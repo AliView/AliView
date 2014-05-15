@@ -1,0 +1,62 @@
+alignmentFile = new File("/opt/Silva_108/core_aligned/Silva_108_core_aligned_seqs.fasta");
+Med gamla int[][] - metoden
+
+Fullscreen minsta med rita bokstäver:
+
+That took 662 milliseconds
+That took 760 milliseconds
+That took 757 milliseconds
+
+Fullscreen minsta utan rita bokstäver:
+That took 246 milliseconds
+That took 247 milliseconds
+That took 321 milliseconds
+That took 312 milliseconds
+That took 381 milliseconds
+That took 286 milliseconds
+That took 222 milliseconds
+That took 220 milliseconds
+
+Med nya char[][] - metoden
+
+Fullscreen minsta med rita bokstäver:
+That took 578 milliseconds
+That took 495 milliseconds
+That took 494 milliseconds
+That took 507 milliseconds
+That took 495 milliseconds
+That took 505 milliseconds
+That took 512 milliseconds
+That took 502 milliseconds
+
+Fullscreen minsta utan rita bokstäver:
+That took 193 milliseconds
+That took 194 milliseconds
+That took 185 milliseconds
+That took 187 milliseconds
+That took 183 milliseconds
+That took 195 milliseconds
+That took 194 milliseconds
+That took 182 milliseconds
+That took 183 milliseconds
+That took 180 milliseconds
+
+Fullscreen minsta med rita bokstäver (utan olika color):
+That took 192 milliseconds
+That took 179 milliseconds
+That took 190 milliseconds
+That took 182 milliseconds
+That took 180 milliseconds
+That took 174 milliseconds
+That took 181 milliseconds
+That took 187 milliseconds
+That took 182 milliseconds
+That took 182 milliseconds
+That took 177 milliseconds
+That took 185 milliseconds
+That took 176 milliseconds
+That took 190 milliseconds
+That took 191 milliseconds
+That took 180 milliseconds
+That took 178 milliseconds
+That took 178 milliseconds

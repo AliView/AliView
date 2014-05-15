@@ -1,0 +1,49 @@
+package aliview.utils;
+
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+import javax.swing.JList;
+
+import aliview.sequencelist.SequenceListModel;
+import aliview.sequences.Sequence;
+
+public class ReorderListener extends MouseAdapter {
+	 
+	   private JList list;
+	   private int pressIndex = 0;
+	   private int releaseIndex = 0;
+	 
+	   public ReorderListener(JList list) {
+	      if (!(list.getModel() instanceof SequenceListModel)) {
+	         throw new IllegalArgumentException("List must have a SequenceListModel");
+	      }
+	      this.list = list;
+	   }
+	 
+
+	   public void mousePressed(MouseEvent e) {
+	      pressIndex = list.locationToIndex(e.getPoint());
+	   }
+	 
+
+	   public void mouseReleased(MouseEvent e) {
+	      releaseIndex = list.locationToIndex(e.getPoint());
+	      if (releaseIndex != pressIndex && releaseIndex != -1) {
+	         reorder();
+	      }
+	   }
+	 
+
+	   public void mouseDragged(MouseEvent e) {
+	      mouseReleased(e);
+	      pressIndex = releaseIndex;      
+	   }
+	 
+	   private void reorder() {
+		   SequenceListModel model = (SequenceListModel) list.getModel();
+	      Sequence dragee = model.get(pressIndex);
+	      model.removeAt(pressIndex);
+	      model.insertAt(dragee, releaseIndex);
+	   }
+	}

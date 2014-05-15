@@ -1,0 +1,11 @@
+#!/bin/bash
+
+#
+# Place this shellscript in same directory as .jar-file and put in bin-path
+#
+
+# -Dsun.java2d.opengl=true
+DIRECTORY_OF_THIS_SCRIPT=$(dirname $0)
+java -Xmx512M -Xms256M -jar $DIRECTORY_OF_THIS_SCRIPT/aliview.jar ${1+"$@"}
+#gnome-terminal --working-directory=$DIRECTORY_OF_THIS_SCRIPT --command "java -Xmx1024M -Xms1024M -jar $DIRECTORY_OF_THIS_SCRIPT/aliview.jar $@"
+#gnome-terminal --working-directory=$DIRECTORY_OF_THIS_SCRIPT --command "/usr/lib/jvm/default-java/bin/java -Xmx1024M -Xms1024M -jar $DIRECTORY_OF_THIS_SCRIPT/aliview.jar $@"

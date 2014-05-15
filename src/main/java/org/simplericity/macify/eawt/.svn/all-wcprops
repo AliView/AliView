@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/simplericity/!svn/ver/480/trunk/macify/src/main/java/org/simplericity/macify/eawt
+END
+Application.java
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/simplericity/!svn/ver/60/trunk/macify/src/main/java/org/simplericity/macify/eawt/Application.java
+END
+ApplicationAdapter.java
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/simplericity/!svn/ver/480/trunk/macify/src/main/java/org/simplericity/macify/eawt/ApplicationAdapter.java
+END
+ApplicationEvent.java
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/simplericity/!svn/ver/48/trunk/macify/src/main/java/org/simplericity/macify/eawt/ApplicationEvent.java
+END
+DefaultApplication.java
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/simplericity/!svn/ver/437/trunk/macify/src/main/java/org/simplericity/macify/eawt/DefaultApplication.java
+END
+ApplicationListener.java
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/simplericity/!svn/ver/480/trunk/macify/src/main/java/org/simplericity/macify/eawt/ApplicationListener.java
+END

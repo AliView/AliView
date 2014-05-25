@@ -123,15 +123,32 @@ need to be temporarily disabled.<br>
 <img style="width: 371px; height: 288px;" alt=""
 src="images/windows-install.png"><br>
 <br>
-<br>
-<br>
+</p>
+
+<p><br>
 <br>
 </p>
 
-<h1><a name="TOP_HELP">Help section:</a></h1>
+<h1><a name="BUG_OR_FEATURE" id="BUG_OR_FEATURE">Report a bug or feature
+request:</a></h1>
+Two ways: <br>
+<br>
+1. Report issue at AliView GitHub Issues tracker: <a
+href="https://github.com/AliView/AliView/issues/">https://github.com/AliView/AliView/issues/</a>
+<br>
+or <br>
+2. Send email to: anders.larsson@ebc.uu.se <br>
 
-<p>Feature-list:</p>
-- fast and light-weight <br>
+
+<p></p>
+
+<p></p>
+
+<p></p>
+
+<h1>Feature-list:</h1>
+
+<p>- fast and light-weight <br>
 - simple navigation, mouse-wheel zoom out unlimited to see whole alignment, and
 zoom in on place of interest. <br>
 - various visual cues to highlight consensus characters or characters deviating
@@ -171,8 +188,127 @@ to FastTree and then automatically opened in FigTree). <br>
 - reverse complement/reverse/complement sequences or whole alignment <br>
 - different color schemes including ClustalX <br>
 - sort sequences by name <br>
-<br>
+</p>
 
+<p></p>
+
+<p></p>
+
+<h1><a name="TOP_HELP" id="TOP_HELP">Help section:</a></h1>
+
+<p><br>
+</p>
+
+<h2>File menu:</h2>
+
+<p><strong>Open File</strong>: AliView will open files in Fasta, Nexus and Phylip format.</p>
+
+<p><strong>Save as Nexus simplified names</strong>: Unorthodox characters (-
+\?./|\,&amp;) in Sequence names are replaced by "_"</p>
+
+<p><strong>Save as Codonpos Nexus (nucleotide dataset only):</strong> All pos 1
+nucleotides are saved as one charset in begining of alignment, thereafter all 2
+pos nucleotides as one charset, then all 3 pos and finally all non-coding
+(0-pos). </p>
+
+<p><strong>Print:</strong> Apart from printing to paper, it is often possible
+in the settings to "print to file", this way you can get post script (ps) files
+of the alignment.</p>
+
+<p><strong>Export alignment as image:</strong> This will save the entire
+alignment as an .png image file</p>
+
+<p><strong>Save selection as Fasta:</strong> Only the selected sequences, or
+selected parts of sequences will be included in the .fasta file - a very simple
+way of pruning away things from your alignment.</p>
+
+<p><strong>Save Translated alignment as Amino acids (nucleotide dataset
+only):</strong> Program will translate nucleotides into AminoAcids (taking into
+acound user specified edits in codon positions when translating)</p>
+
+<p><strong>Start debug:</strong> Prints more messages</p>
+
+<p><strong>Show message log:</strong> Displays program messages and errors in a
+message window</p>
+
+<p></p>
+
+<h2>Edit:</h2>
+
+<p>When opening very large files and they are indexed, then the editing capabilities are very limited - but if you need to edit it might be possible if you increase the Memory resources for AliViev <a href=#memory_settings>see here</a>.
+
+<p><strong>Undo/Redo:</strong> AliView has undo/redo functionality (except from when large indexed files are read from file). Depending on the <a href=#memory_settings>Memory settings</a>, the number of possible undo/redo steps change.</p>
+
+<p><strong>Copy selection as Fasta:</strong> The selected sequences/characters are copied into clipboard as a Fasta sequences (including both name and sequence).</p>
+
+<p><strong>Copy selection as characters:</strong> The selected sequences/characters are copied into clipboard as characters only - Not including the names of the sequences where characters come from.</p>
+
+<p><strong>Paste (fasta sequences):</strong> Sequence(s) will be pasted at top of alignment if clipboard contains <strong>either</strong> File containing fasta sequences <strong>or</strong> text in fasta format, e.g.:<br>
+>Name_of_seq<br>
+TTGGGCATG<br>
+</p>
+
+<p><strong>Add sequences from file:</strong> Add sequence(s) from a file to be pasted at top of alignment (FASTA,PHYLIP or NEXUS file format).</p>
+
+<p><strong>Edit mode:</strong> It is not possible to edit alignment by accident unless you activate "Edit Mode".</p>
+
+<p><strong>Edit mode:</strong> It is not possible to edit alignment by accident unless you activate "Edit Mode".</p>
+
+<p><strong>Clear selected bases:</strong> Changes selected nucleotides/AminoAcids into GAP.</p>
+
+<p><strong>Delete selected</strong> Removes selected sequences/nucleotides/AminoAcids from alignment.</p>
+
+<p><strong>Delere selected bases:</strong> Removes selected nucleotides/AminoAcids from sequences/alignment.</p>
+
+<p><strong>Delete vertical gaps:</strong> If there are column(s) in the alignment only containing GAP these positions are removed.</p>
+
+<p><strong>Delete all gaps in all sequences:</strong> Degap the whole alignment.</p>
+
+<p><strong>Trim sequences/alignment:</strong> If there are column(s) in the beginning or at the end of the alignment containing GAP only, then these positions are removed.</p>
+
+<p><strong>Excludes (Nexus specification)</strong> can be useful if you have an alignment with sections that you don't want to remove permanently - but sometimes when you make an analysis. Then you can save the alignment with the "Excluded" sections removed and use that alignment for the analysis.</p>
+
+<p><strong>Delete excluded bases:</strong> Removes sections of the alignment are marked as "Excludes" (Nexus specification). See also avove under Excludes (Nexus specification).</p>
+
+<p><strong>Find </strong> Finds in name or nucleotides/aminoacids - searches across gaps and obey IUPAC codes.</p>
+
+<p><strong>Find sequence names from clipboard</strong> Finds and selects secuence(s) matching names that are srored in clipbord as list.<br>
+example list in clipboard:<br>
+Woodsia<br>
+Athyrium<br>
+Dryopteris
+</p>
+
+<p><strong>Merge two selected sequences:</strong></p>
+
+<h2>Selection:</h2>
+
+<p><strong>Add selection to Excludes:</strong> Marks sections of the alignment as "Excludes" (Nexus specification). See also avove under Excludes (Nexus specification).</p>
+
+<p><strong>Remove selection from Excludes:</strong> Removes selected sections of the alignment from "Excludes" (if they are included already). See also avove under Excludes (Nexus specification).</p>
+
+
+
+<p><strong></strong></p>
+
+<p></p>
+
+<p></p>
+
+<p></p>
+
+<p></p>
+
+<p></p>
+
+<p></p>
+
+<h2><a name="large_file">Load more sequences from file</a></h2>
+
+<p>If you have opened a large file and all sequences were not indexed at once, this menu will show up and you can select other parts of the file to index. You can also change the number of sequences to index at once in the Program preferences, <a href=#General_settings>General settings</a></p>
+
+
+<p></p>
 
 <h2><a name="memory_settings">Memory settings</a></h2>
 
@@ -284,12 +420,29 @@ current alignment and running it in FastTree to create a MaximumLikelihood Tree
 and finaly opening the resulting tree in FigTree.<br>
 <br>
 Special Parameters:<br>
-CURRENT_ALIGNMENT =The current alignment as a fasta file)<br>
+CURRENT_ALIGNMENT_FASTA =The current alignment as a fasta file)<br>
 CURRENT_SELECTION_AS_FASTA = The selected sequences as a fasta file<br>
 TEMP_OUT_FILE = An empty temporary file created by AliView in the /temp/ folder
 of the computer<br>
 
 
 <h3>examples:</h3>
-Here are examples </body>
+Here are examples
+
+
+<h2>Drag and Drop</h2>
+
+<p>
+If you drop a file on the program window it will open a new window with the alignment
+<br>
+<strong>Note:</strong> If you drop a sequence with "Shift"-button pressed - the sequences in the file will be added to the currently loaded alignment.
+</p>
+Drag and Drop
+
+
+
+</body>
 </html>
+
+
+

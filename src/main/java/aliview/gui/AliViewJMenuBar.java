@@ -312,7 +312,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 		mnFile.add(mntmFindDupes);
 		loadedFunctions.add(mntmFindDupes);
 		 */
-
+/*
 				JMenuItem mntmShowStats = new JMenuItem("Show statistics");
 				mntmShowStats.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
@@ -321,7 +321,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 				});
 				mnFile.add(mntmShowStats);
 				alwaysAvailableFunctions.add(mntmShowStats);
-
+*/
 
 		// Mac has its own menu item
 		if(OSNativeUtils.isAnythingButMac()){
@@ -486,7 +486,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 		//mntmRemoveVerticalGaps.setAccelerator(KeyStroke.getKeyStroke(??));
 		mnEdit.add(mntmRemoveVerticalGaps);
 		editFunctions.add(mntmRemoveVerticalGaps);
-		hasSelectionFunctions.add(mntmRemoveVerticalGaps);
+		alwaysAvailableFunctions.add(mntmRemoveVerticalGaps);
 
 		JMenuItem mntmRemoveAllGaps = new JMenuItem("Delete all gaps in all sequences");
 		mntmRemoveAllGaps.addActionListener(new ActionListener() {
@@ -1208,8 +1208,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 			}
 		});
 		mnPrimer.add(mntmFindPrimerSettings);
-		loadedAlignmentFunctions.add(mntmFindPrimerSettings);
-		nucleotideFunctions.add(mntmFindPrimerSettings);
+		alwaysAvailableFunctions.add(mntmFindPrimerSettings);
 
 
 		// Menu with External Commands
@@ -1229,6 +1228,8 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 		mnHelp.add(mntmHelpOpen);
 		alwaysAvailableFunctions.add(mntmHelpOpen);
 		
+		//mnHelp.add(new JSeparator());
+		
 		JMenuItem mntmCheckNew = new JMenuItem("Check for new version");
 		mntmCheckNew.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -1237,7 +1238,18 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 		});
 		mnHelp.add(mntmCheckNew);
 		alwaysAvailableFunctions.add(mntmCheckNew);
+		
+		JMenuItem mntmReportBug = new JMenuItem("Report bug/feature request");
+		mntmReportBug.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				aliViewWindow.openBugReportPage();
+			}
+		});
+		mnHelp.add(mntmReportBug);
+		alwaysAvailableFunctions.add(mntmReportBug);
 
+		mnHelp.add(new JSeparator());
+		
 		// Mac has its own menu item
 		if(OSNativeUtils.isAnythingButMac()){
 			JMenuItem mntmAbout = new JMenuItem("About");

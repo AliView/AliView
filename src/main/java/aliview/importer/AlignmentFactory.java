@@ -16,6 +16,7 @@ import aliview.AliView;
 import aliview.MemoryUtils;
 import aliview.alignment.Alignment;
 import aliview.alignment.AlignmentMeta;
+import aliview.sequencelist.FileSequenceListModel;
 import aliview.sequencelist.SequenceListModel;
 import aliview.sequences.SequenceUtils;
 
@@ -45,29 +46,31 @@ public class AlignmentFactory {
 				Excludes excludes = new Excludes(sequences.getLongestSequenceLength());
 				CodonPositions codonPositions = new CodonPositions(sequences.getLongestSequenceLength());
 				ArrayList<CharSet> charsets = new ArrayList<CharSet>();
-				try {
-					// Try to read Excludes etc. from alignmentfile	
-					if(NexusUtilities.isNexusFile(alignmentFile)){
-						NexusUtilities.updateExcludesFromFile(alignmentFile,excludes);
-						NexusUtilities.updateCodonPositionsFromNexusFile(alignmentFile, codonPositions);
-						charsets = NexusUtilities.createCharsetsFromNexusFile(alignmentFile, sequences.getLongestSequenceLength());
-					}
-					// Try to read Excludes etc. from metaFile
-					else{
-						// Try to read Excludes from metaFile
-						File metaFile = new File(alignmentFile.getAbsolutePath()+ ".meta");
-						if(metaFile.exists()){
-							NexusUtilities.updateExcludesFromFile(metaFile,new Excludes(sequences.getLongestSequenceLength()));
-							NexusUtilities.updateCodonPositionsFromNexusFile(metaFile, codonPositions);
-							charsets = NexusUtilities.createCharsetsFromNexusFile(metaFile, sequences.getLongestSequenceLength());
+
+					try {
+						// Try to read Excludes etc. from alignmentfile	
+						if(NexusUtilities.isNexusFile(alignmentFile) && sequences instanceof FileSequenceListModel == false){
+							NexusUtilities.updateExcludesFromFile(alignmentFile,excludes);
+							NexusUtilities.updateCodonPositionsFromNexusFile(alignmentFile, codonPositions);
+							charsets = NexusUtilities.createCharsetsFromNexusFile(alignmentFile, sequences.getLongestSequenceLength());
 						}
+						// Try to read Excludes etc. from metaFile
+						else{
+							// Try to read Excludes from metaFile
+							File metaFile = new File(alignmentFile.getAbsolutePath()+ ".meta");
+							if(metaFile.exists()){
+								NexusUtilities.updateExcludesFromFile(metaFile,new Excludes(sequences.getLongestSequenceLength()));
+								NexusUtilities.updateCodonPositionsFromNexusFile(metaFile, codonPositions);
+								charsets = NexusUtilities.createCharsetsFromNexusFile(metaFile, sequences.getLongestSequenceLength());
+							}
+						}
+					} catch (NexusAlignmentImportException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						logger.error(e);
+						AliView.showUserError("Error during import alignment metadata: " + LF + e.getMessage());
 					}
-				} catch (NexusAlignmentImportException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					logger.error(e);
-					AliView.showUserError("Error during import alignment metadata: " + LF + e.getMessage());
-				}
+				
 				
 				MemoryUtils.logMem();
 				AlignmentMeta aliMeta = new AlignmentMeta(excludes, codonPositions, charsets);

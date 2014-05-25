@@ -161,7 +161,6 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 		}
 	}
 
-	
 	public void toggleSimpleName(){
 		this.simpleName = !simpleName;
 	}
@@ -175,8 +174,8 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 	}
 
 	
-	public int findAndSelect(Pattern pattern, int startPos) {
-		// Allocate a Matcher object from the compiled regexe pattern,
+	public int findAndSelect(Pattern pattern, int startPos){
+		// Allocate a Matcher object from the compiled regex pattern,
 		// and provide the input to the Matcher
 		String basesAsString = new String(getBases());
 		Matcher matcher = pattern.matcher(basesAsString);

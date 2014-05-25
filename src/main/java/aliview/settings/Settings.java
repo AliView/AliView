@@ -59,7 +59,7 @@ public class Settings {
 	
 	private static SettingValue horizontalMouseWheelScrollModifier = new SettingValue("HORIZONTALMOUSEWHEELSCROLLMODIFIER", 20,1,100);
 	private static SettingValue verticalMouseWheelScrollModifier = new SettingValue("VERTICALMOUSEWHEELSCROLLMODIFIER", 20,1,100);
-	private static SettingValue largeFileIndexing = new SettingValue("LARGE_FILE_INDEXING", 20000,10,100000000);
+	private static SettingValue largeFileIndexing = new SettingValue("LARGE_FILE_INDEXING", 25000,10,100000000);
 	private static SettingValue maxFileHistogramSequences = new SettingValue("MAX_FILE_HISTOGRAM_SEQUENCES", 1000,10,1000000);
 	
 	private static final String LOGFILE_NAME = "AliView.log";

@@ -54,6 +54,7 @@ Root: HKCR; Subkey: "{#MyAppName}_fas\shell\open\command"; ValueType: string; Va
 
 [Files]
 Source: "Z:\home\anders\maven\AliView\target\windows-latest\AliView.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Z:\home\anders\maven\AliView\AliView.l4j.ini"; DestDir: "{app}";
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

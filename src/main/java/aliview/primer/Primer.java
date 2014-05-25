@@ -55,13 +55,12 @@ public class Primer implements Comparable<Primer> {
 		
 		// expand all primers
 		ArrayList<String> regenerated = NucleotideUtilities.regenerateDegenerated(sequence);
-		
+
 		// loop through and get max and min tm
 		double minTM = Double.MAX_VALUE;
 		double maxTM = Double.MIN_VALUE;
 		for(String thisSeq: regenerated){
 			double tm = OligoCalc.getBaseStackingTM(thisSeq, conc_primer, conc_salt, conc_mg);
-			//logger.info("tm=" + tm);
 			minTM = Math.min(tm, minTM);
 			maxTM = Math.max(tm, maxTM);
 		}

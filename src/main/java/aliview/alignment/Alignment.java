@@ -18,6 +18,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -35,6 +37,7 @@ import aliview.GeneticCode;
 import aliview.NucleotideUtilities;
 import aliview.importer.AlignmentImportException;
 import aliview.importer.SequencesFactory;
+import aliview.messenges.Messenger;
 import aliview.messenges.TextEditDialog;
 import aliview.primer.Dimer;
 import aliview.primer.Primer;
@@ -208,13 +211,14 @@ public class Alignment implements FileSequenceLoadListener {
 		int longest = sequences.getLongestSequenceLength();
 		for(Sequence seq: sequences){
 			String name = seq.getName();
-
+		
 			out.write('>');
 			out.write(seq.getName());
 			out.write(LF);
 			seq.writeBases(out);
 					
 			out.write(LF);
+
 		}		
 		out.flush();
 		out.close();
@@ -464,13 +468,15 @@ public class Alignment implements FileSequenceLoadListener {
 
 	public ArrayList<Primer> findPrimerInSelection(){
 		ArrayList<Primer> allPrimers = new ArrayList<Primer>();
+
+		// no selection returm
 		if(! sequences.hasSelection()){
 			return allPrimers;
 		}
 		
 		String selection = getSelectionAsNucleotides();
 		
-		logger.info(selection);
+//		logger.info(selection);
 		
 		String[] selectionSeq = selection.split("\\n");
 
@@ -520,9 +526,12 @@ public class Alignment implements FileSequenceLoadListener {
 				String primerSeq = consensus.substring(startPos, endPos);
 				Primer aPrimer = new Primer(primerSeq, selectionStartPos + startPos);
 				// only add primers below score
-				if(aPrimer.getDegenerateFold() <= PRIMER_MAX_DEGENERATE_SCORE && 
-					aPrimer.getBaseStackingAvgTm() >= primerMinTM && aPrimer.getBaseStackingAvgTm() <= primerMaxTM){
-					allPrimers.add(aPrimer);
+				long degenFold = aPrimer.getDegenerateFold();
+				double baseStackTM = aPrimer.getBaseStackingAvgTm();
+				if(degenFold <= PRIMER_MAX_DEGENERATE_SCORE){
+					if(baseStackTM >= primerMinTM && baseStackTM <= primerMaxTM){
+						allPrimers.add(aPrimer);
+					}
 				}
 				offset ++;
 				startPos = offset;
@@ -673,9 +682,10 @@ public class Alignment implements FileSequenceLoadListener {
 
 	public void removeVerticalGaps(){
 		String cons = getConsensus();
-			
+		
 		// if there is a gap
 		if(cons.indexOf(SequenceUtils.GAP_SYMBOL) > 0){		
+			
 			// create a bit-mask with pos to delete
 			boolean[] deleteMask = new boolean[cons.length()];
 			for(int n = 0; n < deleteMask.length; n++){
@@ -785,7 +795,7 @@ public class Alignment implements FileSequenceLoadListener {
 	public List<Sequence> insertGapRightOfSelectionMoveLeft() {
 		List<Sequence> previousState = sequences.insertGapRightOfSelectedBase();
 		if(previousState.size()> 0){
-			sequences.rightPadWithGapUntilEqualLength();
+			sequences.leftPadWithGapUntilEqualLength();
 			fireSequencesChanged();
 		}
 		return previousState;
@@ -1214,6 +1224,24 @@ public class Alignment implements FileSequenceLoadListener {
 
 	public Point getFirstSelectedPosition() {
 		return sequences.getFirstSelectedPos();
+	}
+	
+	public int getFirstSelectedPositionX() {
+		Point pos = sequences.getFirstSelectedPos();
+		if(pos == null){
+			return 0;
+		}else{
+			return pos.x;
+		}
+	}
+	
+	public int getFirstSelectedUngapedPositionX() {
+		Point pos = sequences.getFirstSelectedUngapedPos();
+		if(pos == null){
+			return 0;
+		}else{
+			return pos.x;
+		}
 	}
 
 	public void sortSequencesByName() {

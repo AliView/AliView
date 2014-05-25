@@ -51,12 +51,12 @@ public class NexusParser {
 	
 	public boolean isNextTokensRange(){
 		
-		logger.info(getTokenAt(currentPos));
-		logger.info(isTokenInteger(currentPos));
-		logger.info(getTokenAt(currentPos + 1));
-		logger.info(matchesToken(currentPos + 1,"\\-"));
-		logger.info(getTokenAt(currentPos + 2));
-		logger.info(isTokenInteger(currentPos + 2));
+//		logger.info(getTokenAt(currentPos));
+//		logger.info(isTokenInteger(currentPos));
+//		logger.info(getTokenAt(currentPos + 1));
+//		logger.info(matchesToken(currentPos + 1,"\\-"));
+//		logger.info(getTokenAt(currentPos + 2));
+//		logger.info(isTokenInteger(currentPos + 2));
 		
 		if(isTokenInteger(currentPos) && matchesToken(currentPos + 1,"\\-") && isTokenInteger(currentPos + 2)){
 			return true;
@@ -129,9 +129,9 @@ public class NexusParser {
 	}
 
 	public void debug() {
-		logger.info("tokenCount=" + countTokens());
+//		logger.info("tokenCount=" + countTokens());
 		for(String token: tokens){
-			logger.info("token='" + token + "'");
+//			logger.info("token='" + token + "'");
 		}
 	}
 

@@ -442,7 +442,9 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 				out.append(sequence.getName());
 			}
 			out.append(LF);
-			sequence.writeBases(out);
+			for(int n = 0; n < 10; n++){
+				sequence.writeBases(out);
+			}
 			out.append(LF);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -960,6 +962,32 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 	}
 	
 	public String getConsensus() {
+		
+		if(getSequenceType() == SequenceUtils.TYPE_AMINO_ACID){
+			return getAminoAcidConsensus();
+		}
+		else{
+			return getNucleotideConsensus();
+		}
+	}
+		
+	private String getAminoAcidConsensus() {
+		byte[] consVals = new byte[getLongestSequenceLength()];
+		Arrays.fill(consVals, AminoAcid.GAP.getCodeByteVal());
+		for(Sequence sequence : sequences){
+			for(int n = 0; n < sequence.getLength(); n++){
+				consVals[n] = AminoAcid.getConsensusFromByteVal(sequence.getBaseAtPos(n), (byte)consVals[n]);
+			}
+		}
+		
+		String consAsString = new String(consVals);
+		
+		logger.info(consAsString);
+		
+		return consAsString;
+	}
+
+	private String getNucleotideConsensus(){
 		int[] consVals = new int[getLongestSequenceLength()];
 		for(Sequence sequence : sequences){
 			int[] baseVals = sequence.getSequenceAsBaseVals();
@@ -1113,6 +1141,19 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 		}
 		return null;
 	}
+	
+	public Point getFirstSelectedUngapedPos() {
+		for(int n = 0; n < sequences.size(); n++){
+			if(sequences.get(n).hasSelection()){
+				Sequence firstSelected = sequences.get(n);
+				int position = firstSelected.getFirstSelectedPosition();
+				int ungaped = firstSelected.getUngapedPos(position);
+				return new Point(ungaped, n);
+			}		
+		}
+		return null;		
+	}
+	
 
 	public void sortSequencesByName() {
 		logger.info(sequences);
@@ -1521,5 +1562,6 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 		
 		return names;
 	}
+
 	
 }

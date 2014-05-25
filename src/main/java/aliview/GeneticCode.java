@@ -49,7 +49,7 @@ public final class GeneticCode {
 		this.codeString = codeString;
 		this.startCodon = startCodon;
 		for(int n = 0; n < CODE_STATES; n++){
-			acidTranslation[n] = AminoAcid.getAnminoAcidFromChar(codeString.charAt(n));
+			acidTranslation[n] = AminoAcid.getAminoAcidFromChar(codeString.charAt(n));
 		}
 	}
 	

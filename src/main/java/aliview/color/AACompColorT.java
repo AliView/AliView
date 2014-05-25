@@ -17,7 +17,7 @@ public class AACompColorT {
 		String[] splitted = residueString.split(",");
 		residues = new AminoAcid[splitted.length];
 		for(int n = 0; n<splitted.length; n++){
-			residues[n] = AminoAcid.getAnminoAcidFromChar(splitted[n].charAt(0));
+			residues[n] = AminoAcid.getAminoAcidFromChar(splitted[n].charAt(0));
 		}
 		
 		this.color = color;

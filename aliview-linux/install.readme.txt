@@ -1,0 +1,19 @@
+---- simplest-----
+download and run the installer:
+
+
+aliview.install.run
+
+
+(this is a executable archive that will copy the files to the /usr/home/bin/ and /usr/share)
+on some systems you need to change the execution rights of the install file:
+
+chmod +x aliview.install.run 
+sudo ./aliview.install.run 
+
+(most likely you need to sudo the installation)
+
+start the program with aliview (this is a sh script that will execute java -jar aliview.jar)
+
+----- alternative-----
+aliview.tgz is an archive including the program files

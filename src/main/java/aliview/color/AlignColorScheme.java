@@ -45,8 +45,8 @@ public class AlignColorScheme implements ColorScheme {
 		baseForegroundColor[NucleotideUtilities.D] = Color.magenta;
 		baseForegroundColor[NucleotideUtilities.H] = Color.magenta;
 		baseForegroundColor[NucleotideUtilities.V] = Color.magenta;
-		baseForegroundColor[NucleotideUtilities.N] = Color.magenta; 
-		baseForegroundColor[NucleotideUtilities.GAP] = Color.DARK_GRAY; 
+		baseForegroundColor[NucleotideUtilities.N] =  Color.magenta;//new Color(180,200,250);
+		baseForegroundColor[NucleotideUtilities.GAP] = Color.LIGHT_GRAY.darker(); 
 		baseForegroundColor[NucleotideUtilities.UNKNOWN] = Color.cyan;
 		
 		baseBackgroundColor = new Color[64];

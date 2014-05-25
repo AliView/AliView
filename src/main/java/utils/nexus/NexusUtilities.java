@@ -85,10 +85,9 @@ public class NexusUtilities {
 
 			Scanner lineTokenizer = new Scanner(codonPositionsBlock).useDelimiter(",");
 			logger.info("search" + lineTokenizer.findWithinHorizon("\\?:", codonPositionsBlock.length()));
-			while(lineTokenizer.hasNext()){
-				//logger.info(lineTokenizer.nextInt());
-				logger.info(lineTokenizer.next());
-			}
+//			while(lineTokenizer.hasNext()){
+//				logger.info(lineTokenizer.next());
+//			}
 			//
 
 			// Always set position n - 1 because program internally is working with first pos in alignment as 0 (and in codonpos block from 1)
@@ -120,9 +119,9 @@ public class NexusUtilities {
 			String pos1 = StringUtils.substringBetween(codonPositionsBlock, "1:",",");
 			if(pos1 != null){	
 				ArrayList<NexusRange> allRanges = parseNexusRanges(pos1);
-				logger.info("allRangesSize" + allRanges.size());
+//				logger.info("allRangesSize" + allRanges.size());
 				for(NexusRange range: allRanges){
-					logger.info("range" + range.toString());
+//					logger.info("range" + range.toString());
 					for(int n = range.getMinimumInteger(); n <= range.getMaximumInteger(); n=n+3){
 						codonPositions.setPosition(n - 1,1);
 					}
@@ -132,7 +131,7 @@ public class NexusUtilities {
 			String pos2 = StringUtils.substringBetween(codonPositionsBlock, "2:",",");
 			if(pos2 != null){	
 				ArrayList<NexusRange> allRanges = parseNexusRanges(pos2);
-				logger.info("allRangesSize" + allRanges.size());
+//				logger.info("allRangesSize" + allRanges.size());
 				for(NexusRange range: allRanges){
 					for(int n = range.getMinimumInteger(); n <= range.getMaximumInteger(); n=n+3){
 						codonPositions.setPosition(n-1,2);
@@ -286,17 +285,17 @@ public class NexusUtilities {
 		NexusParser parser = new NexusParser(input);	
 		parser.split(" ", true);
 
-		logger.info(parser.countTokens());
+//		logger.info(parser.countTokens());
 
 		parser.debug();
 
 		while(parser.hasMoreTokens()){
 			if(parser.isNextTokensIntRange()){
-				logger.info("TOKENiSiNTRANGE");
+//				logger.info("TOKENiSiNTRANGE");
 				allRanges.add(parser.getNexusRange());
 			}
 			else if(parser.isNextTokenNumeric()){
-				logger.info("tokenIsNumeric");
+//				logger.info("tokenIsNumeric");
 				parser.getIntegerAsRange();
 			}
 			else{
@@ -305,7 +304,7 @@ public class NexusUtilities {
 		}
 
 		for(NexusRange range: allRanges){
-			logger.info("" + range.toString());
+//			logger.info("" + range.toString());
 		}
 
 		return allRanges;

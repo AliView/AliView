@@ -34,13 +34,14 @@ import aliview.AliViewWindow;
 import aliview.FileFormat;
 import aliview.externalcommands.ExternalCommandExecutor;
 import aliview.importer.AlignmentImportException;
+import aliview.importer.FastaFileIndexer;
 import aliview.importer.FileImportUtils;
-import aliview.sequences.FastaFileIndexer;
+import aliview.importer.FileIndexer;
+import aliview.importer.IndexFileReader;
+import aliview.importer.NexusFileIndexer;
+import aliview.importer.PhylipFileIndexer;
 import aliview.sequences.FastaFileSequence;
-import aliview.sequences.FileIndexer;
 import aliview.sequences.FileSequence;
-import aliview.sequences.IndexFileReader;
-import aliview.sequences.PhylipFileIndexer;
 import aliview.sequences.Sequence;
 import aliview.settings.Settings;
 import aliview.subprocesses.SubProcessWindow;
@@ -55,20 +56,17 @@ public class FileMMSequenceList implements List<Sequence>{
 	private List<Sequence> seqList = Collections.synchronizedList(new ArrayList<Sequence>()); //new SequenceListCache(0); // TODO maybe synchronize this list
 	private FilePage currentPage = null;
 	private FileSequence lastCachedSeq;
-	private SequenceListModel sequenceListModel;
 	private long fileSize = -1;
-	private int totalSeqCount = -1;
-	private int nSequencesPerPage = Settings.getLargeFileIndexing().getIntValue();
+	private int nSequencesPerPage;
 	ArrayList<ListDataListener> listeners = new ArrayList<ListDataListener>();
 	private ArrayList<FilePage> pages;
-	private long seekOffset;
-	private long seekStartPos;
-	private long seekToPos;
-	
+
 	
 	public FileMMSequenceList(File aliFile, FileFormat foundFormat) throws IOException {
 		this.aliFile = aliFile;
 		this.fileFormat = foundFormat;
+		
+		logger.info("new FileMMSequnceList");
 		
 		// check if indexfile exists
 		File indexFile = new File(aliFile.getAbsolutePath() + ".fai");
@@ -96,15 +94,17 @@ public class FileMMSequenceList implements List<Sequence>{
 			fireContentsChanged(this);		
 		}
 		else{
-		
+			
 			// first estimate number of sequences and number of sequences to read at once and how many pages that would be	
 			// read and split large file info pages if needed
-			if(fileFormat == FileFormat.PHYLIP){
+			if(fileFormat == FileFormat.PHYLIP || fileFormat == FileFormat.NEXUS){
 				nSequencesPerPage = 1000000;
 			}else{
-				
+				nSequencesPerPage = Settings.getLargeFileIndexing().getIntValue();
 			}
-			findAndAddSequencesToCacheInSubthread(new FilePage(0,aliFile, Collections.synchronizedList(new ArrayList<Sequence>()),0,nSequencesPerPage,0,-1,nSequencesPerPage));
+			
+			FilePage initialPage = new FilePage(0,aliFile, Collections.synchronizedList(new ArrayList<Sequence>()),0,nSequencesPerPage,0,-1,nSequencesPerPage);
+			findAndAddSequencesToCacheInSubthread(initialPage);
 		}
 	}
 	
@@ -113,11 +113,10 @@ public class FileMMSequenceList implements List<Sequence>{
 	}
 
 	private void findAndAddSequencesToCacheInSubthread(final FilePage page){
+		
 		// switchPage
-		if(page != null){
-			currentPage = page;
-			seqList = page.seqList;
-		}
+		currentPage = page;
+		seqList = page.seqList;
 		
 		if(seqList.size() > 0){
 			fireContentsChanged(this);
@@ -146,7 +145,7 @@ public class FileMMSequenceList implements List<Sequence>{
 								createMemoryMappedBuffer();	
 							}
 												
-							List<FileSequence> seqs = findSequencesInFile(page.startPointer,page.startIndex,page.nMaxSeqsToRetrieve, progressWin);
+							List<FileSequence> seqs = findSequencesInFile(page.startPointer,page.startIndex,page.nMaxSeqsToRetrieve, progressWin);							
 							
 							if(pages == null){
 								if(seqs.size() > 0){
@@ -207,8 +206,7 @@ public class FileMMSequenceList implements List<Sequence>{
 		int nSeqCount = 0;
 		
 		ArrayList<FileSequence> allSeqs = new ArrayList<FileSequence>();
-		if(this.fileFormat == FileFormat.PHYLIP){
-			
+		if(this.fileFormat == FileFormat.PHYLIP){		
 			try {
 				PhylipFileIndexer fileIndexer = new PhylipFileIndexer();
 				allSeqs = fileIndexer.findSequencesInFile(mappedBuff, filePointerStart, seqOffset, nSeqsToRetrieve, progressWin, this);
@@ -216,7 +214,15 @@ public class FileMMSequenceList implements List<Sequence>{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+		}
+		else if(this.fileFormat == FileFormat.NEXUS){
+			try {
+				NexusFileIndexer fileIndexer = new NexusFileIndexer();
+				allSeqs = fileIndexer.findSequencesInFile(mappedBuff, filePointerStart, seqOffset, nSeqsToRetrieve, progressWin, this);
+			} catch (AlignmentImportException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}else{
 			FastaFileIndexer fileIndexer = new FastaFileIndexer();
 			allSeqs = fileIndexer.findSequencesInFile(mappedBuff, filePointerStart, seqOffset, nSeqsToRetrieve, progressWin, this);

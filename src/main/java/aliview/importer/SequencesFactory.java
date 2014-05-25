@@ -14,6 +14,7 @@ import jebl.evolution.sequences.SequenceType;
 
 import org.apache.log4j.Logger;
 
+import aliview.AliView;
 import aliview.FileFormat;
 import aliview.MemoryUtils;
 import aliview.sequencelist.FileSequenceListModel;
@@ -69,12 +70,14 @@ public class SequencesFactory {
 				}
 					
 //				// TODO remove - this is pretty much only for testing
-//				if(fileSize > 1000 * 1000 * 1000){
+//				if(AliView.isDebugMode() && fileSize > 1000 * 1000){
 //					memorySequences = false;
 //				}
 				
 			}
 		}	
+		
+		logger.info("memorySequences=" + memorySequences);
 
 		//
 		//	In memory sequences
@@ -209,7 +212,7 @@ public class SequencesFactory {
 		
 				FileFormat foundFormat = FileImportUtils.isFileOfAlignmentFormat(alignmentFile);
 				
-				if(foundFormat == FileFormat.FASTA || foundFormat == FileFormat.PHYLIP){
+				if(foundFormat == FileFormat.FASTA || foundFormat == FileFormat.PHYLIP || foundFormat == FileFormat.NEXUS){
 					
 					try{
 						model = new FileSequenceListModel(alignmentFile, foundFormat);

@@ -189,10 +189,10 @@ public class AminoAcid {
 	}
 	
 	public static final AminoAcid getAminoAcidFromByte(byte base){
-		return getAnminoAcidFromChar((char)base);
+		return getAminoAcidFromChar((char)base);
 	}
 	
-	public static final AminoAcid getAnminoAcidFromChar(char base){
+	public static final AminoAcid getAminoAcidFromChar(char base){
 
 			AminoAcid acid;
 

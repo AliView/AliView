@@ -29,7 +29,7 @@ public class StatusPanel extends JPanel implements AlignmentListener{
 	private int posInUngapedSeq;
 	private int selectedColumnCount;
 	private int selectedSeqCount;
-	private String firstSelectedSequenceName;
+	private String firstSelectedSequenceName = "";
 	
 	public StatusPanel(AlignmentPane alignmentPane, Alignment alignment) {
 		this.aliPane = alignmentPane;
@@ -47,15 +47,18 @@ public class StatusPanel extends JPanel implements AlignmentListener{
 		gbc_lblInfo.insets = new Insets(0, 0, 0, 5);
 		gbc_lblInfo.gridx = 0;
 		gbc_lblInfo.gridy = 0;
-		this.add(lblInfo, gbc_lblInfo);
+		
+		
+		
 		lblSelectionInfo = new JLabel();
 		lblSelectionInfo.setText("selectiontext");
 		GridBagConstraints gbc_lblSelectionInfo = new GridBagConstraints();
-		gbc_lblSelectionInfo.fill = GridBagConstraints.HORIZONTAL;
-		gbc_lblSelectionInfo.anchor = GridBagConstraints.NORTH;
+		gbc_lblSelectionInfo.anchor = GridBagConstraints.NORTHEAST;
 		gbc_lblSelectionInfo.gridx = 1;
 		gbc_lblSelectionInfo.gridy = 0;
-		this.add(lblSelectionInfo, gbc_lblSelectionInfo);
+		
+		this.add(lblInfo, gbc_lblSelectionInfo);
+		this.add(lblSelectionInfo, gbc_lblInfo);
 		this.updateAll();
 	}
 
@@ -67,9 +70,10 @@ public class StatusPanel extends JPanel implements AlignmentListener{
 		}
 
 		public void updateSelectionText(){
-			if(alignment != null){
-				String ungapPosPadded = StringUtils.leftPad("" + posInUngapedSeq, 4);
-				String posInSeqPadded = StringUtils.leftPad("" + posInSeq, 4);
+			if(alignment != null && selectionSize > 0){
+				// +1 because internally we are working with 0 as first pos and first sequence
+				String ungapPosPadded = StringUtils.leftPad("" + (posInUngapedSeq + 1), 4);
+				String posInSeqPadded = StringUtils.leftPad("" + (posInSeq + 1), 4);
 				String selSizePadded = StringUtils.leftPad("" + selectionSize, 6);
 				String selectedColumnCounPadded = StringUtils.leftPad("" + selectedColumnCount, 4);
 				String selectedSeqCountPadded = StringUtils.leftPad("" + selectedSeqCount, 4);
@@ -77,8 +81,12 @@ public class StatusPanel extends JPanel implements AlignmentListener{
 				if(selectedSeqCount > 1){
 					firstSelSeqName += ("....");
 				}
+				if(selectionSize == 0){
+					ungapPosPadded = StringUtils.leftPad("" + "", 4);
+					posInSeqPadded = StringUtils.leftPad("" + "", 4);
+				}
 				
-				lblSelectionInfo.setText(" Selected: " + firstSelSeqName + "  pos: " + posInSeqPadded + ", pos (ungaped): " + ungapPosPadded + " Selected sequences:" + selectedSeqCountPadded + " columns: " +  selectedColumnCounPadded + " total selected characters: " + selSizePadded);
+				lblSelectionInfo.setText("Selected: " + firstSelSeqName + " | pos: " + posInSeqPadded + " | pos (ungaped): " + ungapPosPadded + " | Selected sequences:" + selectedSeqCountPadded + " | columns: " +  selectedColumnCounPadded + " | total selected characters: " + selSizePadded);
 			}else{
 				lblSelectionInfo.setText("");
 			}
@@ -93,9 +101,9 @@ public class StatusPanel extends JPanel implements AlignmentListener{
 			if(alignment == null){
 				lblInfo.setText("no alignmnet loaded");
 			}else{
-				String seqCount = StringUtils.leftPad("" + alignment.getMaxY(), 6);
+				String seqCount = StringUtils.leftPad("Alignment: " + alignment.getMaxY(), 6);
 				String width = StringUtils.leftPad("" + alignment.getMaxX(), 6);
-				lblInfo.setText("" + seqCount + " sequences, width: " + width);	
+				lblInfo.setText("" + seqCount + " sequences " + width + " pos.  ");	
 			}
 		}
 
@@ -108,10 +116,8 @@ public class StatusPanel extends JPanel implements AlignmentListener{
 		public void setPointerPos(Point pointerPos) {
 			this.pointerPos = pointerPos;
 			try {
-				// +1 because internally we are working with 0 as first pos and first sequence
-				posInSeq = aliPane.getPositionInSequenceAt(pointerPos) + 1;
-				posInUngapedSeq = aliPane.getUngapedPositionInSequenceAt(pointerPos) + 1;
-				
+				posInSeq = aliPane.getPositionInSequenceAt(pointerPos);
+				posInUngapedSeq = aliPane.getUngapedPositionInSequenceAt(pointerPos);		
 			} catch (InvalidAlignmentPositionException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -126,6 +132,8 @@ public class StatusPanel extends JPanel implements AlignmentListener{
 			this.selectedColumnCount = alignment.getSelectedColumnCount();
 			this.selectedSeqCount = alignment.getSelectedSequencesCount();
 			this.firstSelectedSequenceName = alignment.getFirstSelectedSequenceName();
+			this.posInSeq = alignment.getFirstSelectedPositionX();
+			this.posInUngapedSeq = alignment.getFirstSelectedUngapedPositionX();
 			if(firstSelectedSequenceName == null){
 				firstSelectedSequenceName = "";
 			}

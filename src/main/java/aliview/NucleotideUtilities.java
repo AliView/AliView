@@ -498,15 +498,29 @@ public class NucleotideUtilities {
 	}
 	
 	private static ArrayList<String> deUpac(String input, String upac, String replace){
-		ArrayList<String> replaced = new ArrayList<String>();
-		
+		ArrayList<String> replaced = null;
 		if(input.indexOf(upac) != -1){
+			replaced = new ArrayList<String>();
+			for(int n = 0; n < replace.length(); n++){
+				String replacedString  = input.replace(upac.charAt(0), replace.charAt(n));
+				replaced.add(replacedString);
+			//	replaced.add(StringUtils.replaceOnce(input,upac, replace.substring(n, n+1)));
+			}
+		}
+		return replaced;	
+	}
+	/*
+	private static ArrayList<String> deUpac(String input, String upac, String replace){
+		ArrayList<String> replaced = null;
+		if(input.indexOf(upac) != -1){
+			replaced = new ArrayList<String>();
 			for(int n = 0; n < replace.length(); n++){
 				replaced.add(StringUtils.replaceOnce(input,upac, replace.substring(n, n+1)));
 			}
 		}
 		return replaced;	
 	}
+	*/
 
 	public static final String reverse(String input) {
 		StringBuffer sb = new StringBuffer(input);

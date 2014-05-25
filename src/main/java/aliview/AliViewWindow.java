@@ -1085,6 +1085,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		sequenceJList.setModel(alignment.getSequences());
 		alignment.getSequences().addListDataListener(aliListener);
 		statusPanel.setAlignment(alignment);
+		statusPanel.updateAll();
 		alignmentPane.validateSize();
 		aliViewWindow.updateWindowTitle();
 		aliViewMenuBar.rebuildSelectCharsetsSubmenu();
@@ -1599,6 +1600,24 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 	}
 
 	public void findPrimerInCurrentSelection() {
+		
+		long selectionSize = alignment.getSelectionSize();
+		
+		// no selection returm
+		if(selectionSize == 0){
+			Messenger.showOKOnlyMessage(Messenger.NO_SELECTION, this);
+			return;
+		}
+		
+		if(selectionSize > 1000*100){
+			// optionpane
+			String message = "In a large selection finding primers might take some time, " + LF + "Do you want to go ahead?";
+			int retVal = JOptionPane.showConfirmDialog(this, message, "Continue?", JOptionPane.OK_CANCEL_OPTION);
+			if(retVal != JOptionPane.OK_OPTION){
+				return;
+			}
+		}
+		
 		ArrayList<Primer> primerResult = alignment.findPrimerInSelection();
 		// kill old frame
 		if(primerResultsFrame != null){
@@ -2112,6 +2131,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		aliViewWindow.getUndoControler().pushUndoState(new UndoSavedStateEditedSequences(prevState, alignment.getAlignentMetaCopy()));		
 		// This movement has to repaint all repaint selected sequences only
 		alignmentPane.validateSize();
+		alignmentPane.scrollMatrixX(-1);
 		requestRepaintSelectedSequences();
 	}
 
@@ -2494,6 +2514,9 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		 */
 
 		public void mousePressed(MouseEvent e) {
+			
+			alignmentPane.requestFocus();
+			
 			// Skip right click
 			if(e.getButton() == e.BUTTON3){
 				return;
@@ -2531,7 +2554,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 
 					try {
 						alignmentPane.selectBaseAt(startPoint);
-						statusPanel.setPointerPos(startPoint);
+			//			statusPanel.setPointerPos(startPoint);
 					} catch (InvalidAlignmentPositionException e1) {
 						//nothing needs to be done
 						e1.printStackTrace();
@@ -2555,7 +2578,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 
 			}else{
 				// if startpoint is same as release-point select by point
-				if(startPoint.equals(e.getPoint())){					
+				if(startPoint.equals(e.getPoint())){				
 					// if shift is down something is selected already make a new rect selection
 					if(e.isShiftDown()){
 						Point firstPos = alignment.getFirstSelectedPosition();
@@ -2567,6 +2590,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 						int selectionSize = alignmentPane.selectWithin(selectRect);
 					}
 					else{
+						logger.info("mouse released");
 						// clear selection
 						alignment.clearSelection();
 						alignmentPane.clearTempSelection();
@@ -2693,14 +2717,9 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 					Rectangle selectInPaneCoord = alignmentPane.matrixCoordToPaneCoord(selectRect);
 					//if(selectInPaneCoord.contains(e.getPoint())){		
 						int diff = e.getPoint().x - dragPointStart.x;
-						double diffInSeqPosiitons = diff/alignmentPane.getCharWidth();
-						int intDiffInseqPos = 0;
-						// round to largest
-						if(diffInSeqPosiitons > 0.5){ // 0.5 makes it not move instantly but when you move mouse a few pixel - feels better
-							intDiffInseqPos = (int)Math.ceil(diffInSeqPosiitons);
-						}else{
-							intDiffInseqPos = (int)Math.floor(diffInSeqPosiitons);
-						}
+						double diffInSeqPositons = diff/alignmentPane.getCharWidth();
+						int intDiffInseqPos = (int)diffInSeqPositons;
+						
 						// Test first if move is possible - otherwise many false requestedit if not possible
 						if(alignment.isMoveSelectionRightPossible() || alignment.isMoveSelectionLeftPossible()){
 							if(requestEditMode()){
@@ -2881,11 +2900,20 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 				}
 
 			}
+			
+			Point posOnPaneNotRuler = new Point(alignmentPane.getVisibleRect().x + e.getPoint().x,0);
+			Point matrixPoint = alignmentPane.paneCoordToMatrixCoord(posOnPaneNotRuler);
+			logger.info("x=" + matrixPoint.x);
+			aliCursor.setPosition(matrixPoint.x,0);
+			// request focus after aliCursor change otherwise not really working
+			alignmentPane.requestFocus();
+			
 			// Clear startpoint
 			startPoint = null;
 			startPointOnAlignmentPane = null;
 			maxRepaintRect = null;
 			alignmentPane.repaint();
+			
 		}
 
 		public void mouseEntered(MouseEvent e) {
@@ -2962,22 +2990,22 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 			if(alignment.hasSelection()){
 				if(e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_KP_UP){
 					e.consume();
-					scrollToCursor();
+					scrollToCursor(KeyEvent.VK_UP);
 					moveCursorUp(e.isShiftDown());
 				}
 				if(e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_KP_DOWN){
 					e.consume();
-					scrollToCursor();
+					scrollToCursor(KeyEvent.VK_DOWN);
 					moveCursorDown(e.isShiftDown());
 				}
 				if(e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_KP_LEFT){
 					e.consume();
-					scrollToCursor();
+					scrollToCursor(KeyEvent.VK_LEFT);
 					moveCursorLeft(e.isShiftDown());
 				}
 				if(e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_KP_RIGHT){
 					e.consume();
-					scrollToCursor();
+					scrollToCursor(KeyEvent.VK_RIGHT);
 					moveCursorRight(e.isShiftDown());
 				}
 			}
@@ -3003,15 +3031,27 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		return Settings.getReverseVerticalMouseWheel().getBooleanValue();
 	}
 
-	public void scrollToCursor() {
+	public void scrollToCursor(int keyDirection) {
 
 		AliCursor aliCursor = getAliCursor();
 		if(aliCursor != null){
-			Rectangle cursRect = new Rectangle();
 			Point pointInPaneCoord = alignmentPane.matrixCoordToPaneCoord(new Point(aliCursor.x, aliCursor.y));
 			Rectangle visiRect = new Rectangle(pointInPaneCoord);
-			visiRect.grow(40, 40);
-			alignmentPane.scrollRectToVisible(visiRect);
+			if(keyDirection == KeyEvent.VK_LEFT){
+				visiRect.add(visiRect.getMinX() - 40, visiRect.getCenterY());
+			}
+			if(keyDirection == KeyEvent.VK_RIGHT){
+				visiRect.add(visiRect.getMaxX() + 40, visiRect.getCenterY());
+			}
+			if(keyDirection == KeyEvent.VK_UP){
+				visiRect.add(visiRect.getCenterX(), visiRect.getMinY() - 40);
+			}
+			if(keyDirection == KeyEvent.VK_DOWN){
+				visiRect.add(visiRect.getCenterX(), visiRect.getMaxY() + 40);
+			}			
+			if(! alignmentPane.getVisibleRect().contains(visiRect)){
+				alignmentPane.scrollRectToVisible(visiRect);
+			}
 		}
 	}
 
@@ -3288,6 +3328,9 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 			}else{
 				// do nothing
 			}
+			
+			// return false after question always
+			// return false;
 		}
 		return isEditMode();
 	}
@@ -3451,8 +3494,15 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 	}
 	
 	public void checkNewVersion() {
-		HelpUtils.display(HelpUtils.DOWNLOAD, this);
+		String version = AliView.getVersion();
+		HelpUtils.displayVersionDownload(version);
 	}
+	
+	public void openBugReportPage() {
+		HelpUtils.display(HelpUtils.BUG_OR_FEATURE, this);
+	}
+	
+	
 
 	public void openHelp() {
 		HelpUtils.display(HelpUtils.TOP_HELP, this);

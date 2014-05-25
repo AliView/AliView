@@ -2,12 +2,19 @@ package aliview.sequencelist;
 
 import java.io.EOFException;
 import java.io.IOException;
+import java.util.ArrayList;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+
+import aliview.importer.NexusFileIndexer;
 
 import sun.nio.cs.ext.ISCII91;
 
 import it.unimi.dsi.io.ByteBufferInpStream;
 
 public class MappedBuffReaderHelper {
+	private static final Logger logger = Logger.getLogger(MappedBuffReaderHelper.class);
 	private ByteBufferInpStream mappedBuff;
 	private byte lastRead;
 
@@ -97,6 +104,13 @@ public class MappedBuffReaderHelper {
 		}
 		return false;
 	}
+	
+	private boolean isCitation(byte nextByte) {
+		if(nextByte == '\''){
+			return true;
+		}
+		return false;
+	}
 
 	public boolean hasNext() {
 		return !isEOF();
@@ -124,6 +138,36 @@ public class MappedBuffReaderHelper {
 		return foundPos;
 	}
 	
+	
+	public void posOfFirstCharAfterNexusName() {
+		boolean charFound = false;
+		boolean whiteFound = false;
+		
+	/*	
+		
+		while(true){
+			byte next = read();
+			if(isCitation(next)){
+				long endNamePos = findNext((byte)'\'');
+				return endNamePos +1;
+			}
+			if(isSpaceOrTab(nextByte)){
+				whiteFound = true;
+			}else{
+				charFound = true;
+			}
+			
+			if(whiteFound && !isSpaceOrTab(next)){
+				foundPos = mappedBuff.position() - 1;
+				break;
+			}
+		}
+		return foundPos;
+		*/
+	}
+	
+
+
 	public boolean hasLineOnlyOneContinousSpace() throws EOFException {
 		byte previous = -1;
 		int spaceCount = 0;
@@ -206,4 +250,150 @@ public class MappedBuffReaderHelper {
 		}
 		return foundPos;
 	}
+
+	public void skipUntilLineContains(String string) throws EOFException {
+		while(true){
+			String next = readLine();
+			if(next.toUpperCase().contains("MATRIX")){
+				break;
+			}
+		}
+	}
+	
+	private boolean isTokenDelimiter(int nextByte){
+		if(nextByte == ' ' || nextByte == '\t' || nextByte == '\r' || nextByte == '\n' || nextByte == '=' || nextByte == ';'){
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean isNexusCommentStart(int nextByte){
+		return nextByte == '[';
+	}
+	
+	private boolean isNexusCommentEnd(int nextByte){
+		return nextByte == ']';
+	}
+	
+	private boolean isNexusNameCitation(int nextByte) {
+		return nextByte == '\'';
+	}
+	
+	public String getCharsUntilNexusCitation() throws EOFException{
+		StringBuilder buff = new StringBuilder();
+		while(true){
+			int nextByte = read();
+			if(isNexusNameCitation(nextByte)){
+				return buff.toString();
+			}
+			else{
+				buff.append(nextByte);
+			}
+		}
+	}
+	
+	public void skipUntilNexusCommentEnd() throws EOFException{
+		while(true){
+			int nextByte = read();
+			if(isNexusCommentEnd(nextByte)){
+	//			logger.info("done skip comment");
+				return;
+			}
+	//		logger.info("skip comment");
+		}
+	}
+	
+
+	public ArrayList<String> readAllNexusTokensUntil(String endToken) throws EOFException{
+		ArrayList<String> tokens = new ArrayList<String>();
+		StringBuilder buff = new StringBuilder();	
+		
+		while(true){
+			int nextByte = read();
+			
+			if(isNexusCommentStart(nextByte)){
+				skipUntilNexusCommentEnd();
+			}
+			
+			if(isTokenDelimiter(nextByte)){
+				if(buff.length() > 0){
+					String token = buff.toString();
+					tokens.add(token);
+					if(StringUtils.equalsIgnoreCase(token, endToken)){
+						return tokens;
+					}
+					buff = new StringBuilder();
+				}
+			}else{
+				buff.append((char)nextByte);
+			}
+		}
+		
+	}
+
+	public String readNextNexusSeqName() throws EOFException {
+		StringBuilder buff = new StringBuilder();	
+		while(true){
+			int nextByte = read();
+			
+			if(isNexusCommentStart(nextByte)){
+				skipUntilNexusCommentEnd();
+			}
+			else if(isNexusNameCitation(nextByte)){
+				String name = getCharsUntilNexusCitation();
+				buff.append(name);
+			}		
+			else if(isWhiteOrLF(nextByte)){
+				// don't return until there is a name
+				if(buff.length() > 0){
+					return buff.toString();
+				}
+			}
+			else{
+				buff.append((char)nextByte);
+			}
+		}
+	}
+	
+	
+
+	public long posOfNextNonWhiteNexusChar() throws EOFException {
+		StringBuilder buff = new StringBuilder();	
+		while(true){
+			int nextByte = read();
+			
+			if(isNexusCommentStart(nextByte)){
+				skipUntilNexusCommentEnd();
+			}
+			
+			if(isWhiteOrLF(nextByte)){
+				// skip
+			}else{
+				
+				return mappedBuff.position() -1;
+			}
+		}
+	}
+	
+	public long getPosOfNonWhiteNexusCharacter(int skipCount) throws EOFException {
+		int counter = 0;
+		while(true){
+			int nextByte = read();
+			
+			if(isNexusCommentStart(nextByte)){
+				skipUntilNexusCommentEnd();
+			}		
+			else if(isWhiteOrLF(nextByte)){
+				// skip
+			}else{
+				counter++;
+				logger.info((char)nextByte);
+				if(counter == skipCount){
+				//	logger.info("lastseqchar=" + (char)nextByte);
+					return mappedBuff.position() - 1;
+				}
+			}
+		}
+	}
+	
 }

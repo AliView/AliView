@@ -9,7 +9,7 @@ public class DefaultColorSchemeFast extends AlignColorScheme {
 
 	public DefaultColorSchemeFast() {
 		super();
-		this.colorSchemeName =  "Default-variant - simpler, slightly faster";
+		this.colorSchemeName =  "Default-variant - single color letters, slightly faster";
 
 		baseForegroundColor = new Color[64];
 		Color NUC_FG = Color.DARK_GRAY.darker();

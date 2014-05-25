@@ -10,10 +10,13 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.InputStream;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 import java.net.JarURLConnection;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Properties;
 
 import javax.swing.JFrame;
@@ -48,6 +51,7 @@ public class AliView implements ApplicationListener{
 	private static AliViewWindow activeWindow = null;
 	private static final Logger logger = Logger.getLogger(AliView.class);
 	private static File savedInitialArgumentAlignmentFileForMac = null;
+	private static boolean debugMode = false;
 
 	/**
 	 * Launch the application.
@@ -59,17 +63,49 @@ public class AliView implements ApplicationListener{
 //		System.setErr( new PrintStream( new LoggingOutputStream( logger, Level.ERROR ), true));
 //		System.setOut( new PrintStream( new LoggingOutputStream( logger, Level.INFO ), true));
 		
+		long startTime = System.currentTimeMillis();
+		
 		Logger.getRootLogger().setLevel(Level.ALL);
 		logAllLogs();
+		
+		
+		
+		
 		
 		logger.info("version " + AliView.getVersion());
 		long time = AliView.getTime(AliView.class);
 		logger.info("version time " + new Date(time));
+		
+		System.out.println("Time to here in ms = " + ( System.currentTimeMillis() - startTime));
 
 		Properties props = System.getProperties();
 		props.list(System.out);
 
 		try{
+			
+			// check for debug args
+			boolean hasDebugArg = false;
+			if(args != null && args.length >= 1){	
+				for(String arg: args){
+					if("debug".equalsIgnoreCase(arg)){
+						hasDebugArg = true;
+					}
+				}
+			}
+			// check if debug in user environ
+			String debugEnv = System.getenv("ALIVIEW_DEBUG");
+			logger.info("debugEnv" + debugEnv);
+
+			debugEnv = null;
+
+			// set debug mode
+			if(hasDebugArg || (debugEnv != null)){
+				AliView.setDebug(true);
+			}
+			else{
+				AliView.setDebug(false);
+			}
+			
 			
 			// Set exception handler that takes care of error that are uncaught in the GUI-thread (Event-dispatching-queue)
 			Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
@@ -82,6 +118,16 @@ public class AliView implements ApplicationListener{
 			    });
 			
 
+			RuntimeMXBean bean = ManagementFactory.getRuntimeMXBean();
+			 List<String> aList = bean.getInputArguments();
+
+			  for (int i = 0; i < aList.size(); i++) {
+				  logger.info("" +  aList.get( i ));
+			  }
+			  // print the non-JVM command line arguments using args
+			  // name of the main class
+			  logger.info(" " + System.getProperty("sun.java.command"));
+			
 			logger.info("java.vendor" + System.getProperty("java.vendor"));
 			logger.info("java.version" + System.getProperty("java.version"));
 
@@ -250,8 +296,11 @@ public class AliView implements ApplicationListener{
 				
 				
 	//			alignmentFile = new File("/home/anders/projekt/alignments/sandies/euArc36C_F1_big_problematic.nex");
+			//	alignmentFile = new File("/home/anders/projekt/alignments/sandies/euArc165F_F1.fasta");
+			//	alignmentFile = new File("/home/anders/projekt/alignments/Woodsia_chloroplast_min4_20131109_v2.excluded.nexus");
 				
-				alignmentFile = new File("/home/anders/projekt/alignments/Woodsia_chloroplast_min4_20131109_v2.excluded.nexus");
+				alignmentFile = new File("/home/anders/projekt/alignments/Woodsia_chloroplast_min1_20131029.nexus");
+			//	alignmentFile = new File("/vol2/big_data/test.nexus");
 				
 			//			  alignmentFile = new File("/vol2/johns_454/SSURef_108_full_align_tax_silva_trunc.fasta");
 			//		  alignmentFile = new File("/vol2/big_data/SSURef_108_full_align_tax_silva_trunc.selection.fasta");
@@ -263,7 +312,7 @@ public class AliView implements ApplicationListener{
 	//			alignmentFile = new File("/home/anders/projekt/alignments/harris_CT144_seq_v2.phy");
 		//		alignmentFile = new File("/home/anders/projekt/alignments/harris_CT144_seq_v2_shortname_sequential.phy");
 			//	alignmentFile = new File("/vol2/big_data/small_test_shortname.phy");
-	//		alignmentFile = new File("/vol2/big_data/test.phy");
+//			alignmentFile = new File("/vol2/big_data/test.phy");
 	//			alignmentFile = new File("/vol2/big_data/test.fasta");
 				
 			//			alignmentFile = new File("/home/anders/projekt/alignments/smalphylipSeqShortName.phy");
@@ -304,23 +353,9 @@ public class AliView implements ApplicationListener{
 			err.printStackTrace();
 		}
 
-		// check for debug args
-		boolean hasDebugArg = false;
-		if(args != null && args.length >= 1){	
-			for(String arg: args){
-				if("debug".equalsIgnoreCase(arg)){
-					hasDebugArg = true;
-				}
-			}
-		}
-		// check if debug in user environ
-		String debugEnv = System.getenv("ALIVIEW_DEBUG");
-		logger.info("debugEnv" + debugEnv);
-
-		debugEnv = null;
 
 		// set debug mode
-		if(hasDebugArg || (debugEnv != null)){
+		if(isDebugMode()){
 			Logger.getRootLogger().setLevel(Level.ALL);
 		}
 		else{
@@ -329,6 +364,14 @@ public class AliView implements ApplicationListener{
 
 		logger.info("done with main method");
 
+	}
+
+	private static void setDebug(boolean b) {
+		debugMode = b;
+	}
+	
+	public static boolean isDebugMode() {
+		return debugMode;
 	}
 
 	/**

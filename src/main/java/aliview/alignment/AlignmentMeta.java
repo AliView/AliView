@@ -99,6 +99,9 @@ public class AlignmentMeta {
 
 
 	public void removeFromMask(boolean[] deleteMask) {
+		
+		logger.info(deleteMask.length);
+		
 				for(int n = excludes.getLength() - 1; n>= 0; n--){
 					if(deleteMask[n] == true){
 						excludes.removePosition(n);

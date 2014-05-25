@@ -20,6 +20,7 @@ public class Messenger {
 	private static final String LF = System.getProperty("line.separator");
 	private static final Logger logger = Logger.getLogger(Messenger.class);
 	public static final Message SAVE_NOT_POSSIBLE_TRY_SAVE_AS = new Message("Not possible to save, try Save as....", "Sorry....");
+	public static final Message NO_SELECTION = new Message("Nothing selected...", "No selection");
 	public static Message NO_FASTA_IN_CLIPBOARD = new Message("Could not find fasta sequences in clipboard (name has to start with >)", "No fasta sequences");
 	public static Message NO_FASTA_OR_FILE_IN_CLIPBOARD = new Message("Could not find fasta sequences (name has to start with >)" + LF +
 			                                                           "- or a valid alignment file name in clipboard.", "No sequences");

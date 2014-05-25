@@ -297,8 +297,6 @@ public class AlignmentPane extends JPanel{
 		if(base != null){
 			ungapedPos = base.getUngapedPosition();
 		}
-
-
 		return ungapedPos;
 	}
 
@@ -1380,6 +1378,23 @@ public class AlignmentPane extends JPanel{
 
 	public void setColorSchemeNucleotide(ColorScheme aScheme) {
 		this.colorSchemeNucleotide = aScheme;
+	}
+
+	public Point getVisibleUpperLeftMatrixPos() {
+		Rectangle rect = this.getVisibleRect();
+		Point ulPanePos = rect.getLocation();
+		Point ulMatrixPos = paneCoordToMatrixCoord(ulPanePos);
+		return ulMatrixPos;
+	}
+	
+	public void scrollToVisibleUpperLeftMatrixPos(Point ulPos) {
+		Point ulPanePos = matrixCoordToPaneCoord(ulPos);
+		this.setLocation(ulPanePos);
+	}
+
+	public void scrollMatrixX(int offset) {
+		int offsetPane = (int)(offset * charWidth);
+		this.setLocation( getLocation().x + offsetPane, getLocation().y );
 	}
 
 

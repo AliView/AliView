@@ -4,7 +4,7 @@
   <groupId>AliView</groupId>
   <artifactId>AliView</artifactId>
   <packaging>jar</packaging>
-  <version>0.9.9.3</version>
+  <version>1.04</version>
   <name>AliView</name>
   <url>http://maven.apache.org</url>  
   <properties>
@@ -31,7 +31,6 @@
   <build>
 	<!-- make sure binaries not are filtered - then they will get corrupted-->
 	<!-- there is one set of files to be filtered and copied and another copied but not filtered-->
-    
     <resources>
         <resource>
             <directory>src/main/resources</directory>
@@ -69,25 +68,6 @@
           <target>1.6</target>
        </configuration>
      </plugin>
-     <!--
-     <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <configuration>
-          <finalName>
-            aliview
-          </finalName>
-          <appendAssemblyId>false</appendAssemblyId>
-          <descriptorRefs>
-            <descriptorRef>jar-with-dependencies</descriptorRef>
-          </descriptorRefs>
-          <archive>
-            <manifest>
-              <mainClass>aliview.AliView</mainClass>
-            </manifest>
-          </archive>       
-        </configuration>
-       </plugin>
-     -->
      <plugin>
             <artifactId>maven-dependency-plugin</artifactId>
             <executions>
@@ -112,6 +92,9 @@
                    <manifest>
                       <mainClass>aliview.AliView</mainClass>
                    </manifest>
+                   <manifestEntries>
+                     <SplashScreen-Image>img/splash_128x128.png</SplashScreen-Image>      
+        		   </manifestEntries>
                 </archive>      
           </configuration>
           <executions>
@@ -132,6 +115,9 @@
 						  <manifest>
 							 <mainClass>aliview.AliView</mainClass>
 						  </manifest>
+						  <manifestEntries>
+                            <SplashScreen-Image>img/splash_128x128.png</SplashScreen-Image>      
+        		          </manifestEntries>
 					   </archive>       
 				  </configuration>
 			   </execution>
@@ -152,6 +138,9 @@
 							<manifest>
 							  <mainClass>aliview.AliView</mainClass>
 							</manifest>
+							<manifestEntries>
+                               <SplashScreen-Image>img/splash_128x128.png</SplashScreen-Image>      
+        		            </manifestEntries> 
 					   </archive>       
                     </configuration>
                  </execution>
@@ -171,6 +160,9 @@
 							<manifest>
 							  <mainClass>aliview.AliView</mainClass>
 							</manifest>
+							<manifestEntries>
+                               <SplashScreen-Image>img/splash_128x128.png</SplashScreen-Image>      
+        		            </manifestEntries>
 						  </archive>       
                       </configuration>
                   </execution>
@@ -236,8 +228,7 @@
                  </fileset>
                </filesets>
              </configuration>           
-         </execution>
-         
+         </execution> 
          <execution>
             <id>remove-jar-files-from-osx-bundle-since-they-are-unpacked-in-ailiview-jar-already</id>
             <goals>
@@ -282,47 +273,6 @@
 		 </execution>
 	   </executions>
 	</plugin>
-	
-	<plugin>
-  <groupId>org.codehaus.mojo</groupId>
-  <artifactId>exec-maven-plugin</artifactId>
-  <version>1.2</version>
-  <executions>
-    
-    <execution>
-      <id>copy linux install files</id>
-      <goals>
-        <goal>exec</goal>
-      </goals>
-      <configuration>
-        <executable>cp</executable>
-        <arguments>
-          <argument>${basedir}/aliview-linux/*</argument>
-          <argument>${basedir}/target/linux-version-${project.version}/aliview/</argument>
-
-        </arguments>
-      </configuration>
-    </execution>
-    
-    
-    <execution>
-      <id>cbuild linux install</id>
-      <goals>
-        <goal>exec</goal>
-      </goals>
-      <configuration>
-        <executable>makeself</executable>
-        <arguments>
-          <argument>${basedir}/target/linux-version-${project.version}/aliview</argument>
-          <argument>${basedir}/target/linux-version-${project.version}/aliview.install.run</argument>
-          <argument>"Installer for AliView"</argument>
-          <argument>./install.sh</argument>
-        </arguments>
-      </configuration>
-    </execution>
-  </executions>
-</plugin>
-	
     <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>osxappbundle-maven-plugin</artifactId>
@@ -344,7 +294,29 @@
                 </goals>
             </execution>
         </executions>
-     </plugin>
+     </plugin>  
+     <plugin>
+	   <groupId>org.codehaus.mojo</groupId>
+	   <artifactId>truezip-maven-plugin</artifactId>
+	   <version>1.1</version>   
+	   <executions>
+		  <execution>
+            <id>add-splash-image-mac-version</id>
+            <goals>
+                <goal>copy</goal>
+            </goals>
+            <phase>package</phase>
+            <configuration>
+				<files>
+                <file>
+                  <source>${basedir}/src/main/resources/img/splash_128x128.png</source>
+                  <outputDirectory>target/AliView-${project.version}/AliView.app/Contents/Resources/Java/</outputDirectory>
+                </file>
+                </files>
+            </configuration>
+         </execution>
+       </executions> 
+     </plugin>  
 	 <plugin>
 		<groupId>org.bluestemsoftware.open.maven.plugin</groupId>
 		<artifactId>launch4j-plugin</artifactId>
@@ -397,77 +369,7 @@
 			</execution>
 		</executions>
 	</plugin>
-<!--
- <artifactId>jdeb</artifactId>
-                <groupId>org.vafer</groupId>
-                <version>1.1.1</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jdeb</goal>
-                        </goals>
-                        <configuration>
-                            <verbose>true</verbose>
-                            <snapshotExpand>true</snapshotExpand>
-
-                            <snapshotEnv>USER</snapshotEnv>
-                            <verbose>true</verbose>
-                            <controlDir>${basedir}/src/deb/control</controlDir>
-                            <dataSet>
-
-                                <data>
-                                  <src>${project.build.directory}/${project.build.finalName}.jar</src>
-                                  <type>file</type>
-                                  <mapper>
-                                    <type>perm</type>
-                                    <prefix>/usr/share/jdeb/lib</prefix>
-                                    <user>loader</user>
-                                    <group>loader</group>
-                                  </mapper>
-                                </data>
-
-                                <data>
-                                  <type>link</type>
-                                  <symlink>true</symlink>
-                                  <linkName>/usr/share/java/jdeb.jar</linkName>
-                                  <linkTarget>/usr/share/jdeb/lib/${project.build.finalName}.jar</linkTarget>
-                                </data>
-
-                                <data>
-                                  <src>${basedir}/src/deb/init.d</src>
-                                  <type>directory</type>
-                                  <mapper>
-                                    <type>perm</type>
-                                    <prefix>/etc/init.d</prefix>
-                                    <user>loader</user>
-                                    <group>loader</group>
-                                  </mapper>
-                                </data>
-
-                                <data>
-                                  <type>template</type>
-                                  <paths>
-                                    <path>etc/${project.artifactId}</path>
-                                    <path>var/lib/${project.artifactId}</path>
-                                    <path>var/log/${project.artifactId}</path>
-                                    <path>var/run/${project.artifactId}</path>
-                                  </paths>
-                                  <mapper>
-                                    <type>perm</type>
-                                    <user>loader</user>
-                                    <group>loader</group>
-                                  </mapper>
-                                </data>
-
-                            </dataSet>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-    -->
    </plugins>
-  <!-- <copy file="aliview-linux/*" tofile="target/linux-version-${project.version}/aliview/"/> -->
   </build>
   <dependencies>
     <dependency>
@@ -480,48 +382,21 @@
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
       <version>1.2.13</version>
-
     </dependency>
     <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
       <version>2.6</version>
-
     </dependency>
     <dependency>
     	<groupId>commons-io</groupId>
     	<artifactId>commons-io</artifactId>
     	<version>2.2</version>
-
     </dependency>
-
-    <!--
-    <dependency>
-	<groupId>commons-collections</groupId>
-	<artifactId>commons-collections</artifactId>
-	<version>3.2.1</version>
-    </dependency>
-    
-    <dependency>
-	  <groupId>it.unimi.dsi</groupId>
-	  <artifactId>dsiutils</artifactId>
-	  <version>2.0.15</version>
-    </dependency>
-    -->
-    
     <dependency>
       <groupId>jebl2</groupId>
       <artifactId>jebl</artifactId>
       <version>0.1</version>
-
     </dependency>  
-    <!--
-    <dependency>
-      <groupId>scripts</groupId>
-      <artifactId>scripts</artifactId>
-      <version>0.9-SNAPSHOT</version>
-    </dependency>
-    
-   -->
   </dependencies>
 </project>

@@ -61,14 +61,18 @@ public class SequencesFactory {
 		boolean memorySequences = true;
 		if(alignmentFile != null){
 			if(alignmentFile.exists()){
-				long fileSize = alignmentFile.length();
-				long maxMem = MemoryUtils.getMaxMem();
+				double fileSize = alignmentFile.length();
+				double maxMem = MemoryUtils.getMaxMem();
 				
-				// memory need to be 2 times file size
-				if(maxMem/fileSize < 2){
+				logger.info("maxMem" + maxMem);
+				logger.info("fileSize" + fileSize);
+				
+				// memory need to be ca 1.5 * times file size
+				if(maxMem/fileSize < 1.5){
+					logger.info("maxMem/fileSize=" + maxMem/fileSize);
 					memorySequences = false;
 				}
-					
+//					
 //				// TODO remove - this is pretty much only for testing
 //				if(AliView.isDebugMode() && fileSize > 1000 * 1000){
 //					memorySequences = false;

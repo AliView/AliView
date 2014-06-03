@@ -35,8 +35,7 @@ public class FileSequenceListModel extends SequenceListModel implements ListData
 	public FileMMSequenceList getSequences() {
 		return (FileMMSequenceList) super.getSequences();
 	}
-
-	
+ 
 	@Override
 	// only for the ones in the cache
 	public int getLongestSequenceLength() {		
@@ -168,9 +167,28 @@ public class FileSequenceListModel extends SequenceListModel implements ListData
 	}
 
 
-	public void intervalRemoved(ListDataEvent e) {
+	public void intervalRemoved(ListDataEvent e){
 		// TODO Auto-generated method stub
 	}
-
+	
+	// Skip padding if filesequences
+	public boolean rightPadWithGapUntilEqualLength(){
+		return false;
+	}
+	
+	// Skip padding if filesequences
+	public boolean leftPadWithGapUntilEqualLength() {
+		return false;
+	}
+	
+	// Skip trimming if filesequences
+	public boolean rightTrimSequencesRemoveGapsUntilEqualLength(){
+		return false;
+	}
+	
+	// Skip delete if filesequences
+	public void deleteBasesInAllSequencesFromMask(boolean[] deleteMask) {
+		return;
+	}
 
 }

@@ -49,6 +49,7 @@ import aliview.subprocesses.SubThreadProgressWindow;
 
 public class FileMMSequenceList implements List<Sequence>{
 	private static final Logger logger = Logger.getLogger(FileMMSequenceList.class);
+	private static final String LF = System.getProperty("line.separator");
 	private FileFormat fileFormat;
 	private File aliFile;
 	//private MappedByteBuffer mappedBuff;
@@ -163,9 +164,12 @@ public class FileMMSequenceList implements List<Sequence>{
 						} catch (FileNotFoundException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
+							AliView.showUserError("File not found:" + LF + e.getLocalizedMessage());
+							
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
+							AliView.showUserError("Error when reading file:" + LF + e.getLocalizedMessage());
 						}
 						
 						// loading is done the new thread should activate GUI again before it is finished
@@ -196,8 +200,27 @@ public class FileMMSequenceList implements List<Sequence>{
 	}
 	
 	// TODO close buffer maybe? When alignment is changed?
-	protected void createMemoryMappedBuffer() throws FileNotFoundException, IOException {
-		mappedBuff = ByteBufferInpStream.map(new FileInputStream(aliFile).getChannel(),FileChannel.MapMode.READ_ONLY );
+	protected void createMemoryMappedBuffer() throws IOException{
+		
+		try {
+			mappedBuff = ByteBufferInpStream.map(new FileInputStream(aliFile).getChannel(),FileChannel.MapMode.READ_ONLY );
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			throw e;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			AliView.showUserError("Error when trying to open large file:" + LF +
+								  "One source of problem could be if you are running a 32-bit OS." + LF +
+								  "Opening large files are mainly tested on 64-bit OS" + LF +
+								  "Another problem could be if your Java version is 32-bit although" + LF + 
+								  "your OS is 64-bit, in this case you could download and install latest 64-bit Java." + LF +
+								  "Another solution is if you can increase memory for AliView so that alignment is" + LF +
+								  "loaded into memory and not residing on file. See setting memory in Program Preferences");
+					
+			e.getLocalizedMessage();
+			throw e;
+		}
 	}
 	
 	private synchronized List<FileSequence> findSequencesInFile(long filePointerStart, int seqOffset, final int nSeqsToRetrieve, final SubThreadProgressWindow progressWin){

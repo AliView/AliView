@@ -12,7 +12,10 @@ import javax.swing.JOptionPane;
 
 import org.apache.log4j.Logger;
 
+import utils.DialogUtils;
+
 import aliview.AliViewWindow;
+import aliview.AminoAcid;
 import aliview.gui.AliViewJMenuBar;
 import aliview.settings.Settings;
 
@@ -20,7 +23,7 @@ public class Messenger {
 	private static final String LF = System.getProperty("line.separator");
 	private static final Logger logger = Logger.getLogger(Messenger.class);
 	public static final Message SAVE_NOT_POSSIBLE_TRY_SAVE_AS = new Message("Not possible to save, try Save as....", "Sorry....");
-	public static final Message NO_SELECTION = new Message("Nothing selected...", "No selection");
+	public static final Message NO_SELECTION = new Message("Nothing selected...", "No selection");	
 	public static Message NO_FASTA_IN_CLIPBOARD = new Message("Could not find fasta sequences in clipboard (name has to start with >)", "No fasta sequences");
 	public static Message NO_FASTA_OR_FILE_IN_CLIPBOARD = new Message("Could not find fasta sequences (name has to start with >)" + LF +
 			                                                           "- or a valid alignment file name in clipboard.", "No sequences");
@@ -31,7 +34,21 @@ public class Messenger {
 	public static Message OUT_OF_MEMORY_ERROR = new Message("Out of memory error - you can probably still save your work as it is." + LF +
 			                                         //       "One source of this error is the number of undo-steps preserved - you can change this in Settings." + LF +
 															"If you want to increase memory available for AliView:  " + Settings.getAliViewHelpWebPage(), "Out of memory");
-
+	public static Message ONLY_VIEW_WHEN_FILESEQUENCES = new Message("Edit capabilities are limited when large alignment is read from file" + LF + 
+			                        								 "You can delete and rearange sequences." + LF + 
+			                        								 "If you need full editing capabilities then you can increase " + LF + 
+			                        								 "AliView memory settings under menu \"Preferences\". Memory " + LF +
+			                        								 "needed is 2 x file size if files are to be read into memory." + LF +
+			                        								 " ", "Limited edit capabilities");
+	
+	public static final Message LIMITED_UNDO_CAPABILITIES = new Message("The size of the alignment prevents Undo functionality when editing." + LF + 
+			 															"- Don't forget to 'Save As' every once in a while....", "Undo function disabled");
+			
+	
+	public static void main(String[] args) {
+		boolean cbxSelected = showOKOnlyMessageWithCbx(ONLY_VIEW_WHEN_FILESEQUENCES, true, null);
+		logger.info("cbxSelected" + cbxSelected);
+	}
 	
 	public static void showGeneralErrorMessage(Error error, JFrame parentFrame) {
 		 Message GENERAL_ERROR = new Message("Error (you can probably still save work as it is)" + LF +
@@ -82,15 +99,19 @@ public class Messenger {
 		//JOptionPane.showMessageDialog(aliViewWindow,message.text,message.title, JOptionPane.INFORMATION_MESSAGE);	
 	}
 	
-   public static void showOKOnlyMessageWithCbx(Message message, AliViewWindow aliViewWindow) {
+	
+	
+	
+   public static boolean showOKOnlyMessageWithCbx(Message message, boolean cbxSelected, AliViewWindow aliViewWindow) {
 		
 		final JDialog dialog = new JDialog(aliViewWindow);
 		dialog.setTitle(message.title);
 		dialog.setModal(true);
 		dialog.setAlwaysOnTop(true);
 		dialog.setModalityType(ModalityType.DOCUMENT_MODAL);
-		
 		JCheckBox cbx = new JCheckBox("Don't show this message again");
+		cbx.setSelected(cbxSelected);
+		cbx.setFocusPainted(false);
 		JOptionPane optPane = new JOptionPaneWithCheckbox(cbx, message.text,JOptionPane.INFORMATION_MESSAGE);
 		optPane.addPropertyChangeListener(new PropertyChangeListener()
 		   {
@@ -117,10 +138,12 @@ public class Messenger {
 		dialog.setLocationRelativeTo(aliViewWindow);
 		dialog.setVisible(true);
 		
-		//JOptionPane.showMessageDialog(aliViewWindow,message.text,message.title, JOptionPane.INFORMATION_MESSAGE);	
+		return cbx.isSelected();
+		
 	}
-	
+   	
 }
+
 
 class Message{
 	String title;

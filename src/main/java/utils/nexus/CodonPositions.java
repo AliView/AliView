@@ -33,7 +33,6 @@ public class CodonPositions{
 			int posVal = (n % 3) + 1;
 			array[n] = posVal;
 		}
-		createTranslatedCodonPositions();
 	}
 	
 	public void createTranslatedCodonPositions(){
@@ -57,8 +56,8 @@ public class CodonPositions{
 				}
 				// there is a gap in protein translation
 				gap ++;
-				// Add a protein gap in sequence for every 3 gaps
-				if(gap % 3 == 1){
+				// Add a protein gap in sequence for every 3 gaps (or if it is the last one)
+				if(gap % 3 == 1 || x == positionsArray.length -1){
 					orfanPos = new CodonPos(x, x);
 					translatedCodonPos.add(orfanPos);
 				}

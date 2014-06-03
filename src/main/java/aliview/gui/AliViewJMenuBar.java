@@ -16,6 +16,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.ButtonModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -57,7 +58,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 	private ArrayList<AbstractButton> aminoAcidFunctions = new ArrayList<AbstractButton>();
 	private ArrayList<AbstractButton> hasSelectionFunctions = new ArrayList<AbstractButton>();
 	private ArrayList<AbstractButton> undoFunctions = new ArrayList<AbstractButton>();
-	private ArrayList<AbstractButton> reorderFunctions = new ArrayList<AbstractButton>();
+	private ArrayList<AbstractButton> reorderAndDeleteFunctions = new ArrayList<AbstractButton>();
 	private JMenu mnRecentFiles;
 	private JMenu mnExternal;
 	private JMenu mnFilePages;
@@ -254,7 +255,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 		mnFile.add(mntmSaveTranslatedAlignmentAsFasta);
 		loadedAlignmentFunctions.add(mntmSaveTranslatedAlignmentAsFasta);
 		nucleotideFunctions.add(mntmSaveTranslatedAlignmentAsFasta);
-
+		/*
 		JMenuItem mntmSaveTranslatedAlignmentAsPhylip = new JMenuItem("Save Translated alignment (Amino Acid) as Phylip");
 		mntmSaveTranslatedAlignmentAsPhylip.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -276,7 +277,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 		mnFile.add(mntmSaveTranslatedAlignmentAsNexus);
 		loadedAlignmentFunctions.add(mntmSaveTranslatedAlignmentAsNexus);
 		nucleotideFunctions.add(mntmSaveTranslatedAlignmentAsNexus);
-
+		 */
 
 		mnFile.add(new JSeparator());
 
@@ -312,7 +313,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 		mnFile.add(mntmFindDupes);
 		loadedFunctions.add(mntmFindDupes);
 		 */
-/*
+		/*
 				JMenuItem mntmShowStats = new JMenuItem("Show statistics");
 				mntmShowStats.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
@@ -321,7 +322,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 				});
 				mnFile.add(mntmShowStats);
 				alwaysAvailableFunctions.add(mntmShowStats);
-*/
+		 */
 
 		// Mac has its own menu item
 		if(OSNativeUtils.isAnythingButMac()){
@@ -347,7 +348,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 			}
 		});
 		undoButton.setAccelerator(OSNativeUtils.getUndoKeyAccelerator());
-		undoButton.setIcon(AppIcons.getUndoIcon());
+		undoButton.setIcon(AppIcons.getUndoIcon()); 
 		mnEdit.add(undoButton);
 		undoFunctions.add(undoButton);
 
@@ -363,7 +364,6 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 		undoFunctions.add(redoButton);
 
 		mnEdit.add(new JSeparator());
-
 		JMenuItem mntmCopySelectionAsFasta = new JMenuItem("Copy selection as fasta");
 		mntmCopySelectionAsFasta.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -471,7 +471,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 		});
 		mntmDeleteSelectedItem.setAccelerator(OSNativeUtils.getDeleteKeyAccelerator());
 		mnEdit.add(mntmDeleteSelectedItem);
-		editFunctions.add(mntmDeleteSelectedItem);
+		reorderAndDeleteFunctions.add(mntmDeleteSelectedItem);
 		hasSelectionFunctions.add(mntmDeleteSelectedItem);
 
 
@@ -653,29 +653,42 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 
 		mnSelection.add(new JSeparator());
 
-		JMenuItem mntmMoveSelectionUp = new JMenuItem("Move selected sequences up");
-		mntmMoveSelectionUp.addActionListener(new ActionListener() {
+
+		// This way of binding key action to menu buttom makes repeat work much faster
+		// http://stackoverflow.com/questions/9622260/java-swing-actionlistener-much-slower-than-keylistener
+		AbstractAction meveSelUpAction = new AbstractAction("Move selected sequences up"){
+			{
+				putValue(ACCELERATOR_KEY, OSNativeUtils.getMoveSelectionUpKeyAccelerator());
+			}
 			public void actionPerformed(ActionEvent e) {
 				aliViewWindow.moveSelectionUp();
 			}
-		});
-		mntmMoveSelectionUp.setAccelerator(OSNativeUtils.getMoveSelectionUpKeyAccelerator());
+		};
+		aliViewWin.getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(OSNativeUtils.getMoveSelectionUpKeyAccelerator(), "meveSelUpAction");
+		aliViewWin.getRootPane().getActionMap().put("meveSelUpAction", meveSelUpAction);   
+		JMenuItem mntmMoveSelectionUp = new JMenuItem(meveSelUpAction);
 		mnSelection.add(mntmMoveSelectionUp);
 		mntmMoveSelectionUp.setIcon(AppIcons.getGoUpIcon());
 		hasSelectionFunctions.add(mntmMoveSelectionUp);
-		reorderFunctions.add(mntmMoveSelectionUp);
+		reorderAndDeleteFunctions.add(mntmMoveSelectionUp);
 
-		JMenuItem mntmMoveSelectionDown = new JMenuItem("Move selected sequences down");
-		mntmMoveSelectionDown.addActionListener(new ActionListener() {
+		// This way of binding key action to menu buttom makes repeat work much faster
+		// http://stackoverflow.com/questions/9622260/java-swing-actionlistener-much-slower-than-keylistener
+		AbstractAction moveSelDownAction = new AbstractAction("Move selected sequences down"){
+			{
+				putValue(ACCELERATOR_KEY, OSNativeUtils.getMoveSelectionDownKeyAccelerator());
+			}
 			public void actionPerformed(ActionEvent e) {
 				aliViewWindow.moveSelectionDown();
 			}
-		});
-		mntmMoveSelectionDown.setAccelerator(OSNativeUtils.getMoveSelectionDownKeyAccelerator());
+		};
+		aliViewWin.getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(OSNativeUtils.getMoveSelectionDownKeyAccelerator(), "moveSelDownAction");
+		aliViewWin.getRootPane().getActionMap().put("moveSelDownAction", moveSelDownAction);   
+		JMenuItem mntmMoveSelectionDown = new JMenuItem(moveSelDownAction);
 		mntmMoveSelectionDown.setIcon(AppIcons.getGoDownIcon());
 		mnSelection.add(mntmMoveSelectionDown);
 		hasSelectionFunctions.add(mntmMoveSelectionDown);
-		reorderFunctions.add(mntmMoveSelectionDown);
+		reorderAndDeleteFunctions.add(mntmMoveSelectionDown);
 
 
 		JMenuItem mntmMoveSelectionToTop = new JMenuItem("Move selected sequences to top");
@@ -688,7 +701,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 		mntmMoveSelectionToTop.setIcon(AppIcons.getGoTopIcon());
 		mnSelection.add(mntmMoveSelectionToTop);
 		hasSelectionFunctions.add(mntmMoveSelectionToTop);
-		reorderFunctions.add(mntmMoveSelectionToTop);
+		reorderAndDeleteFunctions.add(mntmMoveSelectionToTop);
 
 		JMenuItem mntmMoveSelectionToBottom = new JMenuItem("Move selected sequences to bottom");
 		mntmMoveSelectionToBottom.addActionListener(new ActionListener() {
@@ -700,7 +713,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 		mntmMoveSelectionToBottom.setIcon(AppIcons.getGoBottomIcon());
 		mnSelection.add(mntmMoveSelectionToBottom);
 		hasSelectionFunctions.add(mntmMoveSelectionToBottom);
-		reorderFunctions.add(mntmMoveSelectionToBottom);
+		reorderAndDeleteFunctions.add(mntmMoveSelectionToBottom);
 
 		mnSelection.add(new JSeparator());
 
@@ -722,18 +735,18 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 		});
 		mnSelection.add(mntmRemoveExcludes);
 		hasSelectionFunctions.add(mntmRemoveExcludes);
-		
+
 		mnSelection.add(new JSeparator());
 
 		mnSelectCharset = new JMenu("Select Charset");
-//		mntmSelectCharset.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent e) {
-//				aliViewWindow.setSelectionAsCoding(0);
-//			}
-//		});
+		//		mntmSelectCharset.addActionListener(new ActionListener() {
+		//			public void actionPerformed(ActionEvent e) {
+		//				aliViewWindow.setSelectionAsCoding(0);
+		//			}
+		//		});
 		mnSelection.add(mnSelectCharset);
 		mnSelectCharset.setEnabled(false);
-		
+
 
 		mnSelection.add(new JSeparator());
 
@@ -855,7 +868,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 			}
 		});
 		mnViewMenu.add(mntmSortSequencesBy);
-		reorderFunctions.add(mntmSortSequencesBy);
+		reorderAndDeleteFunctions.add(mntmSortSequencesBy);
 		loadedAlignmentFunctions.add(mntmSortSequencesBy);
 
 
@@ -1114,62 +1127,94 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 
 		mnAlign.add(new JSeparator());
 
-		JMenuItem mntmMoveSelectionRight = new JMenuItem("Move selected positions right");
-		mntmMoveSelectionRight.addActionListener(new ActionListener() {
+
+		// This way of binding key action to menu buttom makes repeat work much faster
+		// http://stackoverflow.com/questions/9622260/java-swing-actionlistener-much-slower-than-keylistener
+		AbstractAction moveselrightAction = new AbstractAction("Move selected positions right"){
+			{
+				putValue(ACCELERATOR_KEY, OSNativeUtils.getMoveSelectedRightKeyAccelerator());
+			}
 			public void actionPerformed(ActionEvent e) {
 				aliViewWindow.moveSelectionRight();
 			}
-		});
-		mntmMoveSelectionRight.setAccelerator(OSNativeUtils.getMoveSelectedRightKeyAccelerator());
+		};
+		aliViewWin.getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(OSNativeUtils.getMoveSelectedRightKeyAccelerator(), "moveselright");
+		aliViewWin.getRootPane().getActionMap().put("moveselright", moveselrightAction);  
+		JMenuItem mntmMoveSelectionRight = new JMenuItem(moveselrightAction);
 		mnAlign.add(mntmMoveSelectionRight);
 		mntmMoveSelectionRight.setIcon(AppIcons.getMoveRightIcon());
 		hasSelectionFunctions.add(mntmMoveSelectionRight);
 		editFunctions.add(mntmMoveSelectionRight);
 
 
-		JMenuItem mntmMoveSelectionLeft = new JMenuItem("Move selected positions left");
-		mntmMoveSelectionLeft.addActionListener(new ActionListener() {
+		// This way of binding key action to menu buttom makes repeat work much faster
+		// http://stackoverflow.com/questions/9622260/java-swing-actionlistener-much-slower-than-keylistener
+		AbstractAction moveselleftAction = new AbstractAction("Move selected positions left"){
+			{
+				putValue(ACCELERATOR_KEY, OSNativeUtils.getMoveSelectedLeftKeyAccelerator());
+			}
 			public void actionPerformed(ActionEvent e) {
 				aliViewWindow.moveSelectionLeft();
 			}
-		});
-		mntmMoveSelectionLeft.setAccelerator(OSNativeUtils.getMoveSelectedLeftKeyAccelerator());
+		};
+		aliViewWin.getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(OSNativeUtils.getMoveSelectedLeftKeyAccelerator(), "moveselleft");
+		aliViewWin.getRootPane().getActionMap().put("moveselleft", moveselleftAction);   
+		JMenuItem mntmMoveSelectionLeft = new JMenuItem(moveselleftAction);
+		mntmMoveSelectionLeft.setAction(moveselleftAction); 
 		mnAlign.add(mntmMoveSelectionLeft);
 		mntmMoveSelectionLeft.setIcon(AppIcons.getMoveLeftIcon());
 		editFunctions.add(mntmMoveSelectionLeft);
 		hasSelectionFunctions.add(mntmMoveSelectionLeft);
 
-		JMenuItem mntmInsertGapMoveRight = new JMenuItem("Insert Gap move right");
-		mntmInsertGapMoveRight.addActionListener(new ActionListener() {
+
+
+		// This way of binding key action to menu buttom makes repeat work much faster
+		// http://stackoverflow.com/questions/9622260/java-swing-actionlistener-much-slower-than-keylistener
+		AbstractAction insertGapMRAction = new AbstractAction("Insert Gap move right"){
+			{
+				putValue(ACCELERATOR_KEY, OSNativeUtils.getInsertGapMoveRightKeyAccelerator());
+			}
 			public void actionPerformed(ActionEvent e) {
 				aliViewWindow.insertGapMoveRight();
 			}
-		});
-		mntmInsertGapMoveRight.setAccelerator(OSNativeUtils.getInsertGapMoveRightKeyAccelerator());
+		};
+		aliViewWin.getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(OSNativeUtils.getInsertGapMoveRightKeyAccelerator(), "insertGapMRAction");
+		aliViewWin.getRootPane().getActionMap().put("insertGapMRAction", insertGapMRAction);   
+		JMenuItem mntmInsertGapMoveRight = new JMenuItem(insertGapMRAction);
 		mnAlign.add(mntmInsertGapMoveRight);
 		editFunctions.add(mntmInsertGapMoveRight);
 		hasSelectionFunctions.add(mntmInsertGapMoveRight);
 
-		JMenuItem mntmInsertGapMoveLeft = new JMenuItem("Insert Gap move left");
-		mntmInsertGapMoveLeft.addActionListener(new ActionListener() {
+		// This way of binding key action to menu buttom makes repeat work much faster
+		// http://stackoverflow.com/questions/9622260/java-swing-actionlistener-much-slower-than-keylistener
+		AbstractAction insertGapMoveLeftAction = new AbstractAction("Insert Gap move left"){
+			{
+				putValue(ACCELERATOR_KEY, OSNativeUtils.getInsertGapMoveLeftKeyAccelerator());
+			}
 			public void actionPerformed(ActionEvent e) {
 				aliViewWindow.insertGapMoveLeft();
-
 			}
-		});
-		mntmInsertGapMoveLeft.setAccelerator(OSNativeUtils.getInsertGapMoveLeftKeyAccelerator());
+		};
+		aliViewWin.getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(OSNativeUtils.getInsertGapMoveLeftKeyAccelerator(), "insertGapMoveLeftAction");
+		aliViewWin.getRootPane().getActionMap().put("insertGapMoveLeftAction", insertGapMoveLeftAction); 
+		JMenuItem mntmInsertGapMoveLeft = new JMenuItem(insertGapMoveLeftAction);
 		mnAlign.add(mntmInsertGapMoveLeft);
 		editFunctions.add(mntmInsertGapMoveLeft);
 		hasSelectionFunctions.add(mntmInsertGapMoveLeft);
 
-		JMenuItem mntmDeleteGapMoveLeft = new JMenuItem("Delete Gap move left");
-		mntmDeleteGapMoveLeft.addActionListener(new ActionListener() {
+		// This way of binding key action to menu buttom makes repeat work much faster
+		// http://stackoverflow.com/questions/9622260/java-swing-actionlistener-much-slower-than-keylistener
+		AbstractAction deleteGapMoveLeftAction = new AbstractAction("Delete Gap move left"){
+			{
+				putValue(ACCELERATOR_KEY, OSNativeUtils.getDeleteGapMoveLeftKeyAccelerator());
+			}
 			public void actionPerformed(ActionEvent e) {
 				aliViewWindow.deleteGapMoveLeft();
-
 			}
-		});
-		mntmDeleteGapMoveLeft.setAccelerator(OSNativeUtils.getDeleteGapMoveLeftKeyAccelerator());
+		};
+		aliViewWin.getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(OSNativeUtils.getDeleteGapMoveLeftKeyAccelerator(), "deleteGapMoveLeftAction");
+		aliViewWin.getRootPane().getActionMap().put("deleteGapMoveLeftAction", deleteGapMoveLeftAction); 
+		JMenuItem mntmDeleteGapMoveLeft = new JMenuItem(deleteGapMoveLeftAction);
 		mnAlign.add(mntmDeleteGapMoveLeft);
 		editFunctions.add(mntmDeleteGapMoveLeft);
 		hasSelectionFunctions.add(mntmDeleteGapMoveLeft);
@@ -1227,9 +1272,9 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 		});
 		mnHelp.add(mntmHelpOpen);
 		alwaysAvailableFunctions.add(mntmHelpOpen);
-		
+
 		//mnHelp.add(new JSeparator());
-		
+
 		JMenuItem mntmCheckNew = new JMenuItem("Check for new version");
 		mntmCheckNew.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -1238,7 +1283,16 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 		});
 		mnHelp.add(mntmCheckNew);
 		alwaysAvailableFunctions.add(mntmCheckNew);
-		
+
+		JMenuItem mntmVersionHistory = new JMenuItem("Check version history");
+		mntmVersionHistory.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				aliViewWindow.displayVersionHistory();
+			}
+		});
+		mnHelp.add(mntmVersionHistory);
+		alwaysAvailableFunctions.add(mntmVersionHistory);
+
 		JMenuItem mntmReportBug = new JMenuItem("Report bug/feature request");
 		mntmReportBug.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -1249,7 +1303,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 		alwaysAvailableFunctions.add(mntmReportBug);
 
 		mnHelp.add(new JSeparator());
-		
+
 		// Mac has its own menu item
 		if(OSNativeUtils.isAnythingButMac()){
 			JMenuItem mntmAbout = new JMenuItem("About");
@@ -1289,7 +1343,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 				aliViewWindow.editExternalCommands();
 			}
 		});
-		
+
 		mnExternal.add(mntmEditExternal);
 		alwaysAvailableFunctions.add(mntmEditExternal);
 	}
@@ -1311,12 +1365,12 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 		mnRecentFiles.invalidate();
 		mnRecentFiles.repaint();
 	}
-	
-	
+
+
 	public void rebuildSelectCharsetsSubmenu(){
 		logger.info("rebuildSelectCharsetsSubmenu()" + aliViewWindow.getAlignment().getAlignentMeta().getCharsets());
 		mnSelectCharset.removeAll();
-		
+
 		ArrayList<CharSet> charsets = aliViewWindow.getAlignment().getAlignentMeta().getCharsets();
 		// submenu
 		for(final CharSet aCharset: charsets){
@@ -1333,12 +1387,12 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 		}else{
 			mnSelectCharset.setEnabled(false);
 		}
-		
+
 		mnSelectCharset.invalidate();
 		mnSelectCharset.repaint();
 	}
-	
-	
+
+
 	public final void setEditFunctionsEnabled(boolean enable){
 		setAllEnabled(editFunctions, enable);
 	}
@@ -1364,7 +1418,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 	}
 
 	public final void setReorderFunctionsEnabled(boolean enable){
-		setAllEnabled(reorderFunctions, enable);
+		setAllEnabled(reorderAndDeleteFunctions, enable);
 	}
 
 	public void setUndoButtonEnabled(boolean b) {
@@ -1408,7 +1462,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 		setAllEnabled(aminoAcidFunctions, enable);
 		setAllEnabled(hasSelectionFunctions, enable);
 		setAllEnabled(undoFunctions, enable);
-		setAllEnabled(reorderFunctions, enable);		
+		setAllEnabled(reorderAndDeleteFunctions, enable);		
 	}
 
 	public void updateAllMenuEnabled() {

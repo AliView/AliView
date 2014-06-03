@@ -22,6 +22,7 @@ public class SettingsFrame extends JFrame {
 	public static final String TAB_PRIMER = "Primer";
 	public static final String TAB_ALIGN_ALL = "Align ALL program";
 	public static final String TAB_ALIGN_ADD =  "Align ADD program";
+	public static final String TAB_MEMORY = "Memory";
 	
 	public SettingsFrame(Component parent){
 		init();
@@ -39,6 +40,7 @@ public class SettingsFrame extends JFrame {
 		tabbedPane.add(TAB_ALIGN_ALL, new AlignerALLItemsPanel(this));
 		tabbedPane.add(TAB_ALIGN_ADD, new AlignerADDItemsPanel(this));
 		tabbedPane.add(TAB_EXTERNAL_COMMANDS, new CmdItemsPanel(this));
+		tabbedPane.add(TAB_MEMORY, new MemorySettingsPanel(this));
 		this.getContentPane().add(tabbedPane);
 		this.setIconImage(AppIcons.getProgramIconImage());
 		this.setTitle("Settings");

@@ -19,6 +19,9 @@ public interface ColorScheme {
 
 	public Color getBaseSelectionBackgroundColor(int baseValue);
 	
+	public Color getBaseConsensusBackgroundColor();
+	
+	
 	public Color getAminoAcidBackgroundColor(AminoAcid acid);
 
 	public Color getAminoAcidSelectionBackgroundColor(AminoAcid acid);
@@ -32,6 +35,8 @@ public interface ColorScheme {
 	public Color getAminoAcidSelectionBackgroundColor(AminoAcid acid, int xPos, Alignment alignment);
 	
 	public Color getAminoAcidSelectionForegroundColor(AminoAcid acid, int xPos, Alignment alignment);
+	
+	public Color getAminiAcidConsensusBackgroundColor();
 	
 	public String getName();
 }

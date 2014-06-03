@@ -36,4 +36,15 @@ public class MemoryUtils {
 		logger.info("getFreeMemMB()" + getFreeMemMB());
 		logger.info("getUsedMemMB()" + getUsedMemMB());
 	}	
+	
+	public static double getPresumableFreeMemoryMB(){
+		double presumableFreeMemory= Runtime.getRuntime().maxMemory() - getAllocatedMemory();
+		return presumableFreeMemory / MB;
+
+	}
+	
+	public static double getAllocatedMemory(){
+		double allocatedMemory = (Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory());
+		return allocatedMemory;
+	}
 }

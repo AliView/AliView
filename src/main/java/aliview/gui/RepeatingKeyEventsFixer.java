@@ -34,7 +34,7 @@ import javax.swing.Timer;
  */
 public class RepeatingKeyEventsFixer implements AWTEventListener {
 
- public static final int RELEASED_LAG_MILLIS = 5;
+ public static final int RELEASED_LAG_MILLIS = 1;
 
  private static boolean assertEDT() {
   if (!EventQueue.isDispatchThread()) {

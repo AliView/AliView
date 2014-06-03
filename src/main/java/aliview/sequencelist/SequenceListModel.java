@@ -605,11 +605,13 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 		return true;
 	}
 	
-	public List<Sequence> insertGapRightOfSelectedBase() {
+	public List<Sequence> insertGapRightOfSelectedBase(boolean undoable) {
 		List<Sequence> editedSequences = new ArrayList<Sequence>();
 		for(Sequence seq: sequences){
 			if(seq.hasSelection()){
-				editedSequences.add(seq.getCopy());
+				if(undoable){
+					editedSequences.add(seq.getCopy());
+				}
 				seq.insertGapRightOfSelectedBase();
 			}
 		}
@@ -619,11 +621,13 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 		return editedSequences;	
 	}
 	
-	public List<Sequence> insertGapLeftOfSelectedBase() {
+	public List<Sequence> insertGapLeftOfSelectedBase(boolean undoable) {
 		List<Sequence> editedSequences = new ArrayList<Sequence>();
 		for(Sequence seq: sequences){
 			if(seq.hasSelection()){
-				editedSequences.add(seq.getCopy());
+				if(undoable){
+					editedSequences.add(seq.getCopy());
+				}
 				seq.insertGapLeftOfSelectedBase();
 			}
 		}
@@ -633,7 +637,7 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 		return editedSequences;
 	}
 	
-	public List<Sequence> deleteGapMoveLeft() {
+	public List<Sequence> deleteGapMoveLeft(boolean undoable) {
 		boolean gapPresentInAll = true;
 		List<Sequence> editedSequences = new ArrayList<Sequence>();
 		for(Sequence seq: sequences){
@@ -649,7 +653,9 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 		if(gapPresentInAll){
 			for(Sequence seq: sequences){
 				if(seq.hasSelection()){
-					editedSequences.add(seq.getCopy());
+					if(undoable){
+						editedSequences.add(seq.getCopy());
+					}
 					seq.deleteGapLeftOfSelection();
 				}
 			}
@@ -674,12 +680,14 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 		return gapPresentInAll;
 	}
 	
-	public List<Sequence> moveSelectionRightIfGapIsPresent() {
+	public List<Sequence> moveSelectionRightIfGapIsPresent(boolean undoable) {
 		List<Sequence> editedSequences = new ArrayList<Sequence>();
 		if(isGapPresentRightOfSelection()){
 			for(Sequence seq: sequences){
 				if(seq.hasSelection()){
-					editedSequences.add(seq.getCopy());
+					if(undoable){
+						editedSequences.add(seq.getCopy());
+					}
 					seq.moveSelectionRightIfGapIsPresent();
 				}
 			}
@@ -703,12 +711,14 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 		return gapPresentInAll;
 	}
 	
-	public List<Sequence> moveSelectionLeftIfGapIsPresent() {
+	public List<Sequence> moveSelectionLeftIfGapIsPresent(boolean undoable) {
 		List<Sequence> editedSequences = new ArrayList<Sequence>();
 		if(isGapPresentLeftOfSelection()){
 			for(Sequence seq: sequences){
 				if(seq.hasSelection()){
-					editedSequences.add(seq.getCopy());
+					if(undoable){
+						editedSequences.add(seq.getCopy());
+					}
 					seq.moveSelectionLeftIfGapIsPresent();
 				}
 			}
@@ -719,7 +729,7 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 		return editedSequences;
 	}
 
-	public List<Sequence> moveSelectionIfGapIsPresent(int diff){
+	public List<Sequence> moveSelectionIfGapIsPresent(int diff, boolean undoable){
 		List<Sequence> editedSequences = new ArrayList<Sequence>();
 		// TODO this is moving and remembering startpos
 		int unmovedDiff = diff - selectionOffset;
@@ -729,9 +739,9 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 			while(n < absDiff){
 				// only keep first one
 				if(editedSequences == null){
-					editedSequences = this.moveSelectionLeftIfGapIsPresent();
+					editedSequences = this.moveSelectionLeftIfGapIsPresent(undoable);
 				}else{
-					this.moveSelectionLeftIfGapIsPresent();
+					this.moveSelectionLeftIfGapIsPresent(undoable);
 				}
 				n++;
 			}
@@ -742,9 +752,9 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 			while(n < absDiff){
 				// only keep first one
 				if(editedSequences == null){
-					editedSequences = this.moveSelectionRightIfGapIsPresent();
+					editedSequences = this.moveSelectionRightIfGapIsPresent(undoable);
 				}else{
-					this.moveSelectionRightIfGapIsPresent();
+					this.moveSelectionRightIfGapIsPresent(undoable);
 				}
 				n++;
 			}
@@ -880,7 +890,7 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 		}
 	}
 
-	public boolean rightPadWithGapUntilEqualLength() {
+	public boolean rightPadWithGapUntilEqualLength(){
 		boolean wasPadded = false;	
 		int longLen = getLongestSequenceLength();
 		for(Sequence sequence : sequences){
@@ -954,6 +964,7 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 		}
 		return wasTrimmed;
 	}
+	
 	
 	public void deleteBasesInAllSequencesFromMask(boolean[] deleteMask) {
 		for(Sequence sequence : sequences){
@@ -1181,7 +1192,7 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 		return histogram;
 	}
 
-	public List<Sequence> replaceSelectedCharactersWithThis(SequenceListModel newOnes) {
+	public List<Sequence> replaceSelectedCharactersWithThis(SequenceListModel newOnes, boolean undoable) {
 		List<Sequence> editedSequences = new ArrayList<Sequence>();
 		for(Sequence seq: sequences){
 			if(seq.hasSelection()){
@@ -1206,7 +1217,9 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 				}		
 				seq.replaceBases(selPos[0],selPos[selPos.length -1],realignedBases);
 				seq.selectBases(selPos[0],selPos[0] + realignedBases.length -1);
-				editedSequences.add(seq.getCopy());
+				if(undoable){
+					editedSequences.add(seq.getCopy());
+				}
 			}
 		}
 		return editedSequences;	
@@ -1429,22 +1442,26 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 		return nExactOverlap;		
 	}
 
-	public List<Sequence> replaceSelectedBasesWithGap() {
+	public List<Sequence> replaceSelectedBasesWithGap(boolean undoable) {
 		List<Sequence> editedSequences = new ArrayList<Sequence>();
 		for(Sequence seq: sequences){
 			if(seq.hasSelection()){
-				editedSequences.add(seq.getCopy());
+				if(undoable){
+					editedSequences.add(seq.getCopy());
+				}
 				seq.replaceSelectedBasesWithGap();
 			}
 		}
 		return editedSequences;
 	}
 
-	public List<Sequence> deleteSelectedBases() {
+	public List<Sequence> deleteSelectedBases(boolean undoable) {
 		List<Sequence> editedSequences = new ArrayList<Sequence>();
 		for(Sequence sequence : sequences){
 			if(sequence.hasSelection()){
-				editedSequences.add(sequence.getCopy());
+				if(undoable){
+					editedSequences.add(sequence.getCopy());
+				}
 				sequence.deleteSelectedBases();
 			}
 		}	

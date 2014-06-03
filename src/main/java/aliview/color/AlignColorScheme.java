@@ -18,6 +18,8 @@ public class AlignColorScheme implements ColorScheme {
 	Color[] aminoAcidForegroundColor;
 	Color[] aminoAcidSelectionBackgroundColor;
 	Color[] aminoAcidSelectionForegroundColor;
+	Color baseConsensusBackgroundColor;
+	Color aminiAcidConsensusBackgroundColor;
 	
 	
 	protected String colorSchemeName = "Default";
@@ -30,6 +32,7 @@ public class AlignColorScheme implements ColorScheme {
 		super();
 		this.colorSchemeName = "Default";
 		
+
 		baseForegroundColor = new Color[64];
 		baseForegroundColor[NucleotideUtilities.A] = new Color(1,128,1); //Color.green
 		baseForegroundColor[NucleotideUtilities.C] = new Color(1,1,255); //Color.blue
@@ -67,6 +70,8 @@ public class AlignColorScheme implements ColorScheme {
 		baseBackgroundColor[NucleotideUtilities.N] = Color.white; 
 		baseBackgroundColor[NucleotideUtilities.GAP] = new Color(250,250,250);
 		baseBackgroundColor[NucleotideUtilities.UNKNOWN] = Color.white;
+		
+		baseConsensusBackgroundColor =  new Color(240,240,240);
 			
 		baseSelectionForegroundColor = new Color[64];
 		baseSelectionForegroundColor[NucleotideUtilities.A]       =createSelectionForegroundColor(baseForegroundColor[NucleotideUtilities.A] );
@@ -168,8 +173,11 @@ public class AlignColorScheme implements ColorScheme {
 		aminoAcidBackgroundColor[AminoAcid.W.intVal] = new Color(0x0355a9);
 		aminoAcidBackgroundColor[AminoAcid.Y.intVal] = new Color(0x14c6c8);
 		aminoAcidBackgroundColor[AminoAcid.STOP.intVal] = Color.darkGray;
-		aminoAcidBackgroundColor[AminoAcid.GAP.intVal] = Color.white;
+		aminoAcidBackgroundColor[AminoAcid.GAP.intVal] = new Color(230,230,230);
+		//aminoAcidBackgroundColor[AminoAcid.GAP.intVal] = Color.white;
 		aminoAcidBackgroundColor[AminoAcid.X.intVal] = Color.white;
+		
+		aminiAcidConsensusBackgroundColor = new Color(240,240,240);
 		
 		aminoAcidForegroundColor = new Color[255];
 		aminoAcidForegroundColor[AminoAcid.A.intVal] = Color.BLACK;
@@ -312,6 +320,14 @@ public class AlignColorScheme implements ColorScheme {
 
 	public Color getAminoAcidSelectionForegroundColor(AminoAcid acid, int xPos, Alignment aliment) {
 		return getAminoAcidSelectionForegroundColor(acid);
+	}
+
+	public Color getBaseConsensusBackgroundColor() {
+		return baseConsensusBackgroundColor;
+	}
+
+	public Color getAminiAcidConsensusBackgroundColor() {
+		return aminiAcidConsensusBackgroundColor;
 	}
 
 

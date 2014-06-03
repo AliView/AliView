@@ -29,6 +29,7 @@ public class ViewSettingsPanel extends JPanel{
 	private JCheckBox chckbxOverrideDefaultFont;
 	
 	public ViewSettingsPanel(final JFrame parFrame) {
+		/*
 		this.setBorder(new EmptyBorder(10, 10, 10, 10));
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{324, 100, 100, 0};
@@ -221,7 +222,7 @@ public class ViewSettingsPanel extends JPanel{
 		gbc_btnOk.gridx = 2;
 		gbc_btnOk.gridy = 10;
 		add(btnOk, gbc_btnOk);
-		
+		*/
 	
 	}
 	

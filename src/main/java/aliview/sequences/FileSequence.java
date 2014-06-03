@@ -101,14 +101,7 @@ public class FileSequence implements Sequence {
 		//logger.info(getSeqEndPointer());
 		//logger.info(getSeqStartPointer());
         long len = (getEndPointer() - getStartPointer()) - (getSequenceAfterNameStartPointer() - getStartPointer()); // +1 because seq end pointer is inclusive 
-        //long len = getEndPointer() - getSequenceAfterNameStartPointer();
-		
-		/*
-		if(len > 19000){
-			logger.info("len" + len + "getSequenceAfterNameStartPointer" +  getSequenceAfterNameStartPointer() + "getEndPointer" + getEndPointer());
-			logger.info("len" + len + "getSequenceAfterNameStartPointer" +  getStartPointer() + "getEndPointer" + getEndPointer());
-		}
-		 */
+
 		return (int)len;
 	}
 
@@ -144,26 +137,43 @@ public class FileSequence implements Sequence {
 		return null;
 	}
 
+	// TO DO this is not working if seq is to large
 	public byte[] getAllBasesAsByteArray(){
-		// TODO Auto-generated method stub
-		return null;
+		if(this.getLength() > 100 * 1000 * 1000){
+			return null;
+		}
+		byte[] allBases = new byte[this.getLength()];
+		for(int n = 0; n < allBases.length; n++){
+			allBases[n] = getBaseAtPos(n);
+		}
+		return allBases;
 	}
 
 	public void writeBases(OutputStream out) throws IOException{
 		for(int n = 0; n < getLength(); n++){
-			out.write(getBaseAsIntAtPos(n));
+			int base = getBaseAsIntAtPos(n);
+			if(base == ' ' || base == '\n' || base =='\r'){
+			}
+			else{
+				out.write(base);
+			}
 		}	
 	}
 
 	public void writeBases(Writer out) throws IOException {
 		for(int n = 0; n < getLength(); n++){
-			out.write((char)getBaseAsIntAtPos(n));
-		}
+			int base = getBaseAsIntAtPos(n);
+			if(base == ' ' || base == '\n' || base =='\r'){
+			}
+			else{
+				out.write((char)base);
+			}
+		}	
 	}
 
 	public String getBasesAsString() {
-		// TODO Auto-generated method stub
-		return null;
+		byte[] allBases = getAllBasesAsByteArray();
+		return new String(allBases);
 	}
 
 	public int getUngapedLength() {

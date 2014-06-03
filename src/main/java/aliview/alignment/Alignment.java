@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.swing.JOptionPane;
+import javax.swing.undo.UndoableEdit;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -72,7 +73,7 @@ public class Alignment implements FileSequenceLoadListener {
 	private boolean isSelectable;
 	private AliHistogram translatedHistogram;
 
-	public Alignment() {
+	public Alignment(){
 		this.sequences = new MemorySequenceListModel();
 		this.alignmentMeta = new AlignmentMeta(sequences.getLongestSequenceLength());
 		setEditedAfterLastSave(false);
@@ -91,12 +92,22 @@ public class Alignment implements FileSequenceLoadListener {
 		fireNewSequences();
 	}
 	
+	public double getApproximateMemorySizeMB(){
+		double seqSize = sequences.getSize() * sequences.getLongestSequenceLength();
+		double MB = 1000 * 1000;
+		return seqSize /MB;
+	}
+	
 	public void addAlignmentListener(AlignmentListener listener){
 		alignmentListeners .add(listener);
 	}
 	
 	private void fireSequencesChanged(){
 		cachedHistogram = null;
+		
+		logger.info("fireSequencesChanged");
+		logger.info("alignmentListeners.size" + alignmentListeners.size());
+		
 		for(AlignmentListener listener: alignmentListeners){
 			listener.sequencesChanged(new AlignmentEvent(this));
 		}
@@ -317,9 +328,11 @@ public class Alignment implements FileSequenceLoadListener {
 
 	public void saveAlignmentAsFile(File outFile, FileFormat fileFormat) throws IOException{
 		
-		// make sure they are equal length
-		sequences.rightPadWithGapUntilEqualLength();
-		sequences.rightTrimSequencesRemoveGapsUntilEqualLength();
+		// make sure they are equal length (if editable)
+		if(sequences.isEditable()){
+			sequences.rightPadWithGapUntilEqualLength();
+			sequences.rightTrimSequencesRemoveGapsUntilEqualLength();
+		}
 		
 		BufferedWriter out = new BufferedWriter(new FileWriter(outFile));
 
@@ -346,17 +359,17 @@ public class Alignment implements FileSequenceLoadListener {
 			storeAlignmetAsPhyTranslatedAminoAcidFile(out);
 			// save meta if exset it is set
 			if(this.alignmentMeta.isMetaOutputNeeded()){
-				AlignmentMeta translatedMeta = getTranslatedMeta();
+				//AlignmentMeta translatedMeta = getTranslatedMeta();
 				BufferedWriter outMeta = new BufferedWriter(new FileWriter(new File(outFile.getAbsoluteFile() + ".meta")));
-				storeTranslatedMetaData(outMeta, translatedMeta);
+			//	storeTranslatedMetaData(outMeta, translatedMeta);
 			}
 		}else if(fileFormat == FileFormat.FASTA_TRANSLATED_AMINO_ACID){
 			storeAlignmetAsFastaTranslatedAminoAcidFile(out);
 			// save meta if exset it is set
 			if(this.alignmentMeta.isMetaOutputNeeded()){
-				AlignmentMeta translatedMeta = getTranslatedMeta();
+				//AlignmentMeta translatedMeta = getTranslatedMeta();
 				BufferedWriter outMeta = new BufferedWriter(new FileWriter(new File(outFile.getAbsoluteFile() + ".meta")));
-				storeTranslatedMetaData(outMeta, translatedMeta);
+				//storeTranslatedMetaData(outMeta, translatedMeta);
 			}
 		}else if(fileFormat == FileFormat.NEXUS){
 			AliViewExtraNexusUtilities.exportAlignmentAsNexus(new BufferedWriter(new FileWriter(outFile)), this, false,nexusDatatype);
@@ -410,8 +423,8 @@ public class Alignment implements FileSequenceLoadListener {
 				logger.info("rangesSize" + nexusRanges.size());
 				CharSet translatedSet = new CharSet(charset.getName(),alignmentMeta.getCodonPositions().getTranslatedAminAcidLength());
 				for(NexusRange range: nexusRanges){	
-					NexusRange translatedRange = new NexusRange(alignmentMeta.getCodonPositions().getAminoAcidPosFromNucleotidePos(range.getMinimumInteger()),
-							                                         alignmentMeta.getCodonPositions().getAminoAcidPosFromNucleotidePos(range.getMaximumInteger()));
+					NexusRange translatedRange = new NexusRange(alignmentMeta.getCodonPositions().getAminoAcidPosFromNucleotidePos(range.getMinimumInteger()) + 1, // +1 för Nexus ranges börjar på 1
+							                                         alignmentMeta.getCodonPositions().getAminoAcidPosFromNucleotidePos(range.getMaximumInteger()) + 1); // +1 för Nexus ranges börjar på 1
 					logger.info(translatedRange);
 					translatedSet.addRange(translatedRange);
 				}
@@ -425,9 +438,7 @@ public class Alignment implements FileSequenceLoadListener {
 		}
 		return metaTrans;
 	}
-	
-	
-	
+		
 	
 	/*
 	 * Alternate method
@@ -660,16 +671,16 @@ public class Alignment implements FileSequenceLoadListener {
 	}
 
 
-	public List<Sequence> clearSelectedBases(){
-		List<Sequence> affected =  sequences.replaceSelectedBasesWithGap();
+	public List<Sequence> clearSelectedBases(boolean undoable){
+		List<Sequence> affected =  sequences.replaceSelectedBasesWithGap(undoable);
 		if(affected.size() > 0){
 			fireSequencesChanged();
 		}
 		return affected;
 	}
 
-	public List<Sequence> deleteSelectedBases() {
-		List<Sequence> affected =  sequences.deleteSelectedBases();
+	public List<Sequence> deleteSelectedBases(boolean undoable) {
+		List<Sequence> affected =  sequences.deleteSelectedBases(undoable);
 		if(affected.size() > 0){
 			fireSequencesChanged();
 		}
@@ -743,25 +754,25 @@ public class Alignment implements FileSequenceLoadListener {
 		sequences.setSelectionOffset(0);
 	}
 	
-	public List<Sequence> moveSelectionRight(){
+	public List<Sequence> moveSelectionRight(boolean undoable){
 		logger.info("move");
-		List<Sequence> previousState = sequences.moveSelectionRightIfGapIsPresent();
+		List<Sequence> previousState = sequences.moveSelectionRightIfGapIsPresent(undoable);
 		if(previousState.size()> 0){
 			fireSequencesChanged();
 		}
 		return previousState;
 	}
 
-	public List<Sequence> moveSelectionLeft() {
-		List<Sequence> previousState = sequences.moveSelectionLeftIfGapIsPresent();
+	public List<Sequence> moveSelectionLeft(boolean undoable) {
+		List<Sequence> previousState = sequences.moveSelectionLeftIfGapIsPresent(undoable);
 		if(previousState.size()> 0){
 			fireSequencesChanged();
 		}
 		return previousState;
 	}
 
-	public List<Sequence> moveSelection(int diff) {
-		List<Sequence> previousState = sequences.moveSelectionIfGapIsPresent(diff);
+	public List<Sequence> moveSelection(int diff, boolean undoable) {
+		List<Sequence> previousState = sequences.moveSelectionIfGapIsPresent(diff, undoable);
 		if(previousState.size()> 0){
 			fireSequencesChanged();
 		}
@@ -774,8 +785,8 @@ public class Alignment implements FileSequenceLoadListener {
 		return sequences.isGapPresentRightOfSelection();
 	}
 	
-	public List<Sequence> deleteGapMoveLeft() {
-		List<Sequence> previousState = sequences.deleteGapMoveLeft();
+	public List<Sequence> deleteGapMoveLeft(boolean undoable) {
+		List<Sequence> previousState = sequences.deleteGapMoveLeft(undoable);
 		if(previousState.size()> 0){
 			sequences.rightPadWithGapUntilEqualLength();
 			fireSequencesChanged();
@@ -783,8 +794,8 @@ public class Alignment implements FileSequenceLoadListener {
 		return previousState;
 	}
 
-	public List<Sequence> insertGapLeftOfSelectionMoveRight() {
-		List<Sequence> previousState = sequences.insertGapLeftOfSelectedBase();
+	public List<Sequence> insertGapLeftOfSelectionMoveRight(boolean undoable) {
+		List<Sequence> previousState = sequences.insertGapLeftOfSelectedBase(undoable);
 		if(previousState.size()> 0){
 			sequences.rightPadWithGapUntilEqualLength();
 			fireSequencesChanged();
@@ -792,8 +803,8 @@ public class Alignment implements FileSequenceLoadListener {
 		return previousState;
 	}
 	
-	public List<Sequence> insertGapRightOfSelectionMoveLeft() {
-		List<Sequence> previousState = sequences.insertGapRightOfSelectedBase();
+	public List<Sequence> insertGapRightOfSelectionMoveLeft(boolean undoable) {
+		List<Sequence> previousState = sequences.insertGapRightOfSelectedBase(undoable);
 		if(previousState.size()> 0){
 			sequences.leftPadWithGapUntilEqualLength();
 			fireSequencesChanged();
@@ -1273,7 +1284,8 @@ public class Alignment implements FileSequenceLoadListener {
 	}
 
 	public void replaceSelectedCharactersWithThis(Alignment realignment) {
-		List<Sequence> affected = sequences.replaceSelectedCharactersWithThis(realignment.getSequences());
+		boolean undoable = true;
+		List<Sequence> affected = sequences.replaceSelectedCharactersWithThis(realignment.getSequences(), undoable);
 		if(affected.size() > 0){
 			fireSequencesChanged();
 		}

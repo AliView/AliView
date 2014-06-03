@@ -35,6 +35,8 @@ import org.simplericity.macify.eawt.ApplicationEvent;
 import org.simplericity.macify.eawt.ApplicationListener;
 import org.simplericity.macify.eawt.DefaultApplication;
 
+import sun.misc.MessageUtils;
+import utils.DialogUtils;
 import utils.FileUtilities;
 import utils.OSNativeUtils;
 import aliview.gui.AliViewJMenuBarFactory;
@@ -116,17 +118,16 @@ public class AliView implements ApplicationListener{
 			    	  }
 			      }
 			    });
-			
 
 			RuntimeMXBean bean = ManagementFactory.getRuntimeMXBean();
-			 List<String> aList = bean.getInputArguments();
+			List<String> aList = bean.getInputArguments();
 
-			  for (int i = 0; i < aList.size(); i++) {
-				  logger.info("" +  aList.get( i ));
-			  }
-			  // print the non-JVM command line arguments using args
-			  // name of the main class
-			  logger.info(" " + System.getProperty("sun.java.command"));
+			for (int i = 0; i < aList.size(); i++) {
+				 logger.info("" +  aList.get( i ));
+			}
+			// print the non-JVM command line arguments using args
+			// name of the main class
+			logger.info(" " + System.getProperty("sun.java.command"));
 			
 			logger.info("java.vendor" + System.getProperty("java.vendor"));
 			logger.info("java.version" + System.getProperty("java.version"));
@@ -142,12 +143,13 @@ public class AliView implements ApplicationListener{
 				logger.info("args(null)=" + args);
 			}
 
-			// TODO this should probably only install for some os
-			if(OSNativeUtils.isLinuxOrUnix()){
-				RepeatingKeyEventsFixer rf = new RepeatingKeyEventsFixer();
-				rf.install();
-			}
-
+			// I think this issue is solved now when creating actions and adding keybinding to the root pane
+//			if(OSNativeUtils.isLinuxOrUnix()){
+//				RepeatingKeyEventsFixer rf = new RepeatingKeyEventsFixer();
+//				rf.install();
+//			}
+			
+			// Quick tooltips and for a long time
 			ToolTipManager.sharedInstance().setInitialDelay(0);
 			ToolTipManager.sharedInstance().setDismissDelay(5000);
 
@@ -268,7 +270,7 @@ public class AliView implements ApplicationListener{
 				alignmentFile = null;
 			}
 
-			// TODO should be replaced
+			// TODO should be replaced 
 			// Special alignmentfile for user anders
 			String username = System.getenv("USERNAME");
 			if(username != null && username.equals("anders") && alignmentFile == null){
@@ -293,6 +295,8 @@ public class AliView implements ApplicationListener{
 				//			alignmentFile = new File("/home/anders/projekt/alignments/ssu_pr2-99.fasta");
 				//		alignmentFile = new File("/home/anders/projekt/alignments/sample_of_SSURef_108_full_align_tax_silva_trunc_larger.fasta");
 			//			alignmentFile = new File("/vol2/big_data/SSURef_108_filtered_bacteria_pos_5389-24317.fasta");
+				
+				//alignmentFile = new File("/vol2/big_data/test.fasta");
 				
 				
 	//			alignmentFile = new File("/home/anders/projekt/alignments/sandies/euArc36C_F1_big_problematic.nex");
@@ -393,19 +397,59 @@ public class AliView implements ApplicationListener{
 			Settings.putLoadAlignmentDirectory(selectedFile.getParent());
 		}
 	}
+	
+	private static boolean souldBreakBecauseOfLowMemory(File alignmentFile){
+		double fileSize = alignmentFile.length();
+		double fileSizeMB = fileSize / (1000 * 1000);			
+		double presumableFreeMemory = MemoryUtils.getPresumableFreeMemoryMB();
+		
+		MemoryUtils.logMem();
+		logger.info("getPresumableFreeMemory()=" + MemoryUtils.getPresumableFreeMemoryMB());
+		logger.info("fileSizeMB=" + fileSizeMB);
+		
+		boolean isBreakBecauseOfLowMemory = false;
+		if(presumableFreeMemory < 1.5 * fileSizeMB){			
+			// ask user whether to continue or not
+			String message="Memory is running low, if you open this Alignment before closing some" + LF + 
+					       "other Alignments the program might run out of Memory." + LF +
+					       "" + LF +
+					       "Do you want to continue and open the new Alignment?";
+			int retVal = JOptionPane.showConfirmDialog(DialogUtils.getDialogParent(), message, "Continue?", JOptionPane.YES_NO_CANCEL_OPTION);
+			// return if not OK
+			if(retVal != JOptionPane.OK_OPTION){
+				isBreakBecauseOfLowMemory = true;
+			}
+		}
+		return isBreakBecauseOfLowMemory;
+	}
+	
 
 	public static void openAlignmentFile(File alignmentFile){	
-		// if it is empty load file in old window - otherwise create new window
-		logger.info("activeWindow=" + activeWindow);
-		if(activeWindow != null && activeWindow.isEmpty()){
-			//activeWindow.dispose();
-			//createNewAliViewWindow(alignmentFile);
-			activeWindow.loadNewAlignmentFile(alignmentFile);
-		}else{
-			createNewAliViewWindow(alignmentFile);
+		try{
+			// if it is empty load file in old window - otherwise create new window
+			logger.info("activeWindow=" + activeWindow);
+			if(activeWindow != null && activeWindow.isEmpty()){
+				
+				if(souldBreakBecauseOfLowMemory(alignmentFile)){
+					return;
+				}
+				
+				activeWindow.loadNewAlignmentFile(alignmentFile);
+			}else{
+				createNewAliViewWindow(alignmentFile);
+			}
+			Settings.putLoadAlignmentDirectory(alignmentFile.getAbsoluteFile().getParent());
+			Settings.addRecentFile(alignmentFile);
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+		}catch(OutOfMemoryError memoryErr){
+			logger.info("memory err");
+			memoryErr.printStackTrace();
+			//Messenger.showOKOnlyMessage(Messenger.OUT_OF_MEMORY_ERROR, activeWindow);
+		}catch(Error err){
+			err.printStackTrace();
 		}
-		Settings.putLoadAlignmentDirectory(alignmentFile.getAbsoluteFile().getParent());
-		Settings.addRecentFile(alignmentFile);
 	}
 
 	public static void createNewWindow() {
@@ -418,9 +462,17 @@ public class AliView implements ApplicationListener{
 	}
 
 	private static void createNewAliViewWindow(final File alignmentFile){
-
-		//		EventQueue.invokeLater(new Runnable() {
-		//			public void run() {
+		
+		// If memory is low ask user first and break if wanted
+		if(aliViewWindows.size() > 0){
+			if(alignmentFile != null){			
+				if(souldBreakBecauseOfLowMemory(alignmentFile)){
+					return;
+				}		
+			}			
+		}
+			
+		
 		try {
 
 			AliViewWindow newWin = new AliViewWindow(alignmentFile,menuBarFactory);

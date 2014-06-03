@@ -8,6 +8,7 @@ import java.util.Arrays;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 
+import sun.security.action.GetBooleanAction;
 import utils.nexus.CodonPos;
 import utils.nexus.CodonPositions;
 import aliview.sequences.Sequence;
@@ -62,6 +63,57 @@ public class AATranslator{
 		}
 		return codon;
 	}
+	
+	public AminoAcid getNoGapAminoAcidAtNucleotidePos(int pos){
+		int tripStart = -1;
+		int tripEnd = -1;
+		int tripCount = 0;
+		byte[] triplet = new byte[3];
+		int seqLen = sequence.getLength();
+		
+		// skip pos depending on ReadingFrame
+		int startPos = 0;
+		int skipCount = 0;
+		int readingFrame = codonPositions.getReadingFrame();
+		if(readingFrame > 1){
+			for(int skipPos = 0; skipPos < seqLen; skipPos ++){
+				byte base = sequence.getBaseAtPos(skipPos);
+				if(! NucleotideUtilities.isGap(base)){
+					skipCount ++;
+				}
+				if(skipCount == readingFrame){
+					startPos = skipPos;
+				}
+			}
+		}
+		
+		for(int n = startPos; n < seqLen; n++){
+			byte base = sequence.getBaseAtPos(n);
+			if(NucleotideUtilities.isGap(base)){			
+				if(n >= pos && tripCount == 0){
+					return AminoAcid.GAP;
+				}			
+			}else{
+				
+				if(tripStart == -1){
+					tripStart = n;
+				}
+				
+				tripCount ++;
+				triplet[tripCount - 1] = base;
+				
+				if(tripCount == 3){				
+					if(n >= pos){
+						AminoAcid aa = AminoAcid.getAminoAcidFromCodon(triplet, genCode);
+						return aa;
+					}
+					triplet = new byte[3];
+					tripCount = 0;
+				}			
+			}
+		}
+		return AminoAcid.X;
+		}
 	
 	public AminoAcid getAminoAcidFromTripletStartingAt(int x){
 		return AminoAcid.getAminoAcidFromCodon(getTripletAt(x), genCode);

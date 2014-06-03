@@ -24,6 +24,7 @@ import javax.swing.JPanel;
 import org.apache.log4j.Logger;
 
 import aliview.AATranslator;
+import aliview.AliView;
 import aliview.AminoAcid;
 import aliview.Base;
 import aliview.NucleotideUtilities;
@@ -677,7 +678,12 @@ public class AlignmentPane extends JPanel{
 
 							// Draw as translated
 							if(showTranslation){
-								drawTranslatedNucleotides(g2d, base,x,y,xPaneCoord,yPaneCoord, widthInPaneCoord, heightInPaneCoord, aaTransSeq, charCenterXOffset, charCenterYOffset);
+//								if(AliView.isDebugMode()){
+//									drawTranslatedNucleotidesSkipGap(g2d, base,x,y,xPaneCoord,yPaneCoord, widthInPaneCoord, heightInPaneCoord, aaTransSeq, charCenterXOffset, charCenterYOffset);
+//								}
+//								else{
+									drawTranslatedNucleotides(g2d,base,x,y,xPaneCoord,yPaneCoord, widthInPaneCoord, heightInPaneCoord, aaTransSeq, charCenterXOffset, charCenterYOffset);
+//								}
 								// TODO skall även rita ut chars
 
 							}else{
@@ -779,13 +785,30 @@ public class AlignmentPane extends JPanel{
 
 		// adjustment if non-cons to be highlighted
 		if(highlightNonCons){
-			if(alignment.getHistogram().isMajorityRuleConsensus(x,acid.intVal)){
-				baseBackgroundColor = colorSchemeAminoAcid.getAminoAcidBackgroundColor(AminoAcid.GAP);
+			if(acid == AminoAcid.GAP){
+				// no color on gap even if they are in maj.cons
 			}
+			else if(alignment.getHistogram().isMajorityRuleConsensus(x,acid.intVal)){
+				baseBackgroundColor = colorSchemeAminoAcid.getAminiAcidConsensusBackgroundColor();
+				//baseBackgroundColor = colorSchemeAminoAcid.getAminoAcidBackgroundColor(AminoAcid.GAP);
+			}
+			
+//			// first set all gaps with one color
+//			if(acid){
+//				baseBackgroundColor = colorSchemeAminoAcid.getAminoAcidBackgroundColor(AminoAcid.GAP);
+//			}
+//			else if(alignment.getHistogram().isMajorityRuleConsensus(x,acid.intVal)){
+//				baseBackgroundColor = colorSchemeAminoAcid.getAminoAcidBackgroundColor(AminoAcid.GAP);
+//			}
 		}
+		// adjustment if cons to be highlighted
 		if(highlightCons){
-			if(! alignment.getHistogram().isMajorityRuleConsensus(x,acid.intVal)){
-				baseBackgroundColor = colorSchemeAminoAcid.getAminoAcidBackgroundColor(AminoAcid.GAP);
+			if(acid == AminoAcid.GAP){
+				// no color on gap even if they are in maj.cons
+			}
+			else if(! alignment.getHistogram().isMajorityRuleConsensus(x,acid.intVal)){
+				baseBackgroundColor = colorSchemeAminoAcid.getAminiAcidConsensusBackgroundColor();
+				//baseBackgroundColor = colorSchemeAminoAcid.getAminoAcidBackgroundColor(AminoAcid.GAP);
 			}
 		}
 
@@ -865,6 +888,47 @@ public class AlignmentPane extends JPanel{
 		}
 
 	}
+	
+	private void drawTranslatedNucleotidesSkipGap(Graphics2D g2d, byte base, int x, int y, int xPaneCoord, int yPaneCoord, int width, int height, AATranslator aaTransSeq,
+			int charCenterXOffset, int charCenterYOffset){
+
+		int baseVal = NucleotideUtilities.baseValFromBase(base);
+
+		byte[] byteToDraw = new byte[]{base};
+		
+		// Set default
+		Color baseForegroundColor = colorSchemeNucleotide.getBaseForegroundColor(baseVal);
+
+		AminoAcid acid = aaTransSeq.getNoGapAminoAcidAtNucleotidePos(x);
+		Color backgroundColor = colorSchemeNucleotide.getAminoAcidBackgroundColor(acid);
+		// Draw background color
+		drawNucleotideBackground(g2d, xPaneCoord, yPaneCoord, width, height, backgroundColor);	
+		
+		if(drawAminoAcidCode){
+			//drawAminoAcidCode(g2d, x, y, acid, Color.WHITE, charCenterXOffset, charCenterYOffset);
+			drawAminoAcidCodeSimple(g2d, x, y, acid, Color.WHITE, charCenterXOffset, charCenterYOffset);
+		}
+
+		// We have to calculate within this way - because rect.contains(Point) is always returning false on a 0-width or 0 height Rectangle
+		boolean isPointWithinSelectionRect = false;
+		if(tempSelectionRect != null){
+			if(x <= tempSelectionRect.getMaxX() && x >= tempSelectionRect.getMinX() && y <= tempSelectionRect.getMaxY() && y >= tempSelectionRect.getMinY()){
+				isPointWithinSelectionRect = true;
+			}
+		}
+
+		// adjust colors if selected and temp selection
+		if(alignment.isBaseSelected(x,y) || (tempSelectionRect != null && isPointWithinSelectionRect)){
+			backgroundColor = colorSchemeNucleotide.getAminoAcidSelectionBackgroundColor(acid);
+			drawNucleotideBackground(g2d, xPaneCoord, yPaneCoord, width, height, backgroundColor);
+		}
+
+		// Draw char letter
+		if(! drawAminoAcidCode){
+			drawNucleotideLetter(g2d, byteToDraw, x, y, baseForegroundColor, charCenterXOffset, charCenterYOffset);
+		}
+
+	}
 
 
 	private void drawNucleotides(Graphics2D g2d, byte base, int x, int y, int xPaneCoord, int yPaneCoord, int width, int height,
@@ -911,14 +975,22 @@ public class AlignmentPane extends JPanel{
 		// adjustment if non-cons to be highlighted
 		if(highlightNonCons){
 			NucleotideHistogram nucHistogram = (NucleotideHistogram) alignment.getHistogram();
-			if(nucHistogram.isMajorityRuleConsensus(x,baseVal)){
-				baseBackgroundColor = colorSchemeNucleotide.getBaseBackgroundColor(NucleotideUtilities.GAP);
+			if(baseVal == NucleotideUtilities.GAP){
+				// no color on gap even if they are in maj.cons
+			}
+			else if(nucHistogram.isMajorityRuleConsensus(x,baseVal)){
+				baseBackgroundColor = colorSchemeNucleotide.getBaseConsensusBackgroundColor();
+				//baseBackgroundColor = colorSchemeNucleotide.getBaseBackgroundColor(NucleotideUtilities.UNKNOWN);
 			}
 		}
 		if(highlightCons){
 			NucleotideHistogram nucHistogram = (NucleotideHistogram) alignment.getHistogram();
-			if(! nucHistogram.isMajorityRuleConsensus(x,baseVal)){
-				baseBackgroundColor = colorSchemeNucleotide.getBaseBackgroundColor(NucleotideUtilities.GAP);
+			if(baseVal == NucleotideUtilities.GAP){
+				// no color on gap even if they are in maj.cons
+			}
+			else if(! nucHistogram.isMajorityRuleConsensus(x,baseVal)){
+				baseBackgroundColor = colorSchemeNucleotide.getBaseConsensusBackgroundColor();
+				//baseBackgroundColor = colorSchemeNucleotide.getBaseBackgroundColor(NucleotideUtilities.UNKNOWN);
 			}
 		}
 
@@ -927,9 +999,7 @@ public class AlignmentPane extends JPanel{
 			// dont draw if gap or anything with gap-color (already bg-color is drawn on whole pane)
 			// this is to improve performance
 		}else{
-
 		//		drawNucleotideBackground(g2d, xPaneCoord, yPaneCoord, width, height, 1, baseBackgroundColor);
-
 		}
 
 		// Put char letter in buffer
@@ -963,6 +1033,13 @@ public class AlignmentPane extends JPanel{
 		g2d.setColor(foregroundColor);
 		if(charHeight > MAX_CHARSIZE_TO_DRAW){
 			g2d.drawBytes(acid.getCodeByteArray(), 0, 1, (int)(xAlignmentCoord * charWidth + charCenterXOffset + charWidth), (int)(yAlignmentCoord * charHeight + charHeight - charCenterYOffset));
+		}
+	}
+	
+	private void drawAminoAcidCodeSimple(Graphics2D g2d, int xAlignmentCoord, int yAlignmentCoord, AminoAcid acid, Color foregroundColor, int charCenterXOffset, int charCenterYOffset) {
+		g2d.setColor(foregroundColor);
+		if(charHeight > MAX_CHARSIZE_TO_DRAW){
+			g2d.drawBytes(acid.getCodeByteArray(), 0, 1, (int)(xAlignmentCoord * charWidth + charCenterXOffset), (int)(yAlignmentCoord * charHeight + charHeight - charCenterYOffset));
 		}
 	}
 

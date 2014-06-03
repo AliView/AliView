@@ -57,6 +57,8 @@ public class Settings {
 	private static SettingValue reverseHorizontalMouseWheel = new SettingValue("REVERSE_HORIZONTAL_MOUSE_WHEEL", false);
 	private static SettingValue reverseVerticalMouseWheel = new SettingValue("REVERSE_VERTICAL_MOUSE_WHEEL", false);
 	
+	private static SettingValue hideFileSeqLimitedEditCapabilities = new SettingValue("hideFileSeqLimitedEditCapabilities", false);
+	
 	private static SettingValue horizontalMouseWheelScrollModifier = new SettingValue("HORIZONTALMOUSEWHEELSCROLLMODIFIER", 20,1,100);
 	private static SettingValue verticalMouseWheelScrollModifier = new SettingValue("VERTICALMOUSEWHEELSCROLLMODIFIER", 20,1,100);
 	private static SettingValue largeFileIndexing = new SettingValue("LARGE_FILE_INDEXING", 25000,10,100000000);
@@ -388,24 +390,24 @@ public class Settings {
 		// raxmlHPC -f a -x 1465421654 -# 1 -m PROTGAMMAGTR -n RAXML_ALIGN -s /tmp/aliview-tmp-current-alignment3189140589076301400phy 
 		
 		if(OSNativeUtils.isMac()){			
-			CommandItem MAC_DEFAULT_1 = new CommandItem("FastTree + FigTree", "", "/usr/local/bin/FastTree -nt -gtr -out TEMP_OUT_FILE CURRENT_ALIGNMENT" + LF + "open -a \"FigTree v1.4.0.app\" TEMP_OUT_FILE", false, true);
-			CommandItem MAC_DEFAULT_2 = new CommandItem("Textedit", "", "open -a TextEdit CURRENT_ALIGNMENT", false,false);
+			CommandItem MAC_DEFAULT_1 = new CommandItem("FastTree + FigTree", "", "/usr/local/bin/FastTree -nt -gtr -out TEMP_OUT_FILE CURRENT_ALIGNMENT_FASTA" + LF + "open -a \"FigTree v1.4.0.app\" TEMP_OUT_FILE", false, true);
+			CommandItem MAC_DEFAULT_2 = new CommandItem("Textedit", "", "open -a TextEdit CURRENT_ALIGNMENT_FASTA", false,false);
 			CommandItem MAC_DEFAULT_3 = new CommandItem("", "", "", false,false);
 			CommandItem MAC_DEFAULT_4 = new CommandItem("", "", "", false,false);
 			CommandItem MAC_DEFAULT_5 = new CommandItem("", "", "", false,false);
 			CommandItem[] MAC_COMMAND_ITEM_DEFAULTS = new CommandItem[]{MAC_DEFAULT_1, MAC_DEFAULT_2, MAC_DEFAULT_3, MAC_DEFAULT_4, MAC_DEFAULT_5};
 			return MAC_COMMAND_ITEM_DEFAULTS;
 		}else if(OSNativeUtils.isWindows()){
-			CommandItem WIN_DEFAULT_1 = new CommandItem("FastTree + FigTree", "", "\"C:\\Program Files\\FastTree\\FastTree.exe\" -nt -gtr -out TEMP_OUT_FILE CURRENT_ALIGNMENT" + LF + "\"C:\\Program Files\\FigTree\\FigTree v1.4.0.exe\" TEMP_OUT_FILE", true, true);
-			CommandItem WIN_DEFAULT_2 = new CommandItem("notepad++(Texteditor)", "", "\"C:\\Program Files (x86)\\Notepad++\\Notepad++.exe\" CURRENT_ALIGNMENT", false,false);
+			CommandItem WIN_DEFAULT_1 = new CommandItem("FastTree + FigTree", "", "\"C:\\Program Files\\FastTree\\FastTree.exe\" -nt -gtr -out TEMP_OUT_FILE CURRENT_ALIGNMENT_FASTA" + LF + "\"C:\\Program Files\\FigTree\\FigTree v1.4.0.exe\" TEMP_OUT_FILE", true, true);
+			CommandItem WIN_DEFAULT_2 = new CommandItem("notepad++(Texteditor)", "", "\"C:\\Program Files (x86)\\Notepad++\\Notepad++.exe\" CURRENT_ALIGNMENT_FASTA", false,false);
 			CommandItem WIN_DEFAULT_3 = new CommandItem("", "", "", false,false);
 			CommandItem WIN_DEFAULT_4 = new CommandItem("", "", "", false,false);
 			CommandItem WIN_DEFAULT_5 = new CommandItem("", "", "", false,false);
 			CommandItem[] WIN_COMMAND_ITEM_DEFAULTS = new CommandItem[]{WIN_DEFAULT_1, WIN_DEFAULT_2, WIN_DEFAULT_3, WIN_DEFAULT_4, WIN_DEFAULT_5};
 			return WIN_COMMAND_ITEM_DEFAULTS;
 		}else{
-			CommandItem DEFAULT_1 = new CommandItem("FastTree + FigTree", "", "FastTree -nt -gtr -out TEMP_OUT_FILE CURRENT_ALIGNMENT" + LF + "figtree TEMP_OUT_FILE", false, true);
-			CommandItem DEFAULT_2 = new CommandItem("Geany(Texteditor)", "", "geany CURRENT_ALIGNMENT", false,false);
+			CommandItem DEFAULT_1 = new CommandItem("FastTree + FigTree", "", "FastTree -nt -gtr -out TEMP_OUT_FILE CURRENT_ALIGNMENT_FASTA" + LF + "figtree TEMP_OUT_FILE", false, true);
+			CommandItem DEFAULT_2 = new CommandItem("Geany(Texteditor)", "", "geany CURRENT_ALIGNMENT_FASTA", false,false);
 			CommandItem DEFAULT_3 = new CommandItem("", "", "", false,false);
 			CommandItem DEFAULT_4 = new CommandItem("", "", "", false,false);
 			CommandItem DEFAULT_5 = new CommandItem("", "", "", false,false);
@@ -416,26 +418,26 @@ public class Settings {
 	
 	private static CommandItem[] getAlignerAddDefaultItems() {
 		if(OSNativeUtils.isMac()){
-			CommandItem MAC_DEFAULT_ADD_ALIGNER_ITEM_1 = new CommandItem("Muscle-profile", MuscleWrapper.getMusclePath().getAbsolutePath(), "-profile -in1 CURRENT_ALIGNMENT -in2 SECOND_SEQUENCES -out TEMP_OUT_FILE", true,true);
-			CommandItem MAC_DEFAULT_ADD_ALIGNER_ITEM_2 = new CommandItem("Mafft --add", "/usr/bin/mafft", "--add SECOND_SEQUENCES --out TEMP_OUT_FILE CURRENT_ALIGNMENT", false,true);
-			CommandItem MAC_DEFAULT_ADD_ALIGNER_ITEM_3 = new CommandItem("Mafft --addfragments", "/usr/local/bin/mafft", "--addfragments SECOND_SEQUENCES --out TEMP_OUT_FILE CURRENT_ALIGNMENT", false,true);
-			CommandItem MAC_DEFAULT_ADD_ALIGNER_ITEM_4 = new CommandItem("Mafft --addfull", "/usr/local/bin/mafft", "--addfull SECOND_SEQUENCES --out TEMP_OUT_FILE CURRENT_ALIGNMENT", false,true);
+			CommandItem MAC_DEFAULT_ADD_ALIGNER_ITEM_1 = new CommandItem("Muscle-profile", MuscleWrapper.getMusclePath().getAbsolutePath(), "-profile -in1 CURRENT_ALIGNMENT_FASTA -in2 SECOND_SEQUENCES -out TEMP_OUT_FILE", true,true);
+			CommandItem MAC_DEFAULT_ADD_ALIGNER_ITEM_2 = new CommandItem("Mafft --add", "/usr/bin/mafft", "--add SECOND_SEQUENCES --out TEMP_OUT_FILE CURRENT_ALIGNMENT_FASTA", false,true);
+			CommandItem MAC_DEFAULT_ADD_ALIGNER_ITEM_3 = new CommandItem("Mafft --addfragments", "/usr/local/bin/mafft", "--addfragments SECOND_SEQUENCES --out TEMP_OUT_FILE CURRENT_ALIGNMENT_FASTA", false,true);
+			CommandItem MAC_DEFAULT_ADD_ALIGNER_ITEM_4 = new CommandItem("Mafft --addfull", "/usr/local/bin/mafft", "--addfull SECOND_SEQUENCES --out TEMP_OUT_FILE CURRENT_ALIGNMENT_FASTA", false,true);
 			CommandItem MAC_DEFAULT_ADD_ALIGNER_ITEM_5 = new CommandItem("", "", "", false,false);
 			CommandItem[] MAC_ALIGNER_ADD_ITEM_DEFAULTS = new CommandItem[]{MAC_DEFAULT_ADD_ALIGNER_ITEM_1, MAC_DEFAULT_ADD_ALIGNER_ITEM_2, MAC_DEFAULT_ADD_ALIGNER_ITEM_3, MAC_DEFAULT_ADD_ALIGNER_ITEM_4, MAC_DEFAULT_ADD_ALIGNER_ITEM_5};
 			return MAC_ALIGNER_ADD_ITEM_DEFAULTS;
 		}else if(OSNativeUtils.isWindows()){
-			CommandItem WIN_DEFAULT_ADD_ALIGNER_ITEM_1 = new CommandItem("Muscle-profile", MuscleWrapper.getMusclePath().getAbsolutePath(), "-profile -in1 CURRENT_ALIGNMENT -in2 SECOND_SEQUENCES -out TEMP_OUT_FILE", true,true);
-			CommandItem WIN_DEFAULT_ADD_ALIGNER_ITEM_2 = new CommandItem("Mafft --add", "cmd.exe", "/C \"C:\\Program Files\\mafft-win\\mafft.bat\" --add SECOND_SEQUENCES --out TEMP_OUT_FILE CURRENT_ALIGNMENT", false,true);
-			CommandItem WIN_DEFAULT_ADD_ALIGNER_ITEM_3 = new CommandItem("Mafft --addfragments", "cmd.exe", "/C \"C:\\Program Files\\mafft-win\\mafft.bat\" --addfragments SECOND_SEQUENCES --out TEMP_OUT_FILE CURRENT_ALIGNMENT", false,true);
-			CommandItem WIN_DEFAULT_ADD_ALIGNER_ITEM_4 = new CommandItem("Mafft --addfull","cmd.exe", "/C \"C:\\Program Files\\mafft-win\\mafft.bat\" --addfull SECOND_SEQUENCES --out TEMP_OUT_FILE CURRENT_ALIGNMENT", false,true);
+			CommandItem WIN_DEFAULT_ADD_ALIGNER_ITEM_1 = new CommandItem("Muscle-profile", MuscleWrapper.getMusclePath().getAbsolutePath(), "-profile -in1 CURRENT_ALIGNMENT_FASTA -in2 SECOND_SEQUENCES -out TEMP_OUT_FILE", true,true);
+			CommandItem WIN_DEFAULT_ADD_ALIGNER_ITEM_2 = new CommandItem("Mafft --add", "cmd.exe", "/C \"C:\\Program Files\\mafft-win\\mafft.bat\" --add SECOND_SEQUENCES --out TEMP_OUT_FILE CURRENT_ALIGNMENT_FASTA", false,true);
+			CommandItem WIN_DEFAULT_ADD_ALIGNER_ITEM_3 = new CommandItem("Mafft --addfragments", "cmd.exe", "/C \"C:\\Program Files\\mafft-win\\mafft.bat\" --addfragments SECOND_SEQUENCES --out TEMP_OUT_FILE CURRENT_ALIGNMENT_FASTA", false,true);
+			CommandItem WIN_DEFAULT_ADD_ALIGNER_ITEM_4 = new CommandItem("Mafft --addfull","cmd.exe", "/C \"C:\\Program Files\\mafft-win\\mafft.bat\" --addfull SECOND_SEQUENCES --out TEMP_OUT_FILE CURRENT_ALIGNMENT_FASTA", false,true);
 			CommandItem WIN_DEFAULT_ADD_ALIGNER_ITEM_5 = new CommandItem("", "", "", false,false);
 			CommandItem[] WIN_ALIGNER_ADD_ITEM_DEFAULTS = new CommandItem[]{WIN_DEFAULT_ADD_ALIGNER_ITEM_1, WIN_DEFAULT_ADD_ALIGNER_ITEM_2, WIN_DEFAULT_ADD_ALIGNER_ITEM_3, WIN_DEFAULT_ADD_ALIGNER_ITEM_4, WIN_DEFAULT_ADD_ALIGNER_ITEM_5};
 			return WIN_ALIGNER_ADD_ITEM_DEFAULTS;
 		}else{
-			CommandItem DEFAULT_ADD_ALIGNER_ITEM_1 = new CommandItem("Muscle-profile", MuscleWrapper.getMusclePath().getAbsolutePath(), "-profile -in1 CURRENT_ALIGNMENT -in2 SECOND_SEQUENCES -out TEMP_OUT_FILE", true,true);
-			CommandItem DEFAULT_ADD_ALIGNER_ITEM_2 = new CommandItem("Mafft --add", "mafft", "--add SECOND_SEQUENCES --out TEMP_OUT_FILE CURRENT_ALIGNMENT", false,true);
-			CommandItem DEFAULT_ADD_ALIGNER_ITEM_3 = new CommandItem("Mafft --addfragments", "mafft", "--addfragments SECOND_SEQUENCES --out TEMP_OUT_FILE CURRENT_ALIGNMENT", false,true);
-			CommandItem DEFAULT_ADD_ALIGNER_ITEM_4 = new CommandItem("Mafft --addfull", "mafft", "--addfull SECOND_SEQUENCES --out TEMP_OUT_FILE CURRENT_ALIGNMENT", false,true);
+			CommandItem DEFAULT_ADD_ALIGNER_ITEM_1 = new CommandItem("Muscle-profile", MuscleWrapper.getMusclePath().getAbsolutePath(), "-profile -in1 CURRENT_ALIGNMENT_FASTA -in2 SECOND_SEQUENCES -out TEMP_OUT_FILE", true,true);
+			CommandItem DEFAULT_ADD_ALIGNER_ITEM_2 = new CommandItem("Mafft --add", "mafft", "--add SECOND_SEQUENCES --out TEMP_OUT_FILE CURRENT_ALIGNMENT_FASTA", false,true);
+			CommandItem DEFAULT_ADD_ALIGNER_ITEM_3 = new CommandItem("Mafft --addfragments", "mafft", "--addfragments SECOND_SEQUENCES --out TEMP_OUT_FILE CURRENT_ALIGNMENT_FASTA", false,true);
+			CommandItem DEFAULT_ADD_ALIGNER_ITEM_4 = new CommandItem("Mafft --addfull", "mafft", "--addfull SECOND_SEQUENCES --out TEMP_OUT_FILE CURRENT_ALIGNMENT_FASTA", false,true);
 			CommandItem DEFAULT_ADD_ALIGNER_ITEM_5 = new CommandItem("", "", "", false,false);
 			CommandItem[] ALIGNER_ADD_ITEM_DEFAULTS = new CommandItem[]{DEFAULT_ADD_ALIGNER_ITEM_1, DEFAULT_ADD_ALIGNER_ITEM_2, DEFAULT_ADD_ALIGNER_ITEM_3, DEFAULT_ADD_ALIGNER_ITEM_4, DEFAULT_ADD_ALIGNER_ITEM_5};
 			return ALIGNER_ADD_ITEM_DEFAULTS;
@@ -445,25 +447,25 @@ public class Settings {
 	
 	private static CommandItem[] getAlignerALLDefaultItems() {
 		if(OSNativeUtils.isMac()){
-			CommandItem MAC_DEFAULT_ALL_ALIGNER_ITEM_1 = new CommandItem("Muscle", MuscleWrapper.getMusclePath().getAbsolutePath(), "-in CURRENT_ALIGNMENT -out TEMP_OUT_FILE", true, true);
-			CommandItem MAC_DEFAULT_ALL_ALIGNER_ITEM_2 = new CommandItem("Mafft-localpair", "/usr/local/bin/mafft", "--localpair --reorder --maxiterate 1000 --out TEMP_OUT_FILE CURRENT_ALIGNMENT", false,true);
-			CommandItem MAC_DEFAULT_ALL_ALIGNER_ITEM_3 = new CommandItem("Mafft-globalpair", "/usr/local/bin/mafft", "--globalpair --thread 2 --out TEMP_OUT_FILE CURRENT_ALIGNMENT", false,true);
+			CommandItem MAC_DEFAULT_ALL_ALIGNER_ITEM_1 = new CommandItem("Muscle", MuscleWrapper.getMusclePath().getAbsolutePath(), "-in CURRENT_ALIGNMENT_FASTA -out TEMP_OUT_FILE", true, true);
+			CommandItem MAC_DEFAULT_ALL_ALIGNER_ITEM_2 = new CommandItem("Mafft-localpair", "/usr/local/bin/mafft", "--localpair --reorder --maxiterate 1000 --out TEMP_OUT_FILE CURRENT_ALIGNMENT_FASTA", false,true);
+			CommandItem MAC_DEFAULT_ALL_ALIGNER_ITEM_3 = new CommandItem("Mafft-globalpair", "/usr/local/bin/mafft", "--globalpair --thread 2 --out TEMP_OUT_FILE CURRENT_ALIGNMENT_FASTA", false,true);
 			CommandItem MAC_DEFAULT_ALL_ALIGNER_ITEM_4 = new CommandItem("", "", "", false,true);
 			CommandItem MAC_DEFAULT_ALL_ALIGNER_ITEM_5 = new CommandItem("", "", "", false,true);
 			CommandItem[] MAC_ALIGNER_ALL_ITEM_DEFAULTS = new CommandItem[]{MAC_DEFAULT_ALL_ALIGNER_ITEM_1, MAC_DEFAULT_ALL_ALIGNER_ITEM_2, MAC_DEFAULT_ALL_ALIGNER_ITEM_3, MAC_DEFAULT_ALL_ALIGNER_ITEM_4, MAC_DEFAULT_ALL_ALIGNER_ITEM_5};
 			return MAC_ALIGNER_ALL_ITEM_DEFAULTS;
 		}else if(OSNativeUtils.isWindows()){
-			CommandItem WIN_DEFAULT_ALL_ALIGNER_ITEM_1 = new CommandItem("Muscle", MuscleWrapper.getMusclePath().getAbsolutePath(), "-in CURRENT_ALIGNMENT -out TEMP_OUT_FILE", true, true);
-			CommandItem WIN_DEFAULT_ALL_ALIGNER_ITEM_2 = new CommandItem("Mafft", "cmd.exe", "/C \"C:\\Program Files\\mafft-win\\mafft.bat\" --localpair --reorder --maxiterate 1000 --out TEMP_OUT_FILE CURRENT_ALIGNMENT", false,true);
-			CommandItem WIN_DEFAULT_ALL_ALIGNER_ITEM_3 = new CommandItem("Mafft--globalpair", "cmd.exe", "/C \"C:\\Program Files\\mafft-win\\mafft.bat\" --globalpair --thread 2 --out TEMP_OUT_FILE CURRENT_ALIGNMENT", false,true);
+			CommandItem WIN_DEFAULT_ALL_ALIGNER_ITEM_1 = new CommandItem("Muscle", MuscleWrapper.getMusclePath().getAbsolutePath(), "-in CURRENT_ALIGNMENT_FASTA -out TEMP_OUT_FILE", true, true);
+			CommandItem WIN_DEFAULT_ALL_ALIGNER_ITEM_2 = new CommandItem("Mafft", "cmd.exe", "/C \"C:\\Program Files\\mafft-win\\mafft.bat\" --localpair --reorder --maxiterate 1000 --out TEMP_OUT_FILE CURRENT_ALIGNMENT_FASTA", false,true);
+			CommandItem WIN_DEFAULT_ALL_ALIGNER_ITEM_3 = new CommandItem("Mafft--globalpair", "cmd.exe", "/C \"C:\\Program Files\\mafft-win\\mafft.bat\" --globalpair --thread 2 --out TEMP_OUT_FILE CURRENT_ALIGNMENT_FASTA", false,true);
 			CommandItem WIN_DEFAULT_ALL_ALIGNER_ITEM_4 = new CommandItem("", "", "", false,true);
 			CommandItem WIN_DEFAULT_ALL_ALIGNER_ITEM_5 = new CommandItem("", "", "", false,true);
 			CommandItem[] WIN_ALIGNER_ALL_ITEM_DEFAULTS = new CommandItem[]{WIN_DEFAULT_ALL_ALIGNER_ITEM_1, WIN_DEFAULT_ALL_ALIGNER_ITEM_2, WIN_DEFAULT_ALL_ALIGNER_ITEM_3, WIN_DEFAULT_ALL_ALIGNER_ITEM_4, WIN_DEFAULT_ALL_ALIGNER_ITEM_5};
 			return WIN_ALIGNER_ALL_ITEM_DEFAULTS;
 		}else{
-			CommandItem DEFAULT_ALL_ALIGNER_ITEM_1 = new CommandItem("Muscle", MuscleWrapper.getMusclePath().getAbsolutePath(), "-in CURRENT_ALIGNMENT -out TEMP_OUT_FILE", true, true);
-			CommandItem DEFAULT_ALL_ALIGNER_ITEM_2 = new CommandItem("Mafft", "mafft", "--localpair --reorder --maxiterate 1000 --out TEMP_OUT_FILE CURRENT_ALIGNMENT", false,true);
-			CommandItem DEFAULT_ALL_ALIGNER_ITEM_3 = new CommandItem("Mafft", "mafft", "--globalpair --thread 2 --out TEMP_OUT_FILE CURRENT_ALIGNMENT", false,true);
+			CommandItem DEFAULT_ALL_ALIGNER_ITEM_1 = new CommandItem("Muscle", MuscleWrapper.getMusclePath().getAbsolutePath(), "-in CURRENT_ALIGNMENT_FASTA -out TEMP_OUT_FILE", true, true);
+			CommandItem DEFAULT_ALL_ALIGNER_ITEM_2 = new CommandItem("Mafft", "mafft", "--localpair --reorder --maxiterate 1000 --out TEMP_OUT_FILE CURRENT_ALIGNMENT_FASTA", false,true);
+			CommandItem DEFAULT_ALL_ALIGNER_ITEM_3 = new CommandItem("Mafft", "mafft", "--globalpair --thread 2 --out TEMP_OUT_FILE CURRENT_ALIGNMENT_FASTA", false,true);
 			CommandItem DEFAULT_ALL_ALIGNER_ITEM_4 = new CommandItem("", "", "", false,true);
 			CommandItem DEFAULT_ALL_ALIGNER_ITEM_5 = new CommandItem("", "", "", false,true);
 			CommandItem[] ALIGNER_ALL_ITEM_DEFAULTS = new CommandItem[]{DEFAULT_ALL_ALIGNER_ITEM_1, DEFAULT_ALL_ALIGNER_ITEM_2, DEFAULT_ALL_ALIGNER_ITEM_3, DEFAULT_ALL_ALIGNER_ITEM_4, DEFAULT_ALL_ALIGNER_ITEM_5};
@@ -544,6 +546,11 @@ public class Settings {
 	public static SettingValue getVerticalScrollModifier() {
 		return verticalMouseWheelScrollModifier;
 	}
+	
+	public static SettingValue getHideFileSeqLimitedEditCapabilities() {
+		return hideFileSeqLimitedEditCapabilities;
+	}
+	
 
 	public static void addRecentFile(File alignmentFile){
 		Vector<File> files = getRecentFiles();
@@ -640,6 +647,5 @@ public class Settings {
 		return ALIVIEW_HELP_URL;
 	}
 
-	
 	
 }

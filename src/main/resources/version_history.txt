@@ -1,0 +1,40 @@
+Version history
+
+1.08-beta
+
+-Fixed key repeat problem in Linux
+
+1.07
+
+-Fixed "Out of Memory" problem when editing some large datasets,
+the problem was that the Undo function was draining all memory resources on
+very large files. Now Undo functionality is turned of before memory error and
+user is notified
+
+-New dialog that notifies user about low possible memory problem if keeping to
+many large alignments opened at the same time.
+
+-New menu item "Check version history" in Help menu
+  
+1.06
+
+-Error handling and error message if you are using 32bit Operating system and
+trying to open large files
+
+1.05
+
+-Different color on gap and matching characters in "Highlight differences" mode
+
+-Improved error handling if unable to load or save files
+
+1.03
+
+-Fixed issue "Cursor movement at edge of pane is making whole pane scroll"
+
+1.02
+
+-Added version check menu item
+
+1.01
+
+-Improved error message handling

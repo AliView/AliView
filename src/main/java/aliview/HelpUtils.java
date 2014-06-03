@@ -29,6 +29,7 @@ public class HelpUtils {
 	public static final String TOP_HELP = "TOP_HELP";
 	public static final String DOWNLOAD = "DOWNLOAD";
 	public static final String BUG_OR_FEATURE = "BUG_OR_FEATURE";
+	public static final String MEMORY_SETTINGS = "memory_settings";
 	
 	protected static String baseURL = Settings.getAliViewHelpWebPage();
 	protected static String localBaseURL = "file:///home/anders/maven/AliView/web/help/help.html";
@@ -118,5 +119,16 @@ public class HelpUtils {
 			e.printStackTrace();
 		}
 	}
-
+	
+	public static void displayVersionHistory(){
+		try {
+			String versionDownloadURL = "http://www.ormbunkar.se/aliview/version_history.txt";
+			URL location = new URL(versionDownloadURL);
+			openWebpage(location);
+		} catch (Exception e) {
+			// Nothing to do
+			//Messenger.showOKOnlyMessage(Messenger.COULD_NOT_OPEN_HELP_IN_BROWSER, null);
+			e.printStackTrace();
+		}
+	}
 }

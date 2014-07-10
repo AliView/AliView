@@ -13,8 +13,8 @@ public class AlignmentMeta {
 	private Excludes excludes = new Excludes(0);
 	private CodonPositions codonPositions = new CodonPositions(0);
 	private ArrayList<CharSet> charsets = new ArrayList<CharSet>();
-	
-	
+
+
 	public AlignmentMeta(int alignmentLength){
 		this(new Excludes(alignmentLength), new CodonPositions(alignmentLength), new ArrayList<CharSet>());
 	}
@@ -66,7 +66,7 @@ public class AlignmentMeta {
 
 	public void setReadingFrame(int readingFrame) {
 		this.codonPositions.setReadingFrame(readingFrame);
-		
+
 	}
 
 
@@ -78,7 +78,7 @@ public class AlignmentMeta {
 	public int getCodonPosAt(int x) {
 		return codonPositions.getPosAt(x);
 	}
-	
+
 
 	public AlignmentMeta getCopy() {
 		ArrayList<CharSet> copyOfCharsets = new ArrayList<CharSet>();
@@ -93,30 +93,30 @@ public class AlignmentMeta {
 		if(removeExcluded){
 			excludes.removeExcludedPositionsFromList(positions);
 		}
-		
+
 		return positions;
 	}
 
 
 	public void removeFromMask(boolean[] deleteMask) {
-		
+
 		logger.info(deleteMask.length);
-		
-				for(int n = excludes.getLength() - 1; n>= 0; n--){
-					if(deleteMask[n] == true){
-						excludes.removePosition(n);
-						codonPositions.removePosition(n);
-						for(CharSet charset: charsets){
-							charset.removePosition(n); 
-						}
-					}		
+
+		for(int n = excludes.getLength() - 1; n>= 0; n--){
+			if(deleteMask[n] == true){
+				excludes.removePosition(n);
+				codonPositions.removePosition(n);
+				for(CharSet charset: charsets){
+					charset.removePosition(n); 
 				}
+			}		
+		}
 	}
 
 
 	public void excludePosition(int i) {
 		this.excludes.getPositionsBooleanArray()[i] = true;
-		
+
 	}
 
 

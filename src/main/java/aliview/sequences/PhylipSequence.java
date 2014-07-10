@@ -6,7 +6,6 @@ import java.io.UnsupportedEncodingException;
 import org.apache.log4j.Logger;
 
 
-
 public class PhylipSequence extends InMemorySequence{
 	private static final Logger logger = Logger.getLogger(PhylipSequence.class);
 	private static final String TEXT_FILE_BYTE_ENCODING = "ASCII";

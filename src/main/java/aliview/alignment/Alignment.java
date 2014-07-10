@@ -37,6 +37,8 @@ import aliview.FileFormat;
 import aliview.GeneticCode;
 import aliview.NucleotideUtilities;
 import aliview.importer.AlignmentImportException;
+import aliview.importer.MSFFileIndexer;
+import aliview.importer.MSFImporter;
 import aliview.importer.SequencesFactory;
 import aliview.messenges.Messenger;
 import aliview.messenges.TextEditDialog;
@@ -47,10 +49,12 @@ import aliview.sequencelist.FindObject;
 import aliview.sequencelist.MemorySequenceListModel;
 import aliview.sequencelist.SequenceListModel;
 import aliview.sequencelist.FileSequenceLoadListener;
+import aliview.sequences.FastaFileSequence;
 import aliview.sequences.PhylipSequence;
 import aliview.sequences.Sequence;
 import aliview.sequences.SequenceUtils;
 import aliview.settings.Settings;
+import aliview.utils.ArrayUtilities;
 
 public class Alignment implements FileSequenceLoadListener {
 	private static final Logger logger = Logger.getLogger(Alignment.class);
@@ -81,7 +85,7 @@ public class Alignment implements FileSequenceLoadListener {
 	}
 
 	public Alignment(File file, FileFormat fileFormat, SequenceListModel sequences, AlignmentMeta aliMeta) {
-		this.alignmentFile = file;
+		setAlignmentFile(file);
 		this.fileFormat = fileFormat;
 		this.sequences = sequences;
 		this.alignmentMeta = aliMeta;
@@ -213,7 +217,7 @@ public class Alignment implements FileSequenceLoadListener {
 
 	public void setAlignmentFile(File alignmentFile) {
 		if(alignmentFile != null && alignmentFile.exists()){
-			this.alignmentFile = alignmentFile;
+			this.alignmentFile = alignmentFile.getAbsoluteFile();
 			fireNewSequences();
 		}
 	}
@@ -234,14 +238,154 @@ public class Alignment implements FileSequenceLoadListener {
 		out.flush();
 		out.close();
 	}
+	
+	private void storeAlignmetAsClustal(Writer out) throws IOException {
+		
+		// First write meta
+		out.write("CLUSTAL multiple sequence alignment" + LF);
+		out.write(LF);
+		out.write(LF);
+		
+		int longSeq = sequences.getLongestSequenceLength();
+		int namePadSize = sequences.getLongestSequenceName() + 1;
+		
+	    //  Clustal uses up to 60 residues per line
+		for(int pos = 0; pos < longSeq; pos += 60){
+			
+			int endPos = pos + 60;
+			endPos = Math.min(endPos, longSeq);
+			
+			for(int n = 0; n < sequences.getSize(); n++){		
+				// Write name space and up to 60 residues
+				Sequence seq = sequences.get(n);
+				String paddedName = StringUtils.rightPad(seq.getName(), namePadSize);
+				byte[] bases = seq.getBasesBetween(pos,  endPos - 1);
+
+				out.write(paddedName);
+				out.write(new String(bases));
+				out.write(LF);
+			}
+			
+			// add two blank lines
+			out.write(LF);
+			out.write(LF);
+		}
+		out.flush();
+		out.close();
+	}
+	
+	private void storeAlignmetAsMSF(Writer out) throws IOException {
+		
+		int longSeq = sequences.getLongestSequenceLength();
+		int namePadSize = sequences.getLongestSequenceName() + 1;
+			
+		// first write alignment meta
+		String type = "P";
+		String type2 = "!!AA";
+		if(this.isNucleotideAlignment()){
+			type = "N";
+			type2 = "!!NA";
+		}
+		
+		out.write("" + type2 + "_MULTIPLE_ALIGNMENT" + LF);
+		out.write(LF);
+		out.write(LF);
+		
+		
+	//	 checksumTotal += check;
+	//	 checksumTotal %= 10000;
+		
+		int checkTotal = 0;
+		for(int n = 0; n < sequences.getSize(); n++){
+			Sequence seq = sequences.get(n);
+			String paddedName = StringUtils.rightPad(seq.getName(), namePadSize);
+			int check = MSFImporter.GCGchecksum(seq);
+			checkTotal += check;
+			checkTotal %= 10000;
+		}
+
+		
+		String totalMeta = "   MSF: " + longSeq + "  Type: " + type + "  Check: "  + checkTotal + "  ..";
+		out.write(totalMeta);
+		out.write(LF);
+		
+		out.write(LF);
+		
+		// then write names and checksums
+		for(int n = 0; n < sequences.getSize(); n++){
+			Sequence seq = sequences.get(n);
+			String paddedName = StringUtils.rightPad(seq.getName(), namePadSize);
+			int check = MSFImporter.GCGchecksum(seq);
+			String seqMeta = " Name: " + paddedName + "  Len: " + seq.getLength() + "  Check: "  + check + "  Weight: 1.00";
+			out.write(seqMeta);
+			out.write(LF);
+			
+		}
+		
+		// start sequences
+		out.write(LF);
+		out.write(LF);
+		out.write("//");
+		out.write(LF);
+		out.write(LF);
+		// then write 
+		
+		
+	    // MSF uses up to 50 residues per line
+		for(int pos = 0; pos < longSeq; pos += 50){
+			
+			int endPos = pos + 50;
+			endPos = Math.min(endPos, longSeq);
+			
+			for(int n = 0; n < sequences.getSize(); n++){		
+				// Write name space and up to 50 residues
+				Sequence seq = sequences.get(n);
+				String paddedName = StringUtils.rightPad(seq.getName(), namePadSize);
+				
+				out.write(paddedName);
+				
+				byte[] bases = seq.getBasesBetween(pos,  endPos - 1);
+				// replace gaps to MSF notation
+				bases = ArrayUtilities.replaceAll(bases, '-', (byte) '.');			
+				
+				// write bases with space every 10 pos
+				for(int delPos = 0; delPos < bases.length; delPos += 10){
+					int maxLen = 10;
+					maxLen = Math.min(maxLen, bases.length - delPos);
+					out.write(new String(bases, delPos, maxLen));
+					
+					// add space, but not at last
+					if(delPos+10 < bases.length){
+						out.write(' ');
+					}
+				}
+					
+				out.write(LF);
+			}
+			
+			// add two blank lines
+			out.write(LF);
+			out.write(LF);
+		}
+		out.flush();
+		out.close();
+	}
 
 
-	private void storeAlignmetAsPhyFile(Writer out) throws IOException{
+	private void storeAlignmetAsPhyFile(Writer out, FileFormat fileFormat) throws IOException{
 		// First line number of seq + seqLen
 		out.write("" + sequences.getSize() + " " + this.getMaximumSequenceLength() + LF);
 
-		for(Sequence seq: sequences){			
-			out.write("" + StringUtils.rightPad(seq.getName(),100) + "");
+		for(Sequence seq: sequences){
+			String seqName = seq.getName();
+			seqName = escapeSeqName(seqName);
+			
+			if(fileFormat == FileFormat.PHYLIP_RELAXED_PADDED){
+				int longSeqName = sequences.getLongestSequenceName();
+				seqName = StringUtils.rightPad(seqName , longSeqName);
+			}
+			
+			out.write(seqName+ " ");
 			seq.writeBases(out);
 			out.write(LF);
 		}
@@ -251,15 +395,24 @@ public class Alignment implements FileSequenceLoadListener {
 
 	}
 
+	private String escapeSeqName(String name) {
+		if(name != null && name.indexOf(' ') > -1){
+			name = StringUtils.replace(name, " ", "_");
+		}
+		return name;
+	}
+
 	private void storeAlignmetAsPhyTranslatedAminoAcidFile(Writer out) throws IOException{
 		// First line number of seq + seqLen
 		out.write("" + sequences.getSize() + " " + alignmentMeta.getCodonPositions().getTranslatedAminAcidLength() + LF);
 
+		// int longSeqName = sequences.getLongestSequenceName();
+		
 		AATranslator aaTransSeq = new AATranslator(getAlignentMeta().getCodonPositions(),getGeneticCode());
 		for(Sequence seq: sequences){
 			aaTransSeq.setSequence(seq);
 		
-			out.write("" + StringUtils.rightPad(seq.getName(),100));
+			out.write(escapeSeqName(seq.getName()) + " ");
 			aaTransSeq.writeTranslation(out);
 			out.write(LF);
 		}
@@ -348,8 +501,8 @@ public class Alignment implements FileSequenceLoadListener {
 				BufferedWriter outMeta = new BufferedWriter(new FileWriter(new File(outFile.getAbsoluteFile() + ".meta")));
 				storeMetaData(outMeta);
 			}
-		}else if(fileFormat == FileFormat.PHYLIP){
-			storeAlignmetAsPhyFile(out);
+		}else if(fileFormat == FileFormat.PHYLIP || fileFormat == FileFormat.PHYLIP_RELAXED || fileFormat == FileFormat.PHYLIP_RELAXED_PADDED){
+			storeAlignmetAsPhyFile(out, fileFormat);
 			// save meta if exset it is set
 			if(this.alignmentMeta.isMetaOutputNeeded()){
 				BufferedWriter outMeta = new BufferedWriter(new FileWriter(new File(outFile.getAbsoluteFile() + ".meta")));
@@ -371,6 +524,10 @@ public class Alignment implements FileSequenceLoadListener {
 				BufferedWriter outMeta = new BufferedWriter(new FileWriter(new File(outFile.getAbsoluteFile() + ".meta")));
 				//storeTranslatedMetaData(outMeta, translatedMeta);
 			}
+		}else if(fileFormat == FileFormat.CLUSTAL){
+			storeAlignmetAsClustal(out);
+		}else if(fileFormat == FileFormat.MSF){
+			storeAlignmetAsMSF(out);
 		}else if(fileFormat == FileFormat.NEXUS){
 			AliViewExtraNexusUtilities.exportAlignmentAsNexus(new BufferedWriter(new FileWriter(outFile)), this, false,nexusDatatype);
 		}else if(fileFormat == FileFormat.NEXUS_TRANSLATED_AMINO_ACID){
@@ -381,7 +538,7 @@ public class Alignment implements FileSequenceLoadListener {
 			AliViewExtraNexusUtilities.exportAlignmentAsNexusCodonpos(new BufferedWriter(new FileWriter(outFile)), this, AliViewExtraNexusUtilities.DATATYPE_DNA);
 		}		
 	}
-	
+
 	/*
 	 * utility method
 	 */
@@ -694,8 +851,14 @@ public class Alignment implements FileSequenceLoadListener {
 	public void removeVerticalGaps(){
 		String cons = getConsensus();
 		
+		logger.info("done cons" + cons);
+		
+		logger.info('-' == cons.charAt(0));
+		
 		// if there is a gap
-		if(cons.indexOf(SequenceUtils.GAP_SYMBOL) > 0){		
+		if(cons.indexOf(SequenceUtils.GAP_SYMBOL) >= 0){		
+			
+			logger.info("there is a gap in cons");
 			
 			// create a bit-mask with pos to delete
 			boolean[] deleteMask = new boolean[cons.length()];
@@ -793,6 +956,15 @@ public class Alignment implements FileSequenceLoadListener {
 		}
 		return previousState;
 	}
+	
+	public List<Sequence> deleteGapMoveRight(boolean undoable) {
+		List<Sequence> previousState = sequences.deleteGapMoveRight(undoable);
+		if(previousState.size()> 0){
+			sequences.rightPadWithGapUntilEqualLength();
+			fireSequencesChanged();
+		}
+		return previousState;
+	}
 
 	public List<Sequence> insertGapLeftOfSelectionMoveRight(boolean undoable) {
 		List<Sequence> previousState = sequences.insertGapLeftOfSelectedBase(undoable);
@@ -860,6 +1032,30 @@ public class Alignment implements FileSequenceLoadListener {
 	}
 
 
+	public void addOrRemoveSelectionToExcludes() {
+		// check if anythin is excluded already - then remove
+		// otherwise add
+		boolean containsExcludedAlready = false;
+		for(Sequence sequence : sequences){
+			int[] selection = sequence.getSelectedPositions();
+			if(selection != null){
+				for(int n = 0; n < selection.length; n++){
+					if(this.alignmentMeta.isExcluded(selection[n])){
+						containsExcludedAlready = true;
+						break;
+					}
+				}
+			}
+		}
+		
+		logger.info("containsExcludedAlready" + containsExcludedAlready);
+		if(containsExcludedAlready){
+			removeSelectionFromExcludes();
+		}else{
+			addSelectionToExcludes();
+		}
+	}
+	
 	public void addSelectionToExcludes() {
 		for(Sequence sequence : sequences){
 			int[] selection = sequence.getSelectedPositions();
@@ -1001,13 +1197,13 @@ public class Alignment implements FileSequenceLoadListener {
 	 * 
 	 */
 	public void findDuplicates() {
-		StringBuilder dupeMessage = new StringBuilder("duplicates in alignment: " + alignmentFile.getName() + 
+		StringBuilder dupeMessage = new StringBuilder("duplicates in alignment: " + getAlignmentFile().getName() + 
 				                                      LF + "time: " + SimpleDateFormat.getDateTimeInstance().format(new Date()) + LF);
 		String message = sequences.findDuplicates();
 		dupeMessage.append(message);
 		
 		try {
-			FileUtils.writeStringToFile(new File(alignmentFile.getParentFile(), "duplicates.log"), dupeMessage.toString() );
+			FileUtils.writeStringToFile(new File(getAlignmentFile().getParentFile(), "duplicates.log"), dupeMessage.toString() );
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1259,6 +1455,11 @@ public class Alignment implements FileSequenceLoadListener {
 		sequences.sortSequencesByName();
 		fireSequenceOrderChanged();
 	}
+	
+	public void sortSequencesByCharInSelectedColumn() {
+		sequences.sortSequencesByCharInSelectedColumn();
+		fireSequenceOrderChanged();
+	}
 
 	public AliHistogram getHistogram(){
 		if(showTranslationOnePos){
@@ -1327,6 +1528,7 @@ public class Alignment implements FileSequenceLoadListener {
 	public void fileSequenceContentsChanged() {
 		logger.info("fileSequenceContChanged");
 		if(alignmentMeta.getCodonPositions().getLength() == 0){
+			//logger.info("sequences.getLongestSequenceLength()" + sequences.getLongestSequenceLength());
 			alignmentMeta = new AlignmentMeta(sequences.getLongestSequenceLength());
 		}
 	}
@@ -1371,4 +1573,150 @@ public class Alignment implements FileSequenceLoadListener {
 		}
 		fireSelectionChanged();
 	}
+
+	public int countStopCodons() {
+		int totalCount = 0;
+		if(isNucleotideAlignment()){		
+			AATranslator aaTransSeq = new AATranslator(getAlignentMeta().getCodonPositions(),getGeneticCode());
+			for(Sequence seq: sequences){
+				aaTransSeq.setSequence(seq);
+				totalCount += aaTransSeq.countStopCodon();	
+			}
+		}else{
+			for(Sequence seq: sequences){
+				totalCount += seq.countChar('*');	
+			}
+		}
+		
+		return totalCount;
+	}
+
+	public void saveFastaIndex() {
+		logger.info(this.fileFormat);
+		
+		if(this.fileFormat == FileFormat.FASTA && sequences instanceof FileSequenceListModel){
+			FileSequenceListModel model = (FileSequenceListModel) getSequences();
+			
+			//String indexName = FileFormat.stripFileSuffixFromName(this.getAlignmentFile().getAbsolutePath());
+			String indexName = this.getAlignmentFile().getAbsolutePath();
+			indexName += ".fai";
+			
+			File indexFile = new File(indexName);
+			
+			try {
+				BufferedWriter out = new BufferedWriter(new FileWriter(indexFile));
+			
+				Sequence firstSeq = sequences.get(0);
+				
+				
+				int charsPerLine = 0;
+				int newlinePos = firstSeq.indexOf('\n');
+				if(newlinePos == -1){
+					charsPerLine = firstSeq.getLength() + 2; // +2 because of .......
+				}else{
+					charsPerLine = newlinePos + 1 + 1; // +1 because of 0f index,  +1 because of LF;
+				}
+				
+				int spacePerLine =  firstSeq.countChar(' ', 0, newlinePos);
+				
+				logger.info("newlinePos" + newlinePos);
+				logger.info("spacePerLine" + spacePerLine);
+				
+				
+				
+				spacePerLine += 1; // +1 because of LF 
+				int residuesPerLine = charsPerLine - spacePerLine;
+				
+//				int returnCount = firstSeq.countChar('\r');
+//				int tabCount = firstSeq.countChar('\t');
+//				int spaceCount = firstSeq.countChar(' ');
+				
+			//	int totalLen = firstSeq.getLength();
+				//int lenWithoutWhite = totalLen - newlineCount - returnCount - tabCount - spaceCount;
+				
+			//	logger.info("lenWithoutWhite" + lenWithoutWhite);
+				
+				
+				for(Sequence seq: sequences){
+								
+					FastaFileSequence fileSeq = (FastaFileSequence) seq;
+					
+					//String name = StringUtils.substring(fileSeq.getName(), 0, 50);
+					String name = fileSeq.getName();
+
+					out.write(name);
+					
+					out.write('\t');
+					
+					int length = fileSeq.getLength();
+					logger.info("length" + length);
+					int fullRows = length/charsPerLine;
+					logger.info("fullRows" + fullRows);
+					int diff = charsPerLine - residuesPerLine;
+					logger.info("diff" + diff);
+					double decimalPart = (double)length/(double)charsPerLine - (double)fullRows;
+					int remindDiff = (int) (decimalPart * (double)diff);
+					logger.info("remindDiff" + remindDiff);
+					diff = diff * fullRows;
+					diff = diff + remindDiff;
+					
+					logger.info("diff" + diff);
+					
+					int lengthWithoutWhite = length - diff + 1; // don't know exactly why +1
+					
+					out.write("" + lengthWithoutWhite);
+					
+					out.write('\t');
+					
+					out.write("" + (fileSeq.getSequenceAfterNameStartPointer() -1));
+					
+					out.write('\t');
+					
+					out.write("" + residuesPerLine);
+							
+					out.write('\t');
+					
+					out.write("" + charsPerLine);
+					
+					out.write(LF);
+					
+					
+				}	
+				
+				out.flush();
+				out.close();
+			
+			
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+		}else{
+			Messenger.showOKOnlyMessage(Messenger.NO_FASTA_INDEX_COULD_BE_SAVED);
+		}
+	}
+
+	
 }

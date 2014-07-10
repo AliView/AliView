@@ -1,12 +1,17 @@
 <html>
 <body>
-You have version: <?php echo $_GET['ver']; ?>
-<br>
-<br>
+<pre>
+
+You have version: <b><?php echo $_GET['ver']; ?></b>
+
 Latest <?php include("version.properties"); ?>
-<br>
-<br>
+
+
 <a href="downloads">Download latest version here</a>
-<br>
+
+---
+
+<?php include("version_history.txt"); ?>
+</pre>
 </body>
 </html>

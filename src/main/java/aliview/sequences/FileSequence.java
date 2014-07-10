@@ -379,9 +379,24 @@ public class FileSequence implements Sequence {
 
 
 	public boolean contains(char testChar) {
-
-		// TODO Auto-generated method stub
+		for(int n = 0; n < getLength(); n++){
+			int base = getBaseAsIntAtPos(n);
+			if((char)base == testChar){
+				return true;
+			}
+		}
 		return false;
+	}
+	
+	public int countChar(char targetChar) {
+		int count = 0;
+		for(int n = 0; n < getLength(); n++){
+			int base = getBaseAsIntAtPos(n);
+			if((char)base == targetChar){
+				count++;
+			}
+		}
+		return count;
 	}
 
 	public long countSelectedPositions(int startIndex, int endIndex) {
@@ -410,7 +425,10 @@ public class FileSequence implements Sequence {
 
 	public void deleteGapLeftOfSelection() {
 		// TODO Auto-generated method stub
-		
+	}
+	
+	public void deleteGapRightOfSelection() {
+		// TODO Auto-generated method stub	
 	}
 
 	public byte[] getBasesBetween(int startIndexInclusive, int endIndexInclusive) {
@@ -420,13 +438,11 @@ public class FileSequence implements Sequence {
 
 	public void replaceSelectedBasesWithChar(char newChar) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	public void realignNucleotidesUseThisAASequenceAsTemplate(
 			byte[] allBasesAsByteArray) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	public void selectAllBasesUntilGap(int x) {
@@ -465,6 +481,30 @@ public class FileSequence implements Sequence {
 
 	public boolean isAllSelected() {
 		return selectionModel.isAllSelected();
+	}
+	
+	public int indexOf(char testChar) {
+		for(int n = 0; n < getLength(); n++){
+			int base = getBaseAsIntAtPos(n);
+			if((char)base == testChar){
+				return n;
+			}
+		}
+		return -1;
+	}
+		
+	
+	public int countChar(char targetChar, int startpos, int endpos) {
+		int count = 0;
+		
+		for(int n = startpos; n < getLength() && n < endpos; n++){
+			int base = getBaseAsIntAtPos(n);
+			if((char)base == targetChar){
+				count++;
+			}
+		}
+
+		return count;
 	}
 
 

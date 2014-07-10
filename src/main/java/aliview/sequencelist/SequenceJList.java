@@ -69,6 +69,8 @@ public class SequenceJList extends javax.swing.JList{
 		map.put(OSNativeUtils.getCopySelectionAsFastaKeyAccelerator(),"null");
 		map.put(OSNativeUtils.getMoveSelectionUpKeyAccelerator(),"null");
 		map.put(OSNativeUtils.getMoveSelectionDownKeyAccelerator(),"null");
+		map.put(OSNativeUtils.getIncreaseFontSizeKeyAccelerator(),"null");
+		map.put(OSNativeUtils.getDecreaseFontSizeKeyAccelerator(),"null");
 		
 	}
 	
@@ -174,12 +176,19 @@ public class SequenceJList extends javax.swing.JList{
 		this.setSelected(selection);
 	}
 	
-	public void moveSelectedSequencesTo(int index){
+	public void moveSelectedSequencesTo(int toIndex){
 		Sequence[] selection = this.getSelectedValues();
 		if(! isSelectionValid(selection)){
 			return;
 		}
-		this.getModel().moveSequencesTo(index, selection);
+		// Since move is between list in same list the input index has to be lowered because the
+		// target sequence is one of the lower index sequences
+		if(this.getSelectedIndex() < toIndex){
+			if(toIndex > 0){
+				toIndex --;
+			}
+		}
+		this.getModel().moveSequencesTo(toIndex, selection);
 		this.setSelected(selection);
 	}
 

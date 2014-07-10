@@ -35,115 +35,74 @@ public class PrimerResultsFrame extends JFrame {
 	public PrimerResultsFrame(ArrayList<Primer> primRes,AliViewWindow aliViewWin){
 		this.aliViewWindow = aliViewWin;
 		this.primerResult = primRes;
-		
-		//DefaultTableModel tm = new DefaultTableModel(new Object[0][1], new String[]{"PrimerData"});
-		DefaultTableModel tm = new DefaultTableModel(PrimerResultTableRow.getColumnHeaders().toArray(),0);
-		
-		mainTable = new JTable(tm);
-		mainTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		mainTable.setRowHeight(44);
-		//mainTable.setDefaultRenderer(PrimerPanel.class, new PrimerPanelCellRenderer());
-		mainTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			
-			    public void valueChanged(ListSelectionEvent e) {
-			        // If cell selection is enabled, both row and column change events are fired
-			        if (e.getValueIsAdjusting()) {
-			            // The mouse button has not yet been released
-			        }
-			        else{
-			        	displaySelectedPrimerDetailWindow();
-			        }
-			    }
-
-		});	
-		
-		mainTable.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				if(e.getButton() == e.BUTTON3){
-					logger.info("copy Primer To clipboard");
-					
-					int colIndex = 0;
-					if(mainTable.getSelectedColumn() == colIndex){
-			        	PrimerPanel selected = (PrimerPanel) mainTable.getModel().getValueAt(mainTable.getSelectedRow(),0);   	
-			        	String data = selected.getPrimer().getPrimerDetailsAsText();
-			        	
-			        	System.out.println(data);
-					}
-				}
-				// always display window
-				displaySelectedPrimerDetailWindow();
-
-			}
+			DefaultTableModel tm = new DefaultTableModel(PrimerResultTableRow.getColumnHeaders().toArray(),0);
 			
-		});
-		
-		
-//		TableColumn col = mainTable.getColumnModel().getColumn(0);
-//		col.setCellRenderer(new PrimerPanelCellRenderer());
-//		col.setCellEditor(new PrimerPanelCellRenderer());
-
-		/*
-		TableColumn col = mainTable.getColumnModel().getColumn(3);
-		col.setCellRenderer(new ComponentCellRenderer());
-		col.setCellEditor(new ComponentCellRenderer());
-		*/
-		
-		
-		Enumeration<TableColumn> enu = mainTable.getColumnModel().getColumns();
-		while(enu.hasMoreElements()) {
-			TableColumn col = enu.nextElement();
-			col.setCellRenderer(new ComponentCellRenderer());
-			col.setCellEditor(new ComponentCellRenderer());
-		}
-		
-		/*
-		TableColumn col = mainTable.getColumnModel().getColumn(2);
-		col.setCellRenderer(new ComponentCellRenderer());
-		col.setCellEditor(new ComponentCellRenderer());
-		*/
-		
-		for(int n = 0; n < mainTable.getColumnModel().getColumnCount(); n++){
-			 mainTable.getColumnModel().getColumn(n).setPreferredWidth(PrimerResultTableRow.getColumnSizes().get(n));
-		}
-		//TableColumn col = table.getColumnModel().getColumn(vColIndex);
-
-		
-		//mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-		JScrollPane scrollPane = new JScrollPane(mainTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		getContentPane().add(scrollPane, BorderLayout.CENTER);
-		//getContentPane().add(mainTable, BorderLayout.CENTER);
-		
-		int nCount = 0;
-		for(Primer primer: primRes){
-			if(primer.getScore() <= 1000 && nCount < MAX_NUMBER_OF_PRIMERS_REPORTED){
-				//logger.info("AddingPanel");
-				//tm.addRow(new Object[]{new PrimerPanel(primer)});
-				//logger.info("AddingRow");
-				tm.addRow( new PrimerResultTableRow(primer).getRow().toArray() );
-				nCount ++;
+			mainTable = new JTable(tm);
+			mainTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			mainTable.setRowHeight(44);
+			//mainTable.setDefaultRenderer(PrimerPanel.class, new PrimerPanelCellRenderer());
+			mainTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 				
+				    public void valueChanged(ListSelectionEvent e) {
+				        // If cell selection is enabled, both row and column change events are fired
+				        if (e.getValueIsAdjusting()) {
+				            // The mouse button has not yet been released
+				        }
+				        else{
+				        	displaySelectedPrimerDetailWindow();
+				        }
+				    }
+	
+			});	
+			
+			mainTable.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					if(e.getButton() == e.BUTTON3){
+						logger.info("copy Primer To clipboard");
+						
+						int colIndex = 0;
+						if(mainTable.getSelectedColumn() == colIndex){
+				        	PrimerPanel selected = (PrimerPanel) mainTable.getModel().getValueAt(mainTable.getSelectedRow(),0);   	
+				        	String data = selected.getPrimer().getPrimerDetailsAsText();
+				        	
+				        	System.out.println(data);
+						}
+					}
+					// always display window
+					displaySelectedPrimerDetailWindow();
+	
+				}
+				
+			});
+			
+			Enumeration<TableColumn> enu = mainTable.getColumnModel().getColumns();
+			while(enu.hasMoreElements()) {
+				TableColumn col = enu.nextElement();
+				col.setCellRenderer(new ComponentCellRenderer());
+				col.setCellEditor(new ComponentCellRenderer());
 			}
-		}
-		
-		
-		/*
-		mainPanel = new JPanel();
-		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-		
-		JScrollPane scrollPane = new JScrollPane(mainPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		getContentPane().add(scrollPane, BorderLayout.CENTER);
-		
-		for(Primer primer: primerResult){
-			if(primer.getScore() < 1000){
-				logger.info("AddingPanel");
-				mainPanel.add(new PrimerPanel(primer));
+			
+			for(int n = 0; n < mainTable.getColumnModel().getColumnCount(); n++){
+				 mainTable.getColumnModel().getColumn(n).setPreferredWidth(PrimerResultTableRow.getColumnSizes().get(n));
 			}
-		}
-		*/
-		
-		//mainTable.set
-		
+	
+			JScrollPane scrollPane = new JScrollPane(mainTable, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+			getContentPane().add(scrollPane, BorderLayout.CENTER);
+			
+			int nCount = 0;
+			for(Primer primer: primRes){
+				if(primer.getScore() <= 1000 && nCount < MAX_NUMBER_OF_PRIMERS_REPORTED){
+					//logger.info("AddingPanel");
+					//tm.addRow(new Object[]{new PrimerPanel(primer)});
+					//logger.info("AddingRow");
+					tm.addRow( new PrimerResultTableRow(primer).getRow().toArray() );
+					nCount ++;
+					
+				}
+			}
+
 		
 		this.setTitle("Primer finds");
 		this.setIconImage(AppIcons.getProgramIconImage());

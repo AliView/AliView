@@ -26,20 +26,20 @@ public class AliToolBar extends JToolBar{
 		JToggleButton toggleButtonDiffTrace = new JToggleButton();//("Diff");
 		toggleButtonDiffTrace.setFocusPainted(false);
 		toggleButtonDiffTrace.setIcon(AppIcons.getDiffIcon());
-		toggleButtonDiffTrace.setToolTipText("<html>Highligt difference from one selected \"trace\"-sequence<br>(Select trace sequence by right clicking on target)</html>");
+		toggleButtonDiffTrace.setToolTipText("<html>Highlight difference from one selected \"trace\"-sequence<br>(Select trace sequence by right clicking on target)</html>");
 		toggleButtonDiffTrace.setModel(aliMenuBar.getHighlightDiffTraceButtonModel());
 		this.add(toggleButtonDiffTrace);
 		
 		JToggleButton toggleBtnNonCons = new JToggleButton();//("Non-Cons");
 		toggleBtnNonCons.setFocusPainted(false);
-		toggleBtnNonCons.setToolTipText("Highligt difference from majority rule consensus");
+		toggleBtnNonCons.setToolTipText("Highlight difference from majority rule consensus");
 		toggleBtnNonCons.setIcon(AppIcons.getHighlightNonConsIcon());
 		toggleBtnNonCons.setModel(aliMenuBar.getHighlightNonConsButtonModel());
 		this.add(toggleBtnNonCons);
 		
 		JToggleButton toggleBtnCons = new JToggleButton();//("Cons");
 		toggleBtnCons.setFocusPainted(false);
-		toggleBtnCons.setToolTipText("Highligt majority rule consensus characters");
+		toggleBtnCons.setToolTipText("Highlight majority rule consensus characters");
 		toggleBtnCons.setIcon(AppIcons.getHighlightConsIcon());
 		toggleBtnCons.setModel(aliMenuBar.getHighlightConsButtonModel());
 		this.add(toggleBtnCons);

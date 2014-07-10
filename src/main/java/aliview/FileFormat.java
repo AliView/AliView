@@ -17,6 +17,12 @@ public class FileFormat {
 	public static final FileFormat NEXUS_CODONPOS_CHARSET = new FileFormat("NexusCodonposCharset", "codonpos.nexus", "codonpos.nex");
 	public static final FileFormat NEXUS_SIMPLE = new FileFormat("NexusSimple", "nexus", "nex");
 	public static final FileFormat PHYLIP = new FileFormat("Phylip", "phy", "phy");
+	public static final FileFormat PHYLIP_RELAXED = new FileFormat("Phylip", "phy", "phy");
+	public static final FileFormat PHYLIP_RELAXED_PADDED = new FileFormat("Phylip", "phy", "phy");
+	public static final FileFormat MSF = new FileFormat("MSF", "msf", "msf");
+	public static final FileFormat CLUSTAL = new FileFormat("Clustal", "aln", "aln");
+	
+	
 	public static final FileFormat IMAGE_PNG = new FileFormat("png-image", "png", "png");
 	
 	// TODO should be different when not translated AminoAcid
@@ -24,6 +30,7 @@ public class FileFormat {
 	public static final FileFormat NEXUS_TRANSLATED_AMINO_ACID = new FileFormat("NexusTranslated", "translated.nexus", "translated.nex");
 	public static final FileFormat FASTA_TRANSLATED_AMINO_ACID = new FileFormat("FastaTranslated", "translated.fasta", "translated.fas");
 	
+
 	public FileFormat(String name, String suffix, String suffixWin) {
 		this.name = name;
 		this.suffix = suffix;
@@ -45,7 +52,6 @@ public class FileFormat {
 	
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
 		return this.name;
 	}
 }

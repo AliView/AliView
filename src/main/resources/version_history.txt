@@ -1,19 +1,42 @@
 Version history
 
-1.08-beta
+1.09
 
--Fixed key repeat problem in Linux
+- Added info message if MUSCLE profile algorithm is used for adding sequences
+- Added format support for CLUSTAL(.aln) and MSF
+- Improved error dialogs so that they are no longer hiding each other.
+- Added "Save fasta index file" functionality
+- Revised the Nexus format output
+- Revised the Phylip format output and input
+- Fixed bug where the * symbol did not disappear from window although the file was saved
+- Fixed bug where "Delete vertical gaps" did not work if the first column was all gap
+- Fixed drag drop function where dropped sequence sometimes were positioned one position to low
+- Changed version menu item to "Check for new version/version history"
+- Added button "Count stop codons" on translate sequence toolbar
+
+
+1.08
+
+-Fixed error in Mac-version where all Menus got greyed out after alignment program error
+-Fixed key repeat problem in Linux and Java 8
+-Fixed problem where "Recent files" menu not always got updated
+-Fixed problem with cursor not stopping at edge of alignment
+-Improved drawing speed when translating nucleotides
+-Fixed color problem when selecting and "Highlight consensus/non-consensus/trace"
+-Changed "Add-Remove selection to Excludes" so that it now toggles add/remove selected chars - with same shortcut key
+-Added "Delete gap at right" - functionality
+-Added function "Ignore gaps when translating"
+-Changed color theme (Default-faster) and (SeaView), selected character are less different - makes manual alignment easier
+-Added "Sort sequences by char in selected column"
+-Added Menu "Count stop codons"
+-Added message when no primers were found in selected region (instead of just silently do nothing).
+
 
 1.07
 
--Fixed "Out of Memory" problem when editing some large datasets,
-the problem was that the Undo function was draining all memory resources on
-very large files. Now Undo functionality is turned of before memory error and
-user is notified
-
--New dialog that notifies user about low possible memory problem if keeping to
-many large alignments opened at the same time.
-
+-Fixed "Out of Memory" problem when editing some large datasets, the problem was that the Undo function was draining all memory
+ resources on very large files. Now Undo functionality is turned of before memory error and user is notified
+-New dialog that notifies user about low possible memory problem if keeping to many large alignments opened at the same time.
 -New menu item "Check version history" in Help menu
   
 1.06
@@ -24,7 +47,6 @@ trying to open large files
 1.05
 
 -Different color on gap and matching characters in "Highlight differences" mode
-
 -Improved error handling if unable to load or save files
 
 1.03

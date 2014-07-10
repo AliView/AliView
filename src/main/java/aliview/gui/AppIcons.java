@@ -124,7 +124,9 @@ public class AppIcons {
 		return createIcon("/img/appicons/aaCode_22x22.png");
 	}
 	
-	
+	public static ImageIcon getCountCodonIcon() {
+		return createIcon("/img/appicons/16x16/countCodon.png");
+	}
 	
 	public static ImageIcon getRedoIcon(){
 		return new ImageIcon(Toolkit.getDefaultToolkit().getImage(AliViewWindow.class.getResource("/img/appicons/16x16/edit-redo.png")));
@@ -150,6 +152,7 @@ public class AppIcons {
 	private static ImageIcon createIcon(String fileName) {
 	    return new ImageIcon(Toolkit.getDefaultToolkit().getImage(AliViewWindow.class.getResource(fileName)));
 	}
+
 
 	
 

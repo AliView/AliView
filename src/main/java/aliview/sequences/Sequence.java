@@ -119,6 +119,8 @@ public interface Sequence extends Comparable<Sequence>{
 	public boolean isGapLeftOfSelection();
 
 	public void deleteGapLeftOfSelection();
+	
+	public void deleteGapRightOfSelection();
 
 	public void replaceSelectedBasesWithChar(char newChar);
 
@@ -133,5 +135,11 @@ public interface Sequence extends Comparable<Sequence>{
 	public int getPosOfSelectedIndex(int posInSeq);
 
 	public boolean isAllSelected();
+
+	public int countChar(char c);
+
+	public int indexOf(char c);
+	
+	public int countChar(char targetChar, int startpos, int endpos);
 
 }

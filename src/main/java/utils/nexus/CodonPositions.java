@@ -1,5 +1,6 @@
 package utils.nexus;
 
+import java.nio.charset.CodingErrorAction;
 import java.util.ArrayList;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -18,14 +19,11 @@ public class CodonPositions{
 		setPositionsArray(new int[length]);
 		this.readingFrame = 1;
 		fillArrayWith123(getPositionsArray());
-		createTranslatedCodonPositions();
 	}
 	
 	private CodonPositions(int[] positionsArray, int readingFrame) {
 		this.setPositionsArray(positionsArray);
-		this.readingFrame = readingFrame;
-		createTranslatedCodonPositions();
-		
+		this.readingFrame = readingFrame;	
 	}
 
 	private void fillArrayWith123(int[] array){
@@ -65,11 +63,18 @@ public class CodonPositions{
 			}
 		}
 	}
+
+	public boolean isNonCoding(int pos) {
+		return positionsArray[pos] == 0;
+	}
 	
+	public boolean isCoding(int pos) {
+		return positionsArray[pos] != 0;
+	}
 	
 	public int getAminoAcidPosFromNucleotidePos(int pos){
-		for(int n = 0; n < translatedCodonPos.size(); n++){
-			CodonPos cPos = translatedCodonPos.get(n);
+		for(int n = 0; n < getTranslatedCodonPos().size(); n++){
+			CodonPos cPos = getTranslatedCodonPos().get(n);
 			if(pos >= cPos.startPos && pos <= cPos.endPos){
 				return n;
 			}
@@ -77,10 +82,17 @@ public class CodonPositions{
 		return 0;
 	}
 	
+	private ArrayList<CodonPos> getTranslatedCodonPos() {
+		if(translatedCodonPos == null){
+			createTranslatedCodonPositions();
+		}
+		return translatedCodonPos;
+	}
+
 	public CodonPos getCodonPosAtNucleotidePos(int pos){
 		CodonPos foundPos = null;
-		for(int n = 0; n < translatedCodonPos.size(); n++){
-			CodonPos cPos = translatedCodonPos.get(n);
+		for(int n = 0; n < getTranslatedCodonPos().size(); n++){
+			CodonPos cPos = getTranslatedCodonPos().get(n);
 			if(pos >= cPos.startPos && pos <= cPos.endPos){
 				foundPos = cPos;
 				break;
@@ -92,7 +104,7 @@ public class CodonPositions{
 	
 	
 	public int getTranslatedAminAcidLength(){
-		return translatedCodonPos.size();
+		return getTranslatedCodonPos().size();
 	}
 	
 
@@ -116,10 +128,22 @@ public class CodonPositions{
 				if(getPositionsArray()[x] == 3 && getPositionsArray()[x+1] == 1 && getPositionsArray()[x+2] == 2){
 					isFullCodon = true;
 				}
-			}
-			
+			}	
 		}
 		return isFullCodon;
+	}
+	
+	public boolean isPartOfFullCodon(int x){
+		// if full codon check x (x-1 && x -2)
+		if(isFullCodonStartingAt(x)){
+			return true;
+		}else if(isFullCodonStartingAt(x - 1)){
+			return true;
+		}else if(isFullCodonStartingAt(x - 2)){
+			return true;
+		}else{
+			return false;
+		}
 	}
 	
 	
@@ -328,4 +352,6 @@ public class CodonPositions{
 		int size = translatedCodonPos.size();
 		return Math.max(0,size);
 	}
+
+	
 }

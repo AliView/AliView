@@ -12,8 +12,7 @@ public class DrawCharBuffer{
 	public DrawCharBuffer(int size) {
 		byteBuffer = new byte[size];
 		fgColorBuffer = new Color[size];
-		bgColorBuffer = new Color[size];
-		
+		bgColorBuffer = new Color[size];	
 	}
 	
 	public void clear(){
@@ -77,5 +76,9 @@ public class DrawCharBuffer{
 	
 	public byte[] getByteBuffer(){
 		return byteBuffer;
+	}
+
+	public byte getByte(int pos) {
+		return byteBuffer[pos];
 	}
 }

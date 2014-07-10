@@ -202,7 +202,7 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 	 * 
 	 * TODO could skip
 	 * 
-	 */
+	*/
 	public void replaceSelectedBasesWithGap(){
 		replaceSelectedBasesWithChar((char)SequenceUtils.GAP_SYMBOL);
 	}
@@ -284,6 +284,18 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 					deleteBase(leftPosition-1);
 				}				
 			}
+	}
+	
+	public void deleteGapRightOfSelection() {
+		// get first selected position
+		int rightPosition = selectionModel.getLastSelectedPosition();
+		if(rangeCheck(rightPosition+1)){
+			// only if gap is left of selection
+			if(NucleotideUtilities.isGap(getBaseAtPos(rightPosition+1))){
+				deleteBase(rightPosition+1);
+			}				
+		}
+		
 	}
 	
 
@@ -563,17 +575,6 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 		setBases(newBases);
 	}
 
-	public boolean contains(char testChar) {
-		boolean contains = false;
-		for(byte base: getBases()){
-			if((char)base == testChar){
-				contains = true;
-				break;
-			}
-		}
-		return contains;
-	}
-
 	public void append(String moreInterleavedsequence) {
 		byte[] newArray = ArrayUtils.addAll(getBases(), moreInterleavedsequence.getBytes());
 		setBases(newArray);
@@ -688,4 +689,54 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 	public boolean isAllSelected() {
 		return selectionModel.isAllSelected();
 	}
+
+	public int countChar(char targetChar) {
+		int count = 0;
+		for(byte base: getBases()){
+			if((char)base == targetChar){
+				count ++;
+			}
+		}
+		return count;
+	}
+	
+	public boolean contains(char testChar) {
+		boolean contains = false;
+		for(byte base: getBases()){
+			if((char)base == testChar){
+				contains = true;
+				break;
+			}
+		}
+		return contains;
+	}
+
+	public int indexOf(char testChar) {
+		int index = -1;
+		for(byte base: getBases()){
+			index ++;
+			if((char)base == testChar){
+				break;
+			}
+		}
+		return index;
+	}
+	
+	public int countChar(char targetChar, int startpos, int endpos) {
+		int count = 0;
+		
+		for(int n = startpos; n < endpos && n < getBases().length; n++){
+			if(targetChar == (char)getBases()[n]){
+				count ++;
+			}
+		}
+		return count;
+	}
+	
+	
+	
+	
+	
+	
+
 }

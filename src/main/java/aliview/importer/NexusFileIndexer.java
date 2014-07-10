@@ -9,7 +9,6 @@ import org.apache.log4j.Logger;
 
 import it.unimi.dsi.io.ByteBufferInpStream;
 import aliview.sequencelist.FileMMSequenceList;
-import aliview.sequencelist.MappedBuffReaderHelper;
 import aliview.sequences.FileSequence;
 import aliview.sequences.NexusFileSequence;
 import aliview.sequences.PhylipFileSequence;
@@ -31,7 +30,7 @@ public class NexusFileIndexer implements FileIndexer{
 			mappedBuff.position(filePointerStart);
 
 			logger.info("Nexus file ix");
-
+/*
 			MappedBuffReaderHelper readerHelper = new MappedBuffReaderHelper(mappedBuff);
 			ArrayList<String> allTokens = readerHelper.readAllNexusTokensUntil("MATRIX");
 
@@ -104,7 +103,7 @@ public class NexusFileIndexer implements FileIndexer{
 				for(int n = 0; n < nTax; n ++){
 
 					String name = readerHelper.readNextNexusSeqName();
-					logger.info(name);
+					//logger.info(name);
 					long nameStartPointer = mappedBuff.position() - name.length();
 
 					long seqStartPointer = readerHelper.posOfNextNonWhiteNexusChar();
@@ -144,7 +143,7 @@ public class NexusFileIndexer implements FileIndexer{
 					}
 				}			
 			}
-
+*/
 
 		}catch(Exception exc){
 			logger.info("could not read as nexus");

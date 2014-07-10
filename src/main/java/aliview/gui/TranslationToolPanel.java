@@ -85,6 +85,14 @@ public class TranslationToolPanel extends JPanel implements AlignmentListener {
 	btnCodonNoneSelect.setModel(aliViewWindow.getAliMenuBar().getCodingNoneButtonModel());
 	this.add(btnCodonNoneSelect);
 	
+	JButton btnCountCodon = new JButton();
+	btnCountCodon.setPreferredSize(new Dimension(32,32));
+	btnCountCodon.setMaximumSize(new Dimension(32,32));
+	btnCountCodon.setToolTipText("Count stop codons");
+	btnCountCodon.setIcon(AppIcons.getCountCodonIcon());
+	btnCountCodon.setModel(aliViewWindow.getAliMenuBar().getCountCodonButtonModel());
+	this.add(btnCountCodon);
+	
 	Component horizontalStrut_1 = Box.createHorizontalStrut(10);
 	this.add(horizontalStrut_1);
 	

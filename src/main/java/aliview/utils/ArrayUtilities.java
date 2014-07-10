@@ -15,4 +15,19 @@ public class ArrayUtilities {
 		return count;
 	}
 
+	public static byte[] replaceAll(byte[] byteArray, char find, byte replace) {
+		if(byteArray == null){
+			return null;
+		}
+		
+		for(int n = 0; n < byteArray.length; n++){
+			if(byteArray[n] == find){
+				byteArray[n] = replace;
+			}
+		}
+		return byteArray;
+	}
+	
+	
+
 }

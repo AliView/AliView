@@ -51,8 +51,8 @@ public class DefaultColorSchemeFast extends AlignColorScheme {
 		baseBackgroundColor[NucleotideUtilities.GAP] = new Color(250,250,250);
 		baseBackgroundColor[NucleotideUtilities.UNKNOWN] = Color.white;
 
-		Color NUC_SELECTED_FG = Color.WHITE;
-		Color IUPAC_SELECTED_FG = NUC_FG;
+		Color NUC_SELECTED_FG = NUC_FG.darker();
+		Color IUPAC_SELECTED_FG = IUPAC_FG.darker();
 		baseSelectionForegroundColor = new Color[64];
 		baseSelectionForegroundColor[NucleotideUtilities.A] = NUC_SELECTED_FG;
 		baseSelectionForegroundColor[NucleotideUtilities.C] = NUC_SELECTED_FG;

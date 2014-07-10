@@ -14,8 +14,8 @@ public class PositionToPointer {
 		this.endPointer = endPointer;
 	}
 
-	public PositionToPointer(long interleavedStartPos, long l) {
-		
+	public PositionToPointer(int seqPosition, long startPointer, long endPointer) {
+		this(seqPosition, seqPosition + (int)(endPointer - startPointer), startPointer, endPointer);
 	}
 
 	public long getPointer(int askedPos) {

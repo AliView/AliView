@@ -9,7 +9,8 @@ import aliview.alignment.Alignment;
 
 public interface ColorScheme {
 	
-	Color GREY_TRANSPARENT = new Color(0,0,0,140);
+	public static Color GREY_TRANSPARENT = new Color(0,0,0,140);
+	public static Color TRANSPARENT = new Color(0,0,0,0);
 
 	public Color getBaseForegroundColor(int baseValue);
 	

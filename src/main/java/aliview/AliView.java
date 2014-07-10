@@ -35,7 +35,6 @@ import org.simplericity.macify.eawt.ApplicationEvent;
 import org.simplericity.macify.eawt.ApplicationListener;
 import org.simplericity.macify.eawt.DefaultApplication;
 
-import sun.misc.MessageUtils;
 import utils.DialogUtils;
 import utils.FileUtilities;
 import utils.OSNativeUtils;
@@ -69,11 +68,7 @@ public class AliView implements ApplicationListener{
 		
 		Logger.getRootLogger().setLevel(Level.ALL);
 		logAllLogs();
-		
-		
-		
-		
-		
+			
 		logger.info("version " + AliView.getVersion());
 		long time = AliView.getTime(AliView.class);
 		logger.info("version time " + new Date(time));
@@ -155,9 +150,7 @@ public class AliView implements ApplicationListener{
 
 			// -Dsun.java2d.opengl=true
 			//System.setProperty("sun.java2d.opengl","True");
-
-			
-			 
+	 
 			
 			if(OSNativeUtils.isMac()){
 				
@@ -176,7 +169,6 @@ public class AliView implements ApplicationListener{
 				logger.info("apple.awt.graphics.EnableQ2DX" + System.getProperty("apple.awt.graphics.EnableQ2DX"));
 				logger.info("apple.awt.rendering" + System.getProperty("apple.awt.rendering"));
 
-
 				// ToDo turn on anti-aliasing on Mac
 //				System.setProperty("apple.awt.antialiasing","on");
 				//				System.setProperty("apple.awt.rendering", "VALUE_RENDER_SPEED");		
@@ -187,39 +179,35 @@ public class AliView implements ApplicationListener{
 				logger.info("apple.awt.graphics.UseQuartz" + System.getProperty("apple.awt.graphics.UseQuartz"));
 				logger.info("apple.awt.graphics.EnableQ2DX" + System.getProperty("apple.awt.graphics.EnableQ2DX"));
 				logger.info("apple.awt.rendering" + System.getProperty("apple.awt.rendering"));
+				
 			}
-
-			// change look and feel for a component:
-			//			public void stuff(){
-			//			    JFileChooser chooser = null;
-			//			    LookAndFeel previousLF = UIManager.getLookAndFeel();
-			//			    try {
-			//			        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-			//			        chooser = new JFileChooser();
-			//			        UIManager.setLookAndFeel(previousLF);
-			//			    } catch (IllegalAccessException | UnsupportedLookAndFeelException | InstantiationException | ClassNotFoundException e) {}
-			//			    //Add whatever other settings you want to the method
-			//			    chooser.showOpenDialog(frame);
-			//			}
-
 
 			else if(OSNativeUtils.isLinuxOrUnix()){
 				try {
-					// First set GTK
+					// First try Nimbus
+					boolean uiFound = false;
 					for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-
-						if ("com.sun.java.swing.plaf.gtk.GTKLookAndFeel".equals(info.getClassName())) {   
-							javax.swing.UIManager.setLookAndFeel(info.getClassName());				       
-							OSNativeUtils.installGtkPopupBugWorkaround();					       
-						} 
-					}
-					// Then try Nimbus
-					for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-
+						// First try Nimbus
 						if ("Nimbus".equals(info.getName())) {
 							UIManager.setLookAndFeel(info.getClassName());
+							uiFound = true;
 							break;
 						}
+					}
+					if(! uiFound){
+						for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+							if ("com.sun.java.swing.plaf.gtk.GTKLookAndFeel".equals(info.getClassName())) {   
+								javax.swing.UIManager.setLookAndFeel(info.getClassName());				       
+								OSNativeUtils.installGtkPopupBugWorkaround();
+								uiFound = true;
+								break;
+							}
+						}
+					}
+					if(! uiFound){
+						UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+						uiFound = true;
+						
 					}
 
 				} catch (Exception e) {
@@ -228,8 +216,7 @@ public class AliView implements ApplicationListener{
 			}
 			else{
 				try {
-					UIManager.setLookAndFeel(
-							UIManager.getSystemLookAndFeelClassName());
+					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -247,7 +234,6 @@ public class AliView implements ApplicationListener{
 				// and some more keys
 				setUIFontSize(userSize);
 			}
-
 
 			aliView = new AliView();
 
@@ -270,10 +256,8 @@ public class AliView implements ApplicationListener{
 				alignmentFile = null;
 			}
 
-			// TODO should be replaced 
-			// Special alignmentfile for user anders
-			String username = System.getenv("USERNAME");
-			if(username != null && username.equals("anders") && alignmentFile == null){
+			
+			if(AliView.isDebugMode() && alignmentFile == null){
 		//		alignmentFile = new File("/home/anders/projekt/ormbunkar/analys/sekv_analysis/aligned-WoodsiatrnGR-mafft.fasta.nexus");
 				//File alignmentFile = new File("/home/anders/projekt/ormbunkar/analys/test_seqconcat/test_seqconcat.nexus");
 				//File alignmentFile = new File("/home/anders/projekt/ormbunkar/cytotree/sequences/rbcl_all_ferns.tiny.xml.fasta");
@@ -303,7 +287,7 @@ public class AliView implements ApplicationListener{
 			//	alignmentFile = new File("/home/anders/projekt/alignments/sandies/euArc165F_F1.fasta");
 			//	alignmentFile = new File("/home/anders/projekt/alignments/Woodsia_chloroplast_min4_20131109_v2.excluded.nexus");
 				
-				alignmentFile = new File("/home/anders/projekt/alignments/Woodsia_chloroplast_min1_20131029.nexus");
+	//			alignmentFile = new File("/home/anders/projekt/alignments/Woodsia_chloroplast_min1_20131029.nexus");
 			//	alignmentFile = new File("/vol2/big_data/test.nexus");
 				
 			//			  alignmentFile = new File("/vol2/johns_454/SSURef_108_full_align_tax_silva_trunc.fasta");
@@ -335,6 +319,18 @@ public class AliView implements ApplicationListener{
 				//alignmentFile = new File("/home/anders/tmp/Purple_ITScut2.nexus");
 				//alignmentFile = new File("/home/anders/projekt/ormbunkar/fernloci/carls_example/locus_alignments_transcriptome/4321_transcriptome_alignments_etc/4321_v2.2_allin.nex");
 				//alignmentFile = new File("/opt/Silva_108/core_aligned/Silva_108_core_aligned_seqs.fasta");
+				
+				//alignmentFile = new File("/home/anders/projekt/alignments/MSF_format.example.msf");
+				//alignmentFile = new File("/home/anders/projekt/alignments/clustal_wrong2.aln");
+			//	alignmentFile = new File("/home/anders/projekt/alignments/Woodsia_chloroplast_min4_20131109_v2.excluded.msf");
+				alignmentFile = new File("/home/anders/projekt/alignments/infile_V2.phy");
+	//			alignmentFile = new File("/home/anders/projekt/alignments/smalphylipInterlLongName.phy");
+				
+				
+				
+				if(! alignmentFile.exists()){
+					alignmentFile = null;
+				}
 			}
 
 			// only open file in Mac if there is a file name argument
@@ -423,6 +419,7 @@ public class AliView implements ApplicationListener{
 		return isBreakBecauseOfLowMemory;
 	}
 	
+
 
 	public static void openAlignmentFile(File alignmentFile){	
 		try{
@@ -534,7 +531,7 @@ public class AliView implements ApplicationListener{
 		}catch(OutOfMemoryError memoryErr){
 			logger.info("memory err");
 		//	memoryErr.printStackTrace();
-		//	Messenger.showOKOnlyMessage(Messenger.OUT_OF_MEMORY_ERROR, activeWindow);
+			Messenger.showOKOnlyMessage(Messenger.OUT_OF_MEMORY_ERROR, activeWindow);
 		}catch(Error err){
 			err.printStackTrace();
 		}
@@ -693,20 +690,7 @@ public class AliView implements ApplicationListener{
 			return 0;
 		}
 	}
-
-	public static void showUserError(final String message) {
-		// Less-modal error message
-		Thread t = new Thread(new Runnable(){
-			public void run(){
-				JOptionPane.showMessageDialog(activeWindow, message, "Aliview Problem...", JOptionPane.INFORMATION_MESSAGE);
-			}
-		});
-		t.start();
-	}
-
-	public static void showUserMessage(final String message) {
-		showUserError(message);
-	}
+	
 }
 
 

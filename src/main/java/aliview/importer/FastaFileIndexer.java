@@ -2,15 +2,17 @@ package aliview.importer;
 
 import java.util.ArrayList;
 
+import org.apache.log4j.Logger;
+
 import it.unimi.dsi.io.ByteBufferInpStream;
 import aliview.FileFormat;
 import aliview.sequencelist.FileMMSequenceList;
-import aliview.sequencelist.MappedBuffReaderHelper;
 import aliview.sequences.FastaFileSequence;
 import aliview.sequences.FileSequence;
 import aliview.subprocesses.SubThreadProgressWindow;
 
 public class FastaFileIndexer implements FileIndexer{
+	private static final Logger logger = Logger.getLogger(FastaFileIndexer.class);
 	long estimateTotalSeqInFile = 0;
 	long fileSize = -1;
 
@@ -74,13 +76,14 @@ public class FastaFileIndexer implements FileIndexer{
 		boolean bytesUntilNextLFAreName = false;
 		byte nextByte;
 		mappedBuff.position(filePointerStart);
-
+		int lineLength = 0;
+		
 		while ((nextByte = (byte)mappedBuff.read()) != -1) {
 
 			boolean findNextLF = false;
 
 			// Find name start
-			if(nextByte == '>'){	
+			if(nextByte == '>' && bytesUntilNextLFAreName == false){	
 
 				// save and return last seq
 				if(sequence != null){
@@ -120,6 +123,8 @@ public class FastaFileIndexer implements FileIndexer{
 
 				}
 			}
+			
+			lineLength ++;
 
 			// build name
 			if(bytesUntilNextLFAreName){
@@ -130,7 +135,8 @@ public class FastaFileIndexer implements FileIndexer{
 		// EOF
 		if(nextByte == -1){
 			if(sequence != null){
-				System.out.println("EOF");
+				logger.info("EOF=" + mappedBuff.position());
+				logger.info("sequence.getStartPointer()" + sequence.getStartPointer());
 				sequence.setEndPointer(mappedBuff.position() - 1); // remove EOF
 			}
 		}

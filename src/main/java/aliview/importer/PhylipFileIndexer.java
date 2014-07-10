@@ -13,7 +13,6 @@ import org.apache.log4j.Logger;
 
 import it.unimi.dsi.io.ByteBufferInpStream;
 import aliview.sequencelist.FileMMSequenceList;
-import aliview.sequencelist.MappedBuffReaderHelper;
 import aliview.sequences.FastaFileSequence;
 import aliview.sequences.FileSequence;
 import aliview.sequences.PhylipFileSequence;

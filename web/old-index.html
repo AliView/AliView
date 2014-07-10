@@ -1,0 +1,1073 @@
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title>AliView - Alignment Viewer and Editor</title>
+  <link rel="shortcut icon" href="alignment_ico_64x64.png">
+  <style type="text/css">
+	body
+	{
+		font-family:sans-serif;
+		font-size:12px;
+	}
+	table
+	{
+		font-family:sans-serif;
+		font-size:12px;
+	}
+  </style>
+
+</head>
+
+<body>
+<h1>aliview</h1>
+
+<h3><a href="downloads">Current stable version: 1.08</a> (<a href="version_history.txt">version history</a>)</h3>
+
+<p>AliView is yet another alignment viewer and editor, but this is probably one
+of the fastest and most intuitive to use, not so bloated and hopefully in your
+likings...</p>
+
+<p>The general idea when designing this program has always been speed and
+usability, all new functions were always optimized so they did not affect the
+general performance and capability to work swiftly with large alignments. </p>
+
+<p>A need to easily sort, view, remove, edit and merge sequences from large
+transcriptome datasets initiated the work with the program.</p>
+
+<p>The program is developed at department of Systematic Biology (Uppsala
+University) so there is probably a predominance in functionality supporting
+someone working with phylogenies.</p>
+
+<img style="width: 400px;" alt="" src="images/prog1.png"><br>
+
+
+<p>A selection of features:</p>
+- edit (manually)<br>
+- align, add and align automatically (with muscle or mafft or any other aligner
+of your choice)<br>
+- find degenerate primers in conserved regions in an alignment of mixed
+species<br>
+- handles fasta, nexus or phylip-format (unlimited file sizes)<br>
+- on the fly translation of nucleotides to amino acids<br>
+- various visual cues to highlight consensus characters or characters deviating
+from consensus<br>
+- simple copy/paste/drop/remove of sequences/files<br>
+- a very simple to use "external interface" that lets you invoke other of your
+favorite programs (you could for example automatically have the alignment sent
+to FastTree and then automatically opened in FigTree).<br>
+
+<p><a href="downloads/">download here (Linux, Mac OS X, Windows)</a> - install instructions see below</p>
+
+
+
+The program is released under Open Source Software License 'GNU General Public
+License, version 3.0 (GPLv3)' <br>
+Source code is available at GitHub: <a
+href="https://github.com/AliView/AliView">https://github.com/AliView/AliView</a><br>
+
+
+
+<h2>contact: </h2>
+
+<p>Anders Larsson,<br>
+Systematic Biology,
+Dep. of Organismal Biology<br>
+Uppsala University<br>
+Sweden<br>
+email: anders.larsson [at] ebc.uu.se<br>
+Phone: +46 (0)18 471 2932<br>
+Fax: +46 (0)18 471 6457 </p>
+<br>
+<br>
+
+<h2>Highlights:</h2>
+
+<p>Don't miss the mouse-wheel zoom out functionality to see the whole alignment
+at once: </p>
+
+<p style="font-weight: bold;"><img style="width: 400px;" alt=""
+src="images/tutorial/2.1.large.png"></p>
+<br>
+
+<h2><a name="DOWNLOAD">Install Instructions and Downloads</a></h2>
+
+<h3><a href="version_history.txt">Version history</a></h3>
+
+<p><a href="demo/">Some demo datasets can be found here</a></p>
+
+<h3>Linux (all versions)  <a href="downloads/">download here</a></h3>
+aliview.install.run<br>
+<br>
+(this is a executable archive that will copy the files to the /usr/home/bin/
+and /usr/share)<br>
+on some systems you need to change the execution rights of the install file:<br>
+<br>
+<code>chmod +x aliview.install.run <br>
+sudo ./aliview.install.run </code><br>
+<br>
+(most likely you need to sudo the installation)<br>
+<br>
+start the program with aliview (this is a sh script that will execute java -jar
+aliview.jar)<br>
+<br>
+
+<b>NOTE:</b> If you are running Linux, consider upgrading to <b>Java 8</b>, there is a <b>significant improvement in drawing speed</b> since it is using Linux built in XRender. <br>
+Install is very simple (1 minute) - <a href=#java8install>Java 8 install instructions for Ubuntu/Debian/OpenSuse/RedHat</a><br>
+
+
+<br>
+
+<b>Linux (alternative install)</b><br>
+aliview.tgz is an archive including the program files<br>
+<br>
+
+<h3>Mac OS X (all versions)  <a href="downloads/">download here</a> </h3>
+AliView-app.zip<br>
+<br>
+the program is distributed as a Application that only need to be dropped in
+your App-folder from (sometimes you need to unpack it manually)<br>
+<br>
+<b>OBS! On Mavericks you might get an error message ”This
+application is damaged and can't be opened. You should move it to the
+Trash.”</b> - The file is actually not damaged, it is just a bad error
+message. There is a settings in the ”Gatekeeper” that you need to change to
+be able to download software from other places than the App-store.<br>
+How to solve:<br>
+<a
+href="http://answers.uchicago.edu/page.php?id=25481">http://answers.uchicago.edu/page.php?id=25481
+</a><br>
+<br>
+<br>
+
+<h3>Windows (all versions)  <a href="downloads/">download here</a></h3>
+AliView-Setup.exe (There are also an alternative executable without installer
+and one version packaged in .jar file)<br>
+<br>
+Run the installer, the program will default installation to directory
+C:\Program Files (x86)\AliView 
+
+<p><strong>NOTE:</strong> some virus scanners might block the installation and
+need to be temporarily disabled.<br>
+<!--<img style="width: 371px; height: 288px;" alt="" src="images/windows-install.png"><br> -->
+</p>
+
+<br>
+<br>
+
+
+<h1><a name="BUG_OR_FEATURE" id="BUG_OR_FEATURE">Report a bug or feature
+request:</a></h1>
+Two ways: <br>
+<br>
+1. Report issue at AliView GitHub Issues tracker: <a
+href="https://github.com/AliView/AliView/issues/">https://github.com/AliView/AliView/issues/</a>
+<br>
+or <br>
+2. Send email to: anders.larsson@ebc.uu.se <br>
+
+
+<p></p>
+
+<p></p>
+
+<p></p>
+
+<h1>Feature-list:</h1>
+
+<p>- fast and light-weight <br>
+- simple navigation, mouse-wheel zoom out unlimited to see whole alignment, and
+zoom in on place of interest. <br>
+- various visual cues to highlight consensus characters or characters deviating
+from consensus or characters deviating from a selected "trace"-sequence <br>
+- edit sequences/alignment (manually), insert, delete, change, move, rename
+(with keyboard or mouse) <br>
+- align, add and align automatically with MUSCLE (included) or MAFFT, or any
+other aligner of your choice <br>
+- define aligner program presets (different parameters, different software) <br>
+- align new sequences to existing or realign all <br>
+- realign a selected block <br>
+- realign nucleotides as translated amino-acids <br>
+- delete vertical gaps <br>
+- undo/redo <br>
+- find degenerate primers in conserved regions in an alignment of mixed species
+<br>
+- open and save in FASTA-, NEXUS- or PHYLIP-format (unlimited file sizes) <br>
+- print (current view) <br>
+- export whole alignment as an image file (png-format). <br>
+- copy selection (as fasta-sequences or just characters) <br>
+- paste sequences (both as sequences in clipboard or filenames in clipboard)
+<br>
+- add more sequences from file <br>
+- merge two sequences - and calculate consensus if the overlap is not perfect
+<br>
+- translate (view) nucleotide sequences as amino-acid sequences <br>
+- save translated alignment <br>
+- read and preserve Codonpos, Charset and Excludes (Nexus-specification) <br>
+- change Codonpos for selected regions (Nexus-specification) <br>
+- drag-drop/remove of sequences/files <br>
+- move sequences to top/bottom with key-press <br>
+- a very simple to use "external interface" that lets you invoke other of your
+favorite programs (you could for example automatically have the alignment sent
+to FastTree and then automatically opened in FigTree). <br>
+- search function that finds patterns across gaps and follow IUPAC codes. <br>
+- search multiple sequence names at once (stored in clipboard) <br>
+- reverse complement/reverse/complement sequences or whole alignment <br>
+- different color schemes including ClustalX <br>
+- sort sequences by name <br>
+</p>
+
+<h1>Illustrated feature-list:</h1>
+
+<h3>Nucleotide and Amino Acid Alignments</h3>
+<img style="width: 600px;" alt="" src="images/tutorial/1.standard.png"><br>
+
+<h3>Unlimited mouse wheel zoom in/out to see whole alignment<br>
+Speedy handling of large alignments.<br>
+Reads unlimited size FASTA, PHYLIP and NEXUS files</h3>
+<img style="width: 600px;" alt="" src="images/tutorial/2.1.large.png"><br>
+
+<h3>Alternative Color schemes (SeaView)</h3>
+<img style="width: 600px;" alt="" src="images/tutorial/3.color-seaview.png"><br>
+
+<h3>ClustalX consensus color scheme</h3>
+<img style="width: 600px;" alt="" src="images/tutorial/3.5.clustalx.color.png"><br>
+
+<h3>View nucleotides colored as translated Amino Acids</h3>
+<img style="width: 600px;" alt="" src="images/tutorial/4.translated.png"><br>
+
+<h3>View nucleotides colored as translated Amino Acids (1-position)</h3>
+<img style="width: 600px;" alt="" src="images/tutorial/4.1.translated.1pos.png"><br>
+
+<h3>Highlight characters deviating from Consensus</h3>
+<img style="width: 600px;" alt="" src="images/tutorial/5.non.consensus.png"><br>
+
+<h3>Highlight characters deviating from selected "Trace" sequence</h3>
+<img style="width: 600px;" alt="" src="images/tutorial/5.2.trace.png"><br>
+
+<h3>Highlight characters belonging to Consensus</h3>
+<img style="width: 600px;" alt="" src="images/tutorial/5.1.consensus.png"><br>
+
+<h3>MUSCLE or other aligner program to realign</h3>
+<img style="width: 600px;" alt="" src="images/tutorial/6.realign.png"><br>
+
+<h3>Realign selected Block with muscle or other aligner program</h3>
+<img style="width: 600px;" alt="" src="images/tutorial/6.1.realign.block.png"><br>
+
+<h3>Realign single sequence with muscle or other aligner program</h3>
+<img style="width: 600px;" alt="" src="images/tutorial/6.2.realign.sequence.png"><br>
+
+<h3>Nucleotides realigned as translated AminoAcids and then retranslated to nucleotides</h3>
+<img style="width: 600px;" alt="" src="images/tutorial/6.3.realign.translated.png"><br>
+
+<h3>Manual Alignment with Keyboard or Mouse</h3>
+<img style="width: 600px;" alt="" src="images/tutorial/7.1.manual.edit.png"><br>
+
+<h3>Delete sequences, reorder, move to top, move to bottom</h3>
+<img style="width: 600px;" alt="" src="images/tutorial/7.2.reorder.delete.png"><br>
+
+<h3>Merge sequences (overlapping or not - create consensus if overlapping)</h3>
+<img style="width: 600px;" alt="" src="images/tutorial/7.3.merge.png"><br>
+
+<h3>Drag and drop file/sequences, if you hold Shift when dropping<br>then you add to current alignment, otherwise open new</h3>
+<img style="width: 600px;" alt="" src="images/tutorial/8.3.dragdrop.png"><br>
+
+<h3>Find degenerate primers in selected blocks</h3>
+<img style="width: 600px;" alt="" src="images/tutorial/8.primer.png"><br>
+
+<h3>Configure external programs</h3>
+<img style="width: 600px;" alt="" src="images/tutorial/8.1.external.png"><br>
+
+<h3>Add and configure other alignment programs to use e.g. Mafft</h3>
+<img style="width: 600px;" alt="" src="images/tutorial/8.2.aligner.config.png"><br>
+
+
+
+<p></p>
+
+<h1><a name="TOP_HELP" id="TOP_HELP">Help section:</a></h1>
+
+<h2>Contents:</h2>
+
+<h4><a href="#file_menu">File menu</a></h4>
+
+<h4><a href="#edit_menu">Edit menu</a></h4>
+
+<h4><a href="#selection_menu">Selection menu</a></h4>
+
+<h4><a href="#view_menu">View menu</a></h4>
+
+<h4><a href="#align_menu">Align menu</a></h4>
+
+<h4><a href="#primer_menu">Primer menu</a></h4>
+
+
+
+
+<h4><a href="#large_file">Large files indexed</a></h4>
+
+<h4><a href="#memory_settings">Memory settings</a></h4>
+
+<h4><a href="#General_settings">General setting (Preferences window)</a></h4>
+
+<h4><a href="#Find_Primer_settings">Find primer setting (Preferences
+window)</a></h4>
+
+<h4><a href="#ALIGNER_SETTINS_ALL">Align All Commands - Edit alignment
+program</a></h4>
+
+<h4><a href="#ALIGNER_SETTINS_ADD">Align Add Commands - Edit alignment
+program</a></h4>
+
+<h4><a href="#EXTERNAL_COMMANDS">External Commands - Add and edit programs
+called by AliView</a></h4>
+
+<h4><a href="#drag_drop">Drag and drop Tips</a></h4>
+
+
+
+<h2><a name="file_menu">File menu:</a></h2>
+
+<p><strong>Open File</strong>: AliView will open files in Fasta, Nexus and
+Phylip format.</p>
+
+<p><strong>Save as Nexus simplified names</strong>: Unorthodox characters (-
+\?./|\,&amp;) in Sequence names are replaced by "_"</p>
+
+<p><strong>Save as Codonpos Nexus (nucleotide dataset only):</strong> All pos 1
+nucleotides are saved as one charset in beginning of alignment, thereafter all 2
+pos nucleotides as one charset, then all 3 pos and finally all non-coding
+(0-pos). </p>
+
+<p><strong>Print:</strong> Apart from printing to paper, it is often possible
+in the settings to "print to file", this way you can get post script (ps) files
+of the alignment.</p>
+
+<p><strong>Export alignment as image:</strong> This will save the entire
+alignment as an .png image file</p>
+
+<p><strong>Save selection as Fasta:</strong> Only the selected sequences, or
+selected parts of sequences will be included in the .fasta file - a very simple
+way of pruning away things from your alignment.</p>
+
+<p><strong>Save Translated alignment as Amino acids (nucleotide dataset
+only):</strong> Program will translate nucleotides into AminoAcids (taking into
+account user specified edits in codon positions when translating)</p>
+
+<p><strong>Start debug:</strong> Prints more messages</p>
+
+<p><strong>Show message log:</strong> Displays program messages and errors in a
+message window</p>
+
+<p></p>
+
+<h2><a name="edit_menu">Edit:</a></h2>
+
+<p>When opening very large files and they are indexed, then the editing
+capabilities are very limited - but if you need to edit it might be possible if
+you increase the Memory resources for AliViev <a href="#memory_settings">see
+here</a>. </p>
+
+<p><strong>Undo/Redo:</strong> AliView has undo/redo functionality (except from
+when large indexed files are read from file). Depending on the <a
+href="#memory_settings">Memory settings</a>, the number of possible undo/redo
+steps change.</p>
+
+<p><strong>Copy selection as Fasta:</strong> The selected sequences/characters
+are copied into clipboard as a Fasta sequences (including both name and
+sequence).</p>
+
+<p><strong>Copy selection as characters:</strong> The selected
+sequences/characters are copied into clipboard as characters only - Not
+including the names of the sequences where characters come from.</p>
+
+<p><strong>Paste (fasta sequences):</strong> Sequence(s) will be pasted at top
+of alignment if clipboard contains <strong>either</strong> File containing
+fasta sequences <strong>or</strong> text in fasta format, e.g.:<br>
+&gt;Name_of_seq<br>
+TTGGGCATG<br>
+</p>
+
+<p><strong>Add sequences from file:</strong> Add sequence(s) from a file to be
+pasted at top of alignment (FASTA,PHYLIP or NEXUS file format).</p>
+
+<p><strong>Edit mode:</strong> It is not possible to edit alignment by accident
+unless you activate "Edit Mode".</p>
+
+<p><strong>Clear selected bases:</strong> Changes selected
+nucleotides/AminoAcids into GAP.</p>
+
+<p><strong>Delete selected</strong> Removes selected
+sequences/nucleotides/AminoAcids from alignment.</p>
+
+<p><strong>Delete selected bases:</strong> Removes selected
+nucleotides/AminoAcids from sequences/alignment.</p>
+
+<p><strong>Delete vertical gaps:</strong> If there are column(s) in the
+alignment only containing GAP these positions are removed.</p>
+
+<p><strong>Delete all gaps in all sequences:</strong> Degap the whole
+alignment.</p>
+
+<p><strong>Trim sequences/alignment:</strong> If there are column(s) in the
+beginning or at the end of the alignment containing GAP only, then these
+positions are removed.</p>
+
+<p><strong>Excludes (Nexus specification)</strong> can be useful if you have an
+alignment with sections that you don't want to remove permanently - but
+sometimes when you make an analysis. Then you can save the alignment with the
+"Excluded" sections removed and use that alignment for the analysis.</p>
+
+<p><strong>Delete excluded bases:</strong> Removes sections of the alignment
+are marked as "Excludes" (Nexus specification). See also above under Excludes
+(Nexus specification).</p>
+
+<p><strong>Find </strong> Finds in name or nucleotides/aminoacids - searches
+across gaps and obey IUPAC codes.</p>
+
+<p><strong>Find sequence names from clipboard</strong> Finds and selects
+sequence(s) matching names that are stored in clipboard as list.<br>
+example list in clipboard:<br>
+Woodsia<br>
+Athyrium<br>
+Dryopteris </p>
+
+<p><strong>Merge two selected sequences:</strong> If there is an non identical
+overlap AliView will create a consensus sequence.</p>
+
+<p><strong>Reverse complement clipboard:</strong> Will reverse complement
+characters/fasta sequences that are stored in clipboard.</p>
+
+<h2><a name="selection_menu">Selection:</a></h2>
+
+<p><strong>Move selected sequences up</strong></p>
+
+<p><strong>Move selected sequences down</strong></p>
+
+<p><strong>Move selected sequences to top</strong></p>
+
+<p><strong>Move selected sequences to bottom</strong></p>
+
+<p><strong>Add selection to Excludes:</strong> Marks sections of the alignment
+as "Excludes" (Nexus specification). See also above under Excludes (this is
+saved in the NEXUS Excludes block).</p>
+
+<p><strong>Remove selection from Excludes:</strong> Removes selected sections
+of the alignment from "Excludes" (if they are included already). See also above
+under Excludes (Nexus specification).</p>
+
+<p><strong>Select charset:</strong> If the alignment file have charsets defined
+you can select one.</p>
+
+<p><strong>Set selection as coding:</strong> In a nucleotide alignment you can
+specify the coding regions, pick the start position of the selection and then
+further bases will be marked as codon position 1,2,3,1,2,3... and so forth.
+(this is saved in the NEXUS Codonpos block)</p>
+
+<p><strong>Set selection as Non-coding:</strong> Set bases as non-coding (this
+is saved in the NEXUS Codonpos block)</p>
+
+<h2><a name="view_menu">View:</a></h2>
+
+<p><strong>Decrease Font Size</strong></p>
+
+<p><strong>Decrease Font Size</strong></p>
+
+<p><strong>Highlight consensus characters</strong> Characters in a column that
+belong to Majority rule consensus are being highlighted by removing background
+colors on deviating characters.</p>
+
+
+<h2><a name="primer_menu">Primer:</a></h2>
+
+<p><strong>Find primer in current selection:</strong>
+<br>
+<br>
+<strong>Note</strong> - You can change the essential parameters when searching for primers in the <a href="#Find_Primer_settings">Find primer settings</a>
+<br>
+<br>
+1. Select a block in the Alignment where you want to find a primer.<br>
+2. Select the menu "Find primer in current selection"<br>
+3. AliView will now open a window with all possible primers in the selected region (min length and max length of the primer is specified in "Find primer settings") as an ordered list sorted by the number of degenerate positions, self-binding values and melting temperature (TM).<br>
+<br>
+<img alt="" src="images/find_primer_result_win.png">
+<br>
+<br>
+4. If you click on a specific primer Another window will open with all primer details - and the primer position will also be highlighted in the alignment.<br>
+<br>
+<img alt="" src="images/find_primer_detail_win.png">
+</p>
+
+<h2><a name="external_commands_menu">External commands:</a></h2>
+
+<p><strong>Edit external commands:</strong> You can have AliView call other programs with the current alignment as a parameter <a href=#EXTERNAL_COMMANDS>see here for examples how to design a command</a></p>
+
+<h2><a name="help_menu">Help menu</a></h2>
+
+<p><strong>Help</strong> AliView will open this document from this menu.....</p>
+
+
+<h2><a name="large_file">Load more sequences from file</a></h2>
+
+<p>If you have opened a large file and all sequences were not indexed at once,
+this menu will show up and you can select other parts of the file to index. You
+can also change the number of sequences to index at once in the Program
+preferences, <a href="#General_settings">General settings</a></p>
+
+<p></p>
+
+<p><br></p>
+
+<p><br></p>
+
+<p><br></p>
+
+<p><br></p>
+
+
+<h2><a name="memory_settings">Memory settings</a></h2>
+
+<p>If you want AliView to read larger alignments in memory and not from file
+(this allows for more editing capabilities), then you can change the maximum
+memory settings for the program.</p>
+
+<p>The amount of memory needed for a file to be read into memory is about 2 x file size.</p>
+
+<p><b>Mac OS X</b> </p>
+
+<p>Go to Applications in Finder --&gt;Left click on specific application
+AliView --&gt; Show Package Content --&gt; Contents --&gt; Then open the file
+"Info.Plist" in a text-editor and change the parameter: &lt;string&gt;-Xmx512m
+-Xms128m&lt;/string&gt; to something different (for example 2GB=2048M):<br>
+&lt;string&gt;-Xmx2048m -Xms128m&lt;/string&gt;</p>
+
+<p><b>Linux</b> </p>
+
+<p>/usr/bin/aliview <br>
+open this file in text-editor and change the parameter -Xmx1024M (default
+setting = 1024M memory)</p>
+
+<p><b>Windows</b> </p>
+
+<p>In the installation folder of AliView (default: "c:\Program Files\AliView\")
+open the file "AliView.l4j.ini" in a text editor and change the setting:
+-Xmx1024m to something you prefer (for example 2GB=2048M) -Xmx2048m</p>
+
+<p></p>
+
+<h2><a name="General_settings">General setting</a></h2>
+<img style="width: 522px; height: 361px;" alt=""
+src="images/general_settings.png"><br>
+<br>
+<b>Reverse horizontal mouse-wheel (touchpad) movement <br>
+Reverse vertical mouse-wheel (touchpad) movement </b> <br>
+(if the direction if movement is driving you crazy - adjust it here).<br>
+<br>
+<b>Horizontal scroll speed <br>
+Vertical scroll speed<br>
+</b> (on some systems the movement is to fast/slow) – you can adjust it
+here.<br>
+<br>
+<b>Override default program font size</b> <br>
+(on some computers with extreme resolution it might be hard to read text with
+default settings)<br>
+<br>
+When working with large files being read straight from disk:<br>
+<b>Number of sequences to Index at a time in very large files</b><br>
+(you can change the number of sequences being indexed at once – the rest of
+the sequences in the file is available by selecting the menu-alternative
+”Load more sequences” (this menu is only showing up when the file is parted
+into ”pages”)<br>
+<br>
+<b>Number of sequences to count when calculating ClustalX consensus on large
+files</b><br>
+(it would take very long time to calculate consensus considering every position
+in a large file)<br>
+
+
+<h2><a name="Find_Primer_settings">Find Primer settings</a></h2>
+<img alt="" style="width: 600px;" src="images/primersettings.jpg"><br>
+<br>
+<br>
+
+
+<h2><a name="ALIGNER_SETTINS_ALL">Program to use for "Align all"
+commands</a></h2>
+<img style="width: 600px;" alt="" src="images/align_all_settings.png"><br>
+<br>
+In the <b>Program</b> field you enter the program you want to execute when
+using the alignment functions in AliView.<br>
+<br>
+There are default settings for Muscle and Mafft included in AliView and they
+look different for different operating systems (Windows / Linux / Mac OSX).<br>
+<br>
+Below are commented examples for <a href="#align_program_mac">Mac OS X</a>, <a
+href="#align_program_linux">Linux</a> and <a
+href="#align_program_win">Windows</a> <br>
+<br>
+<strong>Note 1:</strong>It is essential that file names that contains spaces
+or unorthodox characters are specified within citation marks <b>”</b> <br>
+On Windows for example: ”c:\Program Files\mafft-win\mafft.bat”<br>
+On Mac OS X for example: ”FigTree 1.4.0.App”<br>
+<br>
+<strong>Note 2: </strong>When calling MAFFT on Windows computers you are
+actually starting the program cmd.exe and instead including mafft program path
+as a parameter (compare for example with the muscle.exe program and
+command).<br>
+
+
+<h2><a name="ALIGNER_SETTINS_ADD">Program to use when adding and aligning in
+new sequences ("Align add" commands)</a></h2>
+<img style="width: 600px;" alt="" src="images/align_add_settings.png"><br>
+<br>
+For explanation on how to fill in the fields see above "Program to use for
+"Align all" commands" and below are also commented examples for <a
+href="#align_program_mac">Mac OS X</a>, <a
+href="#align_program_linux">Linux</a> and <a
+href="#align_program_win">Windows</a> <br>
+
+
+<h3>Some commented examples of Aligner Program commands:</h3>
+<strong>NOTE:</strong> It is essential that file names that contains spaces are
+specified within citation marks " <br>
+<br>
+<strong><a name="align_program_mac">MAC OS X</a></strong> <!-- START TABLE --> 
+
+<table border="1" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2"><strong>Align ALL command examples</strong></td>
+    </tr>
+    <tr>
+      <td>muscle command (default)</td>
+      <td>Comment</td>
+    </tr>
+    <tr>
+      <td><code>/home/the-user/.AliView/binaries/muscle3.8.425_i86linux64<br>
+        -in CURRENT_ALIGNMENT_FASTA -out TEMP_OUT_FILE </code></td>
+      <td>The alignment program (muscle) is run with parameter -in -out <br>
+        AliView will replace the text CURRENT_ALIGNMENT_FASTA with a temporary
+        file in which AliView saves the current alignment<br>
+        AliView will replace the text TEMP_OUT_FILE with a temporary file name
+        created in the temp-directory on the computer<br>
+        When the alignment program is done - AliView will reload the output
+        file from alignment program TEMP_OUT_FILE </td>
+    </tr>
+    <tr>
+      <td>MAFFT example</td>
+      <td>Comment</td>
+    </tr>
+    <tr>
+      <td><code>/usr/local/bin/mafft<br>
+        --localpair --reorder --maxiterate 1000 --out TEMP_OUT_FILE
+        CURRENT_ALIGNMENT_FASTA</code><br>
+      </td>
+      <td><strong>NOTE</strong> that MAFFT is not installed with AliView, and
+        have to be installed separately<br>
+        In this example the program (MAFFT) is run with parameter --localpair
+        --reorder --maxiterate 1000 --out <br>
+        AliView will replace the text CURRENT_ALIGNMENT_FASTA with a temporary
+        file in which AliView saves the current alignment<br>
+        AliView will replace the text TEMP_OUT_FILE with a temporary file name
+        created in the temp-directory on the computer<br>
+        When the alignment program is done - AliView will automatic reload the
+        output file from alignment program TEMP_OUT_FILE </td>
+    </tr>
+    <tr>
+      <td colspan="2"><strong>Align ADD command examples</strong></td>
+    </tr>
+    <tr>
+      <td>muscle command (default)</td>
+      <td>Comment</td>
+    </tr>
+    <tr>
+      <td><code>/home/the-user/.AliView/binaries/muscle3.8.425_i86linux64<br>
+        -profile -in1 CURRENT_ALIGNMENT_FASTA -in2 SECOND_SEQUENCES -out
+        TEMP_OUT_FILE </code></td>
+      <td>The alignment program (muscle) is run with parameter -profile -in1
+        -in2 -out <br>
+        That is the MUSCLE of adding sequences to an excisting alignment.<br>
+        AliView will replace the text CURRENT_ALIGNMENT_FASTA with a temporary
+        file in which AliView saves the current alignment<br>
+        AliView will replace the text SECOND_SEQUENCES with a temporary file in
+        which AliView saves the new sequences.<br>
+        AliView will replace the text TEMP_OUT_FILE with a temporary file name
+        created in the temp-directory on the computer<br>
+        When the alignment program is done - AliView will reload the output
+        file from alignment program TEMP_OUT_FILE </td>
+    </tr>
+    <tr>
+      <td>MAFFT example</td>
+      <td>Comment</td>
+    </tr>
+    <tr>
+      <td><code>/usr/local/bin/mafft<br>
+        --add SECOND_SEQUENCES --out TEMP_OUT_FILE
+        CURRENT_ALIGNMENT_FASTA</code><br>
+      </td>
+      <td><strong>NOTE</strong> that MAFFT is not installed with AliView, and
+        have to be installed separately<br>
+        In this example the program (MAFFT) is run with parameter --add --out
+        <br>
+        AliView will replace the text SECOND_SEQUENCES with a temporary file in
+        which AliView saves the new sequences.<br>
+        AliView will replace the text CURRENT_ALIGNMENT_FASTA with a temporary
+        file in which AliView saves the current alignment<br>
+        AliView will replace the text TEMP_OUT_FILE with a temporary file name
+        created in the temp-directory on the computer<br>
+        When the alignment program is done - AliView will automatic reload the
+        output file from alignment program TEMP_OUT_FILE </td>
+    </tr>
+  </tbody>
+</table>
+<!-- END TABLE -->
+<br>
+<br>
+<strong><a name="align_program_linux">LINUX</a></strong> <!-- START TABLE --> 
+
+<table border="1" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2"><strong>Align ALL command examples</strong></td>
+    </tr>
+    <tr>
+      <td>muscle command (default)</td>
+      <td>Comment</td>
+    </tr>
+    <tr>
+      <td><code>/home/the-user/.AliView/binaries/muscle3.8.425_i86linux64<br>
+        -in CURRENT_ALIGNMENT_FASTA -out TEMP_OUT_FILE </code></td>
+      <td>The alignment program (muscle) is run with parameter -in -out <br>
+        AliView will replace the text CURRENT_ALIGNMENT_FASTA with a temporary
+        file in which AliView saves the current alignment<br>
+        AliView will replace the text TEMP_OUT_FILE with a temporary file name
+        created in the temp-directory on the computer<br>
+        When the alignment program is done - AliView will reload the output
+        file from alignment program TEMP_OUT_FILE </td>
+    </tr>
+    <tr>
+      <td>MAFFT example</td>
+      <td>Comment</td>
+    </tr>
+    <tr>
+      <td><code>/usr/local/bin/mafft<br>
+        --localpair --reorder --maxiterate 1000 --out TEMP_OUT_FILE
+        CURRENT_ALIGNMENT_FASTA</code><br>
+      </td>
+      <td><strong>NOTE</strong> that MAFFT is not installed with AliView, and
+        have to be installed separately<br>
+        In this example the program (MAFFT) is run with parameter --localpair
+        --reorder --maxiterate 1000 --out <br>
+        AliView will replace the text CURRENT_ALIGNMENT_FASTA with a temporary
+        file in which AliView saves the current alignment<br>
+        AliView will replace the text TEMP_OUT_FILE with a temporary file name
+        created in the temp-directory on the computer<br>
+        When the alignment program is done - AliView will automatic reload the
+        output file from alignment program TEMP_OUT_FILE </td>
+    </tr>
+    <tr>
+      <td colspan="2"><strong>Align ADD command examples</strong></td>
+    </tr>
+    <tr>
+      <td>muscle command (default)</td>
+      <td>Comment</td>
+    </tr>
+    <tr>
+      <td><code>/home/the-user/.AliView/binaries/muscle3.8.425_i86linux64<br>
+        -profile -in1 CURRENT_ALIGNMENT_FASTA -in2 SECOND_SEQUENCES -out
+        TEMP_OUT_FILE </code></td>
+      <td>The alignment program (muscle) is run with parameter -profile -in1
+        -in2 -out <br>
+        That is the MUSCLE of adding sequences to an excisting alignment.<br>
+        AliView will replace the text CURRENT_ALIGNMENT_FASTA with a temporary
+        file in which AliView saves the current alignment<br>
+        AliView will replace the text SECOND_SEQUENCES with a temporary file in
+        which AliView saves the new sequences.<br>
+        AliView will replace the text TEMP_OUT_FILE with a temporary file name
+        created in the temp-directory on the computer<br>
+        When the alignment program is done - AliView will reload the output
+        file from alignment program TEMP_OUT_FILE </td>
+    </tr>
+    <tr>
+      <td>MAFFT example</td>
+      <td>Comment</td>
+    </tr>
+    <tr>
+      <td><code>/usr/local/bin/mafft<br>
+        --add SECOND_SEQUENCES --out TEMP_OUT_FILE
+        CURRENT_ALIGNMENT_FASTA</code><br>
+      </td>
+      <td><strong>NOTE</strong> that MAFFT is not installed with AliView, and
+        have to be installed separately<br>
+        In this example the program (MAFFT) is run with parameter --add --out
+        <br>
+        AliView will replace the text SECOND_SEQUENCES with a temporary file in
+        which AliView saves the new sequences.<br>
+        AliView will replace the text CURRENT_ALIGNMENT_FASTA with a temporary
+        file in which AliView saves the current alignment<br>
+        AliView will replace the text TEMP_OUT_FILE with a temporary file name
+        created in the temp-directory on the computer<br>
+        When the alignment program is done - AliView will automatic reload the
+        output file from alignment program TEMP_OUT_FILE </td>
+    </tr>
+  </tbody>
+</table>
+<!-- END TABLE -->
+<br>
+<br>
+<strong><a name="align_program_win">WINDOWS</a></strong> <!-- START TABLE --> 
+
+<table border="1" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2"><strong>Align ALL command examples</strong></td>
+    </tr>
+    <tr>
+      <td>muscle command (default)</td>
+      <td>Comment</td>
+    </tr>
+    <tr>
+      <td><code>C:\Users\anders\.AliView\binaries\muscle3.8.425_win32.exe<br>
+        -in CURRENT_ALIGNMENT -out TEMP_OUT_FILE </code></td>
+      <td>The alignment program (muscle) is run with parameter -in -out <br>
+        AliView will replace the text CURRENT_ALIGNMENT_FASTA with a temporary
+        file in which AliView saves the current alignment<br>
+        AliView will replace the text TEMP_OUT_FILE with a temporary file name
+        created in the temp-directory on the computer<br>
+        When the alignment program is done - AliView will reload the output
+        file from alignment program TEMP_OUT_FILE </td>
+    </tr>
+    <tr>
+      <td>MAFFT example</td>
+      <td>Comment</td>
+    </tr>
+    <tr>
+      <td><code>cmd.exe<br>
+        /C "C:\Program Files\mafft-win\mafft.bat" --localpair --reorder
+        --maxiterate 1000 --out TEMP_OUT_FILE CURRENT_ALIGNMENT </code></td>
+      <td><strong>NOTE</strong> that MAFFT is not installed with AliView, and
+        have to be installed separately<br>
+        In this example the program (MAFFT) is run with parameter --localpair
+        --reorder --maxiterate 1000 --out <br>
+        <strong>NOTE2</strong> The program mafft.bat is actually called by
+        program cmd.exe with parameter /C<br>
+        AliView will replace the text CURRENT_ALIGNMENT_FASTA with a temporary
+        file in which AliView saves the current alignment<br>
+        AliView will replace the text TEMP_OUT_FILE with a temporary file name
+        created in the temp-directory on the computer<br>
+        When the alignment program is done - AliView will automatic reload the
+        output file from alignment program TEMP_OUT_FILE </td>
+    </tr>
+    <tr>
+      <td colspan="2"><strong>Align ADD command examples</strong></td>
+    </tr>
+    <tr>
+      <td>muscle command (default)</td>
+      <td>Comment</td>
+    </tr>
+    <tr>
+      <td><code>C:\Users\anders\.AliView\binaries\muscle3.8.425_win32.exe<br>
+        -profile -in1 CURRENT_ALIGNMENT_FASTA -in2 SECOND_SEQUENCES -out
+        TEMP_OUT_FILE </code></td>
+      <td>The alignment program (muscle) is run with parameter -profile -in1
+        -in2 -out <br>
+        That is the MUSCLE of adding sequences to an excisting alignment.<br>
+        AliView will replace the text CURRENT_ALIGNMENT_FASTA with a temporary
+        file in which AliView saves the current alignment<br>
+        AliView will replace the text SECOND_SEQUENCES with a temporary file in
+        which AliView saves the new sequences.<br>
+        AliView will replace the text TEMP_OUT_FILE with a temporary file name
+        created in the temp-directory on the computer<br>
+        When the alignment program is done - AliView will reload the output
+        file from alignment program TEMP_OUT_FILE </td>
+    </tr>
+    <tr>
+      <td>MAFFT example</td>
+      <td>Comment</td>
+    </tr>
+    <tr>
+      <td>cmd.exe<br>
+        <code>/C "C:\Program Files\mafft-win\mafft.bat" --add SECOND_SEQUENCES
+        --out TEMP_OUT_FILE CURRENT_ALIGNMENT_FASTA</code></td>
+      <td><strong>NOTE</strong> that MAFFT is not installed with AliView, and
+        have to be installed separately<br>
+        <strong>NOTE2</strong> The program mafft.bat is actually called by
+        program cmd.exe with parameter /C<br>
+        In this example the program (MAFFT) is run with parameter --add --out
+        <br>
+        AliView will replace the text SECOND_SEQUENCES with a temporary file in
+        which AliView saves the new sequences.<br>
+        AliView will replace the text CURRENT_ALIGNMENT_FASTA with a temporary
+        file in which AliView saves the current alignment<br>
+        AliView will replace the text TEMP_OUT_FILE with a temporary file name
+        created in the temp-directory on the computer<br>
+        When the alignment program is done - AliView will automatic reload the
+        output file from alignment program TEMP_OUT_FILE </td>
+    </tr>
+  </tbody>
+</table>
+<!-- END TABLE -->
+<br>
+<br>
+
+
+<h2><a name="EXTERNAL_COMMANDS">External commands - Send the alignment to other
+programs</a></h2>
+<img style="width: 600px;" alt="" src="images/external_program_settings.png">
+<br>
+
+
+<p>You can send the active alignment from AliView as a command parameter to
+other programs and create a simple pipeline of commands executed from a
+Menu-button in AliView. </p>
+Each line is executed as a separate command waiting for the previous to have
+finished, as an example is a simple combination of commands that are taking the
+current alignment and running it in FastTree to create a Maximum Likelihood Tree
+and finally opening the resulting tree in FigTree.<br>
+<br>
+Special Parameters:<br>
+CURRENT_ALIGNMENT_FASTA = The current alignment as a fasta file<br>
+CURRENT_ALIGNMENT_PHYLIP = The current alignment as a phylip file<br>
+TEMP_OUT_FILE = An empty temporary file created by AliView in the
+temp-directory of the computer<br>
+
+
+<h3>Some commented examples of external commands:</h3>
+<strong>NOTE:</strong> It is essential that file names that contains spaces or
+unorthodox characters are specified within citation marks " <br>
+<br>
+
+
+<table border="1" cellspacing="0">
+  <tbody>
+    <tr>
+      <td colspan="2"><strong>WINDOWS</strong></td>
+    </tr>
+    <tr>
+      <td>Command</td>
+      <td>Comment</td>
+    </tr>
+    <tr>
+      <td><code>"C:\Program Files\FastTree\FastTree.exe" -nt -gtr -out
+        TEMP_OUT_FILE CURRENT_ALIGNMENT_FASTA<br>
+        "C:\Program Files\FigTree\FigTree v1.4.0.exe" TEMP_OUT_FILE </code></td>
+      <td><strong>NOTE</strong> that FastTree.exe and FigTree.exe application
+        names are cited with " since the file path and name contains space.<br>
+        The program FastTree.exe is run with parameters -nt -gtr -out
+        [tree-file-out] [input_alignment]<br>
+        AliView will replace the text TEMP_OUT_FILE with a temporary file name
+        created in the temp-directory on the computer<br>
+        AliView will replace the text CURRENT_ALIGNMENT_FASTA with a temporary
+        file in which AliView saves the current alignment<br>
+        When FastTree.exe is finished creating the tree, it will have saved the
+        result into the file TEMP_OUT_FILE<br>
+        FigTree v1.4.0.exe is run when FastTree.exe is finished and as
+        parameter to the program is the tree in the file TEMP_OUT_FILE<br>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2"><strong>MAC OS X</strong></td>
+    </tr>
+    <tr>
+      <td>Command</td>
+      <td>Comment</td>
+    </tr>
+    <tr>
+      <td><code>/usr/local/bin/FastTree -nt -gtr -out TEMP_OUT_FILE
+        CURRENT_ALIGNMENT_FASTA<br>
+        open -a "FigTree v1.4.0.app" TEMP_OUT_FILE </code></td>
+      <td><strong>NOTE</strong> that FigTree application name is cited with "
+        since the name contains space.<br>
+        <strong>NOTE</strong> that FigTree application is started with MacOS X
+        command open -a<br>
+        The program FastTree is run with parameters -nt -gtr -out
+        [tree-file-out] [input_alignment]<br>
+        AliView will replace the text TEMP_OUT_FILE with a temporary file name
+        created in the temp-directory on the computer<br>
+        AliView will replace the text CURRENT_ALIGNMENT_FASTA with a temporary
+        file in which AliView saves the current alignment<br>
+        When FastTree.exe is finished creating the tree, it will have saved the
+        result into the file TEMP_OUT_FILE<br>
+        FigTree v1.4.0 is run when FastTree is finished and as parameter to the
+        program is the tree in the file TEMP_OUT_FILE<br>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2"><strong>LINUX</strong></td>
+    </tr>
+    <tr>
+      <td>Command</td>
+      <td>Comment</td>
+    </tr>
+    <tr>
+      <td><code>/usr/bin/FastTree -nt -gtr -out TEMP_OUT_FILE
+        CURRENT_ALIGNMENT_FASTA<br>
+        "/path/with a space/FigTree" TEMP_OUT_FILE </code></td>
+      <td><strong>NOTE</strong> that if there is space in the path, it should
+        be cited with "<br>
+        The program FastTree is run with parameters -nt -gtr -out
+        [tree-file-out] [input_alignment]<br>
+        AliView will replace the text TEMP_OUT_FILE with a temporary file name
+        created in the temp-directory on the computer<br>
+        AliView will replace the text CURRENT_ALIGNMENT_FASTA with a temporary
+        file in which AliView saves the current alignment<br>
+        When FastTree.exe is finished creating the tree, it will have saved the
+        result into the file TEMP_OUT_FILE<br>
+        FigTree v1.4.0 is run when FastTree is finished and as parameter to the
+        program is the tree in the file TEMP_OUT_FILE<br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+<h2><a name="drag_drop"></a>Drag and Drop</h2>
+
+<p>If you drop a file on the program window it will open a new window with the
+alignment <br>
+<strong>Note:</strong> If you drop a sequence with "Shift"-button pressed - the
+sequences in the file will be added to the currently loaded alignment. </p>
+
+<br>
+<br>
+
+
+<h2><a name="java8install"></a>Java 8 JRE Install (Linux)</h2>
+
+This is tested on Ubuntu/Debian/OpenSuse (RedHat - just download and install <a href=http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html>rpm-package</a>)<br>
+(These install instructions are compiled and simplified fom this excellent tutorial):<br>
+<a href=http://install-things.com/2014/03/24/how-to-install-oracle-java-8-on-ubuntu-12-04-linux/>http://install-things.com/2014/03/24/how-to-install-oracle-java-8-on-ubuntu-12-04-linux/</a>
+
+
+<p>
+1. Download jre tar.gz-version: <br>
+<a href=http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html>http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html</a>
+</p>
+
+<p>
+2. Unpack <br>
+sudo tar zxvf jre-8*-linux-x64.tar.gz
+</p>
+<p>
+3. Move whole unpacked dir: <br>
+<code>sudo mv jre1.8.* /usr/lib/jvm/</code>
+</p>
+
+<p>
+4. Tell your system where new java is located:<br>
+<code>
+sudo update-alternatives --install /usr/bin/java java /usr/lib/jvm/jre1.8.*/bin/java 1
+</code>
+</p>
+
+<p>
+5. Tell your system to use new version:<br>
+<code>
+sudo update-alternatives --set java /usr/lib/jvm/jre1.8.*/bin/java
+</code>
+</p>
+
+</code>
+</p>
+</body>
+</html>

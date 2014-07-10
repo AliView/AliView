@@ -24,10 +24,8 @@ public class FileImportUtils {
 	private int longestSequenceLength;
 
 	public static void main(String[] args) {
-
 		FileImportUtils ffFileTest = new FileImportUtils();
 		ffFileTest.isFileOfAlignmentFormat(new File("/vol2/big_data/SSURef_108_filtered_bacteria_pos_5389-24317.fasta"));
-
 	}
 
 	public FileImportUtils() {
@@ -76,17 +74,21 @@ public class FileImportUtils {
 				// only first char
 				String[] splitted = filestart.split("\n");
 				String firstLine = splitted[0];
+				
+				logger.info("firstLine" + firstLine);
 
 				if(firstLine.startsWith(">")){
 					foundFormat = FileFormat.FASTA;
 				}else if(StringUtils.containsIgnoreCase(firstLine, "NEXUS")){
 					foundFormat = FileFormat.NEXUS;
-				}else if(firstLine.contains(" ")){
-					String[] lineSplitted = firstLine.split("\\s+"); // one or many whitespace
-					if( NumberUtils.isNumber(lineSplitted[0]) && NumberUtils.isNumber(lineSplitted[1]) ){
-						foundFormat = FileFormat.PHYLIP;
-					}
+				}else if(ClustalImporter.isStringValidFirstLine(firstLine)){
+					foundFormat = FileFormat.CLUSTAL;
+				}else if(MSFImporter.isStringValidFirstLine(firstLine)){
+					foundFormat = FileFormat.MSF;
+				}else if(PhylipImporter.isStringValidFirstLine(firstLine)){
+					foundFormat = FileFormat.PHYLIP;
 				}
+				
 			}
 
 			long endTime = System.currentTimeMillis();
@@ -158,6 +160,18 @@ public static final int INDEX_NOT_FOUND = -1;
 		    }
 		    buf.append(text.substring(start));
 		    return buf;
+		}
+
+		public static StringBuilder replaceChar(StringBuilder sb, char orig, char replace){
+			if(sb == null){
+				return null;
+			}
+			for(int index = 0; index < sb.length(); index++) {
+				if (sb.charAt(index) == orig) {
+					sb.setCharAt(index, replace);
+				}
+			}
+			return sb;
 		}
 
 }

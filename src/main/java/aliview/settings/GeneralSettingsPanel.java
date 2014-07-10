@@ -24,6 +24,7 @@ import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.Dimension;
 import java.util.Enumeration;
+import javax.swing.SwingConstants;
 
 public class GeneralSettingsPanel extends JPanel{
 	JCheckBox cbxReverseHorizontalMouseWheel;
@@ -41,9 +42,9 @@ public class GeneralSettingsPanel extends JPanel{
 		this.setBorder(new EmptyBorder(10, 10, 10, 10));
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{324, 100, 100, 0};
-		gridBagLayout.rowHeights = new int[]{23, 23, 23, 23, 0, 23, 23, 0, 0, 23, 23, 0};
+		gridBagLayout.rowHeights = new int[]{23, 23, 23, 23, 0, 23, 0, 23, 0, 0, 23, 23, 0};
 		gridBagLayout.columnWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
 		
 		
@@ -157,18 +158,42 @@ public class GeneralSettingsPanel extends JPanel{
 		gbc_chckbxOverrideDefaultProgram.gridy = 4;
 		add(chckbxOverrideDefaultFont, gbc_chckbxOverrideDefaultProgram);
 		
+		JLabel lblClearAll = new JLabel("Clear all \"Hide this checkbox\" selections");
+		lblClearAll.setHorizontalAlignment(SwingConstants.LEFT);
+		GridBagConstraints gbc_lblClearAll = new GridBagConstraints();
+		gbc_lblClearAll.anchor = GridBagConstraints.WEST;
+		gbc_lblClearAll.insets = new Insets(0, 0, 5, 5);
+		gbc_lblClearAll.gridx = 0;
+		gbc_lblClearAll.gridy = 6;
+		add(lblClearAll, gbc_lblClearAll);
+		
+		JButton clearCbxButton = new JButton("Clear");
+		clearCbxButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Settings.getHideFileSeqLimitedEditCapabilities().putBooleanValue(false);
+				Settings.getHideEditModeMessage().putBooleanValue(false);
+				Settings.getHideMuscleProfileAlignInfoMessage().putBooleanValue(false);
+			}
+		});
+		clearCbxButton.setPreferredSize(new Dimension(100, 30));
+		GridBagConstraints gbc_clearCBXbutton = new GridBagConstraints();
+		gbc_clearCBXbutton.insets = new Insets(0, 0, 5, 0);
+		gbc_clearCBXbutton.gridx = 2;
+		gbc_clearCBXbutton.gridy = 6;
+		add(clearCbxButton, gbc_clearCBXbutton);
+		
 		GridBagConstraints gbc_lblNumberOfFiles = new GridBagConstraints();
 		gbc_lblNumberOfFiles.fill = GridBagConstraints.BOTH;
 		gbc_lblNumberOfFiles.insets = new Insets(0, 0, 5, 5);
 		gbc_lblNumberOfFiles.gridx = 0;
-		gbc_lblNumberOfFiles.gridy = 6;
+		gbc_lblNumberOfFiles.gridy = 7;
 		JLabel lblNumberOfFiles = new JLabel("Number of sequences to Index at a time in very large files");
 		add(lblNumberOfFiles, gbc_lblNumberOfFiles);
 		GridBagConstraints gbc_txtLargeFileIndexingl = new GridBagConstraints();
 		gbc_txtLargeFileIndexingl.fill = GridBagConstraints.BOTH;
 		gbc_txtLargeFileIndexingl.insets = new Insets(0, 0, 5, 0);
 		gbc_txtLargeFileIndexingl.gridx = 2;
-		gbc_txtLargeFileIndexingl.gridy = 6;
+		gbc_txtLargeFileIndexingl.gridy = 7;
 		txtLargeFileIndexingl = new JTextField();
 		txtLargeFileIndexingl.setText("" + Settings.getLargeFileIndexing().getIntValue());
 		add(txtLargeFileIndexingl, gbc_txtLargeFileIndexingl);
@@ -178,7 +203,7 @@ public class GeneralSettingsPanel extends JPanel{
 		gbc_lblNumberOfSequences.anchor = GridBagConstraints.WEST;
 		gbc_lblNumberOfSequences.insets = new Insets(0, 0, 5, 5);
 		gbc_lblNumberOfSequences.gridx = 0;
-		gbc_lblNumberOfSequences.gridy = 7;
+		gbc_lblNumberOfSequences.gridy = 8;
 		add(lblNumberOfSequences, gbc_lblNumberOfSequences);
 		
 		txtMaxHistogramLargeFiles = new JTextField();
@@ -187,14 +212,14 @@ public class GeneralSettingsPanel extends JPanel{
 		gbc_textField_1.insets = new Insets(0, 0, 5, 0);
 		gbc_textField_1.fill = GridBagConstraints.HORIZONTAL;
 		gbc_textField_1.gridx = 2;
-		gbc_textField_1.gridy = 7;
+		gbc_textField_1.gridy = 8;
 		add(txtMaxHistogramLargeFiles, gbc_textField_1);
 		JLabel lblNewLabel = new JLabel("consensus on large files");
 		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
 		gbc_lblNewLabel.anchor = GridBagConstraints.WEST;
 		gbc_lblNewLabel.insets = new Insets(0, 0, 5, 5);
 		gbc_lblNewLabel.gridx = 0;
-		gbc_lblNewLabel.gridy = 8;
+		gbc_lblNewLabel.gridy = 9;
 		add(lblNewLabel, gbc_lblNewLabel);
 		
 		
@@ -202,7 +227,7 @@ public class GeneralSettingsPanel extends JPanel{
 		gbc_4.fill = GridBagConstraints.BOTH;
 		gbc_4.insets = new Insets(0, 0, 5, 5);
 		gbc_4.gridx = 0;
-		gbc_4.gridy = 9;
+		gbc_4.gridy = 10;
 		JLabel label_1 = new JLabel("");
 		add(label_1, gbc_4);
 		
@@ -217,7 +242,7 @@ public class GeneralSettingsPanel extends JPanel{
 		gbc_btnHelp.anchor = GridBagConstraints.WEST;
 		gbc_btnHelp.insets = new Insets(0, 0, 0, 5);
 		gbc_btnHelp.gridx = 0;
-		gbc_btnHelp.gridy = 10;
+		gbc_btnHelp.gridy = 11;
 		add(btnHelp, gbc_btnHelp);
 		
 		
@@ -232,7 +257,7 @@ public class GeneralSettingsPanel extends JPanel{
 		gbc_btnCancel.anchor = GridBagConstraints.EAST;
 		gbc_btnCancel.insets = new Insets(0, 0, 0, 5);
 		gbc_btnCancel.gridx = 1;
-		gbc_btnCancel.gridy = 10;
+		gbc_btnCancel.gridy = 11;
 		add(btnCancel, gbc_btnCancel);
 		JButton btnOk = new JButton("OK");
 		btnOk.setPreferredSize(new Dimension(100, 30));
@@ -246,7 +271,7 @@ public class GeneralSettingsPanel extends JPanel{
 		gbc_btnOk.anchor = GridBagConstraints.EAST;
 		gbc_btnOk.fill = GridBagConstraints.VERTICAL;
 		gbc_btnOk.gridx = 2;
-		gbc_btnOk.gridy = 10;
+		gbc_btnOk.gridy = 11;
 		add(btnOk, gbc_btnOk);
 		
 	}

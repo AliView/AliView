@@ -226,7 +226,9 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 				newAlignment = AlignmentFactory.createNewAlignment(alignmentFile);
 				Settings.putLoadAlignmentDirectory(alignmentFile.getAbsoluteFile().getParent());
 			}else{
-				AliView.showUserError("Could not open file (does not exists):" + alignmentFile);
+				Messenger.showOKOnlyMessage(Messenger.FILE_OPEN_NOT_EXISTS,
+						                    "Filename: " + alignmentFile,
+						                    aliViewWindow);	
 			}		
 		}else{
 			logger.info("no file");
@@ -561,9 +563,8 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 					revComp += seq.getBasesAsString() + LF;
 				}
 			} catch (AlignmentImportException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
-				AliView.showUserError("Error in reverse complement function: " + LF + e.getLocalizedMessage());
+				Messenger.showOKOnlyMessage(Messenger.COMPLEMENT_FUNCTION_ERROR, LF + e.getLocalizedMessage(), this);
 				
 			}
 
@@ -591,6 +592,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 
 
 	public void showMessageLog() {
+		startDebug();
 		MessageLogFrame messFrame = new MessageLogFrame(this);
 		messFrame.setVisible(true);
 	}
@@ -983,8 +985,8 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
-				// Meddela användaren om fel
-				AliView.showUserError("Error saving file: " + LF + e.getLocalizedMessage());		
+				// Meddela användaren om fel				
+				Messenger.showOKOnlyMessage(Messenger.FILE_SAVE_ERROR, LF + e.getLocalizedMessage(), this);
 			}
 
 		}
@@ -1017,14 +1019,14 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 			alignment.setAlignmentFile(suggestedFile);
 			alignment.setAlignmentFormat(alignment.getFileFormat());
 			aliViewWindow.updateWindowTitle();
-			Settings.putSaveAlignmentDirectory(suggestedFile.getParent());
+			Settings.putSaveAlignmentDirectory(suggestedFile.getAbsoluteFile().getParent());
 			hasUnsavedUndoableEdits = false;
 			this.updateWindowTitle();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			// Meddela användaren om fel
-			AliView.showUserError("Error saving file: " + LF + e.getLocalizedMessage());		
+			Messenger.showOKOnlyMessage(Messenger.FILE_SAVE_ERROR, LF + e.getLocalizedMessage(), this);	
 		}
 
 	}
@@ -1191,8 +1193,9 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 
 			} catch (IOException e) {
 				// Meddela användaren om fel
-				AliView.showUserError("Something went wrong when aligning: " + LF + e.getLocalizedMessage());		
-				// TODO Auto-generated catch block
+				Messenger.showOKOnlyMessage(Messenger.ALIGNER_SOMETHING_PROBLEM_ERROR,
+						                    LF + "Message: " + e.getLocalizedMessage(),
+						                    aliViewWindow);	
 				e.printStackTrace();
 			}
 		}
@@ -1219,6 +1222,14 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 
 	public synchronized void alignAndAddSequences(final CommandItem alignItem, File origSequences, File newSeqs){
 
+			if(StringUtils.containsIgnoreCase(alignItem.getCommand(), "profile")){
+				boolean hideMessage = Settings.getHideMuscleProfileAlignInfoMessage().getBooleanValue();
+				if(! hideMessage){
+					boolean hideMessageNextTime = Messenger.showOKOnlyMessageWithCbx(Messenger.MUSCLE_PROFILE_INFO_MESSAGE, true, this);
+					Settings.getHideMuscleProfileAlignInfoMessage().putBooleanValue(hideMessageNextTime);
+			}	
+		}
+		
 		// warn if invalid characters
 		String invalidChars = alignment.getFirstInvalidCharacter();
 		if(invalidChars.length() > 0 && alignItem.commandContainsIgnoreCase("muscle")){
@@ -1261,8 +1272,11 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 						setSoftLockGUIThroughMenuDisable(false);
 						//glassPane.setVisible(false);
 						// Meddela användaren om fel
-						AliView.showUserError("Something went wrong when aligning: " + LF + e.getLocalizedMessage());	
-						e.printStackTrace();		
+						subProcessWin.appendOutput(e.getMessage());
+						Messenger.showOKOnlyMessage(Messenger.ALIGNER_SOMETHING_PROBLEM_ERROR,
+								                    LF + "Message: " + e.getLocalizedMessage(),
+								                    aliViewWindow);	
+						e.printStackTrace();
 					}
 				}
 			});
@@ -1271,7 +1285,10 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 			//glassPane.setVisible(true);
 			thread.start();
 		} catch (IOException e) {
-			AliView.showUserError("Something went wrong when aligning: " + LF + e.getLocalizedMessage());
+			setSoftLockGUIThroughMenuDisable(false);
+			Messenger.showOKOnlyMessage(Messenger.ALIGNER_SOMETHING_PROBLEM_ERROR,
+					                    LF + "Message: " + e.getLocalizedMessage(),
+					                    aliViewWindow);	
 			e.printStackTrace();
 		}
 	}
@@ -1398,9 +1415,11 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						//glassPane.setVisible(false);
-						subProcessWin.appendOutput(e.getMessage());
-						Messenger.showOKOnlyMessage(Messenger.ALIGNER_SOMETHING_PROBLEM_ERROR, aliViewWindow);
 						setSoftLockGUIThroughMenuDisable(false);
+						subProcessWin.appendOutput(e.getMessage());
+						Messenger.showOKOnlyMessage(Messenger.ALIGNER_SOMETHING_PROBLEM_ERROR,
+								                    LF + "Message: " + e.getLocalizedMessage(),
+								                    aliViewWindow);	
 						e.printStackTrace();		
 					}
 				}
@@ -1410,7 +1429,10 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 			setSoftLockGUIThroughMenuDisable(true);
 			thread.start();
 		} catch (IOException e) {
-			AliView.showUserError("Something went wrong when aligning: " + LF + e.getLocalizedMessage());
+			setSoftLockGUIThroughMenuDisable(false);
+			Messenger.showOKOnlyMessage(Messenger.ALIGNER_SOMETHING_PROBLEM_ERROR,
+					                    LF + "Error message:" + e.getLocalizedMessage(),
+					                    aliViewWindow);	
 			e.printStackTrace();
 		}
 	}
@@ -1658,12 +1680,19 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		}
 		
 		ArrayList<Primer> primerResult = alignment.findPrimerInSelection();
+		
 		// kill old frame
 		if(primerResultsFrame != null){
 			primerResultsFrame.dispose();
 		}
-		primerResultsFrame = new PrimerResultsFrame(primerResult, aliViewWindow);
-		primerResultsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		
+		// if results - else show message
+		if(primerResult != null && primerResult.size() > 0){
+			primerResultsFrame = new PrimerResultsFrame(primerResult, aliViewWindow);
+			primerResultsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		}else{
+			Messenger.showOKOnlyMessage(Messenger.NO_PRIMERS_FOUND, this);
+		}
 
 	}
 
@@ -1690,12 +1719,16 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 						aliViewWindow.alignAndAddSequences(clipboardSequenceFile);
 
 					} catch (IOException e) {
-						AliView.showUserError("Something went wrong when aligning: " + LF + e.getLocalizedMessage());
+						Messenger.showOKOnlyMessage(Messenger.ALIGNER_SOMETHING_PROBLEM_ERROR,
+								                    LF + "Error message:" + e.getLocalizedMessage(),
+								                    aliViewWindow);	
 						e.printStackTrace();
 					}
 				}
 			} catch (AlignmentImportException e) {
-				AliView.showUserError("Something went wrong when aligning: " + LF + e.getLocalizedMessage());
+				Messenger.showOKOnlyMessage(Messenger.ALIGNER_SOMETHING_PROBLEM_ERROR,
+						                    LF + "Error message:" + e.getLocalizedMessage(),
+						                    aliViewWindow);	
 				e.printStackTrace();
 			}
 
@@ -1717,7 +1750,9 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 			try {
 				alignAndAddSequences(selectedFile);
 			} catch (IOException e) {
-				AliView.showUserError("Something went wrong when aligning: " + LF + e.getLocalizedMessage());
+				Messenger.showOKOnlyMessage(Messenger.ALIGNER_SOMETHING_PROBLEM_ERROR,
+						                    LF + "Message: " + e.getLocalizedMessage(),
+						                    aliViewWindow);	
 				e.printStackTrace();
 			}		
 		}	
@@ -1753,7 +1788,9 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 			}
 
 		} catch (IOException e1) {
-			AliView.showUserError("Something went wrong when aligning: " + LF + e1.getLocalizedMessage());
+			Messenger.showOKOnlyMessage(Messenger.ALIGNER_SOMETHING_PROBLEM_ERROR,
+					                    LF + "Message: " + e1.getLocalizedMessage(),
+					                    aliViewWindow);	
 			e1.printStackTrace();
 		}
 	}
@@ -1761,6 +1798,12 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 	public void toggleDrawCodonpos() {
 		alignmentPane.setDrawCodonPosRuler(! alignmentPane.getDrawCodonPosRuler());
 		requestPaneAndRulerRepaint();
+	}
+	
+	public void toggleIgnoreGapInTranslation() {
+		alignmentPane.setIgnoreGapInTranslation(! alignmentPane.getIgnoreGapInTranslation());
+		requestPaneAndRulerRepaint();
+		
 	}
 
 	public void decReadingFrame() {
@@ -1843,15 +1886,9 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		requestPaneAndRulerRepaint();
 	}
 
-	public void removeSelectionFromExcludes() {
-		getUndoControler().pushUndoState();
-		alignment.removeSelectionFromExcludes();
-		alignmentPane.repaint();
-	}
-
-	public void addSelectionToExcludes() {
-		getUndoControler().pushUndoState();
-		alignment.addSelectionToExcludes();
+	public void addOrRemoveSelectionToExcludes() {
+		//getUndoControler().pushUndoState();
+		alignment.addOrRemoveSelectionToExcludes();
 		alignmentPane.repaint();		
 	}
 
@@ -2021,7 +2058,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 
 			} catch (IOException e) {
 				e.printStackTrace();
-				AliView.showUserError("Error pasting: " + LF + e.getLocalizedMessage());
+				Messenger.showOKOnlyMessage(Messenger.ERROR_PASTE, LF + e.getLocalizedMessage(), aliViewWindow);
 			}
 
 		}else{
@@ -2160,6 +2197,19 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		alignmentPane.validateSize();
 		requestRepaintSelectedSequences();
 	}
+	
+	public void deleteGapMoveRight() {
+		if(! requestEditMode()){
+			return;
+		}
+		List<Sequence> prevState = alignment.deleteGapMoveRight(isUndoable());
+		if(isUndoable()){
+			aliViewWindow.getUndoControler().pushUndoState(new UndoSavedStateEditedSequences(prevState, alignment.getAlignentMetaCopy()));
+		}
+		alignmentPane.validateSize();
+		requestRepaintSelectedSequences();
+		
+	}
 
 	public void insertGapMoveRight() {
 		if(! requestEditMode()){
@@ -2296,12 +2346,12 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		}
 		*/
 		
-		ArrayList<CharSet> charsets = alignment.getAlignentMeta().getCharsets();
-		for(CharSet aCharSet: charsets){
-			selectAll(aCharSet);
-			logger.info(aCharSet.getName());
-			break;
-		}
+//		ArrayList<CharSet> charsets = alignment.getAlignentMeta().getCharsets();
+//		for(CharSet aCharSet: charsets){
+//			selectAll(aCharSet);
+//			logger.info(aCharSet.getName());
+//			break;
+//		}
 		
 	}
 
@@ -2402,7 +2452,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 					logger.info("undo everyt");
 					undoEverything((UndoSavedStateEverything)undoObj);
 				} catch (AlignmentImportException e) {
-					AliView.showUserError("Error in undo function: " + LF + e.getLocalizedMessage());
+					Messenger.showOKOnlyMessage(Messenger.UNDO_REDO_PROBLEM, LF + e.getLocalizedMessage(), aliViewWindow);
 					e.printStackTrace();
 				}
 			}else if(undoObj instanceof UndoSavedStateSequenceOrder){
@@ -2477,7 +2527,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 				} catch (AlignmentImportException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-					AliView.showUserError("Error in redo function: " + LF + e.getLocalizedMessage());
+					Messenger.showOKOnlyMessage(Messenger.UNDO_REDO_PROBLEM, LF + e.getLocalizedMessage(), aliViewWindow);
 				}
 			}else if(undoObj instanceof UndoSavedStateSequenceOrder){
 				undoSequenceOrder((UndoSavedStateSequenceOrder)undoObj);
@@ -3124,33 +3174,21 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 
 
 	public void moveCursorUp(boolean isShiftDown){
-		if(!isShiftDown){
-			clearSelection();
-		}
 		getAliCursor().moveUp(isShiftDown);
 		requestRepaintCursor();
 	}
 
 	public void moveCursorDown(boolean isShiftDown){
-		if(!isShiftDown){
-			clearSelection();
-		}
 		getAliCursor().moveDown(isShiftDown);
 		requestRepaintCursor();
 	}
 
 	public void moveCursorLeft(boolean isShiftDown){
-		if(!isShiftDown){
-			clearSelection();
-		}
 		getAliCursor().moveLeft(isShiftDown);
 		requestRepaintCursor();
 	}
 
 	public void moveCursorRight(boolean isShiftDown){
-		if(!isShiftDown){
-			clearSelection();
-		}
 		getAliCursor().moveRight(isShiftDown);
 		requestRepaintCursor();
 	}
@@ -3204,13 +3242,15 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 						alignment.copySelectionFromPosX1toX2(x,x-1);
 					}		
 				}else{
+					clearSelection();
 					alignment.setSelectionAt(x-1, y, true);
-					alignment.setSelectionAt(x, y, false);
 				}
-
 				x--;
+				
 			}
 			savePosition();
+			
+			
 		}
 
 		public void moveRight(boolean isShiftDown){
@@ -3226,8 +3266,8 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 						alignment.copySelectionFromPosX1toX2(x, x+1);
 					}				
 				}else{
-					alignment.setSelectionAt(x+1, y, true);
-					alignment.setSelectionAt(x, y, false);	
+					clearSelection();
+					alignment.setSelectionAt(x+1, y, true);	
 				}		
 				x++;
 			}
@@ -3247,8 +3287,8 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 						alignment.copySelectionFromSequenceTo(y, y-1);
 					}		
 				}else{
+					clearSelection();
 					alignment.setSelectionAt(x, y-1, true);
-					alignment.setSelectionAt(x, y, false);
 				}
 				y--;
 			}
@@ -3266,8 +3306,8 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 						alignment.copySelectionFromSequenceTo(y,y+1);
 					}	
 				}else{
+					clearSelection();
 					alignment.setSelectionAt(x, y+1, true);
-					alignment.setSelectionAt(x, y, false);
 				}
 				y++;
 			}
@@ -3348,7 +3388,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-						AliView.showUserError("Error running external command: " + LF + e.getLocalizedMessage());
+						Messenger.showOKOnlyMessage(Messenger.ERROR_RUNNING_EXTERNAL_COMMAND, LF + e.getLocalizedMessage(), aliViewWindow);
 					}
 					logger.info("done external");
 
@@ -3381,14 +3421,40 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 
 	public boolean requestEditMode(){	
 		if(isEditMode() == false){
-			// optionpane
-			String message = "Edit key/menu pressed (or mouse edit), " + LF + "do you want to allow edits?";
-			int retVal = JOptionPane.showConfirmDialog(aliViewWindow, message, "Edit mode?", JOptionPane.OK_CANCEL_OPTION);
-			if(retVal == JOptionPane.OK_OPTION){
-				aliViewWindow.setEditMode(true);	
+				// optionpane
+				String message = "Edit key/menu pressed (or mouse edit), " + LF + "do you want to allow edits?";
+				int retVal = JOptionPane.showConfirmDialog(aliViewWindow, message, "Edit mode?", JOptionPane.OK_CANCEL_OPTION);
+				if(retVal == JOptionPane.OK_OPTION){
+					aliViewWindow.setEditMode(true);	
+				}else{
+					// do nothing
+				}
+				
+				// return false after question always
+				// return false;
+
+			
+			
+			/*
+			// Skip asking if checkbox "hide this message"
+			if(Settings.getHideEditModeMessage().getBooleanValue() == true){
+				aliViewWindow.setEditMode(true);
+			// Ask user
 			}else{
-				// do nothing
+				logger.info("ask user");
+				Messenger.showOKOnlyMessage(Messenger.EDIT_MODE_QUESTION, this);
+				//boolean hideNextTimeSelected = Messenger.showOKCancelMessageWithCbx(Messenger.EDIT_MODE_QUESTION, false, this);
+				//Settings.getHideEditModeMessage().putBooleanValue(false);
+				int retVal = Messenger.getLastSelectedOption();
+				logger.info("retval=" + retVal);
+				if(retVal == JOptionPane.OK_OPTION){
+					logger.info("set edit mode");
+					aliViewWindow.setEditMode(true);	
+				}else{
+					// do nothing
+				}
 			}
+			*/
 			
 			// return false after question always
 			// return false;
@@ -3421,7 +3487,8 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 			try {
 				job.print();
 			} catch (PrinterException ex) {
-				AliView.showUserError("Error in print function: " + LF + ex.getLocalizedMessage());
+				Messenger.showOKOnlyMessage(Messenger.ERROR_PRINTING, LF + ex.getLocalizedMessage(), aliViewWindow);
+				ex.printStackTrace();
 				/* The job did not successfully complete */
 			}
 		}
@@ -3574,6 +3641,30 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		HelpUtils.display(HelpUtils.TOP_HELP, this);
 	}
 
+	public void sortSequencesByCharColumn() {
+		aliViewWindow.getUndoControler().pushUndoState(new UndoSavedStateSequenceOrder(alignment.getSequences(), alignment.getAlignentMetaCopy()));
+		alignment.sortSequencesByCharInSelectedColumn();
+		alignmentPane.validateSequenceOrder();
+		alignmentPane.repaint();
+		sequenceJList.repaint();
+	}
+
+	public void countStopCodons() {
+		int count = alignment.countStopCodons();
+		Messenger.showCountCodonMessage(count, this);
+	}
+
+	public void startDebug() {
+		Logger.getRootLogger().setLevel(Level.ALL);
+	}
+
+	public void requestGB() {
+		System.gc();
+	}
+
+	public void saveFastaIndex() {
+		alignment.saveFastaIndex();
+	}
 }
 
 	

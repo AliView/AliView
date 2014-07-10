@@ -57,11 +57,14 @@ public class Settings {
 	private static SettingValue reverseHorizontalMouseWheel = new SettingValue("REVERSE_HORIZONTAL_MOUSE_WHEEL", false);
 	private static SettingValue reverseVerticalMouseWheel = new SettingValue("REVERSE_VERTICAL_MOUSE_WHEEL", false);
 	
+	// This is a good place for putting all hide checkbox values
 	private static SettingValue hideFileSeqLimitedEditCapabilities = new SettingValue("hideFileSeqLimitedEditCapabilities", false);
+	private static SettingValue hideEditModeMessage = new SettingValue("hideEditModeMessage", false);
+	private static SettingValue hideMuscleProfileAlignInfoMessage = new SettingValue("hideMuscleProfileAlignInfoMessage", false);
 	
 	private static SettingValue horizontalMouseWheelScrollModifier = new SettingValue("HORIZONTALMOUSEWHEELSCROLLMODIFIER", 20,1,100);
 	private static SettingValue verticalMouseWheelScrollModifier = new SettingValue("VERTICALMOUSEWHEELSCROLLMODIFIER", 20,1,100);
-	private static SettingValue largeFileIndexing = new SettingValue("LARGE_FILE_INDEXING", 25000,10,100000000);
+	private static SettingValue largeFileIndexing = new SettingValue("LARGE_FILE_INDEXING", 100000,10,100000000);
 	private static SettingValue maxFileHistogramSequences = new SettingValue("MAX_FILE_HISTOGRAM_SEQUENCES", 1000,10,1000000);
 	
 	private static final String LOGFILE_NAME = "AliView.log";
@@ -225,7 +228,6 @@ public class Settings {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 	}
 
 	public static String getAliViewUserDataSubdir() {
@@ -551,12 +553,17 @@ public class Settings {
 		return hideFileSeqLimitedEditCapabilities;
 	}
 	
+	public static SettingValue getHideEditModeMessage() {
+		return hideEditModeMessage;
+	}
+	
+	public static SettingValue getHideMuscleProfileAlignInfoMessage() {
+		return hideMuscleProfileAlignInfoMessage;
+	}
+	
 
 	public static void addRecentFile(File alignmentFile){
 		Vector<File> files = getRecentFiles();
-		
-		logger.info("files.get(0).getAbsolutePath()" + files.get(0).getAbsolutePath());
-		logger.info("alignmentFile.getAbsolutePath()" + alignmentFile.getAbsolutePath());
 		
 		// skip if file is same as last
 		if(files.size() > 0 && files.get(0).getAbsolutePath().equals(alignmentFile.getAbsolutePath()) == true){

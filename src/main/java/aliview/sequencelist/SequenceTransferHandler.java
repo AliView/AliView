@@ -71,17 +71,20 @@ public class SequenceTransferHandler extends TransferHandler {
         JList.DropLocation dl  = (JList.DropLocation)info.getDropLocation();
         SequenceListModel model = (SequenceListModel)targetList.getModel();
         int index = dl.getIndex();
-        logger.info(index);
+        logger.info("drop location index" + index);
 
         logger.info("import");
         
         try{
         	Object[] values = (Object[])info.getTransferable().getTransferData(localObjectFlavor);
         	logger.info("" + source + targetList + values);
+        	logger.info("target index" + targetList.getSelectedIndex());
         	
             if(source==targetList){
             	
             	// TODO this is not undoable.....
+            	
+            	logger.info("to index" + index);
             	targetList.moveSelectedSequencesTo(index);
             	// model.moveSequencesTo(index, selection);
             	

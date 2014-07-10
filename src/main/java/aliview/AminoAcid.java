@@ -30,7 +30,7 @@ public class AminoAcid {
     public static final AminoAcid W = new AminoAcid("Tryptophan", "Trp", "W", 18);
     public static final AminoAcid Y = new AminoAcid("Tyrosine", "Tyr", "Y", 19);
     public static final AminoAcid X = new AminoAcid("Unknown amino acid", "Xaa", "X", 25);
-    public static final AminoAcid STOP = new AminoAcid("Stop codon", " * ","X", 27);
+    public static final AminoAcid STOP = new AminoAcid("Stop codon", " * ","X", 27); // The character for stop being used is X because otherwise there is problem when translating-align-retranslate
     public static final AminoAcid GAP = new AminoAcid("Gap", " - ","-", 29);
     
     public static final AminoAcid[] GROUP_ACFHILMVWY = new AminoAcid[]{A,C,F,H,I,L,M,V,W,Y};
@@ -162,6 +162,7 @@ public class AminoAcid {
 			position3Val = -1;
 		}
 		
+		// Set default
 		AminoAcid acid = X;
 		
 		if(position1Val == -1 || position2Val == -1 || position3Val == -1){
@@ -175,6 +176,8 @@ public class AminoAcid {
 		if(baseVal0 == NucleotideUtilities.GAP && baseVal1 == NucleotideUtilities.GAP && baseVal2 == NucleotideUtilities.GAP){
 			acid = AminoAcid.GAP;
 		}
+		
+		
 		/*
 		if(baseVal0 == NucleotideUtilities.UNKNOWN || baseVal1 == NucleotideUtilities.UNKNOWN || baseVal2 == NucleotideUtilities.UNKNOWN){
 			acid = AminoAcid.X;

@@ -660,6 +660,36 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 				}
 			}
 		}
+		
+		if(editedSequences.size()>0){
+			sequencesChanged();
+		}
+		return editedSequences;	
+	}
+	
+	public List<Sequence> deleteGapMoveRight(boolean undoable) {
+		boolean gapPresentInAll = true;
+		List<Sequence> editedSequences = new ArrayList<Sequence>();
+		for(Sequence seq: sequences){
+			if(seq.hasSelection()){
+				//logger.info("hassel" + seq);
+				if(! seq.isGapRightOfSelection()){
+					gapPresentInAll = false;
+					break;
+				}
+			}
+		}
+
+		if(gapPresentInAll){
+			for(Sequence seq: sequences){
+				if(seq.hasSelection()){
+					if(undoable){
+						editedSequences.add(seq.getCopy());
+					}
+					seq.deleteGapRightOfSelection();
+				}
+			}
+		}
 		if(editedSequences.size()>0){
 			sequencesChanged();
 		}
@@ -809,20 +839,40 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 		
 		AATranslator oldTranslator = new AATranslator(codonPos, genCode);
 		oldTranslator.setSequence(nucSeq);
+		
+		logger.info("oldtrans" + oldTranslator.getTranslatedAsString());
+		
 		int nextFindPos = 0;
 		for(int n = 0; n < template.getLength(); n++){
 			byte nextAAByte = template.getBaseAtPos(n);
 			AminoAcid aaTemplate = AminoAcid.getAminoAcidFromByte(nextAAByte);
 			
-//			logger.info("aaTemplate.getCodeCharVal()" + aaTemplate.getCodeCharVal() + "compare" + AminoAcid.GAP.getCodeCharVal());
+						
+			logger.info("aaTemplate.getCodeCharVal()" + aaTemplate.getCodeCharVal());
 			if(aaTemplate.getCodeCharVal() == AminoAcid.GAP.getCodeCharVal()){
 				newSeq.append((char)SequenceUtils.GAP_SYMBOL);
 				newSeq.append((char)SequenceUtils.GAP_SYMBOL);
 				newSeq.append((char)SequenceUtils.GAP_SYMBOL);
 			}else{
+				
+//				// get all stopCodons
+//				AminoAcid oldAcid = oldTranslator.getAAinTranslatedPos(nextFindPos);
+//				logger.info("oldAcid=" + oldAcid.getCodeCharVal());
+//				while(oldAcid == AminoAcid.STOP){
+//					
+//					logger.info("isStop");
+//					
+//					byte[] nextNucs = oldTranslator.getGapPaddedCodonInTranslatedPos(nextFindPos);
+//					newSeq.append(new String(nextNucs));
+//					nextFindPos += 1;
+//					oldAcid = oldTranslator.getAAinTranslatedPos(nextFindPos);
+//				}
+				
+				
 //				logger.info("search for " + aaTemplate.getCodeCharVal() + " in seq " + nucSeq.getName() + " from pos " + nextFindPos);
 				int posFound = oldTranslator.findFistPos(nextFindPos,aaTemplate);
 				if(posFound == -1){
+					logger.info("posnotfound");
 					break;
 				}
 				byte[] nextNucs = oldTranslator.getGapPaddedCodonInTranslatedPos(posFound);
@@ -836,7 +886,10 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 	public void realignNucleotidesUseTheseAASequenceAsTemplate(SequenceListModel templateSeqs, CodonPositions codonPos, GeneticCode genCode){
 		for(Sequence templateSeq: templateSeqs.getSequences()){	
 			// do partial name since it if being cut by some programs....
-			Sequence nucSeq =  this.getSequenceByPartialName(templateSeq.getName());			
+			Sequence nucSeq =  this.getSequenceByPartialName(templateSeq.getName());
+			logger.info("nucSeq=" + nucSeq.getName() + nucSeq.getBasesAsString());
+			logger.info("templateSeq=" + templateSeq.getName() + templateSeq.getBasesAsString());
+			
 			try {
 				realignNucleotidesUseThisAASequenceAsTemplate(nucSeq, templateSeq, codonPos, genCode);
 			} catch (IOException e) {
@@ -1169,6 +1222,12 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 	public void sortSequencesByName() {
 		logger.info(sequences);
 		Collections.sort(sequences);	
+	}
+	
+	public void sortSequencesByCharInSelectedColumn() {
+		// get first selected column
+		Point selPos = getFirstSelectedPos();
+		Collections.sort(sequences, new SequencePositionComparator(selPos.x));
 	}
 
 	public AliHistogram getHistogram() {
@@ -1579,6 +1638,8 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 		
 		return names;
 	}
+
+	
 
 	
 }

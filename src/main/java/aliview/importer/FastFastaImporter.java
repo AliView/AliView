@@ -49,14 +49,17 @@ public class FastFastaImporter {
 						// if there is one sequence in buffer already create that one before starting a new one
 						if(name != null && name.length() > 0){
 							
-							String seqAsString = sequence.toString();
-							nextSeqEstSize = sequence.length();
+							//String seqAsString = sequence.toString();
+							//nextSeqEstSize = sequence.length();
 							// if there are whitespace replace them
 							if(sequence.indexOf(" ") > -1){
-							  // sequence = FileImportUtils.replace(sequence, " ", "", -1);
 							   sequence = FileImportUtils.removeAll(sequence, " ");
 							}
-							sequences.add(new FastFastaSequence(name, sequence.toString()));
+							//FileImportUtils.replaceChar(sequence, '.', '-');
+												
+							byte[] bytes = getBytesFromBuffer(sequence);
+							sequences.add(new FastFastaSequence(name, bytes));
+							
 							this.longestSequenceLength = Math.max(this.longestSequenceLength, sequence.length());
 							sequence = new StringBuilder(nextSeqEstSize + 10);
 							name = null;
@@ -74,13 +77,16 @@ public class FastFastaImporter {
 			
 			// add last sequence
 			if(name != null && name.length() > 0){
-				String seqAsString = sequence.toString();
-				// if there are whitespace replace them
-				if(seqAsString.indexOf(' ') > -1){
-					seqAsString = seqAsString.replaceAll(" ","");
+				
+				if(sequence.indexOf(" ") > -1){
+					// sequence = FileImportUtils.replace(sequence, " ", "", -1);
+				   sequence = FileImportUtils.removeAll(sequence, " ");
 				}
-				sequences.add(new FastFastaSequence(name, seqAsString));
-				this.longestSequenceLength = Math.max(this.longestSequenceLength, seqAsString.length());
+				
+				byte[] bytes = getBytesFromBuffer(sequence);
+				sequences.add(new FastFastaSequence(name, bytes));
+				
+				this.longestSequenceLength = Math.max(this.longestSequenceLength, sequence.length());
 			}	
 			
 			
@@ -95,6 +101,23 @@ public class FastFastaImporter {
 		return sequences;
 	}
 	
+	private boolean bufferContains(StringBuilder sequence, char target) {
+		for(int n = 0; n < sequence.length(); n ++){
+			if(sequence.charAt(n) == target){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private byte[] getBytesFromBuffer(StringBuilder sequence) {
+		byte[] bytes = new byte[sequence.length()];
+		for(int n = 0; n < bytes.length; n++){
+			bytes[n] = (byte)sequence.charAt(n);
+		}
+		return bytes;
+	}
+
 	public int getLongestSequenceLength() {
 		return longestSequenceLength;
 	}

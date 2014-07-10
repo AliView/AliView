@@ -131,7 +131,7 @@ public class OSNativeUtils {
 			return InputEvent.CTRL_DOWN_MASK;
 		}
 	}
-
+/*
 	public static KeyStroke getDecreaseFontSizeKeyAccelerator() {
 		return KeyStroke.getKeyStroke('-');
 	}
@@ -139,12 +139,29 @@ public class OSNativeUtils {
 	public static KeyStroke getIncreaseFontSizeKeyAccelerator() {
 		return KeyStroke.getKeyStroke('+');
 	}
-
+*/
+	
 	public static KeyStroke getPasteKeyAccelerator() {
 		if(isMac()){
 			return KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.META_DOWN_MASK);
 		}else{
 			return KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK);
+		}
+	}
+	
+	public static KeyStroke getIncreaseFontSizeKeyAccelerator() {
+		if(isMac()){
+			return KeyStroke.getKeyStroke('+');//, InputEvent.META_DOWN_MASK); // Command and + is not working on mac
+		}else{
+			return KeyStroke.getKeyStroke('+');//, InputEvent.CTRL_DOWN_MASK);
+		}
+	}
+	
+	public static KeyStroke getDecreaseFontSizeKeyAccelerator() {
+		if(isMac()){
+			return KeyStroke.getKeyStroke('-');//, InputEvent.META_DOWN_MASK); // Command and - is not working on mac
+		}else{
+			return KeyStroke.getKeyStroke('-');//, InputEvent.CTRL_DOWN_MASK);
 		}
 	}
 	
@@ -236,12 +253,28 @@ public class OSNativeUtils {
 			return KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE,0);
 		}
 	}
+	
+	public static KeyStroke getDeleteGapMoveRightKeyAccelerator() {
+		if(isMac()){
+			return KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.SHIFT_DOWN_MASK);
+		}else{
+			return KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, InputEvent.SHIFT_DOWN_MASK);
+		}
+	}
 
 	public static KeyStroke getToggleTranslationKeyAccelerator() {
 		if(isMac()){
 			return KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.META_DOWN_MASK);
 		}else{
 			return KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK);
+		}
+	}
+	
+	public static KeyStroke getToggleIgnoreGapInTranslationKeyAccelerator() {
+		if(isMac()){
+			return KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.META_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
+		}else{
+			return KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK | InputEvent.ALT_DOWN_MASK);
 		}
 	}
 	
@@ -284,8 +317,16 @@ public class OSNativeUtils {
 			return KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, InputEvent.SHIFT_DOWN_MASK);
 		}
 	}
+	
+	public static KeyStroke countStopCodonsKeyAccelerator() {
+		if(isMac()){
+			return KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.META_DOWN_MASK | InputEvent.ALT_DOWN_MASK);
+		}else{
+			return KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK | InputEvent.ALT_DOWN_MASK);
+		}
+	}
 
-	public static KeyStroke getAddExcludesKeyAccelerator() {
+	public static KeyStroke getAddOrRemoveExcludesKeyAccelerator() {
 		if(isMac()){
 			return KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.META_DOWN_MASK);
 		}else{
@@ -432,5 +473,11 @@ public class OSNativeUtils {
 	    method.setAccessible(accessible);
 	    return style;
 	}
+
+	
+
+	
+
+	
 
 }

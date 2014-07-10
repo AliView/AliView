@@ -36,8 +36,14 @@
           <string>fasta</string>
           <string>fas</string>
           <string>fa</string>
+          <string>afa</string>
           <string>phylip</string>
           <string>phy</string>
+          <string>aln</string>
+          <string>clustal</string>
+          <string>clustalw</string>
+          <string>clustalx</string>
+          <string>msf</string>
         </array>
       </dict>
     </array>
@@ -58,6 +64,8 @@
                 <key>apple.laf.useScreenMenuBar</key>
                 <string>true</string>
                 <key>apple.awt.showGrowBox</key>
+                <string>true</string>
+                <key>apple.awt.graphics.UseQuartz</key>
                 <string>true</string>
             </dict>
     </dict>

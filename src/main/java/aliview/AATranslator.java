@@ -8,7 +8,6 @@ import java.util.Arrays;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 
-import sun.security.action.GetBooleanAction;
 import utils.nexus.CodonPos;
 import utils.nexus.CodonPositions;
 import aliview.sequences.Sequence;
@@ -19,6 +18,9 @@ public class AATranslator{
 	CodonPositions codonPositions;
 	private Sequence sequence;
 	private GeneticCode genCode;
+	private int cachedClosestStartPos = -1;
+	private int cachedAminoTripletAcidPos = -1;
+	private AminoAcid cachedAminoAcid;
 	
 	public AATranslator(CodonPositions codonPositions, GeneticCode genCode) {
 		this.codonPositions = codonPositions;
@@ -31,6 +33,8 @@ public class AATranslator{
 	
 	public void setSequence(Sequence seq){
 		this.sequence = seq;
+		this.cachedClosestStartPos = -1;
+		this.cachedAminoTripletAcidPos = -1;
 	}
 	
 	public void setGeneticCode(GeneticCode genCode) {
@@ -42,12 +46,22 @@ public class AATranslator{
 	}
 	
 	public AminoAcid getAminoAcidAtNucleotidePos(int x){
-		CodonPos cPos = codonPositions.getCodonPosAtNucleotidePos(x);
-		if(cPos.isOrfan()){
-			return AminoAcid.X;
+		if(isFullCodonStartingAt(x)){
+			return getAminoAcidFromTripletStartingAt(x);
+		}else if(isFullCodonStartingAt(x - 1)){
+			return getAminoAcidFromTripletStartingAt(x - 1);
+		}else if(isFullCodonStartingAt(x - 2)){
+			return getAminoAcidFromTripletStartingAt(x - 2);
+		}else{
+			return AminoAcid.GAP;
 		}
-		else{
-			return getAminoAcidFromTripletStartingAt(cPos.startPos);
+	}
+	
+	public boolean isCodonSecondPos(int x){
+		if(isFullCodonStartingAt(x - 1)){
+			return true;
+		}else{
+			return false;
 		}
 	}
 	
@@ -64,59 +78,78 @@ public class AATranslator{
 		return codon;
 	}
 	
-	public AminoAcid getNoGapAminoAcidAtNucleotidePos(int pos){
-		int tripStart = -1;
-		int tripEnd = -1;
+	public int getCachedClosestStartPos(){
+		return cachedClosestStartPos;
+	}
+
+	
+	public AminoAcid getNoGapAminoAcidAtNucleotidePos(int target){
 		int tripCount = 0;
 		byte[] triplet = new byte[3];
 		int seqLen = sequence.getLength();
 		
+		
 		// skip pos depending on ReadingFrame
 		int startPos = 0;
-		int skipCount = 0;
-		int readingFrame = codonPositions.getReadingFrame();
-		if(readingFrame > 1){
-			for(int skipPos = 0; skipPos < seqLen; skipPos ++){
-				byte base = sequence.getBaseAtPos(skipPos);
-				if(! NucleotideUtilities.isGap(base)){
-					skipCount ++;
-				}
-				if(skipCount == readingFrame){
-					startPos = skipPos;
+		
+		// if cached pos not is set, get a start pos
+		if(cachedClosestStartPos == -1){
+			int skipCount = 0;
+			int readingFrame = codonPositions.getReadingFrame();
+			if(readingFrame > 1){
+				for(int n = 0; n < seqLen; n ++){
+					byte base = sequence.getBaseAtPos(n);
+					if(! NucleotideUtilities.isGap(base) && codonPositions.isCoding(n)){
+						skipCount ++;
+					}
+					if(skipCount == readingFrame){
+						startPos = n;
+					}
 				}
 			}
+		}else{
+			startPos = cachedClosestStartPos;
 		}
 		
-		for(int n = startPos; n < seqLen; n++){
-			byte base = sequence.getBaseAtPos(n);
-			if(NucleotideUtilities.isGap(base)){			
-				if(n >= pos && tripCount == 0){
-					return AminoAcid.GAP;
-				}			
-			}else{
-				
-				if(tripStart == -1){
-					tripStart = n;
-				}
-				
-				tripCount ++;
-				triplet[tripCount - 1] = base;
-				
-				if(tripCount == 3){				
-					if(n >= pos){
-						AminoAcid aa = AminoAcid.getAminoAcidFromCodon(triplet, genCode);
-						return aa;
+		if(target >= startPos){
+			for(int n = startPos; n < seqLen; n++){
+				byte base = sequence.getBaseAtPos(n);
+				if(NucleotideUtilities.isGap(base) || codonPositions.isNonCoding(n)){			
+					if(n >= target && tripCount == 0){
+						return AminoAcid.GAP;
+					}			
+				}else{
+					
+					tripCount ++;
+					triplet[tripCount - 1] = base;
+					
+					if(tripCount == 1){
+						cachedClosestStartPos = n;
 					}
-					triplet = new byte[3];
-					tripCount = 0;
-				}			
+					
+					if(tripCount == 3){				
+						if(n >= target){
+							AminoAcid aa = AminoAcid.getAminoAcidFromCodon(triplet, genCode);
+							return aa;
+						}
+						triplet = new byte[3];
+						tripCount = 0;
+					}			
+				}
 			}
+			return AminoAcid.X;
+		}else{
+			return AminoAcid.GAP;
 		}
-		return AminoAcid.X;
-		}
+	}
+	
 	
 	public AminoAcid getAminoAcidFromTripletStartingAt(int x){
-		return AminoAcid.getAminoAcidFromCodon(getTripletAt(x), genCode);
+		if(cachedAminoTripletAcidPos != x){
+			cachedAminoTripletAcidPos = x;
+			cachedAminoAcid = AminoAcid.getAminoAcidFromCodon(getTripletAt(cachedAminoTripletAcidPos),genCode);
+		}
+		return cachedAminoAcid;
 	}
 	
 	public String getTranslatedAsString(){
@@ -162,6 +195,10 @@ public class AATranslator{
 		return codonPositions.getLengthOfTranslatedPos();
 	}
 	
+	public AminoAcid getAAinNoGapTranslatedPos(int x) {
+		return getNoGapAminoAcidAtNucleotidePos(x * 3);
+	}
+	
 	public AminoAcid getAAinTranslatedPos(int x) {
 		CodonPos codonPos = codonPositions.getCodonInTranslatedPos(x);
 		if(codonPos == null){
@@ -196,38 +233,43 @@ public class AATranslator{
 			return codon;
 		}
 	}
-	
 
+
+	public int findFistPosSkipStop(int nextFindPos, AminoAcid target){
+		for(int n = nextFindPos; n < codonPositions.getLengthOfTranslatedPos(); n++){
+			AminoAcid nextAA = getAAinTranslatedPos(n);
+			
+			if(nextAA != null && nextAA == AminoAcid.STOP){
+				// Skip to next
+			}	
+			else if(nextAA != null && nextAA.getCodeCharVal() == target.getCodeCharVal()){
+				return n;
+			}
+		}
+		return -1;
+	}
+	
 	public int findFistPos(int nextFindPos, AminoAcid target){
 		for(int n = nextFindPos; n < codonPositions.getLengthOfTranslatedPos(); n++){
 			AminoAcid nextAA = getAAinTranslatedPos(n);
+			
 			if(nextAA != null && nextAA.getCodeCharVal() == target.getCodeCharVal()){
 				return n;
 			}
 		}
 		return -1;
 	}
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+
+	public int countStopCodon(){
+		int counter = 0;
+		int transLen = getTranslatedAminAcidSequenceLength();
+		for(int n = 0; n < transLen; n++){
+			AminoAcid aa = getAAinTranslatedPos(n);
+			if(aa == AminoAcid.STOP){
+				//logger.info(sequence.getName() + "n=" + n);
+				counter ++;
+			}
+		}
+		return counter;
+	}
 }

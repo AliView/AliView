@@ -24,9 +24,58 @@ import aliview.settings.Settings;
 public class MessageLogFrame extends JFrame{
 	private static final Logger logger = Logger.getLogger(MessageLogFrame.class);
 	private static final String LF = System.getProperty("line.separator");
+	private JTextArea messageArea;
+	private AliViewWindow aliViewWindow;
 	
-	public MessageLogFrame(final AliViewWindow aliViewWindow) {
-		final JTextArea messageArea = new JTextArea();
+	public MessageLogFrame(AliViewWindow aliViewWin) {
+		this.aliViewWindow = aliViewWin;
+		messageArea = new JTextArea();
+		
+		refreshLog();
+
+		JScrollPane scrollPane = new JScrollPane(messageArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		
+		this.getContentPane().add(scrollPane, BorderLayout.CENTER);
+
+		
+		JButton btnLogStatistics = new JButton("Log statistics");
+		btnLogStatistics.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e){
+				aliViewWindow.createStats();
+				refreshLog();
+			}
+		});
+		
+		JButton btnRequestGC = new JButton("Request GC");
+		btnRequestGC.setToolTipText("Request Java Garbage Collection");
+		btnRequestGC.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e){
+				aliViewWindow.requestGB();
+				refreshLog();
+			}
+		});
+		
+		JButton refreshButton = new JButton("Refresh log");
+		refreshButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				refreshLog();	
+			}
+		});
+		
+		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		
+		buttonPanel.add(btnLogStatistics);
+		buttonPanel.add(btnRequestGC);
+		buttonPanel.add(refreshButton);
+		this.getContentPane().add(buttonPanel, BorderLayout.SOUTH);
+		this.setPreferredSize(new Dimension(600,400));
+		this.pack();
+		this.setTitle("log");
+		this.setIconImage(AppIcons.getProgramIconImage());
+		this.centerLocationToThisComponent(aliViewWindow);
+	}
+	
+	protected void refreshLog() {
 		try {
 			aliViewWindow.flushAllLogs();
 			File logFile = new File( System.getProperty("user.home"), File.separator + Settings.getAliViewUserDataSubdir() + File.separator + Settings.getLogfileName());
@@ -37,37 +86,8 @@ public class MessageLogFrame extends JFrame{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		JScrollPane scrollPane = new JScrollPane(messageArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		
-		this.getContentPane().add(scrollPane, BorderLayout.CENTER);
-
-		JButton refreshButton = new JButton("Refresh log");
-		refreshButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				try {
-					aliViewWindow.flushAllLogs();
-					File logFile = new File( System.getProperty("user.home"), File.separator + Settings.getAliViewUserDataSubdir() + File.separator + Settings.getLogfileName());
-					String message = FileUtils.readFileToString(logFile);
-					messageArea.setText(logFile.getAbsolutePath() + LF + message);
-				} catch (IOException excep) {
-					// TODO Auto-generated catch block
-					excep.printStackTrace();
-				}
-			}
-
-		});
-
-		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		buttonPanel.add(refreshButton);
-		this.getContentPane().add(buttonPanel, BorderLayout.SOUTH);
-		this.setPreferredSize(new Dimension(600,400));
-		this.pack();
-		this.setTitle("log");
-		this.setIconImage(AppIcons.getProgramIconImage());
-		this.centerLocationToThisComponent(aliViewWindow);
 	}
-	
+
 	public void placeFrameupperLeftLocationOfThis(Component parent){
 		if(parent != null){
 			int newX = parent.getX() + 150;

@@ -28,11 +28,15 @@ public class AliViewExtraNexusUtilities {
 			dataTypeString = "PROTEIN";
 		}
 		
+		//String sequentialParameter = " SEQUENTIAL=YES";
+		String sequentialParameter = "";
+		
+		
       	out.write("#NEXUS" + LF);
       	out.write(LF);
       	out.write("BEGIN DATA;" + LF);
       	out.write("DIMENSIONS  NTAX=" + alignment.getSize() + " NCHAR=" + alignment.getMaximumSequenceLength() + ";" + LF);
-      	out.write("FORMAT DATATYPE=" + dataTypeString + " INTERLEAVE=YES GAP=- MISSING=?;" + LF);
+      	out.write("FORMAT DATATYPE=" + dataTypeString + sequentialParameter + " GAP=- MISSING=?;" + LF);
       	out.write("MATRIX" + LF);
       	out.write(LF);
       	

@@ -23,6 +23,10 @@ or: boolean dontAsk = dontAskBox.isSelected();
 
 	
 	
+	public JOptionPaneWithCheckbox(JCheckBox cbx, String text, int messageType, int optionType) {
+		super(new Object[]{text,cbx}, messageType, optionType);
+	}
+
 	public JOptionPaneWithCheckbox(JCheckBox cbx, String text, int messageType) {
 		super(new Object[]{text,cbx}, messageType);
 	}
@@ -32,7 +36,6 @@ or: boolean dontAsk = dontAskBox.isSelected();
 
 
 		Object[] params = ;
-
 
 		int reply = showConfirmDialog (new JFrame(),
 				params,

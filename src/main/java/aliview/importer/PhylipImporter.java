@@ -30,18 +30,18 @@ public class PhylipImporter {
 	public static int SHORT_NAME_SEQUENTIAL = 2;
 	public static int LONG_NAME_SEQUENTIAL = 3;
 	public static int LONG_NAME_SEQUENTIAL_ONELINE = 4;
-	public int importerType;
+	public int formatType;
 	
 	public static void main(String[] args) throws FileNotFoundException, AlignmentImportException {
 		File alignmentFile = new File("/home/anders/projekt/alignments/smalphylipSeqShortName.phy");
-		PhylipImporter phylipImporter = new PhylipImporter(new FileReader(alignmentFile), PhylipImporter.SHORT_NAME_INTERLEAVED);
-		phylipImporter.importSequences();
+		PhylipImporter importer = new PhylipImporter(new FileReader(alignmentFile), PhylipImporter.SHORT_NAME_INTERLEAVED);
+		importer.importSequences();
 	}
 	
 	
-	public PhylipImporter(Reader reader, int phylipType) {
+	public PhylipImporter(Reader reader, int formatType) {
 		this.reader = reader;
-		this.importerType = phylipType;
+		this.formatType = formatType;
 	}
 	
 	public List<Sequence> importSequences() throws AlignmentImportException {
@@ -73,23 +73,25 @@ public class PhylipImporter {
 			
 			try{
 				
-				if(importerType == LONG_NAME_INTERLEAVED){
+				if(formatType == LONG_NAME_INTERLEAVED){
 					
 					List<String> seqNames = new ArrayList<String>();
-					//List<StringBuilder> seqBuffers = new ArrayList<StringBuilder>();
+					// since we already know sequence size then we can use ByteBuffer
 					List<ByteBuffer> seqBuffers = new ArrayList<ByteBuffer>();
+					//List<StringBuilder> seqBuffers = new ArrayList<StringBuilder>();
 					
 					// try long name sequential
 					for(int n = 0; n <seqCount; n++){
-						String line = helper.readLine();
-						int index = indexOfFirstNonWhiteCharAfterWhiteChar(line);
+						// read lines of seq data
+						helper.readNextLine();
+						String line = helper.getNextLine();
+						int index = ReaderHelper.indexOfFirstNonWhiteCharAfterWhiteChar(line);
 						String name = line.substring(0, index).trim();	
 						seqNames.add(name);
-						ByteBuffer seqBuff = ByteBuffer.allocate(longestSequenceLength);
+						int capacity = longestSequenceLength;
+						ByteBuffer seqBuff = ByteBuffer.allocate(capacity);
 						String seqChars = line.substring(index);
-						if(seqChars.indexOf(' ') > -1){
-							seqChars = StringUtils.remove(seqChars, ' ');
-						}
+						line = ReaderHelper.removeSpaceAndTab(line);
 						seqBuff.put(seqChars.getBytes());
 						seqBuffers.add(seqBuff);					
 					}
@@ -100,15 +102,16 @@ public class PhylipImporter {
 						int lineCount = 0;
 						while(lineCount < seqCount){		
 							// read lines of seq data
-							String line = helper.readLine();
-							int index = indexOfFirstNonWhiteChar(line);
+							helper.readNextLine();
+							String line = helper.getNextLine();
+							int index = ReaderHelper.indexOfFirstNonWhiteChar(line);
 							
 							// Skip empty lines
-							if(index > -1){
+							if(index == -1){
+								
+							}else{
 								String moreChars = line.substring(index);
-								if(moreChars.indexOf(' ') > -1){
-									moreChars = StringUtils.remove(moreChars, ' ');
-								}
+								line = ReaderHelper.removeSpaceAndTab(line);
 								ByteBuffer seqBuff = seqBuffers.get(lineCount);
 								seqBuff.put(moreChars.getBytes());
 								lineCount ++;
@@ -138,17 +141,17 @@ public class PhylipImporter {
 					
 				}
 				
-				if(importerType == LONG_NAME_SEQUENTIAL){
+				if(formatType == LONG_NAME_SEQUENTIAL){
 					// try long name sequential
 					for(int n = 0; n <seqCount; n++){
 						String name = helper.getStringUntilNextSpaceOrTab();
 						// read lines of seq data
 						StringBuilder seqBuffer = new StringBuilder(longestSequenceLength);
 						while(seqBuffer.length() < longestSequenceLength){
-							String line = helper.readLine();
-							if(line.indexOf(' ')>-1){
-								line = StringUtils.remove(line, ' ');
-							}
+							// read lines of seq data
+							helper.readNextLine();
+							String line = helper.getNextLine();
+							line = ReaderHelper.removeSpaceAndTab(line);		
 							seqBuffer.append(line);
 						}
 						if(seqBuffer.length() != longestSequenceLength){
@@ -158,7 +161,7 @@ public class PhylipImporter {
 					}
 				}
 				
-				if(importerType == SHORT_NAME_SEQUENTIAL){
+				if(formatType == SHORT_NAME_SEQUENTIAL){
 					// try long name sequential
 					for(int n = 0; n <seqCount; n++){
 						String name = helper.getStringFromNextPositions(10);
@@ -172,7 +175,7 @@ public class PhylipImporter {
 				}
 				
 				
-				if(importerType == SHORT_NAME_INTERLEAVED){
+				if(formatType == SHORT_NAME_INTERLEAVED){
 					// try long name sequential
 					
 					// first read names lines
@@ -182,10 +185,9 @@ public class PhylipImporter {
 						String name = helper.getStringFromNextPositions(10);
 						
 						// read rest of line as seq data
-						String line = helper.readLine();
-						if(line.indexOf(' ')>-1){
-							line = StringUtils.remove(line, " ");
-						}	
+						helper.readNextLine();
+						String line = helper.getNextLine();
+						line = ReaderHelper.removeSpaceAndTab(line);			
 						sequences.add(new PhylipSequence(name, line));
 					}
 					
@@ -195,10 +197,9 @@ public class PhylipImporter {
 						// loop through all sequences in order
 						for(int n = 0; n <seqCount; n++){			
 							// read lines of seq data
-							String line = helper.readLine();
-							if(line.indexOf(' ')>-1){
-								line = StringUtils.remove(line, " ");
-							}
+							helper.readNextLine();
+							String line = helper.getNextLine();
+							line = ReaderHelper.removeSpaceAndTab(line);	
 							PhylipSequence seq = (PhylipSequence) sequences.get(n);
 							seq.append(line);
 						}
@@ -257,39 +258,15 @@ public class PhylipImporter {
 	public int getLongestSequenceLength() {
 		return longestSequenceLength;
 	}
-	
-	private int indexOfFirstNonWhiteCharAfterWhiteChar(String text) {
-		boolean whiteFound = false;
-		int index = -1;
-		for(int n = 0; n< text.length(); n++){
-			if(isWhiteSpace(text.charAt(n))){
-				whiteFound = true;
-			}
-			if(whiteFound && !isWhiteSpace(text.charAt(n))){
-				index = n;
-				break;
+
+	public static boolean isStringValidFirstLine(String firstLine) {
+		boolean isValid = false;
+		if(firstLine.contains(" ")){
+			String[] lineSplitted = firstLine.split("\\s+"); // one or many whitespace
+			if( NumberUtils.isNumber(lineSplitted[0]) && NumberUtils.isNumber(lineSplitted[1]) ){
+				isValid = true;
 			}
 		}
-		return index;
-	}
-	
-	private int indexOfFirstNonWhiteChar(String text) {
-		int index = -1;
-		for(int n = 0; n< text.length(); n++){
-			if(! isWhiteSpace(text.charAt(n))){
-				index = n;
-				break;
-			}
-		}
-		return index;
-	}
-	
-	private boolean isWhiteSpace(char c) {
-		if(c==' ' || c == '\t' || c=='\r' || c=='\n'){
-			return true;
-		}
-		else{
-			return false;
-		}
+		return isValid;
 	}
 }

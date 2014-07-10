@@ -51,47 +51,52 @@ public class SeaViewColorScheme extends DefaultColorScheme{
 		baseBackgroundColor[NucleotideUtilities.H] = IUPAC_BG;
 		baseBackgroundColor[NucleotideUtilities.V] = IUPAC_BG;
 		baseBackgroundColor[NucleotideUtilities.N] = IUPAC_BG;
-		baseBackgroundColor[NucleotideUtilities.GAP] = new Color(225,225,225);
-		baseBackgroundColor[NucleotideUtilities.UNKNOWN] = Color.lightGray;
+		baseBackgroundColor[NucleotideUtilities.GAP] = IUPAC_BG.brighter();
+		baseBackgroundColor[NucleotideUtilities.UNKNOWN] = IUPAC_BG.brighter();
 			
 		baseSelectionForegroundColor = new Color[64];
 		
-		baseSelectionForegroundColor[NucleotideUtilities.A] = Color.white;
-		baseSelectionForegroundColor[NucleotideUtilities.C] = Color.white;
-		baseSelectionForegroundColor[NucleotideUtilities.G] = Color.white;
-		baseSelectionForegroundColor[NucleotideUtilities.TU] = Color.white;
-		baseSelectionForegroundColor[NucleotideUtilities.R] = Color.white;
-		baseSelectionForegroundColor[NucleotideUtilities.Y] = Color.white;
-		baseSelectionForegroundColor[NucleotideUtilities.M] = Color.white;
-		baseSelectionForegroundColor[NucleotideUtilities.K] = Color.white;
-		baseSelectionForegroundColor[NucleotideUtilities.W] = Color.white;
-		baseSelectionForegroundColor[NucleotideUtilities.S] = Color.white;
-		baseSelectionForegroundColor[NucleotideUtilities.B] = Color.white;
-		baseSelectionForegroundColor[NucleotideUtilities.D] = Color.white;
-		baseSelectionForegroundColor[NucleotideUtilities.H] = Color.white;
-		baseSelectionForegroundColor[NucleotideUtilities.V] = Color.white;
-		baseSelectionForegroundColor[NucleotideUtilities.N] = Color.white;
-		baseSelectionForegroundColor[NucleotideUtilities.GAP] = Color.white;
-		baseSelectionForegroundColor[NucleotideUtilities.UNKNOWN] = Color.white;
+		Color baseSelectionForegroundColorDefault = Color.black.brighter().brighter();
+		
+		baseSelectionForegroundColor[NucleotideUtilities.A] = baseSelectionForegroundColorDefault;
+		baseSelectionForegroundColor[NucleotideUtilities.C] = baseSelectionForegroundColorDefault;
+		baseSelectionForegroundColor[NucleotideUtilities.G] = baseSelectionForegroundColorDefault;
+		baseSelectionForegroundColor[NucleotideUtilities.TU] = baseSelectionForegroundColorDefault;
+		baseSelectionForegroundColor[NucleotideUtilities.R] = baseSelectionForegroundColorDefault;
+		baseSelectionForegroundColor[NucleotideUtilities.Y] = baseSelectionForegroundColorDefault;
+		baseSelectionForegroundColor[NucleotideUtilities.M] = baseSelectionForegroundColorDefault;
+		baseSelectionForegroundColor[NucleotideUtilities.K] = baseSelectionForegroundColorDefault;
+		baseSelectionForegroundColor[NucleotideUtilities.W] = baseSelectionForegroundColorDefault;
+		baseSelectionForegroundColor[NucleotideUtilities.S] = baseSelectionForegroundColorDefault;
+		baseSelectionForegroundColor[NucleotideUtilities.B] = baseSelectionForegroundColorDefault;
+		baseSelectionForegroundColor[NucleotideUtilities.D] = baseSelectionForegroundColorDefault;
+		baseSelectionForegroundColor[NucleotideUtilities.H] = baseSelectionForegroundColorDefault;
+		baseSelectionForegroundColor[NucleotideUtilities.V] = baseSelectionForegroundColorDefault;
+		baseSelectionForegroundColor[NucleotideUtilities.N] = baseSelectionForegroundColorDefault;
+		baseSelectionForegroundColor[NucleotideUtilities.GAP] = baseSelectionForegroundColorDefault;
+		baseSelectionForegroundColor[NucleotideUtilities.UNKNOWN] = baseSelectionForegroundColorDefault;
 		
 		baseSelectionBackgroundColor = new Color[64];
 		baseSelectionBackgroundColor[NucleotideUtilities.A] = new Color(255 - 120,0,0); 
 		baseSelectionBackgroundColor[NucleotideUtilities.C] = new Color(0,255 - 120,0);
 		baseSelectionBackgroundColor[NucleotideUtilities.G] = new Color(255 - 120,255 - 120,0);  
 		baseSelectionBackgroundColor[NucleotideUtilities.TU] = new Color(0,0,255 - 120); 
-		baseSelectionBackgroundColor[NucleotideUtilities.R] = Color.cyan.darker();
-		baseSelectionBackgroundColor[NucleotideUtilities.Y] = Color.cyan.darker();
-		baseSelectionBackgroundColor[NucleotideUtilities.M] = Color.cyan.darker();
-		baseSelectionBackgroundColor[NucleotideUtilities.K] = Color.cyan.darker();
-		baseSelectionBackgroundColor[NucleotideUtilities.W] = Color.cyan.darker();
-		baseSelectionBackgroundColor[NucleotideUtilities.S] = Color.cyan.darker();
-		baseSelectionBackgroundColor[NucleotideUtilities.B] = Color.cyan.darker();
-		baseSelectionBackgroundColor[NucleotideUtilities.D] = Color.cyan.darker();
-		baseSelectionBackgroundColor[NucleotideUtilities.H] = Color.cyan.darker();
-		baseSelectionBackgroundColor[NucleotideUtilities.V] = Color.cyan.darker();
-		baseSelectionBackgroundColor[NucleotideUtilities.N] = Color.cyan.darker();
-		baseSelectionBackgroundColor[NucleotideUtilities.GAP] = Color.darkGray;
-		baseSelectionBackgroundColor[NucleotideUtilities.UNKNOWN] = Color.darkGray;
+		
+		Color IUPAC_BG_SELECTED =  new Color(225,225,225).darker().darker();
+		
+		baseSelectionBackgroundColor[NucleotideUtilities.R] = IUPAC_BG_SELECTED;
+		baseSelectionBackgroundColor[NucleotideUtilities.Y] = IUPAC_BG_SELECTED;
+		baseSelectionBackgroundColor[NucleotideUtilities.M] = IUPAC_BG_SELECTED;
+		baseSelectionBackgroundColor[NucleotideUtilities.K] = IUPAC_BG_SELECTED;
+		baseSelectionBackgroundColor[NucleotideUtilities.W] = IUPAC_BG_SELECTED;
+		baseSelectionBackgroundColor[NucleotideUtilities.S] = IUPAC_BG_SELECTED;
+		baseSelectionBackgroundColor[NucleotideUtilities.B] = IUPAC_BG_SELECTED;
+		baseSelectionBackgroundColor[NucleotideUtilities.D] = IUPAC_BG_SELECTED;
+		baseSelectionBackgroundColor[NucleotideUtilities.H] = IUPAC_BG_SELECTED;
+		baseSelectionBackgroundColor[NucleotideUtilities.V] = IUPAC_BG_SELECTED;
+		baseSelectionBackgroundColor[NucleotideUtilities.N] = IUPAC_BG_SELECTED;
+		baseSelectionBackgroundColor[NucleotideUtilities.GAP] = IUPAC_BG_SELECTED.brighter();
+		baseSelectionBackgroundColor[NucleotideUtilities.UNKNOWN] = IUPAC_BG_SELECTED.brighter();
 
 	}
 

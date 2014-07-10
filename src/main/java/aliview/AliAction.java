@@ -573,11 +573,11 @@ class AddSelectionToExcludesAction extends AliAction{
 		super(name, actionCommandKey, tooltip, accelerator, smallIcon);
 	}
 	public void actionPerformed(ActionEvent e){
-		aliViewWindow.addSelectionToExcludes();
+		aliViewWindow.addOrRemoveSelectionToExcludes();
 	}
 }
-public AliAction addSelectionToExcludesAction = new AddSelectionToExcludesAction("Add selection to Excludes/Exset", "AddSelectionToExcludesAction", null, OSNativeUtils.getAddExcludesKeyAccelerator(), null);
-
+public AliAction addSelectionToExcludesAction = new AddSelectionToExcludesAction("Add selection to Excludes/Exset", "AddSelectionToExcludesAction", null, OSNativeUtils.getAddOrRemoveExcludesKeyAccelerator(), null);
+/*
 class RemoveSelectionFromExcludesAction extends AliAction{	
 	public RemoveSelectionFromExcludesAction(String name, String actionCommandKey,
 			String tooltip, KeyStroke accelerator, ImageIcon smallIcon) {
@@ -588,6 +588,7 @@ class RemoveSelectionFromExcludesAction extends AliAction{
 	}
 }
 public AliAction removeSelectionFromExcludesAction = new RemoveSelectionFromExcludesAction("Remove selection from Excludes/Exset", "RemoveSelectionFromExcludesAction", null, null, null);
+*/
 
 class SetSelectionCoding0Action extends AliAction{	
 	public SetSelectionCoding0Action(String name, String actionCommandKey,

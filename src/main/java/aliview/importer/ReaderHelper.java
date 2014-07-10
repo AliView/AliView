@@ -5,6 +5,9 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.Reader;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+
 /*
  * 
  * This method is inspired by Import Helper
@@ -12,9 +15,10 @@ import java.io.Reader;
  * 
  */
 public class ReaderHelper {
-	
+	private static final Logger logger = Logger.getLogger(ReaderHelper.class);
 	private BufferedReader reader;
 	private int lastReadInt;
+	private String nextLine;
 
 	public ReaderHelper(BufferedReader reader){
 		this.reader = reader;
@@ -105,58 +109,6 @@ public class ReaderHelper {
 		}
 		return chars.toString();	
 	}
-	
-	
-	private boolean isPhylipNameChar(char c) {
-		if(c == '\t' || c=='\r' || c=='\n'){
-			return false;
-		}
-		else{
-			return true;
-		}
-	}
-
-	
-	
-	private boolean isWhiteSpace(int c) {
-		return isWhiteSpace((char)c);
-	}
-	
-	private boolean isSpaceOrTab(char c) {
-		if(c==' ' || c=='\t'){
-			return true;
-		}
-		else{
-			return false;
-		}
-	}
-	
-	private boolean isWhiteSpace(char c) {
-		if(c==' ' || c == '\t' || c=='\r' || c=='\n'){
-			return true;
-		}
-		else{
-			return false;
-		}
-	}
-	
-	private boolean isWhiteSpaceNotNewline(char c) {
-		if(c==' ' || c == '\t' || c=='\r'){
-			return true;
-		}
-		else{
-			return false;
-		}
-	}
-	
-	private boolean isNewline(char c) {
-		if(c=='\n'){
-			return true;
-		}
-		else{
-			return false;
-		}
-	}
 
     public char readChar() throws IOException{
 	    return (char) read();
@@ -181,9 +133,178 @@ public class ReaderHelper {
 	public void skipPastNext(char c) throws IOException {
 		while(readChar() != c);
 	}
+	
+	public void readNextLine() throws IOException{
+		nextLine = reader.readLine();
+	}
+	
+	public String getNextLine() throws IOException{
+		return nextLine;
+	}
+	
+	public boolean isNextLineEOF() throws IOException{
+		return (nextLine == null);
+	}
+	
+	public boolean isNextLineContainingNonWhitespaceChars() throws IOException{
+		if(isNextLineEOF()){
+			return false;
+		}
+		return isStringContainingNonWhitespaceChars(nextLine);
+	}
+	
+	public boolean isNextLineEmptyOrOnlyWhitespaceChars() throws IOException{
+		if(isNextLineEOF()){
+			return false;
+		}
+		return !isStringContainingNonWhitespaceChars(nextLine);
+	}
+	
+	public boolean isNextLineStartingWithNonBlankChar(){
+		if(nextLine != null){
+			if(nextLine.length() > 0){
+				if(!isWhiteSpace(nextLine.charAt(0))){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	public void readUntilNextNonBlankLine() throws IOException{
+		readNextLine();
+		while(isNextLineEmptyOrOnlyWhitespaceChars()){
+			readNextLine();
+		}
+	}
 
-	public String readLine() throws IOException {
-		return reader.readLine();
+	public boolean readUntilNextLineContains(String target) throws IOException {
+		readNextLine();
+		while(!isNextLineEOF()){
+			if(StringUtils.containsIgnoreCase(nextLine, target)){
+				return true;
+			}
+			readNextLine();
+		}
+		return false;
+	}
+	
+	
+	
+
+	//
+	//	Utility methods
+	//
+	
+	
+	private static boolean isPhylipNameChar(char c) {
+		if(c == '\t' || c=='\r' || c=='\n'){
+			return false;
+		}
+		else{
+			return true;
+		}
+	}	
+	
+	private static boolean isWhiteSpace(int c) {
+		return isWhiteSpace((char)c);
+	}
+	
+	private static boolean isSpaceOrTab(char c) {
+		if(c==' ' || c=='\t'){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	
+	private static boolean isWhiteSpace(char c) {
+		if(c==' ' || c == '\t' || c=='\r' || c=='\n'){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	
+	private static boolean isWhiteSpaceNotNewline(char c) {
+		if(c==' ' || c == '\t' || c=='\r'){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	
+	private static boolean isNewline(char c) {
+		if(c=='\n'){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	
+	
+	
+	public static boolean isStringContainingNonWhitespaceChars(String input){
+		if(input == null){
+			return false;
+		}
+		for(int n = 0; n < input.length(); n++){
+			if(! isWhiteSpace(input.charAt(n))){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static String removeSpace(String text) {
+		if(text.indexOf(' ')>-1){
+			text = StringUtils.remove(text, ' ');
+		}
+		return text;
+	}
+	
+	public static String removeTab(String text) {
+		if(text.indexOf('\t')>-1){
+			text = StringUtils.remove(text, '\t');
+		}
+		return text;
+	}
+
+
+	public static String removeSpaceAndTab(String text) {
+		text = removeSpace(text);
+		text = removeTab(text);
+		return text;
+	}
+	
+	public static int indexOfFirstNonWhiteCharAfterWhiteChar(String text) {
+		boolean whiteFound = false;
+		int index = -1;
+		for(int n = 0; n< text.length(); n++){
+			if(isWhiteSpace(text.charAt(n))){
+				whiteFound = true;
+			}
+			if(whiteFound && !isWhiteSpace(text.charAt(n))){
+				index = n;
+				break;
+			}
+		}
+		return index;
+	}
+	
+	public static int indexOfFirstNonWhiteChar(String text) {
+		int index = -1;
+		for(int n = 0; n< text.length(); n++){
+			if(! isWhiteSpace(text.charAt(n))){
+				index = n;
+				break;
+			}
+		}
+		return index;
 	}
 	
 }

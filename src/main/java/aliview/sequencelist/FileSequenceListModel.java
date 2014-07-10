@@ -17,6 +17,8 @@ import aliview.FileFormat;
 import aliview.alignment.AAHistogram;
 import aliview.alignment.AliHistogram;
 import aliview.alignment.NucleotideHistogram;
+import aliview.messenges.Messenger;
+import aliview.sequences.FileSequence;
 import aliview.sequences.Sequence;
 import aliview.sequences.SequenceUtils;
 import aliview.settings.Settings;
@@ -29,6 +31,7 @@ public class FileSequenceListModel extends SequenceListModel implements ListData
 	public FileSequenceListModel(File aliFile, FileFormat foundFormat) throws IOException {
 		super(new FileMMSequenceList(aliFile, foundFormat));
 		this.getSequences().addListDataListener(this);
+		this.setFileFormat(foundFormat);
 	}
 
 	@Override
@@ -42,7 +45,7 @@ public class FileSequenceListModel extends SequenceListModel implements ListData
 		int maxLen = 0;
 		for(Sequence seq: this.getSequences()){
 			int len = seq.getLength();
-			if(len > maxLen){
+			if(len > maxLen){		
 				maxLen = len;
 			}
 		}
@@ -76,7 +79,7 @@ public class FileSequenceListModel extends SequenceListModel implements ListData
 		//if(getSelectionSize()*3 > MemoryUtils.getMaxMem()){
 		if(getSelectionSize() > 200000000){
 			//AliView.showUserMessage("Selection is to big to Copy with current Java Memory setting");
-			AliView.showUserMessage("Selection is to big to Copy");
+			Messenger.showOKOnlyMessage(Messenger.TO_BIG_SELECTION_FOR_COPY);	
 			logger.info("getSelectionSize" + getSelectionSize());
 		}
 		else{	

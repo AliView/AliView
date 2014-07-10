@@ -16,8 +16,10 @@ import aliview.AliView;
 import aliview.MemoryUtils;
 import aliview.alignment.Alignment;
 import aliview.alignment.AlignmentMeta;
+import aliview.messenges.Messenger;
 import aliview.sequencelist.FileSequenceListModel;
 import aliview.sequencelist.SequenceListModel;
+import aliview.sequences.NexusSequence;
 import aliview.sequences.SequenceUtils;
 
 public class AlignmentFactory {
@@ -44,12 +46,13 @@ public class AlignmentFactory {
 				SequenceListModel sequences = seqFactory.createSequences(alignmentFile);
 				
 				Excludes excludes = new Excludes(sequences.getLongestSequenceLength());
+				logger.info("sequences.getLongestSequenceLength()" + sequences.getLongestSequenceLength());
 				CodonPositions codonPositions = new CodonPositions(sequences.getLongestSequenceLength());
 				ArrayList<CharSet> charsets = new ArrayList<CharSet>();
 
 					try {
 						// Try to read Excludes etc. from alignmentfile	
-						if(NexusUtilities.isNexusFile(alignmentFile) && sequences instanceof FileSequenceListModel == false){
+						if(NexusUtilities.isNexusFile(alignmentFile) && sequences instanceof FileSequenceListModel == false && sequences.get(0) instanceof NexusSequence == false){
 							NexusUtilities.updateExcludesFromFile(alignmentFile,excludes);
 							NexusUtilities.updateCodonPositionsFromNexusFile(alignmentFile, codonPositions);
 							charsets = NexusUtilities.createCharsetsFromNexusFile(alignmentFile, sequences.getLongestSequenceLength());
@@ -68,7 +71,8 @@ public class AlignmentFactory {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 						logger.error(e);
-						AliView.showUserError("Error during import alignment metadata: " + LF + e.getMessage());
+						Messenger.showOKOnlyMessage(Messenger.ALIGNMENT_META_READ_ERROR,
+								LF + e.getLocalizedMessage());	
 					}
 				
 				
@@ -88,9 +92,10 @@ public class AlignmentFactory {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				logger.error(e);
-				AliView.showUserError("Could not Import alignment: " + LF + e.getMessage());
+				Messenger.showOKOnlyMessage(Messenger.ALIGNMENT_IMPORT_ERROR,
+						LF + e.getLocalizedMessage());
+
 			}
-			
 			
 			long endTime = System.currentTimeMillis();
 			System.out.println("Importing sequences took " + (endTime - startTime) + " milliseconds");

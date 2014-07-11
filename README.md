@@ -5,7 +5,7 @@ Webpage: www.ormbunkar.se/aliview
 
 <strong>AliView is yet another alignment viewer and editor, but this one is probably one of the fastest and most intuitive to use, less bloated and hopefully to your liking.</strong>
 
-The general idea when designing this program has always been usability and speed, all new functions are optimized so they do not affect the general performance and capability to work swiftly with large alignments. 
+The general idea when designing this program has always been <strong>usability</strong> and <strong>speed</strong>, all new functions are optimized so they do not affect the general performance and capability to work swiftly with large alignments. 
 
 A need to easily sort, view, remove, edit and merge sequences from large transcriptome datasets initiated the work with the program.
 

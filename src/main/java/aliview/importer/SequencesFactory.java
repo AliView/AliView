@@ -271,7 +271,6 @@ public class SequencesFactory {
 				if(foundFormat == FileFormat.FASTA || foundFormat == FileFormat.PHYLIP || 
 						foundFormat == FileFormat.NEXUS || foundFormat == FileFormat.CLUSTAL ||
 						    foundFormat == FileFormat.MSF){
-					
 					try{
 						model = new FileSequenceListModel(alignmentFile, foundFormat);
 						logger.info(model.getFileFormat());

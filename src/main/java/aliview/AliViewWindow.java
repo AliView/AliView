@@ -124,6 +124,7 @@ import aliview.gui.AliToolBar;
 import aliview.gui.AliViewJMenuBar;
 import aliview.gui.AliViewJMenuBarFactory;
 import aliview.gui.AlignmentPane;
+import aliview.gui.AlignmentPane_Orig;
 import aliview.gui.AlignmentPopupMenu;
 import aliview.gui.AppIcons;
 import aliview.gui.GlassPaneKeyListener;
@@ -370,12 +371,16 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 
 		alignmentScrollPane.setAutoscrolls(true);
 		alignmentScrollPane.setMinimumSize(new Dimension(150, 150));
-		alignmentScrollPane.setDoubleBuffered(true);
+		logger.info("alignmentPane.isDoubleBuffered()" +  alignmentPane.isDoubleBuffered());
+		//boolean paneDoubleBuff = alignmentPane.isDoubleBuffered();
+		boolean paneDoubleBuff = false;
+		alignmentScrollPane.setDoubleBuffered(paneDoubleBuff);
 		//alignmentScrollPane.setDoubleBuffered(false);
 		alignmentScrollPane.getVerticalScrollBar().setUnitIncrement(16);
 		alignmentScrollPane.getHorizontalScrollBar().setUnitIncrement(160);
+		alignmentScrollPane.getViewport().setScrollMode(JViewport.BACKINGSTORE_SCROLL_MODE);
 		//alignmentScrollPane.setDropTarget(alignmentPane);
-		alignmentPane.setDoubleBuffered(true);
+		alignmentPane.setDoubleBuffered(paneDoubleBuff);
 		//alignmentPane.setDoubleBuffered(false);
 		//alignmentScrollPane.setBorder(null);
 		alignmentScrollPane.setBorder(BorderFactory.createEmptyBorder());
@@ -761,11 +766,6 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		// TODO Problem is that a scrollpane need to be resized before setViewPosiiton()
 		// and all should be done at once before repaint!!!
 
-		//		Base atBase = alignmentPane.getClosestBaseAt(mousePos);
-		//		incCharSize();
-		//		alignmentPane.scrollBaseTo(atBase,mousePos)
-
-
 		// Get alignmentPane size before resize since it will change afeter resize
 		// we need to now relative size different between new and old size because
 		// we want to zoom in on same position (same nucleotide) where mouse was in
@@ -779,9 +779,9 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		incCharSize();
 
 		Dimension newSize = alignmentPane.getPreferredSize();
-		//alignmentPane.setSize(newSize);
-		//alignmentPane.revalidate();
-		logger.info("newSize" + newSize);
+		alignmentPane.setSize(newSize);
+
+		logger.info("pane-newSize" + newSize);
 
 		// Now when alignmentPanel coordinates have changed due to resize, lets focus on the 
 		// relative position where mouse pointer were earlier (same nucleotide)		
@@ -802,36 +802,19 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 
 		final Point newViewPoint = new Point(newX, newY);
 
-		//		// move viewport so base moves to mouse pointer (absolute position on)
-		//				alignmentScrollPane.getViewport().setViewPosition(newViewPoint);
-		//				alignmentPane.revalidate();
-		//				alignmentPane.repaint();
-
-		// move viewport so base moves to mouse pointer (absolute position on)
-		alignmentScrollPane.getViewport().validate();
-		//		logger.info("alignmentPane.getSize()" + alignmentPane.getSize());
-		//		logger.info("alignmentPane.getPreferedSize()" + alignmentPane.getPreferredSize());
 		viewPoint = alignmentScrollPane.getViewport().getViewPosition();
 		logger.info("beforeViewPoint" + viewPoint);
 		logger.info("newViewPoint" + newViewPoint);
-
-		//alignmentScrollPane.ensureViewPoint(newViewPoint);
-
-		//		getSize();
-
-		alignmentScrollPane.getViewport().revalidate();
+		
 		alignmentScrollPane.getViewport().setViewPosition(newViewPoint);
-
-		//sequenceJList.revalidate();
-		//		listScrollPane.getViewport().revalidate();
-		//		listScrollPane.getViewport().setViewPosition(new Point(0,newViewPoint.y));
-		//alignmentScrollPane.scrollRectToVisible(new Rectangle(newViewPoint));
-
-		//	logger.info("point" + newViewPoint);
 
 		viewPoint = alignmentScrollPane.getViewport().getViewPosition();
 		logger.info("afterViewPoint" + viewPoint);
-		alignmentPane.repaint();
+		
+		// This is a bit double to make sure everything gets repainted
+		alignmentPane.setForceRepaintAll(true);
+		alignmentPane.repaint(0,0,newSize.width, newSize.height);
+		
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run(){
 				scrollBarListener.stateChanged(new ChangeEvent(alignmentScrollPane.getVerticalScrollBar().getModel()));
@@ -840,11 +823,10 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run(){
-				//			listScrollPane.getViewport().setViewPosition(new Point(0, newViewPoint.y));
+				// listScrollPane.getViewport().setViewPosition(new Point(0, newViewPoint.y));
 			}
 		});
 
-		//clearSelectedBases();
 	}
 
 	public void zoomOutAt(Point mousePos){
@@ -859,57 +841,51 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 
 		Point mouseInMatrixCoord = alignmentPane.paneCoordToMatrixCoord(mousePosInScrollPaneCoord);
 
-
 		logger.info("oldSize" + oldSize);
 
-		decCharSize();
+		boolean didChangeSize = decCharSize();
 
-		/*
-		upperLeftMatrixCoord = alignmentPane.paneCoordToMatrixCoord(mousePosInScrollPaneCoord);
-
-		// scrollMatrixPosToPaneCoord
-		alignmentScrollPane.getViewport().setViewPosition(p)
-
-		alignmentScrollPane.getViewport().
-		 */
-
-		Dimension newSize = alignmentPane.getPreferredSize();
-		logger.info("newSize" + newSize);
-
-		// Now when alignmentPanel coordinates have changed due to resize, lets focus on the 
-		// relative position where mouse pointer were earlier (same nucleotide)		
-		double paneRelSizeX = newSize.getWidth()/oldSize.getWidth();
-		double paneRelSizeY = newSize.getHeight()/oldSize.getHeight();
-
-		int mousePosXOnResizedPane = (int) (mousePos.getX() * paneRelSizeX);
-		int mousePosYOnResizedPane = (int) (mousePos.getY() * paneRelSizeY);
-
-		Point mousePosOnResizedPane = new Point(mousePosXOnResizedPane, mousePosYOnResizedPane);
-
-		// calculate new vew location	
-		int newX = mousePosOnResizedPane.x - mousePosInScrollPaneCoord.x;
-		int newY = mousePosOnResizedPane.y - mousePosInScrollPaneCoord.y;
-		final Point newViewPoint = new Point(newX, newY);
-
-		// move viewport so base moves to mouse pointer (absolute position on)
-		alignmentScrollPane.getViewport().setViewPosition(newViewPoint);
-		alignmentPane.revalidate();
-		alignmentPane.repaint();
-
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run(){
-				scrollBarListener.stateChanged(new ChangeEvent(alignmentScrollPane.getVerticalScrollBar().getModel()));
-			}
-		});
-
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run(){
-				//			listScrollPane.getViewport().setViewPosition(new Point(0, newViewPoint.y));
-			}
-		});
-
-		//viewPoint = alignmentScrollPane.getViewport().getViewPosition();
-
+		if(didChangeSize){
+		
+			Dimension newSize = alignmentPane.getPreferredSize();
+			alignmentPane.setSize(newSize);
+			logger.info("newSize" + newSize);
+	
+			// Now when alignmentPanel coordinates have changed due to resize, lets focus on the 
+			// relative position where mouse pointer were earlier (same nucleotide)		
+			double paneRelSizeX = newSize.getWidth()/oldSize.getWidth();
+			double paneRelSizeY = newSize.getHeight()/oldSize.getHeight();
+	
+			int mousePosXOnResizedPane = (int) (mousePos.getX() * paneRelSizeX);
+			int mousePosYOnResizedPane = (int) (mousePos.getY() * paneRelSizeY);
+	
+			Point mousePosOnResizedPane = new Point(mousePosXOnResizedPane, mousePosYOnResizedPane);
+	
+			// calculate new vew location	
+			int newX = mousePosOnResizedPane.x - mousePosInScrollPaneCoord.x;
+			int newY = mousePosOnResizedPane.y - mousePosInScrollPaneCoord.y;
+			final Point newViewPoint = new Point(newX, newY);
+	//		logger.info("newViewPoint" + newViewPoint);
+	
+			// move viewport so base moves to mouse pointer (absolute position on)
+			alignmentScrollPane.getViewport().setViewPosition(newViewPoint);
+		//	logger.info(alignmentPane.getVisibleRect());
+			// This is a bit double - but I want to be sure everything gets painted
+			alignmentPane.setForceRepaintAll(true);
+			alignmentPane.repaint(0,0,newSize.width, newSize.height);
+	
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run(){
+					scrollBarListener.stateChanged(new ChangeEvent(alignmentScrollPane.getVerticalScrollBar().getModel()));
+				}
+			});
+	
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run(){
+					//			listScrollPane.getViewport().setViewPosition(new Point(0, newViewPoint.y));
+				}
+			});
+		}
 	}
 
 
@@ -1134,13 +1110,14 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 	protected void incCharSize(){
 		alignmentPane.incCharSize();
 		sequenceJList.setCharSize(alignmentPane.getCharHeight());
-		alignmentPane.repaint();
 	}
 
-	protected void decCharSize() {
-		alignmentPane.decCharSize();
-		sequenceJList.setCharSize(alignmentPane.getCharHeight());
-		alignmentPane.repaint();
+	protected boolean decCharSize() {
+		boolean didChange = alignmentPane.decCharSize();
+		if(didChange){
+			sequenceJList.setCharSize(alignmentPane.getCharHeight());
+		}
+		return didChange;
 	}
 
 	public void restoreWindowGeometry(){
@@ -1867,8 +1844,16 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 	}
 
 	public void sortSequencesByName() {
-		aliViewWindow.getUndoControler().pushUndoState(new UndoSavedStateSequenceOrder(alignment.getSequences(), alignment.getAlignentMetaCopy()));
+		aliViewWindow.getUndoControler().pushUndoState(new UndoSavedStateSequenceOrder(alignment.getSequences().getCopyShallow(), alignment.getAlignentMetaCopy()));
 		alignment.sortSequencesByName();
+		alignmentPane.validateSequenceOrder();
+		alignmentPane.repaint();
+		sequenceJList.repaint();
+	}
+	
+	public void sortSequencesByCharColumn() {
+		aliViewWindow.getUndoControler().pushUndoState(new UndoSavedStateSequenceOrder(alignment.getSequences().getCopyShallow(), alignment.getAlignentMetaCopy()));
+		alignment.sortSequencesByCharInSelectedColumn();
 		alignmentPane.validateSequenceOrder();
 		alignmentPane.repaint();
 		sequenceJList.repaint();
@@ -3639,14 +3624,6 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 
 	public void openHelp() {
 		HelpUtils.display(HelpUtils.TOP_HELP, this);
-	}
-
-	public void sortSequencesByCharColumn() {
-		aliViewWindow.getUndoControler().pushUndoState(new UndoSavedStateSequenceOrder(alignment.getSequences(), alignment.getAlignentMetaCopy()));
-		alignment.sortSequencesByCharInSelectedColumn();
-		alignmentPane.validateSequenceOrder();
-		alignmentPane.repaint();
-		sequenceJList.repaint();
 	}
 
 	public void countStopCodons() {

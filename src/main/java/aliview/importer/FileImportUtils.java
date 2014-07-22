@@ -174,4 +174,8 @@ public static final int INDEX_NOT_FOUND = -1;
 			return sb;
 		}
 
+		public static String removeAll(String line, char c) {
+			return StringUtils.remove(line, c);
+		}
+
 }

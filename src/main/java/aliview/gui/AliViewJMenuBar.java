@@ -200,7 +200,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 		loadedAlignmentFunctions.add(mntmSaveAlignmentAsNexusCodon);
 		nucleotideFunctions.add(mntmSaveAlignmentAsNexusCodon);
 
-		JMenuItem mntmSaveAlignmentAsPhylipRelaxedPadded = new JMenuItem("Save as Phylip (relaxed & padded)");
+		JMenuItem mntmSaveAlignmentAsPhylipRelaxedPadded = new JMenuItem("Save as Phylip (full names & padded)");
 		mntmSaveAlignmentAsPhylipRelaxedPadded.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				aliViewWindow.saveAlignmentAsFileViaChooser(FileFormat.PHYLIP_RELAXED_PADDED, false);
@@ -210,7 +210,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 		mnFile.add(mntmSaveAlignmentAsPhylipRelaxedPadded);
 		loadedAlignmentFunctions.add(mntmSaveAlignmentAsPhylipRelaxedPadded);
 		
-		JMenuItem mntmSaveAlignmentAsPhylip = new JMenuItem("Save as Phylip (relaxed)");
+		JMenuItem mntmSaveAlignmentAsPhylip = new JMenuItem("Save as Phylip (full names)");
 		mntmSaveAlignmentAsPhylip.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				aliViewWindow.saveAlignmentAsFileViaChooser(FileFormat.PHYLIP_RELAXED, false);
@@ -219,6 +219,16 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 		});
 		mnFile.add(mntmSaveAlignmentAsPhylip);
 		loadedAlignmentFunctions.add(mntmSaveAlignmentAsPhylip);
+		
+		JMenuItem mntmSaveAlignmentAsPhylipStrictSequential = new JMenuItem("Save as Phylip (strict 10 char names)");
+		mntmSaveAlignmentAsPhylipStrictSequential.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				aliViewWindow.saveAlignmentAsFileViaChooser(FileFormat.PHYLIP_STRICT_SEQUENTIAL, false);
+			}
+
+		});
+		mnFile.add(mntmSaveAlignmentAsPhylipStrictSequential);
+		loadedAlignmentFunctions.add(mntmSaveAlignmentAsPhylipStrictSequential);
 		
 		JMenuItem mntmSaveAlignmentAsClustal = new JMenuItem("Save as Clustal (aln)");
 		mntmSaveAlignmentAsClustal.addActionListener(new ActionListener() {

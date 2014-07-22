@@ -385,7 +385,17 @@ public class Alignment implements FileSequenceLoadListener {
 				seqName = StringUtils.rightPad(seqName , longSeqName);
 			}
 			
-			out.write(seqName+ " ");
+			if(fileFormat == FileFormat.PHYLIP_STRICT_SEQUENTIAL){
+				// Make sure exact 10 positions
+				if(seqName.length() > 10){
+					seqName = StringUtils.substring(seqName, 0, 10);
+					// replace space with '_'
+					seqName = seqName.replace(' ', '_');
+				}
+				seqName = StringUtils.rightPad(seqName , 10);
+			}
+			
+			out.write(seqName); // no space after name
 			seq.writeBases(out);
 			out.write(LF);
 		}
@@ -501,13 +511,15 @@ public class Alignment implements FileSequenceLoadListener {
 				BufferedWriter outMeta = new BufferedWriter(new FileWriter(new File(outFile.getAbsoluteFile() + ".meta")));
 				storeMetaData(outMeta);
 			}
-		}else if(fileFormat == FileFormat.PHYLIP || fileFormat == FileFormat.PHYLIP_RELAXED || fileFormat == FileFormat.PHYLIP_RELAXED_PADDED){
+		}else if(fileFormat == FileFormat.PHYLIP || fileFormat == FileFormat.PHYLIP_RELAXED || fileFormat == FileFormat.PHYLIP_RELAXED_PADDED || fileFormat == FileFormat.PHYLIP_STRICT_SEQUENTIAL){
 			storeAlignmetAsPhyFile(out, fileFormat);
 			// save meta if exset it is set
 			if(this.alignmentMeta.isMetaOutputNeeded()){
 				BufferedWriter outMeta = new BufferedWriter(new FileWriter(new File(outFile.getAbsoluteFile() + ".meta")));
 				storeMetaData(outMeta);
 			}
+			
+		
 		}else if(fileFormat == FileFormat.PHYLIP_TRANSLATED_AMINO_ACID){
 			storeAlignmetAsPhyTranslatedAminoAcidFile(out);
 			// save meta if exset it is set

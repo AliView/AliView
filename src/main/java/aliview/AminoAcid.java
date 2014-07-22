@@ -33,6 +33,9 @@ public class AminoAcid {
     public static final AminoAcid STOP = new AminoAcid("Stop codon", " * ","X", 27); // The character for stop being used is X because otherwise there is problem when translating-align-retranslate
     public static final AminoAcid GAP = new AminoAcid("Gap", " - ","-", 29);
     
+    public static final int HIGEST_AA_INT_VAL = 29;
+    
+    public static final AminoAcid[] GROUP_ALL = new AminoAcid[]{A,C,D,E,F,G,H,I,K,L,M,N,P,Q,R,S,T,V,W,Y,X,STOP,GAP};  
     public static final AminoAcid[] GROUP_ACFHILMVWY = new AminoAcid[]{A,C,F,H,I,L,M,V,W,Y};
     public static final AminoAcid[] GROUP_WLVIMAFCHP = new AminoAcid[]{W,L,V,I,M,A,F,C,H,P};
     public static final AminoAcid[] GROUP_KR = new AminoAcid[]{K,R};

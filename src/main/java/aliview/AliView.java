@@ -308,8 +308,8 @@ public class AliView implements ApplicationListener{
 				//alignmentFile = new File("/home/anders/projekt/alignments/smalphylipInterlShortName.phy");
 //				alignmentFile = new File("/home/anders/projekt/alignments/harris_CT144.phy");
 
-
-				//		 alignmentFile = new File("/home/anders/projekt/alignments/woodsia_chloropl_excl_hybrid.fasta");
+				alignmentFile = new File("/home/anders/projekt/alignments/gold_strains_gg16S_aligned.fasta");
+	//					 alignmentFile = new File("/home/anders/projekt/alignments/woodsia_chloropl_excl_hybrid.fasta");
 				//			alignmentFile = new File("/home/anders/projekt/henriks_laboul/both.fasta");
 				//		alignmentFile = new File("/home/anders/projekt/ormbunkar/sekvenser_output/forkade_alignments/WoodsiapgiC-forked_2.nexus");
 				//			alignmentFile = new File("/home/anders/projekt/ormbunkar/sekvenser_output/forkade_alignments/Woodsia_chloroplast_min1_20131101_v2.nexus.excluded");
@@ -323,7 +323,7 @@ public class AliView implements ApplicationListener{
 				//alignmentFile = new File("/home/anders/projekt/alignments/MSF_format.example.msf");
 				//alignmentFile = new File("/home/anders/projekt/alignments/clustal_wrong2.aln");
 			//	alignmentFile = new File("/home/anders/projekt/alignments/Woodsia_chloroplast_min4_20131109_v2.excluded.msf");
-				alignmentFile = new File("/home/anders/projekt/alignments/infile_V2.phy");
+		//		alignmentFile = new File("/home/anders/projekt/alignments/infile_V2.phy");
 	//			alignmentFile = new File("/home/anders/projekt/alignments/smalphylipInterlLongName.phy");
 				
 				
@@ -425,12 +425,16 @@ public class AliView implements ApplicationListener{
 		try{
 			// if it is empty load file in old window - otherwise create new window
 			logger.info("activeWindow=" + activeWindow);
-			if(activeWindow != null && activeWindow.isEmpty()){
-				
+			logger.info("activeWindow.isEmpty()" + activeWindow.isEmpty());
+			
+			if(hasNonEmptyWindows()){
 				if(souldBreakBecauseOfLowMemory(alignmentFile)){
 					return;
 				}
-				
+			}
+			
+			if(activeWindow != null && activeWindow.isEmpty()){
+
 				activeWindow.loadNewAlignmentFile(alignmentFile);
 			}else{
 				createNewAliViewWindow(alignmentFile);
@@ -449,6 +453,16 @@ public class AliView implements ApplicationListener{
 		}
 	}
 
+	private static boolean hasNonEmptyWindows() {
+		boolean hasNonEmptyWin = false;
+		for(AliViewWindow aliWin: aliViewWindows){
+			if(aliWin != null && !aliWin.isEmpty()){
+				hasNonEmptyWin = true;
+			}
+		}
+		return hasNonEmptyWin;
+	}
+
 	public static void createNewWindow() {
 		logger.info("new win");
 		createNewAliViewWindow(null);
@@ -461,15 +475,14 @@ public class AliView implements ApplicationListener{
 	private static void createNewAliViewWindow(final File alignmentFile){
 		
 		// If memory is low ask user first and break if wanted
-		if(aliViewWindows.size() > 0){
-			if(alignmentFile != null){			
-				if(souldBreakBecauseOfLowMemory(alignmentFile)){
-					return;
-				}		
-			}			
-		}
+//		if(aliViewWindows.size() > 0){
+//			if(alignmentFile != null && !activeWindow.isEmpty()){			
+//				if(souldBreakBecauseOfLowMemory(alignmentFile)){
+//					return;
+//				}		
+//			}			
+//		}
 			
-		
 		try {
 
 			AliViewWindow newWin = new AliViewWindow(alignmentFile,menuBarFactory);

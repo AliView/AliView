@@ -1,6 +1,7 @@
 package aliview.color;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.util.ArrayList;
 
 import aliview.AminoAcid;
@@ -70,6 +71,8 @@ public class ClustalXColorScheme extends DefaultColorScheme{
 	private static ColorT ALWAYS_G = new ColorT("G",0.0);
 	private static ColorT ALWAYS_P = new ColorT("P",0.0);
 
+  Color[] ALL_COMPOUND_COLORS = new Color[]{
+		  CLUSTAL_RED, CLUSTAL_BLUE, CLUSTAL_GREEN, CLUSTAL_ORANGE, CLUSTAL_CYAN, CLUSTAL_PINK, CLUSTAL_PINK, CLUSTAL_MAGENTA, CLUSTAL_YELLOW, COLOR_OTHER};
 	
   AACompColorT[] ALL_COMPOUNDS = new AACompColorT[]{	
 	new AACompColorT("F,I,L,M,F,V,W", CLUSTAL_BLUE, new ColorT[]{percent,number,A,C,F,H,I,L,M,V,W,Y,P,p}),
@@ -146,6 +149,10 @@ public class ClustalXColorScheme extends DefaultColorScheme{
 	
 	public String getName() {
 		return "ClustalX";
+	}
+	
+	public Color[] getALLCompundColors() {
+		return ALL_COMPOUND_COLORS;
 	}
 
 }

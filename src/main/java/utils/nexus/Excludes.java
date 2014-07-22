@@ -15,6 +15,11 @@ public class Excludes{
 
 	private NexusBoolArray positions;
 	
+	
+	public Excludes() {
+		positions = new NexusBoolArray(0);
+	}
+	
 	public Excludes(int length) {
 		positions = new NexusBoolArray(length);
 	}
@@ -38,7 +43,6 @@ public class Excludes{
 
 	public void reverse() {
 		positions.reverse();
-		
 	}
 
 	public boolean isAnythingExcluded() {
@@ -67,6 +71,7 @@ public class Excludes{
 	public int getLength() {
 		return positions.getLength();
 	}
+	
 
 	public void addRange(NexusRange range) {
 		positions.setTrueFromNexusRange(range);

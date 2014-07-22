@@ -11,26 +11,18 @@ import utils.RangeUtils;
 
 public class CodonPositions{
 	private static final Logger logger = Logger.getLogger(CodonPositions.class);
-	private int [] positionsArray;
+	private PositionsArray positionsArray;
 	private int readingFrame;
 	private ArrayList<CodonPos> translatedCodonPos;
 	
 	public CodonPositions(int length){
-		setPositionsArray(new int[length]);
+		setPositionsArray(new PositionsArray(length));
 		this.readingFrame = 1;
-		fillArrayWith123(getPositionsArray());
 	}
 	
-	private CodonPositions(int[] positionsArray, int readingFrame) {
+	private CodonPositions(PositionsArray positionsArray, int readingFrame) {
 		this.setPositionsArray(positionsArray);
 		this.readingFrame = readingFrame;	
-	}
-
-	private void fillArrayWith123(int[] array){
-		for(int n = 0; n < array.length; n++){
-			int posVal = (n % 3) + 1;
-			array[n] = posVal;
-		}
 	}
 	
 	public void createTranslatedCodonPositions(){
@@ -40,7 +32,7 @@ public class CodonPositions{
 		this.translatedCodonPos = new ArrayList<CodonPos>();
 		
 		CodonPos orfanPos = null;
-		while(x < positionsArray.length){
+		while(x < positionsArray.getLength()){
 			if(isFullCodonStartingAt(x)){
 				translatedCodonPos.add(new CodonPos(x,  x + 2));
 				// clear gap
@@ -55,7 +47,7 @@ public class CodonPositions{
 				// there is a gap in protein translation
 				gap ++;
 				// Add a protein gap in sequence for every 3 gaps (or if it is the last one)
-				if(gap % 3 == 1 || x == positionsArray.length -1){
+				if(gap % 3 == 1 || x == positionsArray.getLength() -1){
 					orfanPos = new CodonPos(x, x);
 					translatedCodonPos.add(orfanPos);
 				}
@@ -65,11 +57,11 @@ public class CodonPositions{
 	}
 
 	public boolean isNonCoding(int pos) {
-		return positionsArray[pos] == 0;
+		return positionsArray.getPos(pos) == 0;
 	}
 	
 	public boolean isCoding(int pos) {
-		return positionsArray[pos] != 0;
+		return positionsArray.getPos(pos) != 0;
 	}
 	
 	public int getAminoAcidPosFromNucleotidePos(int pos){
@@ -110,22 +102,22 @@ public class CodonPositions{
 
 	public boolean isFullCodonStartingAt(int x) {
 		boolean isFullCodon = false;
-		if(x >= 0 && x < getPositionsArray().length - 2){
+		if(x >= 0 && x < getPositionsArray().getLength() - 2){
 			
 			if(getReadingFrame() == 1){
-				if(getPositionsArray()[x] == 1 && getPositionsArray()[x+1] == 2 && getPositionsArray()[x+2] == 3){
+				if(getPositionsArray().get(x) == 1 && getPositionsArray().get(x+1) == 2 && getPositionsArray().get(x+2) == 3){
 					isFullCodon = true;
 				}
 			}
 			
 			if(getReadingFrame() == 2){
-				if(getPositionsArray()[x] == 2 && getPositionsArray()[x+1] == 3 && getPositionsArray()[x+2] == 1){
+				if(getPositionsArray().get(x) == 2 && getPositionsArray().get(x+1) == 3 && getPositionsArray().get(x+2) == 1){
 					isFullCodon = true;
 				}
 			}
 			
 			if(getReadingFrame() == 3){
-				if(getPositionsArray()[x] == 3 && getPositionsArray()[x+1] == 1 && getPositionsArray()[x+2] == 2){
+				if(getPositionsArray().get(x) == 3 && getPositionsArray().get(x+1) == 1 && getPositionsArray().get(x+2) == 2){
 					isFullCodon = true;
 				}
 			}	
@@ -149,11 +141,11 @@ public class CodonPositions{
 	
 	
 	public ArrayList<IntRange> getAllNonCodingPositionsAsRanges(int wanted) {
-		return getAllNonCodingPositionsAsRanges(wanted, 0, getPositionsArray().length);
+		return getAllNonCodingPositionsAsRanges(wanted, 0, getPositionsArray().getLength());
 	}
 	
 	public ArrayList<IntRange> getAllCodingPositionsAsRanges(int wanted) {
-		return getAllNonCodingPositionsAsRanges(wanted, 0, getPositionsArray().length);
+		return getAllNonCodingPositionsAsRanges(wanted, 0, getPositionsArray().getLength());
 	}
 	
 	public ArrayList<IntRange> getAllNonCodingPositionsAsRanges(int wanted, int startPos, int endPos) {
@@ -166,10 +158,10 @@ public class CodonPositions{
 		// loop all position three times, start in position 0 (offset) and after that start in pos 1 and pos 2
 		
 		logger.info("endpos"+endPos);
-		logger.info("arrayLen"+getPositionsArray().length);
+		logger.info("arrayLen"+getPositionsArray().getLength());
 		
 			for(int n = startPos; n < endPos; n++){
-				if(getPositionsArray()[n] == wanted){
+				if(getPositionsArray().get(n) == wanted){
 					if(firstPos == -1){
 						firstPos = n;
 					}
@@ -205,7 +197,7 @@ public class CodonPositions{
 		
 		for(int offset = 0; offset <= 2; offset++){
 			for(int n = startPos + offset; n <= endPos; n = n +3){
-				if(getPositionsArray()[n] == wanted){
+				if(getPositionsArray().get(n) == wanted){
 					if(firstPos == -1){
 						firstPos = n;
 					}
@@ -250,8 +242,8 @@ public class CodonPositions{
 	
 	public ArrayList<Integer> getAllPositions(int wantedCodonPosInteger) {
 		ArrayList<Integer> allPos = new ArrayList<Integer>();
-		for(int n = 0; n < getPositionsArray().length; n++){
-			if(getPositionsArray()[n] == wantedCodonPosInteger){
+		for(int n = 0; n < getPositionsArray().getLength(); n++){
+			if(getPositionsArray().get(n) == wantedCodonPosInteger){
 				allPos.add(new Integer(n));
 			}	
 		}
@@ -259,8 +251,8 @@ public class CodonPositions{
 	}
 
 	public void setPosition(int pos, int val) {
-		if(pos >= 0 && pos < getPositionsArray().length){
-			getPositionsArray()[pos] = val;
+		if(pos >= 0 && pos < getPositionsArray().getLength()){
+			getPositionsArray().set(pos, val);
 		}
 	}
 	
@@ -269,52 +261,43 @@ public class CodonPositions{
 	}
 
 	public String debug() {
-		StringBuilder sb = new StringBuilder(getPositionsArray().length);
-		for(int n = 0; n < getPositionsArray().length; n++){
-			sb.append((positionsArray[n]));
+		StringBuilder sb = new StringBuilder(getPositionsArray().getLength());
+		for(int n = 0; n < getPositionsArray().getLength(); n++){
+			sb.append(positionsArray.getPos(n));
 		}
 		return sb.toString();
 		
 	}
 
 	public void reverse() {
-		ArrayUtils.reverse(getPositionsArray());
-		// turn posval 3 into 1 and 1 into 3
-		for(int n = 0; n < getPositionsArray().length; n++){
-			if(getPositionsArray()[n] == 3){
-				getPositionsArray()[n] = 1;
-			}
-			else if(getPositionsArray()[n] == 1){
-				getPositionsArray()[n] = 3;
-			}
-		}
+		positionsArray.reverse();
 		createTranslatedCodonPositions();	
 	}
 	
 	public CodonPositions getCopy(){
-		return new CodonPositions(ArrayUtils.clone(this.positionsArray), this.readingFrame);		
+		return new CodonPositions(this.positionsArray.getCopy(), this.readingFrame);		
 	}
 
-	public int[] getPositionsArray() {
+	public PositionsArray getPositionsArray() {
 		return positionsArray;
 	}
 
-	public void setPositionsArray(int[] positionsArray) {
+	public void setPositionsArray(PositionsArray positionsArray) {
 		this.positionsArray = positionsArray;
 	}
 
 	public int getPosAt(int x){
-		return this.positionsArray[x];
+		return this.positionsArray.getPos(x);
 	}
 	
 	public CodonPositions copyCodonPositionsWithExcludedRemoved(Excludes exset){
 
-		CodonPositions codonPosWithout = new CodonPositions(this.getPositionsArray().length - exset.countExcludedSites());
+		CodonPositions codonPosWithout = new CodonPositions(this.getPositionsArray().getLength() - exset.countExcludedSites());
 		
 		int posInNew = 0;
-		for(int n = 0; n < this.getPositionsArray().length; n++){		
+		for(int n = 0; n < this.getPositionsArray().getLength(); n++){		
 			if(! exset.isExcluded(n)){
-				codonPosWithout.setPosition(posInNew, this.getPositionsArray()[n]);
+				codonPosWithout.setPosition(posInNew, this.getPositionsArray().get(n));
 				posInNew ++;
 			}	
 		}
@@ -326,22 +309,18 @@ public class CodonPositions{
 	
 	public int getLength() {
 		if(positionsArray != null){
-			return positionsArray.length;
+			return positionsArray.getLength();
 		}else{
 			return 0;
 		}
 	}
 
 	public void append(CodonPositions secondCodonPos) {
-		int newSize = this.getLength() + secondCodonPos.getLength();
-		int[] newPositions = new int[newSize];
-		System.arraycopy(positionsArray, 0, newPositions, 0, positionsArray.length);
-		System.arraycopy(secondCodonPos.getPositionsArray(), 0, newPositions, positionsArray.length, secondCodonPos.getPositionsArray().length);
-		this.positionsArray = newPositions;
+		positionsArray.append(getPositionsArray());
 	}
 
 	public void removePosition(int n) {
-		this.positionsArray = ArrayUtils.remove(this.positionsArray, n);
+		this.positionsArray.remove(n);
 	}
 	
 	public CodonPos getCodonInTranslatedPos(int x) {
@@ -351,6 +330,10 @@ public class CodonPositions{
 	public int getLengthOfTranslatedPos() {
 		int size = translatedCodonPos.size();
 		return Math.max(0,size);
+	}
+
+	public boolean isAnythingButNormal() {
+		return positionsArray.isAnythingButDefault();
 	}
 
 	

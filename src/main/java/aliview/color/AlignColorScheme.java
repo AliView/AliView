@@ -1,6 +1,7 @@
 package aliview.color;
 
 import java.awt.Color;
+import java.awt.Font;
 
 import aliview.AminoAcid;
 import aliview.NucleotideUtilities;
@@ -328,6 +329,12 @@ public class AlignColorScheme implements ColorScheme {
 
 	public Color getAminiAcidConsensusBackgroundColor() {
 		return aminiAcidConsensusBackgroundColor;
+	}
+
+
+	public Color[] getALLCompundColors() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

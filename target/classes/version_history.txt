@@ -1,18 +1,24 @@
 Version history
 
+1.10-beta-2
+
+- Improved render speed (5-10 times)
+- Added save alignment as strict 10 char sequential Phylip format
+- Added undo/redo support when sorting sequences with functions "Sort sequences by...."
+
 1.09
 
-- Added info message if MUSCLE profile algorithm is used for adding sequences
 - Added format support for CLUSTAL(.aln) and MSF
-- Improved error dialogs so that they are no longer hiding each other.
 - Added "Save fasta index file" functionality
 - Revised the Nexus format output
 - Revised the Phylip format output and input
+- Improved error dialogs so that they are no longer hiding each other.
 - Fixed bug where the * symbol did not disappear from window although the file was saved
 - Fixed bug where "Delete vertical gaps" did not work if the first column was all gap
 - Fixed drag drop function where dropped sequence sometimes were positioned one position to low
 - Changed version menu item to "Check for new version/version history"
 - Added button "Count stop codons" on translate sequence toolbar
+- Added info message if MUSCLE profile algorithm is used for adding sequences
 
 
 1.08

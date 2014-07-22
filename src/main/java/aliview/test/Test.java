@@ -1,5 +1,6 @@
 package aliview.test;
 
+import java.awt.Color;
 import java.awt.FileDialog;
 import java.awt.Frame;
 import java.io.BufferedOutputStream;
@@ -18,6 +19,8 @@ import javax.script.ScriptException;
 
 import org.apache.log4j.Logger;
 
+import aliview.NucleotideUtilities;
+
 public class Test implements Cloneable{
 	private static final Logger logger = Logger.getLogger(Test.class);
 
@@ -31,6 +34,11 @@ public class Test implements Cloneable{
 	
 
 	public static void main(String[] args) throws CloneNotSupportedException {
+		
+		logger.info(8 % 3);
+		
+		testAlphaColor();
+		
 		//showMemStats();
 		//testBitSet();
 		Test t1 = new Test();
@@ -48,7 +56,84 @@ public class Test implements Cloneable{
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
+		
+//		logger.info("r="+getRed(-687486));
+//		logger.info("g="+getGreen(-687486));
+//		logger.info("b="+getBlue(-687486));
+//		logger.info("a="+getAlpha(-687486));
+//		
+//		logger.info("r="+getRed(-9553093));
+//		logger.info("g="+getGreen(-9553093));
+//		logger.info("b="+getBlue(-9553093));
+//		logger.info("a="+getAlpha(-9553093));
+		
 	}
+	
+	
+	private static void testAlphaColor() {
+		Color test = new Color(1,1,10,0);
+		logger.info("test.getAlpha()" + test.getAlpha());
+	//	logger.info("getRGB" + getRGB(test.getRGB()));
+		logger.info(test.getRGB());
+		
+		logger.info(addTranspGrey(-687486, 0.45));
+		
+	}
+	public static int getGolorVal(int r, int g, int b, int a) {
+        int rgba = ((a & 0xFF) << 24) |
+                ((r & 0xFF) << 16) |
+                ((g & 0xFF) << 8)  |
+                ((b & 0xFF) << 0);
+        return rgba;
+    }
+	
+	public static int addTranspGrey(int inVal, double transp){
+		
+		int a = 255;//getAlpha(inVal);
+		int r = (int)(getRed(inVal) * transp);
+		int g = (int)(getGreen(inVal) * transp);
+		int b = (int)(getBlue(inVal) * transp);
+		
+        int rgba = ((a & 0xFF) << 24) |
+                ((r & 0xFF) << 16) |
+                ((g & 0xFF) << 8)  |
+                ((b & 0xFF) << 0);
+        return rgba;
+    }
+	
+	
+	public static int getRed(int colVal) {
+		return (colVal >> 16) & 0xFF;
+	    }
+
+	    /**
+	     * Returns the green component in the range 0-255 in the default sRGB
+	     * space.
+	     * @return the green component.
+	     * @see #getRGB
+	     */
+	    public static int getGreen(int colVal) {
+		return (colVal >> 8) & 0xFF;
+	    }
+
+	    /**
+	     * Returns the blue component in the range 0-255 in the default sRGB
+	     * space.
+	     * @return the blue component.
+	     * @see #getRGB
+	     */
+	    public static int getBlue(int colVal) {
+		return (colVal >> 0) & 0xFF;
+	    }
+
+	    /**
+	     * Returns the alpha component in the range 0-255.
+	     * @return the alpha component.
+	     * @see #getRGB
+	     */
+	    public static int getAlpha(int colVal) {
+	        return (colVal >> 24) & 0xff;
+	    }
 	
 	public static void buildTestFasta() throws IOException{
 		File fasta = new File("/vol2/big_data/test-wide.fasta");

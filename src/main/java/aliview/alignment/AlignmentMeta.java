@@ -16,7 +16,8 @@ public class AlignmentMeta {
 
 
 	public AlignmentMeta(int alignmentLength){
-		this(new Excludes(alignmentLength), new CodonPositions(alignmentLength), new ArrayList<CharSet>());
+		//this(new Excludes(alignmentLength), new CodonPositions(alignmentLength), new ArrayList<CharSet>());
+		this(new Excludes(), new CodonPositions(alignmentLength), new ArrayList<CharSet>());
 	}
 
 	public AlignmentMeta(Excludes excludes, CodonPositions codonPos, ArrayList<CharSet> charsets) {
@@ -26,7 +27,18 @@ public class AlignmentMeta {
 	}
 
 	public boolean isMetaOutputNeeded(){
-		return true;
+		boolean isMetaNeeded = false;
+		if(excludes.isAnythingExcluded()){
+			isMetaNeeded = true;
+		}
+		if(codonPositions.isAnythingButNormal()){
+			isMetaNeeded = true;
+		}
+		if(charsets.size() > 0){
+			isMetaNeeded = true;
+		}
+		return isMetaNeeded;
+		
 	}
 
 

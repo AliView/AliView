@@ -102,7 +102,7 @@ public class DefaultSequenceSelectionModel implements SequenceSelectionModel {
 			int index = -1;
 			int nCount = 0;
 			 for (int i = bitSelection.nextSetBit(0); i >= 0 && i <= bitSelection.length(); i = bitSelection.nextSetBit(i+1)) {
-			    logger.info("i" + i);
+//			    logger.info("i" + i);
 				nCount ++;
 			    if(nCount == selectedCount){
 			    	index = i;

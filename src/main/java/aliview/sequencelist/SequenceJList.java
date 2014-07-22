@@ -3,6 +3,8 @@ package aliview.sequencelist;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
@@ -10,6 +12,7 @@ import java.util.List;
 
 import javax.swing.BoundedRangeModel;
 import javax.swing.DefaultBoundedRangeModel;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.DropMode;
 import javax.swing.InputMap;
@@ -17,6 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
+import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeListener;
@@ -25,7 +29,7 @@ import org.apache.log4j.Logger;
 
 import utils.OSNativeUtils;
 import aliview.UndoControler;
-import aliview.gui.AlignmentPane;
+import aliview.gui.AlignmentPane_Orig;
 import aliview.sequences.Sequence;
 import aliview.sequences.SequenceSelectionModel;
 import aliview.settings.Settings;
@@ -45,7 +49,8 @@ public class SequenceJList extends javax.swing.JList{
 	private JScrollBar verticalScrollBar;
 	private JScrollPane aliScrollPane;
 	private JScrollPane listScrollPane;
-	private AlignmentPane aliPane;
+	private AlignmentPane_Orig aliPane;
+	private ListCellRenderer storedCellRenderer;
 	
 	
 	public SequenceJList(SequenceListModel model) {
@@ -54,8 +59,13 @@ public class SequenceJList extends javax.swing.JList{
 		this.setTransferHandler(new SequenceTransferHandler());
 		this.setDropMode(DropMode.INSERT);
 		this.setFont(baseFont);
+//		this.setCellRenderer(new TextCellRenderer(metrics, 200));
+		//this.setCellRenderer(new FasterTextCellRenderer()); 
+//		this.setCellRenderer(new TextCellRenderer((int)charHeight, 200, this.getFont())); 
+		
 		this.updateCharSize();
-		this.getCellRenderer();
+		
+		
 		this.setDragEnabled(true);
 		
 		this.setBorder(new EmptyBorder(0,0,0,0));
@@ -79,11 +89,14 @@ public class SequenceJList extends javax.swing.JList{
 		// TODO Auto-generated method stub
 		return (SequenceListModel) super.getModel();
 	}
+
 	
-	@Override
-	public void repaint() {
+	public void paintComponent(Graphics g){
 		// TODO Auto-generated method stub
-		super.repaint();
+		long startTime = System.currentTimeMillis();
+		super.paintComponent(g);
+		long endTime = System.currentTimeMillis();
+		logger.info("Draw JList took " + (endTime - startTime) + " milliseconds");	
 	}
 	
 	
@@ -101,7 +114,9 @@ public class SequenceJList extends javax.swing.JList{
 		if(listFontSize > 13 && !Settings.getUseCustomFontSize().getBooleanValue()){	
 			listFontSize = 13;
 		}
+		
 		updateCharSize();
+//		this.setCellRenderer(new TextCellRenderer((int)charHeight, 200, this.getFont())); 
 	}
 	
 	@Override
@@ -117,6 +132,14 @@ public class SequenceJList extends javax.swing.JList{
 	
 	private void updateCharSize() {
 
+		// Remove List cell renderer att small sizes (saves a lot of drawing speed)
+		if(charHeight < 3 && this.getCellRenderer() != null){
+			this.storedCellRenderer = this.getCellRenderer();
+			this.setCellRenderer(null);
+		}else if(charHeight >= 3 && this.getCellRenderer() == null){
+			this.setCellRenderer(this.storedCellRenderer);
+		}
+		
 		this.setFixedCellHeight((int)charHeight);
 		
 		// Fixed cell height is needed or otherwise all items are loaded
@@ -129,6 +152,7 @@ public class SequenceJList extends javax.swing.JList{
 		// this could be calculated
 		this.setFont(new Font(baseFont.getName(), baseFont.getStyle(), listFontSize));
 
+				
 
 		
 	}

@@ -19,6 +19,7 @@ public class FileFormat {
 	public static final FileFormat PHYLIP = new FileFormat("Phylip", "phy", "phy");
 	public static final FileFormat PHYLIP_RELAXED = new FileFormat("Phylip", "phy", "phy");
 	public static final FileFormat PHYLIP_RELAXED_PADDED = new FileFormat("Phylip", "phy", "phy");
+	public static final FileFormat PHYLIP_STRICT_SEQUENTIAL = new FileFormat("Phylip", "phy", "phy");
 	public static final FileFormat MSF = new FileFormat("MSF", "msf", "msf");
 	public static final FileFormat CLUSTAL = new FileFormat("Clustal", "aln", "aln");
 	
@@ -29,6 +30,7 @@ public class FileFormat {
 	public static final FileFormat PHYLIP_TRANSLATED_AMINO_ACID = new FileFormat("PhylipAminoAcid", "translated.phy", "translated.phy");
 	public static final FileFormat NEXUS_TRANSLATED_AMINO_ACID = new FileFormat("NexusTranslated", "translated.nexus", "translated.nex");
 	public static final FileFormat FASTA_TRANSLATED_AMINO_ACID = new FileFormat("FastaTranslated", "translated.fasta", "translated.fas");
+	
 	
 
 	public FileFormat(String name, String suffix, String suffixWin) {

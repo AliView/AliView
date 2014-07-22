@@ -3,11 +3,11 @@ package aliview.importer;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
-import sun.swing.BakedArrayList;
+import org.apache.log4j.Logger;
 
 
 public class ByteBufferAutogrow {
-		
+	private static final Logger logger = Logger.getLogger(ByteBufferAutogrow.class);
 	private ByteBuffer backend;
 	
 	private double ALLOCATE_MULTIPLIER = 1.5;
@@ -28,6 +28,7 @@ public class ByteBufferAutogrow {
 			int exactSize = backend.position() + moreBytes.length;
 			int newCapacity = (int) (exactSize * ALLOCATE_MULTIPLIER);
 			reallocate(newCapacity);
+			
 		}
 		
 		backend.put(moreBytes);
@@ -40,6 +41,10 @@ public class ByteBufferAutogrow {
 		}
 	}
 	
+	public void clear(){
+		backend.clear();
+	}
+	
 	
 	/*
 	 * 
@@ -48,6 +53,7 @@ public class ByteBufferAutogrow {
 	 */
 	// Preserves position.
 	private void reallocate(int newCapacity) {
+//		logger.info("reallocate");
 		int oldPosition = backend.position();
 		byte[] newBuffer = new byte[newCapacity];
 		System.arraycopy(backend.array(), 0, newBuffer, 0, backend.position());
@@ -63,8 +69,9 @@ public class ByteBufferAutogrow {
 	    return new String(getBytes());    
 	}
 
-	
-	
-	
+	public int position() {
+		return backend.position();
+	}
+
 	
 }

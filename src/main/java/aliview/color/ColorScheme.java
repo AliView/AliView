@@ -1,6 +1,7 @@
 package aliview.color;
 
 import java.awt.Color;
+import java.awt.Font;
 
 import aliview.AminoAcid;
 import aliview.alignment.AAHistogram;
@@ -22,7 +23,11 @@ public interface ColorScheme {
 	
 	public Color getBaseConsensusBackgroundColor();
 	
+	public String getName();
 	
+	
+	// Below this should be moved to AAColorSceme (which in turn is an Compound Color scheme
+		
 	public Color getAminoAcidBackgroundColor(AminoAcid acid);
 
 	public Color getAminoAcidSelectionBackgroundColor(AminoAcid acid);
@@ -31,6 +36,8 @@ public interface ColorScheme {
 	
 	public Color getAminoAcidBackgroundColor(AminoAcid acid, int xPos, Alignment alignment);
 
+	public Color getAminoAcidForgroundColor(AminoAcid acid);
+	
 	public Color getAminoAcidForgroundColor(AminoAcid acid, int xPos, Alignment alignment);
 
 	public Color getAminoAcidSelectionBackgroundColor(AminoAcid acid, int xPos, Alignment alignment);
@@ -39,5 +46,7 @@ public interface ColorScheme {
 	
 	public Color getAminiAcidConsensusBackgroundColor();
 	
-	public String getName();
+	public Color[] getALLCompundColors();
+	
+
 }

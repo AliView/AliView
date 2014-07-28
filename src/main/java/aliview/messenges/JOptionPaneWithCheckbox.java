@@ -24,11 +24,11 @@ or: boolean dontAsk = dontAskBox.isSelected();
 	
 	
 	public JOptionPaneWithCheckbox(JCheckBox cbx, String text, int messageType, int optionType) {
-		super(new Object[]{text,cbx}, messageType, optionType);
+		super(new Object[]{text," ",cbx}, messageType, optionType);
 	}
 
 	public JOptionPaneWithCheckbox(JCheckBox cbx, String text, int messageType) {
-		super(new Object[]{text,cbx}, messageType);
+		super(new Object[]{text," ", cbx}, messageType);
 	}
 
 	/*

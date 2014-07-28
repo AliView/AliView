@@ -5,8 +5,10 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,30 +43,21 @@ public class SequenceJList extends javax.swing.JList{
 	// todo These two constants should be synchronized in one class (AlignmentPane & this)
 	private static final int MIN_CHAR_SIZE = 2;
 	private static final int MAX_CHAR_SIZE = 100;
-	private Font baseFont = new Font("Monospace", Font.PLAIN, 11);
-	private double charHeight = 12;
-	int listFontSize = 10;
-	private BoundedRangeModel belowOneCharListScrollModel = new DefaultBoundedRangeModel();
-	private BoundedRangeModel aboveOneCharListScrollModel;
-	private JScrollBar verticalScrollBar;
-	private JScrollPane aliScrollPane;
-	private JScrollPane listScrollPane;
-	private AlignmentPane_Orig aliPane;
+	private double charHeight;
 	private ListCellRenderer storedCellRenderer;
 	
 	
-	public SequenceJList(SequenceListModel model) {
+	public SequenceJList(SequenceListModel model, double charHeight) {
 		super(model);
 		this.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		this.setTransferHandler(new SequenceTransferHandler());
 		this.setDropMode(DropMode.INSERT);
-		this.setFont(baseFont);
-//		this.setCellRenderer(new TextCellRenderer(metrics, 200));
-		//this.setCellRenderer(new FasterTextCellRenderer()); 
-//		this.setCellRenderer(new TextCellRenderer((int)charHeight, 200, this.getFont())); 
+		this.setCharSize(charHeight);
 		
-		this.updateCharSize();
+		// int width = model.getLongestSequenceName();
+		// int fixedWidth = 300;
 		
+		this.setCellRenderer(new FasterTextCellRenderer()); 	
 		
 		this.setDragEnabled(true);
 		
@@ -92,11 +85,19 @@ public class SequenceJList extends javax.swing.JList{
 
 	
 	public void paintComponent(Graphics g){
-		// TODO Auto-generated method stub
 		long startTime = System.currentTimeMillis();
+		Graphics2D g2 = (Graphics2D) g;
 		super.paintComponent(g);
 		long endTime = System.currentTimeMillis();
 		logger.info("Draw JList took " + (endTime - startTime) + " milliseconds");	
+	}
+	
+	@Override
+	public void validate() {
+		long startTime = System.currentTimeMillis();
+		super.validate();
+		long endTime = System.currentTimeMillis();
+		logger.info("Validate JList took " + (endTime - startTime) + " milliseconds");	
 	}
 	
 	
@@ -107,16 +108,14 @@ public class SequenceJList extends javax.swing.JList{
 	}
 
 	public void setCharSize(double charHeight) {
-		// TODO Auto-generated method stub
-	  this.charHeight = charHeight;
-	  this.setFixedCellHeight((int)charHeight);
-		listFontSize = (int)(charHeight -1);
+	    this.charHeight = charHeight;
+	    
+	    // And now check font size
+		float listFontSize = (int)(charHeight -1);
 		if(listFontSize > 13 && !Settings.getUseCustomFontSize().getBooleanValue()){	
 			listFontSize = 13;
-		}
-		
-		updateCharSize();
-//		this.setCellRenderer(new TextCellRenderer((int)charHeight, 200, this.getFont())); 
+		}	
+		updateCharSize(listFontSize);
 	}
 	
 	@Override
@@ -130,31 +129,26 @@ public class SequenceJList extends javax.swing.JList{
 		return super.getPreferredSize();
 	}
 	
-	private void updateCharSize() {
+	private void updateCharSize(float listFontSize) {
 
-		// Remove List cell renderer att small sizes (saves a lot of drawing speed)
-		if(charHeight < 3 && this.getCellRenderer() != null){
-			this.storedCellRenderer = this.getCellRenderer();
-			this.setCellRenderer(null);
-		}else if(charHeight >= 3 && this.getCellRenderer() == null){
-			this.setCellRenderer(this.storedCellRenderer);
-		}
-		
-		this.setFixedCellHeight((int)charHeight);
 		
 		// Fixed cell height is needed or otherwise all items are loaded
+		this.setFixedCellHeight((int)charHeight);
 		this.setFixedCellWidth(this.getModel().getLongestSequenceName()*(int)(charHeight));
-		
-		logger.info("cellWidth" + this.getModel().getLongestSequenceName()*(int)(charHeight-2));
-		
-		//this.setBorder(new EmptyBorder((int)(charHeight * 2), 1, 1, 1)); // todo read top inset from alignmentPane
-				
-		// this could be calculated
-		this.setFont(new Font(baseFont.getName(), baseFont.getStyle(), listFontSize));
 
-				
-
+		this.setFont(this.getFont().deriveFont(listFontSize));
 		
+		//logger.info(getFont().getName());
+	    //logger.info("fontSize" + this.getFont().getSize());
+		
+		// Remove List cell renderer att small sizes (saves a lot of drawing speed)
+				if(charHeight < 3 && this.getCellRenderer() != null){
+					this.storedCellRenderer = this.getCellRenderer();
+					this.setCellRenderer(null);
+				}else if(charHeight >= 3 && this.getCellRenderer() == null){
+					this.setCellRenderer(this.storedCellRenderer);
+				}
+
 	}
 
 	public void deleteSelectedSequences() {
@@ -175,8 +169,6 @@ public class SequenceJList extends javax.swing.JList{
 			return false;
 		}
 	}
-
-	
 
 	public void reverseComplementSelectedSequences() {
 		Sequence[] selection = this.getSelectedValues();

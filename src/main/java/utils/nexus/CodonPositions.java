@@ -13,7 +13,8 @@ public class CodonPositions{
 	private static final Logger logger = Logger.getLogger(CodonPositions.class);
 	private PositionsArray positionsArray;
 	private int readingFrame;
-	private ArrayList<CodonPos> translatedCodonPos;
+	private TranslatedCodonPos translatedCodonPos;
+	
 	
 	public CodonPositions(int length){
 		setPositionsArray(new PositionsArray(length));
@@ -26,34 +27,7 @@ public class CodonPositions{
 	}
 	
 	public void createTranslatedCodonPositions(){
-		logger.info("creatingtranspositions");
-		int x = 0;
-		int gap = 0;
-		this.translatedCodonPos = new ArrayList<CodonPos>();
-		
-		CodonPos orfanPos = null;
-		while(x < positionsArray.getLength()){
-			if(isFullCodonStartingAt(x)){
-				translatedCodonPos.add(new CodonPos(x,  x + 2));
-				// clear gap
-				gap = 0;
-				x = x + 3; // move one frame ahead (this is a full codon)
-			}
-			else{
-				if(gap > 0){
-					// add new end pos to the last Pos
-					orfanPos.addEndPos(x);
-				}
-				// there is a gap in protein translation
-				gap ++;
-				// Add a protein gap in sequence for every 3 gaps (or if it is the last one)
-				if(gap % 3 == 1 || x == positionsArray.getLength() -1){
-					orfanPos = new CodonPos(x, x);
-					translatedCodonPos.add(orfanPos);
-				}
-				x = x + 1;	
-			}
-		}
+		this.translatedCodonPos = new TranslatedCodonPos(positionsArray);	
 	}
 
 	public boolean isNonCoding(int pos) {
@@ -74,7 +48,7 @@ public class CodonPositions{
 		return 0;
 	}
 	
-	private ArrayList<CodonPos> getTranslatedCodonPos() {
+	private TranslatedCodonPos getTranslatedCodonPos() {
 		if(translatedCodonPos == null){
 			createTranslatedCodonPositions();
 		}
@@ -93,13 +67,11 @@ public class CodonPositions{
 		return foundPos;
 	}
 	
-	
-	
+
 	public int getTranslatedAminAcidLength(){
 		return getTranslatedCodonPos().size();
 	}
 	
-
 	public boolean isFullCodonStartingAt(int x) {
 		boolean isFullCodon = false;
 		if(x >= 0 && x < getPositionsArray().getLength() - 2){
@@ -324,11 +296,11 @@ public class CodonPositions{
 	}
 	
 	public CodonPos getCodonInTranslatedPos(int x) {
-		return translatedCodonPos.get(x);
+		return getTranslatedCodonPos().get(x);
 	}
 
 	public int getLengthOfTranslatedPos() {
-		int size = translatedCodonPos.size();
+		int size = getTranslatedCodonPos().size();
 		return Math.max(0,size);
 	}
 

@@ -8,6 +8,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import aliview.MemoryUtils;
 import aliview.sequences.FastFastaSequence;
 import aliview.sequences.Sequence;
 
@@ -23,10 +24,11 @@ public class FastFastaImporter {
 
 	
 	
-	public List<Sequence> importSequencesBB() throws AlignmentImportException {
+	public List<Sequence> importSequences() throws AlignmentImportException {
 		long startTime = System.currentTimeMillis();
 		ArrayList<Sequence> sequences = new ArrayList<Sequence>();
 		int nextSeqEstSize = 5000;
+		double maxMem = MemoryUtils.getMaxMem();
 		try {
 			StringBuilder sequence = new StringBuilder(nextSeqEstSize);
 //			ByteBufferAutogrow seqBuff = new ByteBufferAutogrow(capacity);
@@ -74,6 +76,9 @@ public class FastFastaImporter {
 					else{
 						sequence.append(line);
 					}
+					if(sequence.length() > maxMem/8){
+						throw new AlignmentImportException("Sequence to long for memory");
+					}
 
 				}
 				nLine ++;
@@ -111,7 +116,7 @@ public class FastFastaImporter {
 	//
 	// Byte buffer version
 	//
-	public List<Sequence> importSequences() throws AlignmentImportException {
+	public List<Sequence> importSequencesBB() throws AlignmentImportException {
 		long startTime = System.currentTimeMillis();
 		ArrayList<Sequence> sequences = new ArrayList<Sequence>();
 		int nextSeqEstSize = 5000;

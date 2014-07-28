@@ -29,6 +29,7 @@ public class Excludes{
 	}
 	
 	public boolean isExcluded(int position){
+		
 		if(position >= 0 && position < positions.getLength()){
 			return positions.valueAt(position);
 		}

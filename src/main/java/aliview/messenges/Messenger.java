@@ -80,6 +80,12 @@ public class Messenger {
 	public static final Message TO_BIG_SELECTION_FOR_COPY = new Message("Selection is to big to Copy", "To bil selection");
 	public static final Message NO_FASTA_INDEX_COULD_BE_SAVED = new Message("Could not save Fasta index file: Alignment has to be indexed" + LF + 
 																			"from file when loaded and in Fasta format", "Problem");
+	public static final Message REALIGN_EVERYTHING = new Message("Are you sure you want to realign the whole alignment?", "Realign everything");
+	
+
+	private static int lastSelectedOption = -1;
+    private static boolean showedMaxJPanelSizeMessageOnceThisSession;
+	   
 	
 	public static void main(String[] args) {
 		boolean cbxSelected = showOKOnlyMessageWithCbx(MUSCLE_PROFILE_INFO_MESSAGE, true, null);
@@ -163,8 +169,7 @@ public class Messenger {
   public static int getLastSelectedOption() {
 	return lastSelectedOption;
   }
-	
-   private static int lastSelectedOption = -1;
+	  
    public static boolean showOKOnlyMessageWithCbx(Message message, boolean cbxSelected, AliViewWindow aliViewWindow) {
 		
 		final JDialog dialog = new JDialog(aliViewWindow);
@@ -172,7 +177,7 @@ public class Messenger {
 		// OBS DO NOT MODAL - Then there is problem in MAC when executed from error thread
 		dialog.setModal(true);
 		dialog.setAlwaysOnTop(true);
-		JCheckBox cbx = new JCheckBox("Don't show this message again");
+		JCheckBox cbx = new JCheckBox("Don't show this message again (can be undone in Preferences)");
 		cbx.setSelected(cbxSelected);
 		cbx.setFocusPainted(false);
 		JOptionPane optPane = new JOptionPaneWithCheckbox(cbx, message.text,JOptionPane.INFORMATION_MESSAGE);
@@ -212,7 +217,7 @@ public class Messenger {
 		// OBS DO NOT MODAL - Then there is problem in MAC when executed from error thread
 		dialog.setModal(true);
 		dialog.setAlwaysOnTop(true);
-		JCheckBox cbx = new JCheckBox("Don't show this message again");
+		JCheckBox cbx = new JCheckBox("Don't show this message again (can be undone in Preferences)");
 		cbx.setSelected(cbxSelected);
 		cbx.setFocusPainted(false);
 		JOptionPane optPane = new JOptionPaneWithCheckbox(cbx, message.text,JOptionPane.INFORMATION_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
@@ -231,6 +236,51 @@ public class Messenger {
 		                  lastSelectedOption = JOptionPane.CANCEL_OPTION;
 		                  break;                       
 		            }
+		            // dialog.setModal(false);
+		            dialog.dispose();
+		         }
+		      }
+		   });
+		
+		dialog.setContentPane(optPane);
+		dialog.pack();
+		dialog.setLocationRelativeTo(aliViewWindow);
+		dialog.setVisible(true);
+		//dialog.setModal(false);
+		
+		return cbx.isSelected();
+		//return dialog;
+		
+	}
+   
+   public static boolean showOKCancelMessage(Message message, AliViewWindow aliViewWindow) {
+		
+		final JDialog dialog = new JDialog(aliViewWindow);
+		dialog.setTitle(message.title);
+		// OBS DO NOT MODAL - Then there is problem in MAC when executed from error thread
+		dialog.setModal(true);
+		dialog.setAlwaysOnTop(true);
+		JCheckBox cbx = new JCheckBox("Don't show this message again");
+		//cbx.setSelected(cbxSelected);
+		cbx.setFocusPainted(false);
+		JOptionPane optPane = new JOptionPaneWithCheckbox(cbx, message.text,JOptionPane.INFORMATION_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
+		optPane.addPropertyChangeListener(new PropertyChangeListener()
+		   {
+		      public void propertyChange(PropertyChangeEvent e)
+		      {
+		         if (e.getPropertyName().equals("value"))
+		         {
+		            switch ((Integer)e.getNewValue())
+		            {
+		               case JOptionPane.OK_OPTION:
+		            	   logger.info("lastSelectedOption" + JOptionPane.OK_OPTION);
+		            	   lastSelectedOption = JOptionPane.OK_OPTION;
+		                  break;
+		               case JOptionPane.CANCEL_OPTION:
+		            	   logger.info("lastSelectedOption" + JOptionPane.CANCEL_OPTION);
+		                  lastSelectedOption = JOptionPane.CANCEL_OPTION;
+		                  break;                       
+		            }
 		            dialog.dispose();
 		         }
 		      }
@@ -244,11 +294,26 @@ public class Messenger {
 		return cbx.isSelected();
 		
 	}
+   
 
    public static void showCountCodonMessage(int count, AliViewWindow aliViewWindow) {
 	   Message countMessage = new Message("Stop codons in alignment: " + count, "Stop codon count");
 	   showOKOnlyMessage(countMessage, aliViewWindow);
-   }	
+   }
+
+   public static void showMaxJPanelSizeMessageOnceThisSession(){
+	   if(! showedMaxJPanelSizeMessageOnceThisSession){
+		   Message maxSizeMessage = new Message("The maximum size of the viewable area is 2147483647 pixels" + LF +
+				                                "The current character-size is to large if you want to view" + LF + 
+				                                "the last residues, try decreasing the character size if you" + LF +
+				                                "are missing residues at the end of alignment", "Max size");
+		   showOKOnlyMessage(maxSizeMessage);
+		   showedMaxJPanelSizeMessageOnceThisSession = true;
+	   }
+
+   }
+   
+   
 }
 
 

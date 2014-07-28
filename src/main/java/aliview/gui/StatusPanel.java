@@ -13,6 +13,7 @@ import aliview.alignment.Alignment;
 import aliview.alignment.AlignmentEvent;
 import aliview.alignment.AlignmentListener;
 
+import java.awt.Color;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
@@ -35,26 +36,28 @@ public class StatusPanel extends JPanel implements AlignmentListener{
 		this.aliPane = alignmentPane;
 		this.alignment = alignment;
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{350, 300, 0};
+		gridBagLayout.columnWidths = new int[]{10, 200, 10, 100, 0};
 		gridBagLayout.rowHeights = new int[]{1, 0};
-		gridBagLayout.columnWeights = new double[]{1.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.columnWeights = new double[]{1.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
 		lblInfo = new JLabel();
+		
 		lblInfo.setText("infotext");
 		GridBagConstraints gbc_lblInfo = new GridBagConstraints();
 		gbc_lblInfo.anchor = GridBagConstraints.NORTHEAST;
 		gbc_lblInfo.insets = new Insets(0, 0, 0, 5);
-		gbc_lblInfo.gridx = 0;
+		gbc_lblInfo.gridx = 1;
 		gbc_lblInfo.gridy = 0;
 		
 		
-		
 		lblSelectionInfo = new JLabel();
+//		lblSelectionInfo.setBackground(Color.red);
+//		lblSelectionInfo.setOpaque(true);
 		lblSelectionInfo.setText("selectiontext");
 		GridBagConstraints gbc_lblSelectionInfo = new GridBagConstraints();
 		gbc_lblSelectionInfo.anchor = GridBagConstraints.NORTHEAST;
-		gbc_lblSelectionInfo.gridx = 1;
+		gbc_lblSelectionInfo.gridx = 3;
 		gbc_lblSelectionInfo.gridy = 0;
 		
 		this.add(lblInfo, gbc_lblSelectionInfo);
@@ -77,16 +80,18 @@ public class StatusPanel extends JPanel implements AlignmentListener{
 				String selSizePadded = StringUtils.leftPad("" + selectionSize, 6);
 				String selectedColumnCounPadded = StringUtils.leftPad("" + selectedColumnCount, 4);
 				String selectedSeqCountPadded = StringUtils.leftPad("" + selectedSeqCount, 4);
-				String firstSelSeqName = StringUtils.substring(firstSelectedSequenceName, 0, 100);
-				if(selectedSeqCount > 1){
-					firstSelSeqName += ("....");
+				String firstSelSeqName = StringUtils.substring(firstSelectedSequenceName, 0, 40);
+				if(firstSelSeqName != null){
+					if(firstSelSeqName.length() == 40 || selectedSeqCount > 1){
+						firstSelSeqName +="...";
+					}
 				}
 				if(selectionSize == 0){
 					ungapPosPadded = StringUtils.leftPad("" + "", 4);
 					posInSeqPadded = StringUtils.leftPad("" + "", 4);
 				}
 				
-				lblSelectionInfo.setText("Selected: " + firstSelSeqName + " | pos: " + posInSeqPadded + " | pos (ungaped): " + ungapPosPadded + " | Selected sequences:" + selectedSeqCountPadded + " | columns: " +  selectedColumnCounPadded + " | total selected characters: " + selSizePadded);
+				lblSelectionInfo.setText("Selected: " + firstSelSeqName + " | pos: " + posInSeqPadded + " | pos (ungaped): " + ungapPosPadded + " | Selected seqs:" + selectedSeqCountPadded + " | cols: " +  selectedColumnCounPadded + " | total selected chars: " + selSizePadded);
 			}else{
 				lblSelectionInfo.setText("");
 			}
@@ -128,6 +133,7 @@ public class StatusPanel extends JPanel implements AlignmentListener{
 
 
 		public void selectionChanged(Alignment source) {
+			
 			this.selectionSize = alignment.getSelectionSize();
 			this.selectedColumnCount = alignment.getSelectedColumnCount();
 			this.selectedSeqCount = alignment.getSelectedSequencesCount();
@@ -137,6 +143,7 @@ public class StatusPanel extends JPanel implements AlignmentListener{
 			if(firstSelectedSequenceName == null){
 				firstSelectedSequenceName = "";
 			}
+			
 			this.updateSelectionText();
 		}
 

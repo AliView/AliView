@@ -11,9 +11,16 @@ public class ByteBufferAutogrow {
 	private ByteBuffer backend;
 	
 	private double ALLOCATE_MULTIPLIER = 1.5;
+	private double ALLOCATE_MULTIPLIER_AFTER_100MB = 1.1;
+	private double MB = 1000*1000;
+	private boolean DIRECT_BUFF = false;
 	
 	public ByteBufferAutogrow(int initialCapacity) {
-		backend = ByteBuffer.allocate(initialCapacity);
+		if(DIRECT_BUFF){
+			backend = ByteBuffer.allocateDirect(initialCapacity);
+		}else{
+			backend = ByteBuffer.allocate(initialCapacity);
+		}
 	}
 
 	public void append(String more) {
@@ -26,9 +33,14 @@ public class ByteBufferAutogrow {
 		// Ensure size
 		if(backend.remaining() < moreBytes.length){
 			int exactSize = backend.position() + moreBytes.length;
-			int newCapacity = (int) (exactSize * ALLOCATE_MULTIPLIER);
-			reallocate(newCapacity);
 			
+			double multiplier = ALLOCATE_MULTIPLIER;
+			if(exactSize > 100*MB ){
+				multiplier = ALLOCATE_MULTIPLIER_AFTER_100MB;
+			}
+			int newCapacity = (int) (exactSize * multiplier);
+			logger.info("newCap=" + newCapacity);
+			reallocate(newCapacity);
 		}
 		
 		backend.put(moreBytes);
@@ -55,14 +67,34 @@ public class ByteBufferAutogrow {
 	private void reallocate(int newCapacity) {
 //		logger.info("reallocate");
 		int oldPosition = backend.position();
-		byte[] newBuffer = new byte[newCapacity];
-		System.arraycopy(backend.array(), 0, newBuffer, 0, backend.position());
-		backend = ByteBuffer.wrap(newBuffer);
-		backend.position(oldPosition);
+		
+		if(backend.hasArray()){
+			byte[] newBuffer = new byte[newCapacity];
+			System.arraycopy(backend.array(), 0, newBuffer, 0, backend.position());
+			backend = ByteBuffer.wrap(newBuffer);
+			backend.position(oldPosition);
+		}else{
+			ByteBuffer newOne = ByteBuffer.allocateDirect(newCapacity);
+			int endPos = backend.position();
+			for(int n = 0; n < endPos; n++){
+				newOne.put(backend.get(n));
+			}
+			backend.clear();
+			backend = newOne;
+		}
 	}
 
 	public byte[] getBytes(){
-	    return Arrays.copyOfRange(backend.array(), 0, backend.position());    
+		if(backend.hasArray()){
+			return Arrays.copyOfRange(backend.array(), 0, backend.position());  
+		}else{
+			int length = backend.position();
+			byte[] retVal = new byte[length];
+			for(int n = 0; n < retVal.length; n++){
+				retVal[n] = backend.get(n);
+			}
+			return retVal;
+		}
 	}
 	
 	public String toString(){

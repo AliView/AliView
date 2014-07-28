@@ -105,7 +105,11 @@ public class SequencesFactory {
 					importErrorMessage += "Tried import as Fasta but: " + e.getMessage() + LF;
 					logger.error(importErrorMessage);
 					logger.error(e);
-				}	
+				} catch (AlignmentImportException aie){
+					if(aie.getMessage().contains("Sequence to long for memory")){
+						memorySequences = false;
+					}
+				}
 			}
 			
 			if(foundFormat == FileFormat.MSF){
@@ -256,15 +260,18 @@ public class SequencesFactory {
 				
 			}
 			
-			if(foundFormat == null || model == null || model.getSize() == 0){
-				// still nothing 
-				throw new AlignmentImportException("Could not find sequences in file: " + alignmentFile + LF + importErrorMessage);
+			if( memorySequences == true ){
+				if(foundFormat == null || model == null || model.getSize() == 0){
+					// still nothing 
+					throw new AlignmentImportException("Could not find sequences in file: " + alignmentFile + LF + importErrorMessage);
+				}
 			}
+		}
 			
 		//
 		// FILE SEQUENCES
 		//
-		}else if(!memorySequences){
+		if(!memorySequences){
 		
 				FileFormat foundFormat = FileImportUtils.isFileOfAlignmentFormat(alignmentFile);
 				

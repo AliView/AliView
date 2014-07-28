@@ -7,8 +7,6 @@ import java.util.HashSet;
 
 import org.apache.log4j.Logger;
 
-import com.sun.org.apache.bcel.internal.generic.CPInstruction;
-
 import aliview.AminoAcid;
 import aliview.NucleotideUtilities;
 import aliview.alignment.Alignment;

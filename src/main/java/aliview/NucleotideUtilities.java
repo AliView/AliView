@@ -714,5 +714,10 @@ public class NucleotideUtilities {
 			return false;
 		}
 	}
+
+	static byte[] allResidues = new byte[256];
+	public static int baseValFromBaseOtherVer(byte residue) {
+		return allResidues[residue];
+	}
 	
 }

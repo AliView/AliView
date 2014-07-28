@@ -177,9 +177,8 @@ public class FileSequence implements Sequence {
 	}
 
 	public int getUngapedLength() {
-
 		// TODO Auto-generated method stub
-		return 0;
+		return -1;
 	}
 
 	public boolean isEmpty() {

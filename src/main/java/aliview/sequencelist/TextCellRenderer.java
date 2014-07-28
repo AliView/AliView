@@ -14,6 +14,7 @@ package aliview.sequencelist;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -27,12 +28,13 @@ import java.lang.reflect.Method;
  * strings are displayed, and cells have a fixed preferred
  * height and width.   
  */
-class TextCellRenderer extends JPanel implements ListCellRenderer 
+class TextCellRenderer extends JLabel implements ListCellRenderer 
 {
     String text;
     final int borderWidth = 1;
     final int width;
     final int height;
+    final BufferedImage buffImg = new BufferedImage(200, 20, BufferedImage.TYPE_INT_ARGB);
     
 
     TextCellRenderer(int width, int height, Font font) {
@@ -67,16 +69,17 @@ class TextCellRenderer extends JPanel implements ListCellRenderer
 		
 		// This need to be off because I use exact font width in createAdjustedDerivedBaseFont
 	//	g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_OFF);
-		if(width < 10){
 			g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-		}
+//		}
 //		g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
     	
-    g.setFont(this.getFont());
-	g.setColor(getBackground());
-	g.fillRect(0, 0, getWidth(), getHeight());
-	g.setColor(getForeground());
-	g.drawString(text, borderWidth, getHeight());
+    //g.setFont(this.getFont());
+	//g.setColor(getBackground());
+	//g.fillRect(0, 0, getWidth(), getHeight());
+	//g.setColor(getForeground());
+	g.drawImage(buffImg, 0,0, null);
+//	g.drawString(" ", borderWidth, getHeight());
+	//g.drawString(text, borderWidth, getHeight());
     }
 
 
@@ -99,6 +102,7 @@ class TextCellRenderer extends JPanel implements ListCellRenderer
 	    setBackground(list.getBackground());
 	    setForeground(list.getForeground());
 	}
+	this.setFont(list.getFont());
 	text = value.toString();
 
 	return this;

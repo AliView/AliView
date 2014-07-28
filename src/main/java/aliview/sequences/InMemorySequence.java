@@ -22,35 +22,40 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 	private static final String TEXT_FILE_BYTE_ENCODING = "ASCII";
 	private static final Logger logger = Logger.getLogger(InMemorySequence.class);
 	private boolean simpleName = false;
-	
+
 	// TODO what is this selection offset?
 	public int selectionOffset = 0;
 	private byte[] bases;
 	protected SequenceSelectionModel selectionModel;
 	protected String name;
 	private int id = SequenceUtils.createID();
-	
+
 	public InMemorySequence(){
 		selectionModel = new DefaultSequenceSelectionModel();
 	}
-	
+
 	public InMemorySequence(String name, String basesAsString) {
 		this(name, basesAsString.getBytes());	
 	}
 
 	public InMemorySequence(String name, byte[] bytes) {
+		// replace all . with -
+		if(bytes != null){
+			ArrayUtilities.replaceAll(bytes, (byte) '.', (byte) '-');
+		}
+
 		this.bases = bytes;
 		this.name = name;
 		this.selectionModel = new DefaultSequenceSelectionModel(); 
 	}
-	
+
 
 	public InMemorySequence(InMemorySequence template) {
 		this.name = template.name;
 		this.bases = ArrayUtils.clone(template.bases);
 		this.selectionModel = new DefaultSequenceSelectionModel();
 	}
-	
+
 	public Sequence getCopy() {
 		return new InMemorySequence(this);
 	}
@@ -66,22 +71,22 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 	public String getSimpleName(){
 		return name;
 	}
-	
-	
+
+
 	public int getLength() {
 		return getBases().length;
 	}
-	
+
 	private byte[] getBases(){
 		return this.bases;
 	}
-	
-	
+
+
 	public void createNewSelectionModel(){
 		this.selectionModel = new DefaultSequenceSelectionModel();
 	}
 
-	
+
 	public byte getBaseAtPos(int n){
 		if(getBases().length > n){
 			return getBases()[n];
@@ -92,7 +97,7 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 	public char getCharAtPos(int n) {
 		return (char) getBaseAtPos(n);
 	}
-	
+
 	// TODO 
 	public boolean isBaseSelected(int n){
 		return selectionModel.isBaseSelected(n);	
@@ -113,7 +118,7 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 	public long countSelectedPositions(int startIndex, int endIndex) {
 		return selectionModel.countSelectedPositions(startIndex, endIndex);
 	}
-	
+
 	public String getSelectedBasesAsString(){
 		StringBuilder selection = new StringBuilder();
 		if(selectionModel.hasSelection()){
@@ -126,8 +131,8 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 		}
 		return selection.toString();
 	}
-	
-	
+
+
 	public byte[] getSelectedBasesAsByte(){
 		byte[] bases = null;
 		try {
@@ -138,8 +143,8 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 		}
 		return bases;
 	}
-	
-	
+
+
 	public String getBasesAsString(){
 		String baseString = "";
 		try {
@@ -150,11 +155,11 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 		}
 		return baseString;
 	}
-	
+
 	public void writeBases(OutputStream out) throws IOException{
 		out.write(getBases());
 	}
-	
+
 	public void writeBases(Writer out) throws IOException{
 		for(byte next: getBases()){
 			out.write( (char) next);
@@ -164,7 +169,7 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 	public void toggleSimpleName(){
 		this.simpleName = !simpleName;
 	}
-	
+
 	public String toString(){
 		if(simpleName == true){
 			return getSimpleName();
@@ -173,13 +178,13 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 		}
 	}
 
-	
+
 	public int findAndSelect(Pattern pattern, int startPos){
 		// Allocate a Matcher object from the compiled regex pattern,
 		// and provide the input to the Matcher
 		String basesAsString = new String(getBases());
 		Matcher matcher = pattern.matcher(basesAsString);
-		
+
 		int findPos = -1;	
 		boolean wasFound = matcher.find(startPos);
 		if(wasFound){
@@ -202,11 +207,11 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 	 * 
 	 * TODO could skip
 	 * 
-	*/
+	 */
 	public void replaceSelectedBasesWithGap(){
 		replaceSelectedBasesWithChar((char)SequenceUtils.GAP_SYMBOL);
 	}
-	
+
 	public void replaceSelectedBasesWithChar(char newChar) {
 		byte newBase = (byte) newChar;
 		if(selectionModel.hasSelection()){
@@ -228,7 +233,7 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 		return baseVals;	
 	}
 
-	
+
 	public void insertGapLeftOfSelectedBase(){	
 		// get first selected position
 		int position = selectionModel.getFirstSelectedPosition();
@@ -236,7 +241,7 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 			insertGapAt(position);
 		}		
 	}
-	
+
 	public void insertGapRightOfSelectedBase(){
 		// get first selected position
 		int position = selectionModel.getLastSelectedPosition();
@@ -244,14 +249,14 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 			insertGapAt(position+1);
 		}	
 	}
-	
+
 	public boolean isGapRightOfSelection(){
 		return isGapRightOfSelection(1);
 	}
 	public boolean isGapLeftOfSelection(){
 		return isGapLeftOfSelection(1);
 	}
-		
+
 	public boolean isGapRightOfSelection(int offset){
 		boolean isGap = false;
 		int rightSelected = selectionModel.getLastSelectedPosition();
@@ -262,7 +267,7 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 		}
 		return isGap;
 	}
-	
+
 	public boolean isGapLeftOfSelection(int offset){
 		boolean isGap = false;
 		int leftSelected = selectionModel.getFirstSelectedPosition();
@@ -273,19 +278,19 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 		}
 		return isGap;
 	}
-	
-	
+
+
 	public void deleteGapLeftOfSelection(){
-			// get first selected position
-			int leftPosition = selectionModel.getFirstSelectedPosition();
-			if(rangeCheck(leftPosition-1)){
-				// only if gap is left of selection
-				if(NucleotideUtilities.isGap(getBaseAtPos(leftPosition-1))){
-					deleteBase(leftPosition-1);
-				}				
-			}
+		// get first selected position
+		int leftPosition = selectionModel.getFirstSelectedPosition();
+		if(rangeCheck(leftPosition-1)){
+			// only if gap is left of selection
+			if(NucleotideUtilities.isGap(getBaseAtPos(leftPosition-1))){
+				deleteBase(leftPosition-1);
+			}				
+		}
 	}
-	
+
 	public void deleteGapRightOfSelection() {
 		// get first selected position
 		int rightPosition = selectionModel.getLastSelectedPosition();
@@ -295,12 +300,12 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 				deleteBase(rightPosition+1);
 			}				
 		}
-		
+
 	}
-	
+
 
 	public void moveSelectionRightIfGapIsPresent(int steps) {
-		
+
 		for(int m = 0; m < steps; m++){
 			// get first selected position
 			int leftPosition = selectionModel.getFirstSelectedPosition();
@@ -309,7 +314,7 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 
 				// only if gap is right of selection
 				if(NucleotideUtilities.isGap(getBaseAtPos(rightPosition + 1))){
-					
+
 					// move bases one step at the time from right to left
 					for(int n = rightPosition; n >= leftPosition; n--){
 						getBases()[n + 1] = getBases()[n];						
@@ -346,25 +351,25 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 			}
 		}
 	}
-	
+
 	public void moveSelectionRightIfGapIsPresent(){
 		moveSelectionRightIfGapIsPresent(1);
 	}
-	
+
 	public void moveSelectionLeftIfGapIsPresent(){
 		moveSelectionLeftIfGapIsPresent(1);
 	}
-	
+
 	/*
 	public void insertGapAtLastSelectedBaseMoveLeft(){
-		
+
 		// get first selected position
 		int position = getRightSelectedBasePosition();
 		if(position != -1){
 			insertGapAtMoveLeft(position);
 		}	
 	}
-	*/
+	 */
 
 	private void insertGapAt(int n) {
 		byte[] newBases = ArrayUtils.add(getBases(), n, SequenceUtils.GAP_SYMBOL);
@@ -372,17 +377,17 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 		selectionModel.insertNewPosAt(n);
 		setBases(newBases);
 	}
-	
-//	private void insertGapAtMoveLeft(int n) {
-//		insertGapAtMoveLeft(n)
-//		
-//		ArrayUtils.add(getBases(), n, SequenceUtils.GAP_SYMBOL);
-//		
-//		// make same with selection
-//		selectionModel.insertNewPosAtAndMoveLeft(n);
-//		
-//		setBases(newBases);
-//	}
+
+	//	private void insertGapAtMoveLeft(int n) {
+	//		insertGapAtMoveLeft(n)
+	//		
+	//		ArrayUtils.add(getBases(), n, SequenceUtils.GAP_SYMBOL);
+	//		
+	//		// make same with selection
+	//		selectionModel.insertNewPosAtAndMoveLeft(n);
+	//		
+	//		setBases(newBases);
+	//	}
 	/*
 	private void removeBaseAt(int n) {
 		// 
@@ -396,18 +401,18 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 		System.arraycopy(getBasesSelection(), 0, newSelection, 0, n);
 		newSelection[n] = false;
 		System.arraycopy(getBasesSelection(), n, newSelection, n + 1, newSelection.length - n - 1);
-		
+
 		setBases(newBases, newSelection);
 	}
 
 	private void setBasesSelection(boolean[] newSelection) {
 		baseSelection = newSelection;	
 	}
-	*/
+	 */
 	public int[] getSelectedPositions() {
 		return selectionModel.getSelectedPositions(0, this.getLength() - 1);
 	}
-	
+
 	/*
 	private void replaceBases(int fromIndex, int toIndex, String newBases) {
 		try {
@@ -417,21 +422,21 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 			e.printStackTrace();
 		}
 	}
-	*/
+	 */
 
 	public void replaceBases(int startReplaceIndex, int stopReplaceIndex, byte[] insertBases) {
-		
+
 		int newLength = this.getBases().length - (stopReplaceIndex + 1 - startReplaceIndex) + insertBases.length;
-		
+
 		// TODO could check if length is less - then just clear and insert
 		byte[] newBases = new byte[newLength];
-		
+
 		// copy first untouched part of sequence
 		System.arraycopy(getBases(), 0, newBases, 0, startReplaceIndex);
-		
+
 		// copy insertbases
 		System.arraycopy(insertBases, 0, newBases, startReplaceIndex, insertBases.length);
-		
+
 		// copy last untouched part of sequence - if there is one
 		if(stopReplaceIndex < getBases().length - 1){
 			System.arraycopy(getBases(), stopReplaceIndex + 1, newBases, startReplaceIndex + insertBases.length, getBases().length - (stopReplaceIndex + 1));
@@ -451,19 +456,19 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 		}
 		selectionModel.setSelection(startIndex, endIndex, true);
 	}
-	
+
 	private boolean rangeCheck(int pos) {
 		if(bases != null &&pos >= 0 && pos < bases.length){
 			return true;
 		}
 		return false;
 	}
-	
+
 
 	public void deleteSelectedBases(){	
 		// create new array size removed selected bases
 		byte[] newBases = new byte[getBases().length - selectionModel.countSelectedPositions(0, this.getLength() - 1)];
-		
+
 		int newIndex = 0;
 		for(int n = 0;n < bases.length ;n++){
 			// copy only unselected bases to new array
@@ -475,7 +480,7 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 		setBases(newBases);
 		createNewSelectionModel();
 	}
-	
+
 	public void deleteBase(int index){	
 		// create new array size removed selected bases
 		byte[] newBases = ArrayUtils.remove(getBases(), index);
@@ -483,55 +488,55 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 		setBases(newBases);
 	}
 
-	
+
 
 	public void reverseComplement() {
 		reverse();
 		complement();
 	}
-	
+
 	public void complement() {
 		NucleotideUtilities.complement(getBases());	
 	}
-	
+
 	public void reverse(){
 		ArrayUtils.reverse(getBases());	
 	}
-	
+
 
 	public void rightPadSequenceWithGaps(int amount) {
-		
+
 		if(amount > 0){
-			
+
 			byte[] newBases = new byte[getBases().length + amount];
 			System.arraycopy(getBases(), 0, newBases, 0, getBases().length);
-			
+
 			// fill last pos with gaps
 			for(int n = 1; n <= amount; n++){
 				newBases[newBases.length - n] = SequenceUtils.GAP_SYMBOL;
 			}
-			
+
 			setBases(newBases);
 		}	
 	}
-	
+
 	public void leftPadSequenceWithGaps(int amount) {
-		
+
 		if(amount > 0){
-			
+
 			byte[] newBases = new byte[getBases().length + amount];
 			System.arraycopy(getBases(), 0, newBases, amount, getBases().length);
-		
+
 			// fill first pos with gaps
 			for(int n = 0; n < amount; n++){
 				newBases[n] = SequenceUtils.GAP_SYMBOL;
 			}
-				
+
 			selectionModel.leftPad(amount);
-			
+
 			setBases(newBases);
 		}	
-		
+
 	}
 
 	public String getCitatedName() {
@@ -551,7 +556,7 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 		}
 		return allPos.toString();
 	}
-	
+
 	public void deleteBasesFromMask(boolean[] mask){
 		int nTruePos = ArrayUtilities.count(mask, true);
 		byte[] newBases = new byte[getBases().length - nTruePos];
@@ -559,7 +564,7 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 		for(int n = 0; n < getBases().length || n < mask.length ; n++){
 			if(mask[n] == true){
 				// dont copy - this pos is to be deleted
-				
+
 			}else{
 				newBases[destPos] = getBases()[n];
 				destPos ++;
@@ -571,7 +576,7 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 				selectionModel.removePosition(n);
 			}
 		}
-		
+
 		setBases(newBases);
 	}
 
@@ -579,16 +584,16 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 		byte[] newArray = ArrayUtils.addAll(getBases(), moreInterleavedsequence.getBytes());
 		setBases(newArray);
 	}
-	
-	
+
+
 	public boolean hasSelection() {
 		return selectionModel.hasSelection();
 	}
-	
+
 	public void clearBase(int pos) {
 		getBases()[pos] = SequenceUtils.GAP_SYMBOL;
 	}
-	
+
 	public byte[] getAllBasesAsByteArray(){
 		return getBasesBetween(0,getBases().length);
 	}
@@ -609,7 +614,7 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 				break;
 			}
 		}
-		
+
 		return isEmpty;
 	}
 
@@ -627,8 +632,14 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 			createNewSelectionModel();
 		}
 	}
-	
+
 	public int getUngapedPos(int position){
+
+		// TODO this is a problem with large sequences
+		if(position > 1000000){
+			return -1;
+		}
+
 		int gapcount = 0;
 		for(int n = 0; n < position; n++){
 			if(NucleotideUtilities.isGap(getBaseAtPos(n))){
@@ -637,7 +648,7 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 		}	
 		return position - gapcount;
 	}
-	
+
 	public String getUngapedSequence() {
 		StringBuilder ungapedSeq = new StringBuilder(getLength());
 		for(int n = 0; n < getLength(); n++){
@@ -699,7 +710,7 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 		}
 		return count;
 	}
-	
+
 	public boolean contains(char testChar) {
 		boolean contains = false;
 		for(byte base: getBases()){
@@ -721,10 +732,10 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 		}
 		return index;
 	}
-	
+
 	public int countChar(char targetChar, int startpos, int endpos) {
 		int count = 0;
-		
+
 		for(int n = startpos; n < endpos && n < getBases().length; n++){
 			if(targetChar == (char)getBases()[n]){
 				count ++;
@@ -732,11 +743,11 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 		}
 		return count;
 	}
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
 
 }

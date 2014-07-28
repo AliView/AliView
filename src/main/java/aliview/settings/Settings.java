@@ -57,10 +57,7 @@ public class Settings {
 	private static SettingValue reverseHorizontalMouseWheel = new SettingValue("REVERSE_HORIZONTAL_MOUSE_WHEEL", false);
 	private static SettingValue reverseVerticalMouseWheel = new SettingValue("REVERSE_VERTICAL_MOUSE_WHEEL", false);
 	
-	// This is a good place for putting all hide checkbox values
-	private static SettingValue hideFileSeqLimitedEditCapabilities = new SettingValue("hideFileSeqLimitedEditCapabilities", false);
-	private static SettingValue hideEditModeMessage = new SettingValue("hideEditModeMessage", false);
-	private static SettingValue hideMuscleProfileAlignInfoMessage = new SettingValue("hideMuscleProfileAlignInfoMessage", false);
+	
 	
 	private static SettingValue horizontalMouseWheelScrollModifier = new SettingValue("HORIZONTALMOUSEWHEELSCROLLMODIFIER", 20,1,100);
 	private static SettingValue verticalMouseWheelScrollModifier = new SettingValue("VERTICALMOUSEWHEELSCROLLMODIFIER", 20,1,100);
@@ -72,6 +69,13 @@ public class Settings {
 	
 	private static Preferences prefs = Preferences.userNodeForPackage(Settings.class);
 	private static ArrayList<SettingsListener> settingListeners = new ArrayList<SettingsListener>();
+	
+	// This is a good place for putting all hide checkbox values
+	private static SettingValue hideFileSeqLimitedEditCapabilities = new SettingValue("hideFileSeqLimitedEditCapabilities", false);
+	private static SettingValue hideEditModeMessage = new SettingValue("hideEditModeMessage", false);
+	private static SettingValue hideMuscleProfileAlignInfoMessage = new SettingValue("hideMuscleProfileAlignInfoMessage", false);
+	private static SettingValue hideRealignEverythingMessage = new SettingValue("hideRealignEverythingMessage", false);
+	private static SettingValue hideAlignmentProgressWindowWhenDone = new SettingValue("hideAlignmentProgressWindowWhenDone", false);
 	
 
 	public static SettingValue getMinPrimerLength(){
@@ -561,32 +565,64 @@ public class Settings {
 		return hideMuscleProfileAlignInfoMessage;
 	}
 	
+	public static SettingValue getHideRealignEverythingMessage() {
+		return hideRealignEverythingMessage;
+	}
+	
+	public static SettingValue getHideAlignmentProgressWindowWhenDone() {
+		return hideAlignmentProgressWindowWhenDone;
+	}
+	
+	public static void clearAllHideThisDialogCheckboxes() {
+		getHideFileSeqLimitedEditCapabilities().putBooleanValue(false);
+		getHideEditModeMessage().putBooleanValue(false);
+		getHideMuscleProfileAlignInfoMessage().putBooleanValue(false);
+		getHideRealignEverythingMessage().putBooleanValue(false);
+		getHideAlignmentProgressWindowWhenDone().putBooleanValue(false);
+	}
+	
 
 	public static void addRecentFile(File alignmentFile){
 		Vector<File> files = getRecentFiles();
 		
 		// skip if file is same as last
 		if(files.size() > 0 && files.get(0).getAbsolutePath().equals(alignmentFile.getAbsolutePath()) == true){
-			// skip is same
+			
+			// skip
+			
 		}else{
-			// remove previous files with same name
-			Object toRemove = null;
-			for(File aFile: files){
-				if(alignmentFile.equals(files)){
-					toRemove = aFile;
+			
+			// remove older previous files with same name
+			Vector<File> toRemove = new Vector<File>();
+			for(File aRecentFile: files){
+				if(alignmentFile.equals(aRecentFile)){
+					toRemove.add(aRecentFile);
 				}
 			}
-			files.remove(toRemove);
+			files.removeAll(toRemove);
 			files.insertElementAt(alignmentFile, 0);
+			
 			putRecentFiles(files);
 		}
 	}
 	
 	private static void putRecentFiles(Vector<File> files){
 		// save the last 20 files
+		logger.info(files.size());
+		
+		// first remove old ones
+		for(int n = 0; n < 20; n++){
+			logger.info("n" + n);
+			prefs.remove(RECENT_FILE + n);
+		}
+		
+		// then add new ones
 		for(int n = 0; n < files.size() && n < 20; n++){
+			logger.info("n" + n);
 			prefs.put(RECENT_FILE + n, files.get(n).getAbsolutePath());
 		}
+		
+		// and flush changes
 		try {
 			prefs.flush();
 		} catch (BackingStoreException e) {
@@ -618,6 +654,7 @@ public class Settings {
 	}
 	
 	private static void fireRecentFilesChanged() {
+		//logger.info("fire fireRecentFilesChanged, settingListeners.size()" + settingListeners.size());
 		for(SettingsListener listener: settingListeners){
 			listener.recentFilesChanged();
 		}
@@ -654,5 +691,4 @@ public class Settings {
 		return ALIVIEW_HELP_URL;
 	}
 
-	
 }

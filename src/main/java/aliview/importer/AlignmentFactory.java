@@ -42,8 +42,8 @@ public class AlignmentFactory {
 			startTime = System.currentTimeMillis();
 			Alignment alignment = null;
 			try {
-					
-				SequenceListModel sequences = seqFactory.createSequences(alignmentFile);
+				
+				SequenceListModel sequences = seqFactory.createSequences(alignmentFile);			
 				
 				Excludes excludes = new Excludes(sequences.getLongestSequenceLength());
 				logger.info("sequences.getLongestSequenceLength()" + sequences.getLongestSequenceLength());
@@ -62,7 +62,7 @@ public class AlignmentFactory {
 							// Try to read Excludes from metaFile
 							File metaFile = new File(alignmentFile.getAbsolutePath()+ ".meta");
 							if(metaFile.exists()){
-								NexusUtilities.updateExcludesFromFile(metaFile,new Excludes(sequences.getLongestSequenceLength()));
+								NexusUtilities.updateExcludesFromFile(metaFile,excludes);
 								NexusUtilities.updateCodonPositionsFromNexusFile(metaFile, codonPositions);
 								charsets = NexusUtilities.createCharsetsFromNexusFile(metaFile, sequences.getLongestSequenceLength());
 							}

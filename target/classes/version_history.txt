@@ -1,10 +1,21 @@
 Version history
 
-1.10-beta-2
+1.11-beta-2
 
-- Improved render speed (5-10 times)
+- Drawing speed improvements on Windows associated with the List of sequence names 
+- Fixed problem when translating some alignments to AminoAcid one pos
+- Added last saved file to "Recent files" menu
+- Added information message to user if the size of the alignment panel window is larger than 2147483647 pixels
+- Adjusted columns in the status panel at bottom
+- Fixed so that selection now is cleared in list after deleting sequences
+
+1.10
+
+- Improved render speed (5-10 times!)
 - Added save alignment as strict 10 char sequential Phylip format
 - Added undo/redo support when sorting sequences with functions "Sort sequences by...."
+- Fixed problem when re-aligning selected sequences only
+- Fixed problem rendering sequences that was longer than 100 million bases (e.g. human chromosomes)
 
 1.09
 

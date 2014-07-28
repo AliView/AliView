@@ -3,6 +3,8 @@ package aliview.test;
 import java.awt.Color;
 import java.awt.FileDialog;
 import java.awt.Frame;
+import java.awt.RenderingHints;
+import java.awt.Toolkit;
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -10,6 +12,8 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.BitSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
@@ -18,6 +22,7 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 import org.apache.log4j.Logger;
+
 
 import aliview.NucleotideUtilities;
 
@@ -34,6 +39,8 @@ public class Test implements Cloneable{
 	
 
 	public static void main(String[] args) throws CloneNotSupportedException {
+		
+		//getAATextInfo(true);
 		
 		logger.info(8 % 3);
 		
@@ -68,6 +75,42 @@ public class Test implements Cloneable{
 //		logger.info("a="+getAlpha(-9553093));
 		
 	}
+
+	/*
+	private static AATextInfo getAATextInfoFromMap(Map hints) {
+	    
+        Object aaHint   = hints.get(RenderingHints.KEY_TEXT_ANTIALIASING);
+        Object contHint = hints.get(RenderingHints.KEY_TEXT_LCD_CONTRAST);
+
+        if (aaHint == null ||
+            aaHint == RenderingHints.VALUE_TEXT_ANTIALIAS_OFF ||
+            aaHint == RenderingHints.VALUE_TEXT_ANTIALIAS_DEFAULT) {
+            return null;
+        } else {
+            return new AATextInfo(aaHint, (Integer)contHint);
+        }
+    }
+
+    public static AATextInfo getAATextInfo(boolean lafCondition) {
+        SunToolkit.setAAFontSettingsCondition(lafCondition);
+        Toolkit tk = Toolkit.getDefaultToolkit();
+        Object map = tk.getDesktopProperty(SunToolkit.DESKTOPFONTHINTS);
+        if (map instanceof Map) {
+        	Map mapObj = (Map) map;
+        	 logger.info(mapObj.size());
+        	for (Map.Entry<Object, Object> entry : ((RenderingHints) map).entrySet()) {
+        	    System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+        	}
+        	
+            return getAATextInfoFromMap((Map)map);
+        } else {
+        	logger.info("is null");
+            return null;
+        }
+    }
+    
+    */
+    
 	
 	
 	private static void testAlphaColor() {

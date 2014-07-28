@@ -117,9 +117,13 @@ public class Alignment implements FileSequenceLoadListener {
 		}
 	}
 	private void fireSelectionChanged(){
+		int count = 0;
 		for(AlignmentListener listener: alignmentListeners){
 			listener.selectionChanged(this);
+//			logger.info("fire" + count);
+			count ++;
 		}
+		
 	}
 	
 	private void fireNewSequences(){

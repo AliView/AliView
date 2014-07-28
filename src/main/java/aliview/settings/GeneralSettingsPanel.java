@@ -169,10 +169,8 @@ public class GeneralSettingsPanel extends JPanel{
 		
 		JButton clearCbxButton = new JButton("Clear");
 		clearCbxButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Settings.getHideFileSeqLimitedEditCapabilities().putBooleanValue(false);
-				Settings.getHideEditModeMessage().putBooleanValue(false);
-				Settings.getHideMuscleProfileAlignInfoMessage().putBooleanValue(false);
+			public void actionPerformed(ActionEvent e) {			
+				Settings.clearAllHideThisDialogCheckboxes();
 			}
 		});
 		clearCbxButton.setPreferredSize(new Dimension(100, 30));

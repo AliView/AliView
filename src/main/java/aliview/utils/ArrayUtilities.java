@@ -28,6 +28,19 @@ public class ArrayUtilities {
 		return byteArray;
 	}
 	
+	public static byte[] replaceAll(byte[] byteArray, byte find, byte replace) {
+		if(byteArray == null){
+			return null;
+		}
+		
+		for(int n = 0; n < byteArray.length; n++){
+			if(byteArray[n] == find){
+				byteArray[n] = replace;
+			}
+		}
+		return byteArray;
+	}
+	
 	
 
 }

@@ -28,6 +28,7 @@ public class SettingsFrame extends JFrame {
 		init();
 //		this.setSize(new Dimension(650,500));
 //		this.setMaximumSize(new Dimension(650,500));
+		this.setAlwaysOnTop(true);
 		this.pack();
 		this.centerLocationToThisComponent(parent);
 	}

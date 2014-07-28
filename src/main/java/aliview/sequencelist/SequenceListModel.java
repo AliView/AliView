@@ -51,6 +51,8 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 	protected FileFormat fileFormat;
 	protected int sequenceType = SequenceUtils.TYPE_UNKNOWN;
 	private int selectionOffset;
+	private int cachedLongestSequenceName;
+	private int cachedLongestSequenceLength;
 	
 	public SequenceListModel() {
 		this.sequences = new ArrayList<Sequence>();
@@ -62,7 +64,10 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 	}
 	
 	private void sequencesChanged() {
-		// TODO Auto-generated method stub
+		// clear cached values
+		cachedLongestSequenceName = -1;
+		cachedLongestSequenceLength = -1;
+		
 		
 	}
 
@@ -175,15 +180,18 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 	
 	
 	// From previous SequenceList Interface
-	public int getLongestSequenceLength() {
-		int maxLen = 0;
-		for(int n = 0; n < sequences.size(); n++){
-			int len = sequences.get(n).getLength();
-			if(len > maxLen){
-				maxLen = len;
+	public int getLongestSequenceLength(){	
+		if(cachedLongestSequenceLength <=0){
+			int maxLen = 0;
+			for(int n = 0; n < sequences.size(); n++){
+				int len = sequences.get(n).getLength();
+				if(len > maxLen){
+					maxLen = len;
+				}
 			}
+			cachedLongestSequenceLength = maxLen;
 		}
-		return maxLen;
+		return cachedLongestSequenceLength;
 	}
 	
 	public FileFormat getFileFormat() {
@@ -442,9 +450,9 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 				out.append(sequence.getName());
 			}
 			out.append(LF);
-			for(int n = 0; n < 10; n++){
-				sequence.writeBases(out);
-			}
+			
+			sequence.writeBases(out);
+			
 			out.append(LF);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -830,10 +838,13 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 	}
 
 	public void selectEverythingWithinGaps(Point point) {
+		if(!rangeCheck(point)){
+			return;
+		}
 		Sequence seq = sequences.get(point.y);
 		seq.selectAllBasesUntilGap(point.x);
 	}
-	
+
 	public void realignNucleotidesUseThisAASequenceAsTemplate(Sequence nucSeq, Sequence template, CodonPositions codonPos, GeneticCode genCode) throws IOException {
 		StringBuilder newSeq = new StringBuilder(nucSeq.getLength());
 		
@@ -1138,11 +1149,17 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 	}
 
 	public int getLongestSequenceName() {
-		int maxlen = 0;
-		for(Sequence seq: sequences){
-			maxlen = Math.max(maxlen, seq.getName().length());
+		long startTime = System.currentTimeMillis();
+		if(cachedLongestSequenceName <=0){
+			int maxlen = 0;
+			for(Sequence seq: sequences){
+				maxlen = Math.max(maxlen, seq.getName().length());
+			}
+			cachedLongestSequenceName = maxlen;
 		}
-		return maxlen;
+		long endTime = System.currentTimeMillis();
+		logger.info("getLongestSequenceName took " + (endTime - startTime) + " milliseconds");	
+		return cachedLongestSequenceName;
 	}
 
 	public void selectAll() {
@@ -1164,6 +1181,11 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 		}
 		return isValid;
 	}
+	
+	private boolean rangeCheck(Point point) {
+		return rangeCheck(point.x, point.y);
+	}
+	
 
 	public void copySelectionFromInto(int indexFrom, int indexTo) {
 		Sequence seqFrom = sequences.get(indexFrom);

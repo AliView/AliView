@@ -1,9 +1,11 @@
 package aliview;
 
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
@@ -19,11 +21,15 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
+import javax.swing.Icon;
+import javax.swing.InputMap;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.ToolTipManager;
+import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.border.Border;
 import javax.swing.plaf.FontUIResource;
 
 import org.apache.log4j.Appender;
@@ -42,6 +48,7 @@ import aliview.gui.AliViewJMenuBarFactory;
 import aliview.gui.RepeatingKeyEventsFixer;
 import aliview.messenges.Messenger;
 import aliview.settings.Settings;
+import aliview.test.Test;
 
 public class AliView implements ApplicationListener{
 
@@ -95,13 +102,7 @@ public class AliView implements ApplicationListener{
 
 			debugEnv = null;
 
-			// set debug mode
-			if(hasDebugArg || (debugEnv != null)){
-				AliView.setDebug(true);
-			}
-			else{
-				AliView.setDebug(false);
-			}
+			
 			
 			
 			// Set exception handler that takes care of error that are uncaught in the GUI-thread (Event-dispatching-queue)
@@ -137,6 +138,15 @@ public class AliView implements ApplicationListener{
 			else{
 				logger.info("args(null)=" + args);
 			}
+			
+			// set debug mode
+						if(hasDebugArg || (debugEnv != null)){
+							AliView.setDebug(true);
+							}
+						else{
+							AliView.setDebug(false);
+						}
+						
 
 			// I think this issue is solved now when creating actions and adding keybinding to the root pane
 //			if(OSNativeUtils.isLinuxOrUnix()){
@@ -217,10 +227,15 @@ public class AliView implements ApplicationListener{
 			else{
 				try {
 					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
+			
+			// debugUIDefaults();
+			
+			
 
 			if(Settings.getUseCustomFontSize().getBooleanValue()){
 				logger.info("user font size");
@@ -365,6 +380,15 @@ public class AliView implements ApplicationListener{
 		logger.info("done with main method");
 
 	}
+	
+	private static void debugUIDefaults(){
+		UIDefaults def = UIManager.getLookAndFeelDefaults();
+		Enumeration enumer = def.keys();
+		while (enumer.hasMoreElements()) {
+			Object item = enumer.nextElement();
+			System.out.println(item +" " + def.get(item));
+		}
+	}
 
 	private static void setDebug(boolean b) {
 		debugMode = b;
@@ -447,7 +471,7 @@ public class AliView implements ApplicationListener{
 		}catch(OutOfMemoryError memoryErr){
 			logger.info("memory err");
 			memoryErr.printStackTrace();
-			//Messenger.showOKOnlyMessage(Messenger.OUT_OF_MEMORY_ERROR, activeWindow);
+			Messenger.showOKOnlyMessage(Messenger.OUT_OF_MEMORY_ERROR, activeWindow);
 		}catch(Error err){
 			err.printStackTrace();
 		}

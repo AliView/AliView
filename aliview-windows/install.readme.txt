@@ -1,0 +1,8 @@
+Install:
+
+The windows installer Aliview-Setup.exe will  put the file AliView.exe in 
+C:\Program Files (x86)\AliView\ and also ask if you want to create file associations for
+alignment type files.
+
+----*** ALTERNATIVE ***----
+in directory "without_installer_version" is the program provided either as an .exe-file or a jar-file

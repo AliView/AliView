@@ -350,6 +350,15 @@ public class OSNativeUtils {
 		}
 	}
 	
+	
+	public static KeyStroke getNewFileAccelerator() {
+		if(isMac()){
+			return KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.META_DOWN_MASK);
+		}else{
+			return KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK);
+		}
+	}
+	
 	public static KeyStroke getPrintAccelerator() {
 		if(isMac()){
 			return KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.META_DOWN_MASK);
@@ -474,9 +483,6 @@ public class OSNativeUtils {
 	    return style;
 	}
 
-	
-
-	
 
 	
 

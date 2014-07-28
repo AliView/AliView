@@ -41,12 +41,18 @@ public class NexusUtilities {
 			if(assumptionsBlock == null || assumptionsBlock.length() == 0){
 				return false;
 			}
+			
+			logger.info("exsetBlock" + assumptionsBlock);
+			
 			String exsetBlock = StringUtils.substringBetween(assumptionsBlock, "EXSET", ";");
 			if(exsetBlock == null){
 				return false;
 			}
 			logger.info("Found block");
 			String excludeString = StringUtils.substringAfter(exsetBlock, "=");
+			
+			logger.info("ecludestring" + excludeString);
+			
 			if(excludeString == null || excludeString.length() == 0){
 				return true;
 			}

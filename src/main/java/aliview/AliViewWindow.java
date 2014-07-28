@@ -1,17 +1,21 @@
 package aliview;
 
+import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.ComponentOrientation;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
+import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
@@ -69,6 +73,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -88,6 +93,7 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.JViewport;
 import javax.swing.KeyStroke;
+import javax.swing.RepaintManager;
 import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
@@ -175,7 +181,9 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 	private static final Rectangle DEFAULT_WIN_GEOMETRY = new Rectangle(20,20,600,400);
 	protected JViewport viewport;
 	protected AlignmentPane alignmentPane;
-	MyScrollPane alignmentScrollPane;
+	// MyScrollPane 
+	JScrollPane alignmentScrollPane;
+	//JPanel alignmentAndRulerPanel;
 	private SequenceJList sequenceJList;
 	private Alignment alignment;
 	private SearchPanel searchPanel;
@@ -207,6 +215,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		this(null, menuBarFactory);
 	}
 */
+	private JPanel alignmentAndRulerPanel;
 	
 
 	public AliViewWindow(File alignmentFile,AliViewJMenuBarFactory menuBarFactory) {
@@ -219,7 +228,6 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		glassPane.addKeyListener(new GlassPaneKeyListener());
 		
 		
-
 		// try to Load alignment
 		Alignment newAlignment = null;
 		if(alignmentFile != null){
@@ -323,14 +331,20 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 	public static Component getAliViewWindowGlassPane(){
 		return glassPane;
 	}
+	
+	
+	public void logScrollPane() {
+		logger.info(alignmentScrollPane.getViewport().getSize());
+		
+	}
 
 	private void initWindow(Alignment newAlignment) {
 		logger.info("inside init()");
 
 		//Color COLORSCHEME_BACKGROUND = Settings.getColorSchemeNucleotide().getBaseBackgroundColor(NucleotideUtilities.GAP);
-		Color COLORSCHEME_BACKGROUND = Settings.getColorSchemeNucleotide().getBaseBackgroundColor(NucleotideUtilities.GAP);
+		//Color COLORSCHEME_BACKGROUND = Settings.getColorSchemeNucleotide().getBaseBackgroundColor(NucleotideUtilities.GAP);
 		//Color COLORSCHEME_BACKGROUND = Color.white;//Settings.getColorSchemeNucleotide().getBaseBackgroundColor(NucleotideUtilities.GAP);
-
+		
 		alignment = newAlignment;
 
 		// add listener
@@ -367,13 +381,15 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		this.updateWindowTitle();
 
 		// Always horizontal scrollbar so list and pane not have varied height - then list and alignment could get out of synch	
-		alignmentScrollPane = new MyScrollPane(alignmentPane, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+	//	alignmentScrollPane = new MyScrollPane(alignmentPane, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 
+		alignmentScrollPane = new JScrollPane(alignmentPane, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		
 		alignmentScrollPane.setAutoscrolls(true);
 		alignmentScrollPane.setMinimumSize(new Dimension(150, 150));
 		logger.info("alignmentPane.isDoubleBuffered()" +  alignmentPane.isDoubleBuffered());
 		//boolean paneDoubleBuff = alignmentPane.isDoubleBuffered();
-		boolean paneDoubleBuff = false;
+		boolean paneDoubleBuff = true;
 		alignmentScrollPane.setDoubleBuffered(paneDoubleBuff);
 		//alignmentScrollPane.setDoubleBuffered(false);
 		alignmentScrollPane.getVerticalScrollBar().setUnitIncrement(16);
@@ -386,8 +402,8 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		alignmentScrollPane.setBorder(BorderFactory.createEmptyBorder());
 		viewport = alignmentScrollPane.getViewport();
 		viewport.setAutoscrolls(true);
-		sequenceJList = new SequenceJList(alignment.getSequences());
-		sequenceJList.setBackground(COLORSCHEME_BACKGROUND);
+		sequenceJList = new SequenceJList(alignment.getSequences(), alignmentPane.getCharHeight());
+	//	sequenceJList.setBackground(COLORSCHEME_BACKGROUND);
 		aliListener = new SequenceListListener(alignmentPane, this);
 		sequenceJList.addListSelectionListener(aliListener);
 		alignment.getSequences().addListDataListener(aliListener);
@@ -397,7 +413,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		// Setting size does nothing - since it is inside split-pane - setting splitpane dividerlocation does the trick
 		//listScrollPane.setMinimumSize(new Dimension(100, 30));
 		//listScrollPane.setPreferredSize(new Dimension(300,500));
-		listScrollPane.setDoubleBuffered(true);
+		//listScrollPane.setDoubleBuffered(true);
 		listScrollPane.setBorder(new EmptyBorder(0,0,0,0));
 		//listScrollPane.setVerticalScrollBarPolicy( JScrollPane.VERTICAL_SCROLLBAR_NEVER);
 
@@ -417,21 +433,21 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		Dimension alignmentRulerDimension = new Dimension(1000,20);
 		JComponent alignmentRuler = alignmentPane.getRulerComponent();
 		alignmentRuler.setPreferredSize(alignmentRulerDimension);
-		JPanel alignmentAndRuler = new JPanel(new BorderLayout());
-		alignmentAndRuler.add(alignmentScrollPane, BorderLayout.CENTER);
-		alignmentAndRuler.add(alignmentRuler, BorderLayout.NORTH);
+		alignmentAndRulerPanel = new JPanel(new BorderLayout());
+		alignmentAndRulerPanel.add(alignmentScrollPane, BorderLayout.CENTER);
+		alignmentAndRulerPanel.add(alignmentRuler, BorderLayout.NORTH);
 
 		// topoffset on listpanel to match ruler
 		listTopOffset = new JPanel();
 
-		listTopOffset.setBackground(COLORSCHEME_BACKGROUND);
+	//	listTopOffset.setBackground(COLORSCHEME_BACKGROUND);
 		listTopOffset.setPreferredSize(new Dimension(100, alignmentRulerDimension.height));
 		JPanel listAndTopOffset = new JPanel(new BorderLayout());
 		listAndTopOffset.add(listScrollPane, BorderLayout.CENTER);
 		listAndTopOffset.add(listTopOffset, BorderLayout.NORTH);
 
 		// Splitpane between list and alignmentview
-		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, listAndTopOffset, alignmentAndRuler);
+		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, listAndTopOffset, alignmentAndRulerPanel);
 		splitPane.setDividerSize(6);
 		splitPane.setDividerLocation(200);
 		//listTopOffset.setBackground(splitPane.getBackground());
@@ -507,6 +523,9 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		//		anotherGlaggP.add(message);
 		//		anotherGlaggP.setVisible(true);
 
+		// Set a default ColorScheme (has to be done after all pnels are created)
+		setColorSchemeNucleotide(Settings.getColorSchemeNucleotide());
+		
 		logger.info("init() finished");
 	}
 
@@ -775,6 +794,10 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		Point mousePosInScrollPaneCoord = new Point(mousePos.x - viewPoint.x, mousePos.y - viewPoint.y);
 
 		logger.info("oldSize" + oldSize);
+		
+		logger.info("mousePosInScrollPaneCoord" + mousePosInScrollPaneCoord);
+		
+		logger.info("mousePosOnPane" + mousePos);
 
 		incCharSize();
 
@@ -801,19 +824,50 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		logger.info("newY" + newY);
 
 		final Point newViewPoint = new Point(newX, newY);
-
+	
 		viewPoint = alignmentScrollPane.getViewport().getViewPosition();
 		logger.info("beforeViewPoint" + viewPoint);
 		logger.info("newViewPoint" + newViewPoint);
 		
+		// Old viewport has to be replaced - otherwise problem drawing graphics
+		// Not needed actually on zoomIn - only on zoomOut
+//		alignmentScrollPane.setViewport(null);
+//		alignmentScrollPane.setViewportView(alignmentPane);
+		// Set new position
 		alignmentScrollPane.getViewport().setViewPosition(newViewPoint);
 
-		viewPoint = alignmentScrollPane.getViewport().getViewPosition();
+		Point afterViewPoint = alignmentScrollPane.getViewport().getViewPosition();
 		logger.info("afterViewPoint" + viewPoint);
 		
-		// This is a bit double to make sure everything gets repainted
-		alignmentPane.setForceRepaintAll(true);
-		alignmentPane.repaint(0,0,newSize.width, newSize.height);
+//		if(alignmentPane.isPointWithinMatrix(mousePosOnResizedPane)){
+//		
+//			// This moving the mouse is done to make sure zoom in at right point even if pane is to small
+//			int xMouseDiff = newViewPoint.x - afterViewPoint.x;
+//			int yMouseDiff = newViewPoint.y - afterViewPoint.y;
+//			logger.info("xMouseDiff=" + xMouseDiff);
+//			logger.info("yMouseDiff=" + yMouseDiff);
+//			
+//			try {
+//				
+//				Robot robot = new Robot();
+//				Point onScreen = MouseInfo.getPointerInfo().getLocation();		
+//				robot.mouseMove(onScreen.x + xMouseDiff, onScreen.y + yMouseDiff);	
+//			} catch (AWTException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
+		
+		
+		
+		//alignmentPane.setForceRepaintAll(true);
+		alignmentPane.repaint();
+		//alignmentPane.setForceRepaintAll(true);
+		//alignmentPane.repaint(0,0,newSize.width, newSize.height);
+		
+		// no longer need to paintImmediately, since instead destroying viewport
+		//alignmentPane.paintImmediately(0,0,newSize.width, newSize.height);
+		
 		
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run(){
@@ -844,10 +898,10 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		logger.info("oldSize" + oldSize);
 
 		boolean didChangeSize = decCharSize();
-
+		
 		if(didChangeSize){
 		
-			Dimension newSize = alignmentPane.getPreferredSize();
+			final Dimension newSize = alignmentPane.getPreferredSize();
 			alignmentPane.setSize(newSize);
 			logger.info("newSize" + newSize);
 	
@@ -865,15 +919,45 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 			int newX = mousePosOnResizedPane.x - mousePosInScrollPaneCoord.x;
 			int newY = mousePosOnResizedPane.y - mousePosInScrollPaneCoord.y;
 			final Point newViewPoint = new Point(newX, newY);
-	//		logger.info("newViewPoint" + newViewPoint);
-	
-			// move viewport so base moves to mouse pointer (absolute position on)
+		
+			// Old viewport has to be replaced 
+			alignmentScrollPane.setViewport(null);
+			alignmentScrollPane.setViewportView(alignmentPane);
+			// Set new pos
 			alignmentScrollPane.getViewport().setViewPosition(newViewPoint);
-		//	logger.info(alignmentPane.getVisibleRect());
-			// This is a bit double - but I want to be sure everything gets painted
-			alignmentPane.setForceRepaintAll(true);
-			alignmentPane.repaint(0,0,newSize.width, newSize.height);
+			
+			Point afterViewPoint = alignmentScrollPane.getViewport().getViewPosition();
+			logger.info("afterViewPoint" + viewPoint);
 	
+//			if(alignmentPane.isPointWithinMatrix(mousePosOnResizedPane)){
+//			
+//				// This moving the mouse is done to make sure zoom in at right point even if pane is to small
+//				int xMouseDiff = newViewPoint.x - afterViewPoint.x;
+//				int yMouseDiff = newViewPoint.y - afterViewPoint.y;
+//				logger.info("xMouseDiff=" + xMouseDiff);
+//				logger.info("yMouseDiff=" + yMouseDiff);
+//				
+//				try {
+//					
+//					Robot robot = new Robot();
+//					Point onScreen = MouseInfo.getPointerInfo().getLocation();		
+//					robot.mouseMove(onScreen.x + xMouseDiff, onScreen.y + yMouseDiff);	
+//				} catch (AWTException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//			}
+			
+			
+			alignmentPane.repaint();
+			//alignmentPane.setForceRepaintAll(true);
+			//alignmentPane.repaint(0,0,newSize.width, newSize.height);
+			
+			// no longer need to paintImmediately, since instead destroying viewport
+			//alignmentPane.paintImmediately(0,0,newSize.width, newSize.height);
+			
+			
+			
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run(){
 					scrollBarListener.stateChanged(new ChangeEvent(alignmentScrollPane.getVerticalScrollBar().getModel()));
@@ -959,6 +1043,12 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 						this.reloadCurrentFile();
 					}
 				}
+				
+				if(fileFormat != fileFormat.IMAGE_PNG){
+					Settings.addRecentFile(selectedFile);
+				}
+				
+				
 			} catch (IOException e) {
 				e.printStackTrace();
 				// Meddela användaren om fel				
@@ -1114,9 +1204,9 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 
 	protected boolean decCharSize() {
 		boolean didChange = alignmentPane.decCharSize();
-		if(didChange){
+//		if(didChange){
 			sequenceJList.setCharSize(alignmentPane.getCharHeight());
-		}
+//		}
 		return didChange;
 	}
 
@@ -1204,8 +1294,9 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 				if(! hideMessage){
 					boolean hideMessageNextTime = Messenger.showOKOnlyMessageWithCbx(Messenger.MUSCLE_PROFILE_INFO_MESSAGE, true, this);
 					Settings.getHideMuscleProfileAlignInfoMessage().putBooleanValue(hideMessageNextTime);
-			}	
-		}
+				}
+			}
+		
 		
 		// warn if invalid characters
 		String invalidChars = alignment.getFirstInvalidCharacter();
@@ -1219,13 +1310,14 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		try {
 			// Create a tempFile for new alignment
 			final File newAlignmentTempFile = File.createTempFile("aliview-tmp-alignment", ".fasta");
+			
 
-			final SubProcessWindow subProcessWin = new SubProcessWindow();
+			final SubProcessWindow subProcessWin = SubProcessWindow.getAlignmentProgressWindow(aliViewWindow, true);
+			subProcessWin.setCloseWhenDoneCbxSelection(Settings.getHideAlignmentProgressWindowWhenDone().getBooleanValue());
 			subProcessWin.setTitle("Align and add sequences with " + alignItem.getName());
 			subProcessWin.setAlwaysOnTop(true);
 			subProcessWin.show();
-			subProcessWin.centerLocationToThisComponent(aliViewWindow);
-
+			
 			alignItem.setParameterCurrentFile(origSequences);
 			alignItem.setParameterSecondFile(newSeqs);
 			alignItem.setParameterOutputFile(newAlignmentTempFile);
@@ -1241,6 +1333,12 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 								boolean wasProcessInterruptedByUser = subProcessWin.wasSubProcessDestrouedByUser();
 								aliViewWindow.realignmentOfSelectedSeqsDone(wasProcessInterruptedByUser, newAlignmentTempFile);
 								subProcessWin.appendOutput(LF + "Done" + LF);
+								
+								// close window automatically if that is what is wanted
+								if(Settings.getHideAlignmentProgressWindowWhenDone().getBooleanValue()){
+									subProcessWin.dispose();
+								}
+								
 								setSoftLockGUIThroughMenuDisable(false);
 								//glassPane.setVisible(false);
 							}
@@ -1318,12 +1416,24 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 	public void reAlignEverythingWithAlignCommand(final CommandItem alignItem, final boolean asTranslatedAA, final boolean selection){
 		// ask if realign everything
 		if(! selection){
-			// optionpane
-			String message = "Are you sure you want to" + LF + "realign the whole alignment?";
-			int retVal = JOptionPane.showConfirmDialog(this, message, "Realign the whole alignment?", JOptionPane.OK_CANCEL_OPTION);
-			if(retVal != JOptionPane.OK_OPTION){
-				return ;
+			
+			boolean hideMessage = Settings.getHideRealignEverythingMessage().getBooleanValue();
+			if(! hideMessage){
+				boolean hideMessageNextTime = Messenger.showOKCancelMessageWithCbx(Messenger.REALIGN_EVERYTHING, hideMessage, aliViewWindow);
+				//JDialog dialog = Messenger.showOKCancelMessageWithCbx(Messenger.REALIGN_EVERYTHING, hideMessage, aliViewWindow);
+//				while(dialog != null && dialog.isVisible()){
+//					try {
+//						Thread.sleep(500);
+//					} catch (InterruptedException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+//					logger.info("awake");
+//				}
+				logger.info("done");
+				Settings.getHideRealignEverythingMessage().putBooleanValue(hideMessageNextTime);
 			}
+			
 		}
 
 		//Messenger.showOKOnlyMessageWithCbx(Messenger.ALIGNER_SOMETHING_PROBLEM_ERROR, aliViewWindow);
@@ -1358,12 +1468,12 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 			alignItem.setParameterCurrentFile(currentAlignmentTempFile);
 			alignItem.setParameterOutputFile(newAlignmentTempFile);
 
-			final SubProcessWindow subProcessWin = new SubProcessWindow();
-			//aliViewWindow.add(subProcessWin.getFrame());
+			
+			final SubProcessWindow subProcessWin = SubProcessWindow.getAlignmentProgressWindow(aliViewWindow, true);
+			subProcessWin.setCloseWhenDoneCbxSelection(Settings.getHideAlignmentProgressWindowWhenDone().getBooleanValue());
 			subProcessWin.setTitle("Align with " + alignItem.getName());
 			subProcessWin.setAlwaysOnTop(true);
 			subProcessWin.show();
-			subProcessWin.centerLocationToThisComponent(aliViewWindow);
 
 
 			Thread thread = new Thread(new Runnable(){
@@ -1385,6 +1495,12 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 								}
 								subProcessWin.appendOutput(LF + "Done" + LF);
 								logger.info("before-set-visible-false");
+								
+								// close window automatically if that is what is wanted
+								if(Settings.getHideAlignmentProgressWindowWhenDone().getBooleanValue()){
+									subProcessWin.dispose();
+								}
+									
 								//glassPane.setVisible(false);
 								setSoftLockGUIThroughMenuDisable(false);
 							}
@@ -1930,6 +2046,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		if(! sequenceJList.isSelectionEmpty()){
 			aliViewWindow.getUndoControler().pushUndoState(new UndoSavedStateSequenceOrder(alignment.getSequences().getCopyShallow(), alignment.getAlignentMetaCopy()));
 			sequenceJList.deleteSelectedSequences();
+			sequenceJList.clearSelection();
 		}else if(alignment.hasSelection()){
 			if(isUndoable()){
 				aliViewWindow.getUndoControler().pushUndoState();
@@ -2288,6 +2405,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 	private void setPaneAndListBGColor(Color color){
 		listTopOffset.setBackground(color);
 		sequenceJList.setBackground(color);
+		alignmentPane.setBackground(color);
 	}
 
 	public void setColorSchemeNucleotide(ColorScheme aScheme){
@@ -2625,14 +2743,16 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 			startPaneVisibleRectLocation = alignmentPane.getVisibleRect().getLocation();
 			lastRect = new Rectangle(e.getPoint());
 
-
+			logger.info("points done");
 
 			// if click is within an existing selection
 			// we should think about drag possibility
 			if(alignmentPane.isWithinExistingSelection(e.getPoint())){
 				dragPointStart = e.getPoint();
 			}else{
-
+				
+				
+				
 				// if shift is down something is selected already make a new rect selection
 				if(e.isShiftDown()){
 
@@ -2763,6 +2883,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 
 			if(e.getClickCount() == 2){
 				Point matrixCoord = alignmentPane.paneCoordToMatrixCoord(e.getPoint());
+				logger.info(matrixCoord);
 				selectEverythingWithinGaps(matrixCoord);
 			}
 
@@ -2784,6 +2905,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 
 
 		public void mouseDragged(MouseEvent e) {
+			logger.info("mouse dragged start");
 			// Theese 2 lines makes sure pane is scrolling when user selects
 			// and moves outside current visible rect (keyword scroll speed)
 			Rectangle preferredVisisble = new Rectangle(e.getPoint());
@@ -2846,6 +2968,8 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 				// sequenceJList.validateSelection();
 
 			}	
+			
+			logger.info("mouse dragged done");
 		}
 
 		public void mouseMoved(MouseEvent e) {
@@ -3341,8 +3465,8 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 	public void runExternalCommandImplementation(final CommandItem cmdItem){
 
 		// Output window
-		final SubProcessWindow subProcessWin = new SubProcessWindow();
-		subProcessWin.init();
+		final SubProcessWindow subProcessWin = new SubProcessWindow(aliViewWindow);
+		//subProcessWin.init();
 		subProcessWin.setTitle(cmdItem.getName());
 		subProcessWin.setAlwaysOnTop(true);
 		subProcessWin.placeFrameupperLeftLocationOfThis(aliViewWindow);

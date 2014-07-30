@@ -380,28 +380,91 @@ public class Alignment implements FileSequenceLoadListener {
 		// First line number of seq + seqLen
 		out.write("" + sequences.getSize() + " " + this.getMaximumSequenceLength() + LF);
 
-		for(Sequence seq: sequences){
-			String seqName = seq.getName();
-			seqName = escapeSeqName(seqName);
-			
-			if(fileFormat == FileFormat.PHYLIP_RELAXED_PADDED){
-				int longSeqName = sequences.getLongestSequenceName();
-				seqName = StringUtils.rightPad(seqName , longSeqName);
+		
+		// Interleaved
+		if(fileFormat == FileFormat.PHYLIP_RELAXED_PADDED_INTERLEAVED){
+			int longSeq = sequences.getLongestSequenceLength();
+			int namePadSize = sequences.getLongestSequenceName() + 1;
+
+			// 60 residues per line
+			int residuesPerLine = 80;
+			// names on first round only
+			for(int n = 0; n < sequences.getSize(); n++){		
+				// Write name space and up to xx residues
+				Sequence seq = sequences.get(n);
+				String seqName = seq.getName();
+				seqName = escapeSeqName(seqName);
+				
+				String paddedName = StringUtils.rightPad(seqName, namePadSize);
+				
+				out.write(paddedName);
+				
+				byte[] bases = seq.getBasesBetween(0,  residuesPerLine - 1);
+				
+				out.write(new String(bases));
+					
+				out.write(LF);
 			}
 			
-			if(fileFormat == FileFormat.PHYLIP_STRICT_SEQUENTIAL){
-				// Make sure exact 10 positions
-				if(seqName.length() > 10){
-					seqName = StringUtils.substring(seqName, 0, 10);
-					// replace space with '_'
-					seqName = seqName.replace(' ', '_');
-				}
-				seqName = StringUtils.rightPad(seqName , 10);
-			}
-			
-			out.write(seqName); // no space after name
-			seq.writeBases(out);
 			out.write(LF);
+			out.write(LF);
+			
+
+			
+			for(int pos = residuesPerLine; pos < longSeq; pos += residuesPerLine){
+				int endPos = pos + residuesPerLine;
+				endPos = Math.min(endPos, longSeq);
+				
+				for(int n = 0; n < sequences.getSize(); n++){		
+					// Write name space and up to xx residues
+					Sequence seq = sequences.get(n);
+//					String seqName = seq.getName();
+//					seqName = escapeSeqName(seqName);
+//					
+//					String paddedName = StringUtils.rightPad(seqName, namePadSize);
+//					
+//					out.write(paddedName);
+					
+					byte[] bases = seq.getBasesBetween(pos,  endPos - 1);
+					
+					out.write(new String(bases));
+						
+					out.write(LF);
+				}
+				
+				// add two blank lines before next "interleave"
+				out.write(LF);
+				out.write(LF);
+			}
+		}
+		// Sequential versions
+		else{
+			for(Sequence seq: sequences){
+				String seqName = seq.getName();
+				seqName = escapeSeqName(seqName);
+						
+				if(fileFormat == FileFormat.PHYLIP_RELAXED_PADDED){
+					int longSeqName = sequences.getLongestSequenceName();
+					seqName = StringUtils.rightPad(seqName , longSeqName + 1); // + one space
+				}
+				
+				if(fileFormat == FileFormat.PHYLIP_RELAXED){
+					int longSeqName = sequences.getLongestSequenceName();
+					seqName += ' '; // + one space
+				}
+				
+				if(fileFormat == FileFormat.PHYLIP_STRICT_SEQUENTIAL){
+					// Make sure exact 10 positions
+					if(seqName.length() > 10){
+						seqName = StringUtils.substring(seqName, 0, 10);					
+					}
+					seqName = StringUtils.rightPad(seqName , 10); // 10 name no space
+				}
+				
+				out.write(seqName); // no space after name that is added on name already (but not on strict)
+				seq.writeBases(out);
+				out.write(LF);
+			}
 		}
 
 		out.flush();
@@ -515,7 +578,9 @@ public class Alignment implements FileSequenceLoadListener {
 				BufferedWriter outMeta = new BufferedWriter(new FileWriter(new File(outFile.getAbsoluteFile() + ".meta")));
 				storeMetaData(outMeta);
 			}
-		}else if(fileFormat == FileFormat.PHYLIP || fileFormat == FileFormat.PHYLIP_RELAXED || fileFormat == FileFormat.PHYLIP_RELAXED_PADDED || fileFormat == FileFormat.PHYLIP_STRICT_SEQUENTIAL){
+		}else if(fileFormat == FileFormat.PHYLIP || fileFormat == FileFormat.PHYLIP_RELAXED ||
+				 fileFormat == FileFormat.PHYLIP_RELAXED_PADDED || fileFormat == FileFormat.PHYLIP_STRICT_SEQUENTIAL ||
+				 fileFormat == FileFormat.PHYLIP_RELAXED_PADDED_INTERLEAVED){
 			storeAlignmetAsPhyFile(out, fileFormat);
 			// save meta if exset it is set
 			if(this.alignmentMeta.isMetaOutputNeeded()){

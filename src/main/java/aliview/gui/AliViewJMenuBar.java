@@ -210,6 +210,22 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 		});
 		mnFile.add(mntmSaveAlignmentAsPhylipRelaxedPadded);
 		loadedAlignmentFunctions.add(mntmSaveAlignmentAsPhylipRelaxedPadded);
+		
+		
+		JMenu menuPhylipSubmenu = new JMenu("Save as Phylip (other format versions)");
+		mnFile.add(menuPhylipSubmenu);
+		
+		
+		JMenuItem mntmSaveAlignmentAsPhylipRelaxedPaddedInterleaved = new JMenuItem("Save as Phylip (full names, padded & interleaved)");
+		mntmSaveAlignmentAsPhylipRelaxedPaddedInterleaved.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				aliViewWindow.saveAlignmentAsFileViaChooser(FileFormat.PHYLIP_RELAXED_PADDED_INTERLEAVED, false);
+			}
+
+		});
+		menuPhylipSubmenu.add(mntmSaveAlignmentAsPhylipRelaxedPaddedInterleaved);
+		loadedAlignmentFunctions.add(mntmSaveAlignmentAsPhylipRelaxedPaddedInterleaved);
+		
 
 		JMenuItem mntmSaveAlignmentAsPhylip = new JMenuItem("Save as Phylip (full names)");
 		mntmSaveAlignmentAsPhylip.addActionListener(new ActionListener() {
@@ -218,7 +234,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 			}
 
 		});
-		mnFile.add(mntmSaveAlignmentAsPhylip);
+		menuPhylipSubmenu.add(mntmSaveAlignmentAsPhylip);
 		loadedAlignmentFunctions.add(mntmSaveAlignmentAsPhylip);
 
 		JMenuItem mntmSaveAlignmentAsPhylipStrictSequential = new JMenuItem("Save as Phylip (strict 10 char names)");
@@ -228,7 +244,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 			}
 
 		});
-		mnFile.add(mntmSaveAlignmentAsPhylipStrictSequential);
+		menuPhylipSubmenu.add(mntmSaveAlignmentAsPhylipStrictSequential);
 		loadedAlignmentFunctions.add(mntmSaveAlignmentAsPhylipStrictSequential);
 
 		JMenuItem mntmSaveAlignmentAsClustal = new JMenuItem("Save as Clustal (aln)");

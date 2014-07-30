@@ -57,7 +57,7 @@ The program is released under the <b>Open Source</b> Software License 'GNU Gener
 Source code is available at GitHub: https://github.com/AliView/AliView
 </p>
 
-<p><a href="downloads">Download the latest version: 1.10 (24/Jul/2014) (Mac OS X, Windows, Linux)</a></p>
+<p><a href="downloads">Download the latest version: 1.11 (30/Jul/2014) (Mac OS X, Windows, Linux)</a></p>
 
 <img align="" style="width: 400px;" alt="" src="images/screenshot_mac.png"><br>
 
@@ -102,36 +102,9 @@ src="images/screenshot_mac_zoom_out_400.png"></p>
 
 <p><a href="demo/">Some demo datasets can be found here</a></p>
 
-<h3>Linux (all versions)  <a href="downloads/">download here</a></h3>
-aliview.install.run<br>
-<br>
-(this is a executable archive that will copy the files to the /usr/home/bin/
-and /usr/share)<br>
-on some systems you will need to change the execution rights of the install file:<br>
-<br>
-<code>chmod +x aliview.install.run <br>
-sudo ./aliview.install.run </code><br>
-<br>
-(most likely you need to sudo the installation)<br>
-<br>
-start the program with aliview (this is a sh script that will execute java -jar
-aliview.jar)<br>
-<br>
-
-<b>NOTE:</b> If you are running Linux, consider upgrading to <b>Java 8</b>, there is a <b>significant improvement in drawing speed</b> since it is using Linux built in XRender. <br>
-Installation is very simple (1 minute) - <a href=#java8install>Java 8 installation instructions for Ubuntu/Debian/OpenSuse/RedHat</a><br>
-
-<br>
-
-<b>Linux (alternative installation)</b><br>
-aliview.tgz is an archive including the program files<br>
-<br>
-<br>
-
 <h3>Mac OS X (all versions)  <a href="downloads/">download here</a> </h3>
-AliView-app.zip<br>
 <br>
-the program is distributed as a Application that only needs to be dropped in
+The program is distributed as a Application <b>(AliView-app.zip)</b>, that only needs to be dropped in
 your App-folder (sometimes you need to unpack it manually)<br>
 <br>
 <b>OBS! On Mavericks you might get an error message ”This
@@ -139,19 +112,21 @@ application is damaged and can't be opened. You should move it to the
 Trash.”</b> - The file is actually not damaged, it is just a bad error
 message. There is a settings in the ”Gatekeeper” that you need to change to
 be able to download software from other places than the App-store.<br>
-How to solve:<br>
+How to solve:
 <a
 href="http://answers.uchicago.edu/page.php?id=25481">http://answers.uchicago.edu/page.php?id=25481
 </a><br>
 <br>
-<br>
+
 
 <h3>Windows (all versions)  <a href="downloads/">download here</a></h3>
-AliView-Setup.exe (There are also an alternative executable without the installer
-and one version packaged in a .jar file)<br>
 <br>
-Run the installer, the program will default installation to directory
-C:\Program Files (x86)\AliView 
+Download and run <b>AliView-Setup.exe</b>
+<br>
+- the setup program will default installation to directory <code>"C:\Program Files (x86)\AliView"</code>
+<br>
+<br>
+<b>Alternatively</b> you can download the program <b>AliView.exe</b> or <b>aliview.jar</b> from sub-directory <code>/without_installer_version/</code>
 
 <p><strong>NOTE:</strong> some virus scanners might block the installation and
 need to be temporarily disabled.<br>
@@ -160,8 +135,47 @@ need to be temporarily disabled.<br>
 
 <br>
 
+<h3>Linux (all versions)  <a href="downloads/">download here</a></h3>
+<br>
+The simplest install is to download the file: <b>aliview.install.run</b>
+<br>
+(this is a executable archive that will copy the files to the /usr/home/bin/ and /usr/share, and will also install a ".desktop" link to the start-menu on compatible systems.)
+<br>
+<br>
+- after downloading you will likely need to change the execution rights of the install file:
+<br>
+<code>chmod +x aliview.install.run</code>
+<br>
+<br>
+- install by issuing command: 
+<br>
+<code>sudo ./aliview.install.run </code>
+<br>
+(most likely you need to sudo the installation, if you don't have super user rights to the system see below)
+<br>
+<br>
+- start the program with command:
+<br>
+<code>aliview</code> (this is a sh-script that will execute java -jar aliview.jar)
+<br>
+<br>
+<b>Linux (alternative installation - as non super user)</b>
+<br>
+<br>
+1. Download the archive <b>aliview.tgz</b> and extract it into a directory of your choice.
+<br>
+2. Run program from this directory by issuing command <code><b>./aliview</b></code> in the terminal
+<br>(this is a sh-script that will execute command java -jar aliview.jar)
+<br>
+<br>
+
+<b>NOTE:</b> If you are running Linux, consider upgrading to <b>Java 8</b>, there is a <b>significant improvement in drawing speed</b> since it is using Linux built in XRender. <br>
+Installation is very simple (1 minute) - <a href=#java8install>Java 8 installation instructions for Ubuntu/Debian/OpenSuse/RedHat</a><br>
+<br>
+
 <h2><a name="BUG_OR_FEATURE" id="BUG_OR_FEATURE">Report a bug or feature
 request:</a></h2>
+<br>
 Two ways: <br>
 <br>
 1. Report issue at AliView GitHub Issues tracker: <a
@@ -575,7 +589,7 @@ When working with large files being read straight from disk:<br>
 (you can change the number of sequences being indexed at once – the rest of
 the sequences in the file are available by selecting the menu-alternative
 ”Load more sequences” (this menu is only showing up when the file is parted
-into ”pages”)<br>
+into ”pages”). More sequences are being indexed as they are being viewed.<br>
 <br>
 <b>Number of sequences to count when calculating ClustalX consensus on large
 files</b><br>

@@ -7,6 +7,7 @@ import utils.OSNativeUtils;
 
 public class FileFormat {
 	
+	
 	private String name;
 	private String suffix;
 	private String suffixWin;
@@ -19,6 +20,7 @@ public class FileFormat {
 	public static final FileFormat PHYLIP = new FileFormat("Phylip", "phy", "phy");
 	public static final FileFormat PHYLIP_RELAXED = new FileFormat("Phylip", "phy", "phy");
 	public static final FileFormat PHYLIP_RELAXED_PADDED = new FileFormat("Phylip", "phy", "phy");
+	public static final FileFormat PHYLIP_RELAXED_PADDED_INTERLEAVED = new FileFormat("Phylip", "phy", "phy");
 	public static final FileFormat PHYLIP_STRICT_SEQUENTIAL = new FileFormat("Phylip", "phy", "phy");
 	public static final FileFormat MSF = new FileFormat("MSF", "msf", "msf");
 	public static final FileFormat CLUSTAL = new FileFormat("Clustal", "aln", "aln");

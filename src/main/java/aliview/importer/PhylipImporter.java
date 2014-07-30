@@ -88,10 +88,15 @@ public class PhylipImporter {
 						int index = ReaderHelper.indexOfFirstNonWhiteCharAfterWhiteChar(line);
 						String name = line.substring(0, index).trim();	
 						seqNames.add(name);
+						
+						logger.info("name" + name);
+						logger.info("index" + index);
+						
 						int capacity = longestSequenceLength;
 						ByteBuffer seqBuff = ByteBuffer.allocate(capacity);
 						String seqChars = line.substring(index);
-						line = ReaderHelper.removeSpaceAndTab(line);
+						seqChars = ReaderHelper.removeSpaceAndTab(seqChars);
+						logger.info("seqChars" + seqChars);
 						seqBuff.put(seqChars.getBytes());
 						seqBuffers.add(seqBuff);					
 					}
@@ -108,10 +113,11 @@ public class PhylipImporter {
 							
 							// Skip empty lines
 							if(index == -1){
-								
+								logger.info("skip empty");
 							}else{
 								String moreChars = line.substring(index);
-								line = ReaderHelper.removeSpaceAndTab(line);
+								
+								moreChars = ReaderHelper.removeSpaceAndTab(moreChars);
 								ByteBuffer seqBuff = seqBuffers.get(lineCount);
 								seqBuff.put(moreChars.getBytes());
 								lineCount ++;
@@ -131,6 +137,8 @@ public class PhylipImporter {
 							}
 							
 							break;			
+						}else{
+							logger.info("seqBuff.position()" + seqBuff.position());
 						}
 						
 						if(seqBuff.position() > longestSequenceLength){

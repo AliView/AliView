@@ -1,6 +1,6 @@
 Version history
 
-1.11-beta-2
+1.11-beta-3
 
 - Drawing speed improvements on Windows associated with the List of sequence names 
 - Fixed problem when translating some alignments to AminoAcid one pos
@@ -9,6 +9,9 @@ Version history
 - Adjusted columns in the status panel at bottom
 - Fixed so that selection now is cleared in list after deleting sequences
 - Now replaces gap symbol '.' with '-' in input alignments
+- Fixed some issues with occational "tearing" of the alignment view when zooming out in version 1.10
+- Added "Save as Phylip (relaxed, padded & interleaved)" option
+- Corrected some non standard implementations when reading and saving in phylip format
 
 1.10
 

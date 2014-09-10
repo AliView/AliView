@@ -1,5 +1,6 @@
 package utils;
 
+import java.awt.Toolkit;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.lang.reflect.Field;
@@ -17,6 +18,7 @@ import org.apache.log4j.Logger;
 
 public class OSNativeUtils {
 	private static final Logger logger = Logger.getLogger(OSNativeUtils.class);
+	private static float cachedContentScaleFactor = -1; // 1 indicates a regular mac display. 2= retina
 	
 	public static boolean isWindows() {
 		 
@@ -24,6 +26,21 @@ public class OSNativeUtils {
 		// windows
 		return (os.indexOf("win") >= 0);
  
+	}
+	
+	public static float getHighDPIScaleFactor() {
+		
+		if(cachedContentScaleFactor == -1){
+			Object obj = Toolkit.getDefaultToolkit().getDesktopProperty("apple.awt.contentScaleFactor");
+			if (obj instanceof Float) {
+			    Float f = (Float) obj;
+			    cachedContentScaleFactor = f;
+			}else{
+				cachedContentScaleFactor = 1;
+			}
+		}
+		return cachedContentScaleFactor;
+
 	}
  
 	public static boolean isRunningDefectJFilechooserJVM(){

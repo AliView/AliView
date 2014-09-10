@@ -1,0 +1,25 @@
+Change version in:
+
+pom
+web-page index.html
+version_history.txt
+wikipedia AliView (after publish)
+
+mvn clean install
+copy_deploy
+
+upload to GitHub:
+// adding
+git add .
+// removing
+git add -u
+// commit local
+git commit -m "version 1.10-beta-3"
+git push AliView master
+username: AliView
+
+
+move old versions on webserver to /old 
+
+
+

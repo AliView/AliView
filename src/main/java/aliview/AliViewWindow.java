@@ -383,6 +383,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		// Always horizontal scrollbar so list and pane not have varied height - then list and alignment could get out of synch	
 	//	alignmentScrollPane = new MyScrollPane(alignmentPane, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 
+		
 		alignmentScrollPane = new JScrollPane(alignmentPane, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		
 		alignmentScrollPane.setAutoscrolls(true);
@@ -394,7 +395,10 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		//alignmentScrollPane.setDoubleBuffered(false);
 		alignmentScrollPane.getVerticalScrollBar().setUnitIncrement(16);
 		alignmentScrollPane.getHorizontalScrollBar().setUnitIncrement(160);
-		alignmentScrollPane.getViewport().setScrollMode(JViewport.BACKINGSTORE_SCROLL_MODE);
+		
+		// BACKINGSTORE_SCROLL_MODE is not working on Mac Retina-screen
+		//alignmentScrollPane.getViewport().setScrollMode(JViewport.BACKINGSTORE_SCROLL_MODE);
+		
 		//alignmentScrollPane.setDropTarget(alignmentPane);
 		alignmentPane.setDoubleBuffered(paneDoubleBuff);
 		//alignmentPane.setDoubleBuffered(false);
@@ -833,6 +837,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		// Not needed actually on zoomIn - only on zoomOut
 //		alignmentScrollPane.setViewport(null);
 //		alignmentScrollPane.setViewportView(alignmentPane);
+		
 		// Set new position
 		alignmentScrollPane.getViewport().setViewPosition(newViewPoint);
 
@@ -2250,13 +2255,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		requestRepaintSelectedSequences();
 	}
 
-	public void moveSelectionRight() {
-		List<Sequence> prevState = alignment.moveSelectionRight(isUndoable());
-		if(isUndoable()){
-			aliViewWindow.getUndoControler().pushUndoState(new UndoSavedStateEditedSequences(prevState, alignment.getAlignentMetaCopy()));
-		}
-		requestRepaintSelection();
-	}
+	
 
 	public void deleteAllGaps() {
 		if(! requestEditMode()){
@@ -2275,6 +2274,18 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		alignmentPane.validateSize();
 		alignmentPane.repaint();
 	}
+	
+	public void moveSelectionRight() {
+		if(! requestEditMode()){
+			return;
+		}
+		List<Sequence> prevState = alignment.moveSelectionRight(isUndoable());
+		if(isUndoable()){
+			aliViewWindow.getUndoControler().pushUndoState(new UndoSavedStateEditedSequences(prevState, alignment.getAlignentMetaCopy()));
+		}
+		requestRepaintSelection();
+	}
+	
 
 	public void moveSelectionLeft(){
 		if(! requestEditMode()){

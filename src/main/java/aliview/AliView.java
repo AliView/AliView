@@ -155,8 +155,8 @@ public class AliView implements ApplicationListener{
 //			}
 			
 			// Quick tooltips and for a long time
-			ToolTipManager.sharedInstance().setInitialDelay(0);
-			ToolTipManager.sharedInstance().setDismissDelay(5000);
+			ToolTipManager.sharedInstance().setInitialDelay(100);
+			ToolTipManager.sharedInstance().setDismissDelay(3000);
 
 			// -Dsun.java2d.opengl=true
 			//System.setProperty("sun.java2d.opengl","True");

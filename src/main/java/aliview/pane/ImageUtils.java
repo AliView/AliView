@@ -12,7 +12,6 @@ import org.apache.log4j.Logger;
 public class ImageUtils {
 	private static final Logger logger = Logger.getLogger(ImageUtils.class);
 	
-	@SuppressWarnings("deprecation")
 	public static void insertRGBArrayAt(int targetX, int targetY, RGBArray newPiece, RGBArray origPiece) throws Exception{
 		
 		try{

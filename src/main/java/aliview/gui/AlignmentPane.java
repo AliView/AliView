@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.font.TextAttribute;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.MemoryImageSource;
 import java.awt.print.PageFormat;
@@ -30,6 +31,8 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import org.apache.log4j.Logger;
+
+import utils.OSNativeUtils;
 
 import aliview.AATranslator;
 import aliview.AliView;
@@ -67,6 +70,9 @@ public class AlignmentPane extends JPanel{
 	double charWidth = 10;
 	double charHeight = 12;
 	private Font baseFont = new Font(Font.MONOSPACED, Font.PLAIN, (int)charWidth);
+	private Font highDPIFont = new Font(Font.MONOSPACED, Font.PLAIN, (int)charWidth);
+	private int highDPIScaleFactor = 1;
+	
 	private Alignment alignment;
 
 	private ColorScheme colorSchemeAminoAcid = Settings.getColorSchemeAminoAcid();
@@ -101,16 +107,23 @@ public class AlignmentPane extends JPanel{
 	private long endTime; // performance measure
 	private int drawCounter = 0; // performance measure
 	private int DRAWCOUNT_LOF_INTERVAL = 1; // performance measure
+	
 
 
 	public AlignmentPane() {
+		highDPIScaleFactor = (int)OSNativeUtils.getHighDPIScaleFactor();
+		createAdjustedDerivedBaseFont();
+		createAdjustedDerivedHighDPIFont();
+		createCharPixelsContainers();
+	//	highDPIScaleFactor = 1;
+		logger.info("highDPIScaleFactor" + highDPIScaleFactor);
 		this.setOpaque(true);
 		//this.setDoubleBuffered(false);
 		//this.setBackground(Color.white);
 		//this.infoLabel = infoLabel;
 		alignmentRuler = new AlignmentRuler(this);
-		createAdjustedDerivedBaseFont();
-		createCharPixelsContainers();
+		
+		
 	}
 
 	public boolean isOnlyDrawDiff() {
@@ -148,7 +161,7 @@ public class AlignmentPane extends JPanel{
 	public boolean decCharSize(){
 
 		// stop when everything is in view (or char is 1 for smaller alignments)
-		Dimension prefSize = getPreferredSize();	
+//		Dimension prefSize = getPreferredSize();	
 
 		// go on decreasing while everything is not in view or while font size >=1
 		boolean didDecrease = false;
@@ -171,6 +184,7 @@ public class AlignmentPane extends JPanel{
 				preferredWidth = 0.85 * charWidth;
 				preferredHeight = preferredWidth;
 			}
+			
 			if(preferredWidth >= MIN_CHAR_SIZE){
 				charWidth = preferredWidth;
 				charHeight = preferredHeight;
@@ -178,6 +192,7 @@ public class AlignmentPane extends JPanel{
 			//baseFont = new Font(baseFont.getName(), baseFont.getStyle(), (int)charWidth);
 
 			createAdjustedDerivedBaseFont();
+			createAdjustedDerivedHighDPIFont();
 			createCharPixelsContainers();
 			//	logFontMetrics();
 			this.validateSize();	
@@ -213,6 +228,7 @@ public class AlignmentPane extends JPanel{
 		//baseFont = new Font(baseFont.getName(), baseFont.getStyle(), (int)charWidth);
 
 		createAdjustedDerivedBaseFont();
+		createAdjustedDerivedHighDPIFont();
 		createCharPixelsContainers();
 		//		logFontMetrics();
 		this.validateSize();
@@ -221,56 +237,69 @@ public class AlignmentPane extends JPanel{
 
 	private void createCharPixelsContainers(){
 
-		long startTime = System.currentTimeMillis();	
+		long startTime = System.currentTimeMillis();
 
-		charPixDefaultNuc = CharPixelsContainer.createDefaultNucleotideImpl(getFont(), (int)MAX_CHARSIZE_TO_DRAW, (int)getCharWidth(), (int)getCharHeight(), colorSchemeNucleotide);
-		charPixSelectedNuc = CharPixelsContainer.createSelectedNucleotideImpl(getFont(), (int)MAX_CHARSIZE_TO_DRAW, (int)getCharWidth(), (int)getCharHeight(), colorSchemeNucleotide);
-		charPixConsensusNuc = CharPixelsContainer.createConsensusNucleotideImpl(getFont(), (int)MAX_CHARSIZE_TO_DRAW, (int)getCharWidth(), (int)getCharHeight(), colorSchemeNucleotide);
+		Font charFont = highDPIFont;
+		// no less than 1
+		int charPixWidth = Math.max(1, (int)(getCharWidth()));
+		charPixWidth = charPixWidth * highDPIScaleFactor;
+		// no less than 1
+		int charPixHeight = Math.max(1, (int)(getCharHeight()));
+		charPixHeight = charPixHeight * highDPIScaleFactor;
+		
+		int charMaxSizeToDraw = (int)MAX_CHARSIZE_TO_DRAW * highDPIScaleFactor;
+		
+		logger.info("charFont" + charFont.getSize());
+		logger.info("charPixWidth" + charPixWidth);
+		
+		
 
-		charPixTranslationDefault = TranslationCharPixelsContainer.createDefaultTranslationPixelsImpl(getFont(), (int)MAX_CHARSIZE_TO_DRAW,
-				(int)getCharWidth(), (int)getCharHeight(), colorSchemeNucleotide);
+		charPixDefaultNuc = CharPixelsContainer.createDefaultNucleotideImpl(charFont, charMaxSizeToDraw, charPixWidth, charPixHeight, colorSchemeNucleotide);
+		charPixSelectedNuc = CharPixelsContainer.createSelectedNucleotideImpl(charFont, charMaxSizeToDraw, charPixWidth, charPixHeight, colorSchemeNucleotide);
+		charPixConsensusNuc = CharPixelsContainer.createConsensusNucleotideImpl(charFont, charMaxSizeToDraw, charPixWidth, charPixHeight, colorSchemeNucleotide);
 
-		charPixTranslationSelected = TranslationCharPixelsContainer.createSelectedTranslationPixelsImpl(getFont(), (int)MAX_CHARSIZE_TO_DRAW,
-				(int)getCharWidth(), (int)getCharHeight(), colorSchemeNucleotide);
+		charPixTranslationDefault = TranslationCharPixelsContainer.createDefaultTranslationPixelsImpl(charFont, charMaxSizeToDraw,
+				charPixWidth, charPixHeight, colorSchemeNucleotide);
 
-		charPixTranslationLetter = TranslationCharPixelsContainer.createLetterTranslationPixelsImpl(getFont(), (int)MAX_CHARSIZE_TO_DRAW,
-				(int)getCharWidth(), (int)getCharHeight(), colorSchemeNucleotide);
+		charPixTranslationSelected = TranslationCharPixelsContainer.createSelectedTranslationPixelsImpl(charFont, charMaxSizeToDraw,
+				charPixWidth, charPixHeight, colorSchemeNucleotide);
 
-		charPixTranslationSelectedLetter = TranslationCharPixelsContainer.createSelectedLetterTranslationPixelsImpl(getFont(), (int)MAX_CHARSIZE_TO_DRAW,
-				(int)getCharWidth(), (int)getCharHeight(), colorSchemeNucleotide);
+		charPixTranslationLetter = TranslationCharPixelsContainer.createLetterTranslationPixelsImpl(charFont, charMaxSizeToDraw,
+				charPixWidth, charPixHeight, colorSchemeNucleotide);
+
+		charPixTranslationSelectedLetter = TranslationCharPixelsContainer.createSelectedLetterTranslationPixelsImpl(charFont, charMaxSizeToDraw,
+				charPixWidth, charPixHeight, colorSchemeNucleotide);
 
 
 		charPixDefaultAA =  new AACharPixelsContainer();
 		if(colorSchemeAminoAcid.getALLCompundColors() != null){
-			CompoundCharPixelsContainer compContainer = CompoundCharPixelsContainer.createDefaultCompoundColorImpl(getFont(), (int)MAX_CHARSIZE_TO_DRAW,
-					(int)getCharWidth(), (int)getCharHeight(), colorSchemeAminoAcid);
+			CompoundCharPixelsContainer compContainer = CompoundCharPixelsContainer.createDefaultCompoundColorImpl(charFont, charMaxSizeToDraw,
+					charPixWidth, charPixHeight, colorSchemeAminoAcid);
 			charPixDefaultAA.setCompoundContainer(compContainer);
 		}else{
-			CharPixelsContainer container = CharPixelsContainer.createDefaultAAImpl(getFont(), (int)MAX_CHARSIZE_TO_DRAW, (int)getCharWidth(), (int)getCharHeight(), colorSchemeAminoAcid);
+			CharPixelsContainer container = CharPixelsContainer.createDefaultAAImpl(charFont, charMaxSizeToDraw, charPixWidth, charPixHeight, colorSchemeAminoAcid);
 			charPixDefaultAA.setContainer(container);
 		}
 
 		charPixSelectedAA =  new AACharPixelsContainer();
 		if(colorSchemeAminoAcid.getALLCompundColors() != null){
-			logger.info("baseFont.getSize()" + baseFont.getSize());
-			logger.info("baseFont.getSize2D()" + baseFont.getSize2D());
 
-			CompoundCharPixelsContainer compContainer = CompoundCharPixelsContainer.createSelectedCompoundColorImpl(getFont(), (int)MAX_CHARSIZE_TO_DRAW,
-					(int)getCharWidth(), (int)getCharHeight(), colorSchemeAminoAcid);
+			CompoundCharPixelsContainer compContainer = CompoundCharPixelsContainer.createSelectedCompoundColorImpl(charFont, charMaxSizeToDraw,
+					charPixWidth, charPixHeight, colorSchemeAminoAcid);
 			charPixSelectedAA.setCompoundContainer(compContainer);
 		}else{
-			CharPixelsContainer container = CharPixelsContainer.createSelectedAAImpl(getFont(), (int)MAX_CHARSIZE_TO_DRAW, (int)getCharWidth(), (int)getCharHeight(), colorSchemeAminoAcid);
+			CharPixelsContainer container = CharPixelsContainer.createSelectedAAImpl(charFont, charMaxSizeToDraw, charPixWidth, charPixHeight, colorSchemeAminoAcid);
 			charPixSelectedAA.setContainer(container);
 		}
 
 		charPixConsensusAA =  new AACharPixelsContainer();
 		if(colorSchemeAminoAcid.getALLCompundColors() != null){
-			CompoundCharPixelsContainer compContainer = CompoundCharPixelsContainer.createDefaultCompoundColorImpl(getFont(), (int)MAX_CHARSIZE_TO_DRAW,
-					(int)getCharWidth(), (int)getCharHeight(), colorSchemeAminoAcid);
+			CompoundCharPixelsContainer compContainer = CompoundCharPixelsContainer.createDefaultCompoundColorImpl(charFont, charMaxSizeToDraw,
+					charPixWidth, charPixHeight, colorSchemeAminoAcid);
 			charPixConsensusAA.setCompoundContainer(compContainer);
 
 		}else{
-			CharPixelsContainer container = CharPixelsContainer.createConsensusAAImpl(getFont(), (int)MAX_CHARSIZE_TO_DRAW, (int)getCharWidth(), (int)getCharHeight(), colorSchemeAminoAcid);
+			CharPixelsContainer container = CharPixelsContainer.createConsensusAAImpl(charFont, charMaxSizeToDraw, charPixWidth, charPixHeight, colorSchemeAminoAcid);
 			charPixConsensusAA.setContainer(container);
 		}
 
@@ -315,6 +344,8 @@ public class AlignmentPane extends JPanel{
 			attributes.put(TextAttribute.TRACKING, 0.4);
 		}
 		 */
+		
+		
 
 		// create a font without Tracking to see the diff in font actual size and specified font size
 		attributes.put(TextAttribute.TRACKING, 0);
@@ -336,16 +367,71 @@ public class AlignmentPane extends JPanel{
 		baseFont = spacedFont;
 
 	}
+	
+	private void createAdjustedDerivedHighDPIFont() {
+		Map<TextAttribute, Object> attributes = new HashMap<TextAttribute, Object>();
 
-	private void logFontMetrics(){
-		FontMetrics metrics = this.getGraphics().getFontMetrics(baseFont);
+		/*
+		if(charWidth == 17){
+			attributes.put(TextAttribute.TRACKING, 0.4117647);
+		}else if(charWidth == 16){
+			attributes.put(TextAttribute.TRACKING, 0.375);
+		}else if(charWidth == 15){
+			attributes.put(TextAttribute.TRACKING, 0.400);
+		}else if(charWidth == 14){
+			attributes.put(TextAttribute.TRACKING, 0.4 + 0.0285);
+		}else if(charWidth == 13){
+			attributes.put(TextAttribute.TRACKING, 0.384 + 0.0007);
+		}else if(charWidth == 12){
+			//attributes.put(TextAttribute.TRACKING, 0.400001 + 0.2);// + 0.008);
+			attributes.put(TextAttribute.TRACKING, 0.416 + 0.0008);// + 0.008);
+		}else if(charWidth == 11){
+			attributes.put(TextAttribute.TRACKING, 0.363);
+		}else if(charWidth == 10){
+			attributes.put(TextAttribute.TRACKING, 0.400);
+		}else if(charWidth == 9){
+			attributes.put(TextAttribute.TRACKING, 0.445);
+		}else if(charWidth == 8){
+			attributes.put(TextAttribute.TRACKING, 0.375);
+		}else if(charWidth == 7){
+			attributes.put(TextAttribute.TRACKING, 0.4285);
+		}else if(charWidth == 6){
+			attributes.put(TextAttribute.TRACKING, 0.4);
+		}
+		 */
+		
+		
 
-		logger.info("baseFont.getSize()" + baseFont.getSize());
-		logger.info("baseFont.getSize2D()" + baseFont.getSize2D());
+		// create a font without Tracking to see the diff in font actual size and specified font size
+		attributes.put(TextAttribute.TRACKING, 0);
+		attributes.put(TextAttribute.SIZE, (int)charWidth*highDPIScaleFactor);
+		Font calcFont = baseFont.deriveFont(attributes);
+		FontMetrics metrics = getFontMetrics(calcFont);
+		int fontActualWidth = metrics.stringWidth("X");
+
+		double sizeDiff = charWidth*highDPIScaleFactor - fontActualWidth;
+		// Calculate tracking for font size
+		double tracking = (double)sizeDiff/charWidth*highDPIScaleFactor;
+		logger.info("tracking" + tracking);
+
+		// Create a font with correct tracking so characters are exactly spaced as pixels on pane
+		attributes.put(TextAttribute.TRACKING, tracking); // 8
+		attributes.put(TextAttribute.SIZE, (int)charWidth*highDPIScaleFactor);
+		Font spacedFont = baseFont.deriveFont(attributes);
+
+		highDPIFont = spacedFont;
+
+	}
+
+	private void logFontMetrics(Font font){
+		FontMetrics metrics = this.getGraphics().getFontMetrics(font);
+
+		logger.info("font.getSize()" + font.getSize());
+		logger.info("font.getSize2D()" + font.getSize2D());
 
 		// get the height of a line of text in this
 		// font and render context	logger.info("baseFont.getSize()" + baseFont.getSize());
-		logger.info("baseFont.getSize2D()" + baseFont.getSize2D());
+		logger.info("font.getSize2D()" + font.getSize2D());
 
 		int hgt = metrics.getHeight();
 		logger.info("metrics.getHeight()" + metrics.getHeight());
@@ -358,7 +444,7 @@ public class AlignmentPane extends JPanel{
 		logger.info("metrics.stringWidth(\"A\")" + metrics.stringWidth("AAAAAAAAAA"));
 		logger.info("metrics.stringWidth(\"T\")" + metrics.stringWidth("T"));
 		logger.info("metrics.stringWidth(\"c\")" + metrics.stringWidth("c"));
-		logger.info("baseFont.getAttributes().get(WIDTH_REGULAR)" + baseFont.getAttributes().get(TextAttribute.WIDTH_REGULAR));
+		logger.info("font.getAttributes().get(WIDTH_REGULAR)" + font.getAttributes().get(TextAttribute.WIDTH_REGULAR));
 
 	}
 
@@ -566,9 +652,12 @@ public class AlignmentPane extends JPanel{
 //				logger.info("width" + width);
 //				logger.info("height" + height);
 
-		int[] pixArray = new int[width * height];
+		
+		// TODO adjust for retina
+		
+		int[] pixArray = new int[width* highDPIScaleFactor * height * highDPIScaleFactor];
 		logger.info(pixArray.length);
-		RGBArray clipRGB = new RGBArray(pixArray, width, height);
+		RGBArray clipRGB = new RGBArray(pixArray, width*highDPIScaleFactor, height*highDPIScaleFactor);
 
 		// these vals are not going to change so get it only once
 		boolean isNucleotideAlignment = alignment.isNucleotideAlignment();
@@ -616,7 +705,7 @@ public class AlignmentPane extends JPanel{
 							}
 						}else{
 							//logger.info("testPixArr" + testpixArray.length);
-						copyNucleotidePixelsTimeTest(testclipRGB,residue,x,y,(int)(clipX*charWidth), (int)(clipY*charHeight));					
+						copyNucleotidePixelsTimeTest(testclipRGB,residue,x,y,(int)(clipX*charWidth*highDPIScaleFactor), (int)(clipY*charHeight*highDPIScaleFactor));					
 						}
 					}
 					// Draw as AminoAcids
@@ -672,7 +761,7 @@ public class AlignmentPane extends JPanel{
 									}else{
 										acid = aaTransSeq.getAAinTranslatedPos(xSeqPos);
 									}
-									copyAminoAcidPixels(clipRGB,(byte)acid.getCodeCharVal(),xSeqPos,ySeq,clipX, clipY);
+									copyAminoAcidPixels(clipRGB,(byte)acid.getCodeCharVal(),xSeqPos,ySeq,clipX*highDPIScaleFactor, clipY*highDPIScaleFactor);
 
 								}
 								clipX ++;
@@ -690,10 +779,10 @@ public class AlignmentPane extends JPanel{
 									byte residue = alignment.getBaseAt(xSeqPos,ySeq);
 	
 									if(ignoreGapInTranslation){
-										copyTranslatedNucleotidesPixelsSkipGap(clipRGB,residue,xSeqPos,ySeq,clipX, clipY, aaTransSeq);
+										copyTranslatedNucleotidesPixelsSkipGap(clipRGB,residue,xSeqPos,ySeq,clipX*highDPIScaleFactor, clipY*highDPIScaleFactor, aaTransSeq);
 									}
 									else{
-										copyTranslatedNucleotidesPixels(clipRGB,residue,xSeqPos,ySeq,clipX, clipY, aaTransSeq);
+										copyTranslatedNucleotidesPixels(clipRGB,residue,xSeqPos,ySeq,clipX*highDPIScaleFactor, clipY*highDPIScaleFactor, aaTransSeq);
 									}
 								}
 
@@ -736,11 +825,11 @@ public class AlignmentPane extends JPanel{
 
 								// Draw as Nucleotides
 								if(isNucleotideAlignment){
-									copyNucleotidePixels(clipRGB,residue,xSeqPos,ySeq,clipX,clipY);			
+									copyNucleotidePixels(clipRGB,residue,xSeqPos,ySeq,clipX*highDPIScaleFactor,clipY*highDPIScaleFactor);			
 								}
 								// Draw as AA
 								else{
-									copyAminoAcidPixels(clipRGB,residue,xSeqPos,ySeq,clipX,clipY);
+									copyAminoAcidPixels(clipRGB,residue,xSeqPos,ySeq,clipX*highDPIScaleFactor,clipY*highDPIScaleFactor);
 								}
 							}
 							
@@ -781,7 +870,39 @@ public class AlignmentPane extends JPanel{
 //											logger.info("clip.y=" + clip.y);
 //											logger.info("x=" + (int)(xMin * charWidth));
 //											logger.info("y=" + (int)(yMin * charHeight));
-				g.drawImage(img, clip.x, clip.y, null);
+				
+				
+				if(highDPIScaleFactor > 1){
+					
+					//translate and scale with AffineTransform
+//	                AffineTransform affineTransform = new AffineTransform();
+//	                affineTransform.translate((int)(xMin * charWidth),(int)(yMin * charHeight));
+//	                affineTransform.scale(0.5, 0.5);
+//	                Graphics2D g2 = (Graphics2D) g;
+//	                g2.drawImage(img, affineTransform, null);			
+					
+	                
+	                int dx1 = clip.x;
+	                int dx2 = dx1 + clipRGB.getScanWidth() / highDPIScaleFactor;
+	                int dy1 = clip.y;
+	                int dy2 = dy1 + clipRGB.getHeight() / highDPIScaleFactor;
+	                
+	                int sx1 = 0;
+	                int sx2 = sx1 + clipRGB.getScanWidth();
+	                int sy1 = 0;
+	                int sy2 = sy1 + clipRGB.getHeight();
+	                
+	              //  g.drawImage(img, clip.x, clip.y, null);
+	                
+	                g.drawImage(img, dx1,dy1,dx2,dy2,sx1,sy1,sx2,sy2, null);
+	                //g.drawImage(img, (int)(xMin * charWidth), (int)(yMin * charHeight), null);
+	                
+				}else{
+					g.drawImage(img, clip.x, clip.y, null);
+					//g.drawImage(img, (int)(xMin * charWidth), (int)(yMin * charHeight),null);
+				}
+				
+				
 			}
 
 			// Draw excludes - only if not 
@@ -829,7 +950,7 @@ public class AlignmentPane extends JPanel{
 						}else{
 							acid = aaTransSeq.getAAinTranslatedPos(x);
 						}
-						copyAminoAcidPixels(clipRGB,(byte)acid.getCodeCharVal(),x,y,(int)(clipX*charWidth), (int)(clipY*charHeight));
+						copyAminoAcidPixels(clipRGB,(byte)acid.getCodeCharVal(),x,y,(int)(clipX*charWidth*highDPIScaleFactor), (int)(clipY*charHeight*highDPIScaleFactor));
 
 						clipX ++;
 					}		
@@ -855,18 +976,18 @@ public class AlignmentPane extends JPanel{
 							// Draw as translated
 							if(showTranslation){
 								if(ignoreGapInTranslation){
-									copyTranslatedNucleotidesPixelsSkipGap(clipRGB,residue,x,y,(int)(clipX*charWidth), (int)(clipY*charHeight), aaTransSeq);
+									copyTranslatedNucleotidesPixelsSkipGap(clipRGB,residue,x,y,(int)(clipX*charWidth*highDPIScaleFactor), (int)(clipY*charHeight*highDPIScaleFactor), aaTransSeq);
 								}
 								else{
-									copyTranslatedNucleotidesPixels(clipRGB,residue,x,y,(int)(clipX*charWidth), (int)(clipY*charHeight), aaTransSeq);
+									copyTranslatedNucleotidesPixels(clipRGB,residue,x,y,(int)(clipX*charWidth*highDPIScaleFactor), (int)(clipY*charHeight*highDPIScaleFactor), aaTransSeq);
 								}
 							}else{
-								copyNucleotidePixels(clipRGB,residue,x,y,(int)(clipX*charWidth), (int)(clipY*charHeight));					
+								copyNucleotidePixels(clipRGB,residue,x,y,(int)(clipX*charWidth*highDPIScaleFactor), (int)(clipY*charHeight*highDPIScaleFactor));					
 							}
 						}
 						// Draw as AminoAcids
 						else{
-							copyAminoAcidPixels(clipRGB,residue,x,y,(int)(clipX*charWidth), (int)(clipY*charHeight));	
+							copyAminoAcidPixels(clipRGB,residue,x,y,(int)(clipX*charWidth*highDPIScaleFactor), (int)(clipY*charHeight*highDPIScaleFactor));	
 						}
 						clipX ++;
 					}		
@@ -928,8 +1049,39 @@ public class AlignmentPane extends JPanel{
 //								logger.info("y=" + (int)(yMin * charHeight));
 //								logger.info("clip.x" + clip.x);
 //								logger.info("clip.y" + clip.y);
-				//g.drawImage(img, clip.x, clip.y, clip.width, clip.height, null);				
-				g.drawImage(img, (int)(xMin * charWidth), (int)(yMin * charHeight),null);
+				//g.drawImage(img, clip.x, clip.y, clip.width, clip.height, null);
+				if(highDPIScaleFactor > 1){
+					
+					//translate and scale with AffineTransform
+//	                AffineTransform affineTransform = new AffineTransform();
+//	                affineTransform.translate((int)(xMin * charWidth),(int)(yMin * charHeight));
+//	                affineTransform.scale(0.5, 0.5);
+//	                Graphics2D g2 = (Graphics2D) g;
+//	                g2.drawImage(img, affineTransform, null);			
+					
+	                
+	                int dx1 = (int)(xMin * charWidth);
+	                int dx2 = dx1 + clipRGB.getScanWidth() / highDPIScaleFactor;
+	                int dy1 = (int)(yMin * charHeight);
+	                int dy2 = dy1 + clipRGB.getHeight() / highDPIScaleFactor;
+	                
+	                int sx1 = 0;
+	                int sx2 = sx1 + clipRGB.getScanWidth();
+	                int sy1 = 0;
+	                int sy2 = sy1 + clipRGB.getHeight();
+	                
+	                logger.info("dx1" + dx1);
+	                logger.info("dx2" + dx2);
+	                
+	                logger.info("sx1" + sx1);
+	                logger.info("sx2" + sx2);
+	                
+	                g.drawImage(img, dx1,dy1,dx2,dy2,sx1,sy1,sx2,sy2, null);
+	                //g.drawImage(img, (int)(xMin * charWidth), (int)(yMin * charHeight), null);
+	                
+				}else{
+					g.drawImage(img, (int)(xMin * charWidth), (int)(yMin * charHeight),null);
+				}
 //
 //			    try {
 //			    	BufferedImage buffImg = ImageUtils.toBufferedImage(img);
@@ -1619,7 +1771,7 @@ public class AlignmentPane extends JPanel{
 			// NUMBERS
 			int rulerCharWidth = 11;
 			//int rulerCharHeight = 11;
-			Font rulerFont = new Font(baseFont.getName(), baseFont.getStyle(), (int)rulerCharWidth);
+			Font rulerFont = new Font(alignmentPane.getFont().getName(), alignmentPane.getFont().getStyle(), (int)rulerCharWidth);
 			g2d.setFont(rulerFont);
 
 			

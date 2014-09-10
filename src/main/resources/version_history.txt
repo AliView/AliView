@@ -1,17 +1,28 @@
 Version history
 
-1.11-beta-3
+1.13
+
+- Fixed bug when realigning a selected block of residues
+
+1.12
+
+- Fixed issue with screen tearing on Linux versions running Open-JDK
+- Fixed issue with pixelation on Mac retina-screen
+- Fixed issue with tooltips on Linux versions running Open-JDK
+
+
+1.11
 
 - Drawing speed improvements on Windows associated with the List of sequence names 
 - Fixed problem when translating some alignments to AminoAcid one pos
 - Added last saved file to "Recent files" menu
+- Added "Save as Phylip (relaxed, padded & interleaved)" option
+- Corrected some non standard implementations when reading and saving in phylip format
+- Now replaces gap symbol '.' with '-' in input alignments
 - Added information message to user if the size of the alignment panel window is larger than 2147483647 pixels
 - Adjusted columns in the status panel at bottom
 - Fixed so that selection now is cleared in list after deleting sequences
-- Now replaces gap symbol '.' with '-' in input alignments
 - Fixed some issues with occational "tearing" of the alignment view when zooming out in version 1.10
-- Added "Save as Phylip (relaxed, padded & interleaved)" option
-- Corrected some non standard implementations when reading and saving in phylip format
 
 1.10
 

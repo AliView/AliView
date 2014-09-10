@@ -897,7 +897,7 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 	public void realignNucleotidesUseTheseAASequenceAsTemplate(SequenceListModel templateSeqs, CodonPositions codonPos, GeneticCode genCode){
 		for(Sequence templateSeq: templateSeqs.getSequences()){	
 			// do partial name since it if being cut by some programs....
-			Sequence nucSeq =  this.getSequenceByPartialName(templateSeq.getName());
+			Sequence nucSeq =  this.getSequenceByName(templateSeq.getName());
 			logger.info("nucSeq=" + nucSeq.getName() + nucSeq.getBasesAsString());
 			logger.info("templateSeq=" + templateSeq.getName() + templateSeq.getBasesAsString());
 			
@@ -909,7 +909,7 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 			}				
 		}
 	}
-
+/*
 	private Sequence getSequenceByPartialName(String name) {
 		if(name == null){
 			return null;
@@ -933,7 +933,7 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 		
 		return foundSeq;	
 	}
-
+*/
 	public Sequence getSequenceByName(String name) {
 		if(name == null){
 			return null;
@@ -1277,7 +1277,9 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 		List<Sequence> editedSequences = new ArrayList<Sequence>();
 		for(Sequence seq: sequences){
 			if(seq.hasSelection()){
-				Sequence realignedSeq = newOnes.getSequenceByPartialName(seq.getName());
+				// No partial name that might swich sequences
+				//Sequence realignedSeq = newOnes.getSequenceByPartialName(seq.getName());
+				Sequence realignedSeq = newOnes.getSequenceByName(seq.getName());
 				byte[] realignedBases;
 				// muscle removes empty seq if that is case create an empty bases
 				if(realignedSeq != null){
@@ -1615,7 +1617,8 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 		ArrayList<Sequence> seqsInOrder = new ArrayList<Sequence>(prevSeqOrder.size());
 		for(int n = 0; n < prevSeqOrder.getSize(); n++){
 			Sequence prev = prevSeqOrder.get(n);
-			Sequence seq = getSequenceByPartialName(prev.getName());
+			//Sequence seq = getSequenceByPartialName(prev.getName());
+			Sequence seq = getSequenceByName(prev.getName());
 			seqsInOrder.add(seq);
 		}
 		if(seqsInOrder.size() == sequences.size()){

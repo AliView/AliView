@@ -11,7 +11,7 @@
   <body>
 	  
   <div id="titlelogo">
-    <img style="width: 100px;" src="images/uu_logo.png" alt="">
+    <img style="width: 100px;" src="images/uu_logo_100.png" alt="">
   </div>
   
   <div id="titlestring">
@@ -24,6 +24,7 @@
     <a href="#SCREENSHOTS">Screenshots</a><br>
     <a href="#FEATURE_LIST">Feature list</a><br>
     <a href="#TOP_HELP">Help</a><br>
+    <a href="#CITATION">Citation</a><br>
     <a href="#CONTACT">Contact</a><br>
   </div>
   
@@ -40,16 +41,17 @@
 of the fastest and most intuitive to use, not so bloated and hopefully to your
 liking.</p>
 
-<p>The general idea when designing this program has always been <b>usability</b> and <b>speed</b>, all new functions are optimized so they do not affect the general performance and capability to work swiftly with large alignments. </p>
-
+<p>The general idea when designing this program has always been <b>usability</b> and <b>speed</b>, all new functions are optimized so they do not affect the general performance and capability to work swiftly with large alignments. The speed in rendering even makes it possible to work with large alignments on older hardware.
 <p>A need to easily sort, view, remove, edit and merge sequences from large
 transcriptome datasets initiated the design of the program.</p>
 
-<p>It is of course also working very well with smaller datasets:-)</p>
+<p>It is of course also working very well with smaller datasets:)</p>
 
 <p>The program is developed at the department of Systematic Biology, <a href=www.uu.se>Uppsala
 University</a>, so there is probably a predominance in functionality supporting
 those working with phylogenies.</p>
+
+<p><b>Citation:</b> Larsson, A. 2014. AliView: a fast and lightweight alignment viewer and editor for large data sets. <i>Bioinformatics</i> :btu531. <a href="http://dx.doi.org/10.1093/bioinformatics/btu531">http://dx.doi.org/10.1093/bioinformatics/btu531</a></p>
 
 <p>
 The program is released under the <b>Open Source</b> Software License 'GNU General Public License, version 3.0 (GPLv3)'
@@ -57,11 +59,14 @@ The program is released under the <b>Open Source</b> Software License 'GNU Gener
 Source code is available at GitHub: https://github.com/AliView/AliView
 </p>
 
-<p><a href="downloads">Download the latest version: 1.11 (30/Jul/2014) (Mac OS X, Windows, Linux)</a></p>
+<p><a href="downloads">Download the latest version: 1.13 (10/Sep/2014) (Mac OS X, Windows, Linux)</a></p>
 
-<img align="" style="width: 400px;" alt="" src="images/screenshot_mac.png"><br>
+<img align="" style="width: 400px;" alt="" src="images/screenshot_mac_400v2.png"><br>
 
-<p>A selection of features:</p>
+
+<!--
+
+<p>A selection of features: <a href="#FEATURE_LIST">(full list here)</a></p>
 - supports Fasta, Nexus, Phylip, Clustal or MSF-format (unlimited file sizes)<br>
 - edit (manually)<br>
 - align, add and align automatically (with MUSCLE or MAFFT or any other aligner
@@ -75,18 +80,6 @@ from the consensus<br>
 - a very simple to use "external interface" that lets you invoke your other favorite programs (you could for example automatically have the alignment sent
 to FastTree and then automatically opened in FigTree).<br>
 
-
-<h2><a name="CONTACT" id="CONTACT">Contact: </a></h2>
-
-<p>Anders Larsson,<br>
-Systematic Biology,
-Dep. of Organismal Biology<br>
-Uppsala University<br>
-Sweden<br>
-email: anders.larsson [at] ebc.uu.se<br>
-Phone: +46 (0)18 471 2932<br>
-Fax: +46 (0)18 471 6457 </p>
-
 <h2>Highlights:</h2>
 
 <p>Don't miss the mouse-wheel zoom out function to see the whole alignment
@@ -94,6 +87,130 @@ at once: </p>
 
 <p style="font-weight: bold;"><img style="width: 400px;" alt=""
 src="images/screenshot_mac_zoom_out_400.png"></p>
+
+-->
+
+
+<h2><a name="FEATURE_LIST" id="FEATURE_LIST">Feature list:</a></h2>
+
+<p>- fast and light-weight <br>
+- simple navigation, mouse-wheel zoom out unlimited to see whole alignment, and
+zoom in on place of interest <br>
+- various visual cues to highlight consensus characters or characters deviating
+from the consensus or characters deviating from a selected "trace"-sequence <br>
+- edit sequences/alignment (manually), insert, delete, change, move, rename
+(with keyboard or mouse) <br>
+- align, add and align automatically with MUSCLE (included) or MAFFT, or any
+other aligner of your choice <br>
+- define aligner program presets (different parameters, different software) <br>
+- align new sequences to existing or realign all <br>
+- realign a selected block <br>
+- realign nucleotides as translated amino-acids <br>
+- delete vertical gaps <br>
+- undo/redo <br>
+- find degenerate primers in conserved regions in an alignment of mixed species
+<br>
+- open and save in FASTA-, NEXUS-, PHYLIP, CLUSTAL or MSF-format (unlimited file sizes) <br>
+- print (current view) <br>
+- export whole alignment as an image file (png-format) <br>
+- copy selection (as fasta-sequences or just characters) <br>
+- paste sequences (both as sequences in clipboard or filenames in clipboard)
+<br>
+- add more sequences from file <br>
+- merge two sequences - and calculate consensus if the overlap is not perfect
+<br>
+- translate (view) nucleotide sequences as amino-acid sequences <br>
+- save translated alignment <br>
+- read and preserve Codonpos, Charset and Excludes (Nexus-specification) <br>
+- change Codonpos for selected regions (Nexus-specification) <br>
+- drag-drop/remove of sequences/files <br>
+- move sequences to top/bottom with key-stroke <br>
+- a very simple to use "external interface" that lets you invoke your other favorite programs (you could for example automatically have the alignment sent
+to FastTree and then automatically opened in FigTree) <br>
+- search function that finds patterns across gaps and follows IUPAC codes <br>
+- search multiple sequence names at once (stored in clipboard) <br>
+- reverse complement/reverse/complement sequences or whole alignment <br>
+- different color schemes including ClustalX <br>
+- sort sequences by name <br>
+- sort sequences by residue in selected column<br>
+</p>
+
+<h2><a name="SCREENSHOTS" id="SCREENSHOTS">Illustrated feature-list:</h2>
+
+
+<!--	
+<p>Nucleotide and Amino Acid Alignments</p>
+<img style="width: 600px;" alt="" src="images/tutorial/1.standard.png"><br>
+-->
+
+<p><b>Unlimited mouse wheel zoom in/out to see whole alignment</b><br>
+Speedy handling of large alignments<br>
+Reads unlimited size FASTA, PHYLIP, NEXUS, CLUSTAL and MSF files</p>
+<img style="width: 600px;" alt="" src="images/tutorial/2.1.large.png"><br>
+
+<p>Alternative Color schemes (SeaView)</p>
+<img style="width: 600px;" alt="" src="images/tutorial/3.color-seaview.png"><br>
+
+<b>
+	
+<p>ClustalX consensus color scheme</p>
+<img style="width: 600px;" alt="" src="images/tutorial/3.5.clustalx.color.png"><br>
+
+<p>View nucleotides colored as translated Amino Acids</p>
+<img style="width: 600px;" alt="" src="images/tutorial/4.translated.png"><br>
+
+<p>View nucleotides colored as translated Amino Acids (1-position)</p>
+<img style="width: 600px;" alt="" src="images/tutorial/4.1.translated.1pos.png"><br>
+
+<p>Highlight characters deviating from Consensus</p>
+<img style="width: 600px;" alt="" src="images/tutorial/5.non.consensus.png"><br>
+
+<p>Highlight characters deviating from selected "Trace" sequence</p>
+<img style="width: 600px;" alt="" src="images/tutorial/5.2.trace.png"><br>
+
+<p>Highlight characters belonging to Consensus</p>
+<img style="width: 600px;" alt="" src="images/tutorial/5.1.consensus.png"><br>
+
+<p>MUSCLE or other alignment program to realign sequences</p>
+<img style="width: 600px;" alt="" src="images/tutorial/6.realign.png"><br>
+
+<p>Realign selected <b>block</b> with muscle or other aligner program</p>
+<img style="width: 600px;" alt="" src="images/tutorial/6.1.realign.block.png"><br>
+
+<p>Realign <b>single sequence</b> with MUSCLE or other aligner program</p>
+<img style="width: 600px;" alt="" src="images/tutorial/6.2.realign.sequence.png"><br>
+
+<p>Nucleotides realigned as translated AminoAcids and then retranslated to nucleotides</p>
+<img style="width: 600px;" alt="" src="images/tutorial/6.3.realign.translated.png"><br>
+
+<p>Manual Alignment with Keyboard or Mouse</p>
+<img style="width: 600px;" alt="" src="images/tutorial/7.1.manual.edit.png"><br>
+
+<p>Delete sequences, reorder, move to top, move to bottom</p>
+<img style="width: 600px;" alt="" src="images/tutorial/7.2.reorder.delete.png"><br>
+
+<p>Merge sequences (overlapping or not - create consensus if overlapping)</p>
+<img style="width: 600px;" alt="" src="images/tutorial/7.3.merge.png"><br>
+
+<p>Drag and drop file/sequences, if you hold Shift when dropping<br>then you add to current alignment, otherwise open new</p>
+<img style="width: 600px;" alt="" src="images/tutorial/8.3.dragdrop.png"><br>
+
+<p>Find degenerate primers in selected blocks</p>
+<img style="width: 600px;" alt="" src="images/tutorial/8.primer.png"><br>
+
+<p>Configure external programs</p>
+<img style="width: 600px;" alt="" src="images/tutorial/8.1.external.png"><br>
+
+<p>Add and configure other alignment programs to use e.g. MAFFT</p>
+<img style="width: 600px;" alt="" src="images/tutorial/8.2.aligner.config.png"><br>
+
+</b>
+
+
+
+<p></p>
+<br>
+<p></p>
 
 
 <h2><a name="DOWNLOAD">Install instructions and Downloads:</a></h2>
@@ -173,6 +290,10 @@ The simplest install is to download the file: <b>aliview.install.run</b>
 Installation is very simple (1 minute) - <a href=#java8install>Java 8 installation instructions for Ubuntu/Debian/OpenSuse/RedHat</a><br>
 <br>
 
+<p></p>
+<br>
+<p></p>
+
 <h2><a name="BUG_OR_FEATURE" id="BUG_OR_FEATURE">Report a bug or feature
 request:</a></h2>
 <br>
@@ -186,120 +307,25 @@ or <br>
 
 
 <p></p>
-
+<br>
 <p></p>
 
-<p></p>
 
-<h2><a name="FEATURE_LIST" id="FEATURE_LIST">Feature list:</a></h2>
+<h2><a name="CONTACT" id="CONTACT">Contact: </a></h2>
 
-<p>- fast and light-weight <br>
-- simple navigation, mouse-wheel zoom out unlimited to see whole alignment, and
-zoom in on place of interest <br>
-- various visual cues to highlight consensus characters or characters deviating
-from the consensus or characters deviating from a selected "trace"-sequence <br>
-- edit sequences/alignment (manually), insert, delete, change, move, rename
-(with keyboard or mouse) <br>
-- align, add and align automatically with MUSCLE (included) or MAFFT, or any
-other aligner of your choice <br>
-- define aligner program presets (different parameters, different software) <br>
-- align new sequences to existing or realign all <br>
-- realign a selected block <br>
-- realign nucleotides as translated amino-acids <br>
-- delete vertical gaps <br>
-- undo/redo <br>
-- find degenerate primers in conserved regions in an alignment of mixed species
-<br>
-- open and save in FASTA-, NEXUS-, PHYLIP, CLUSTAL or MSF-format (unlimited file sizes) <br>
-- print (current view) <br>
-- export whole alignment as an image file (png-format) <br>
-- copy selection (as fasta-sequences or just characters) <br>
-- paste sequences (both as sequences in clipboard or filenames in clipboard)
-<br>
-- add more sequences from file <br>
-- merge two sequences - and calculate consensus if the overlap is not perfect
-<br>
-- translate (view) nucleotide sequences as amino-acid sequences <br>
-- save translated alignment <br>
-- read and preserve Codonpos, Charset and Excludes (Nexus-specification) <br>
-- change Codonpos for selected regions (Nexus-specification) <br>
-- drag-drop/remove of sequences/files <br>
-- move sequences to top/bottom with key-stroke <br>
-- a very simple to use "external interface" that lets you invoke your other favorite programs (you could for example automatically have the alignment sent
-to FastTree and then automatically opened in FigTree) <br>
-- search function that finds patterns across gaps and follows IUPAC codes <br>
-- search multiple sequence names at once (stored in clipboard) <br>
-- reverse complement/reverse/complement sequences or whole alignment <br>
-- different color schemes including ClustalX <br>
-- sort sequences by name <br>
-</p>
+<p>Anders Larsson,<br>
+Systematic Biology,
+Dep. of Organismal Biology<br>
+Uppsala University<br>
+Sweden<br>
+email: anders.larsson [at] ebc.uu.se<br>
+Phone: +46 (0)18 471 2932<br>
+Fax: +46 (0)18 471 6457 </p>
 
-<h2><a name="SCREENSHOTS" id="SCREENSHOTS">Illustrated feature-list:</h2>
-<b>
-<p>Nucleotide and Amino Acid Alignments</p>
+<h2><a name="CITATION" id="CITATION">Citation: </a></h2>
 
-<img style="width: 600px;" alt="" src="images/tutorial/1.standard.png"><br>
+<p>Larsson, A. 2014. AliView: a fast and lightweight alignment viewer and editor for large data sets. <i>Bioinformatics</i> :btu531. <a href="http://dx.doi.org/10.1093/bioinformatics/btu531">http://dx.doi.org/10.1093/bioinformatics/btu531</a></p>
 
-<p>Unlimited mouse wheel zoom in/out to see whole alignment<br>
-Speedy handling of large alignments<br>
-Reads unlimited size FASTA, PHYLIP, NEXUS, CLUSTAL and MSF files</p>
-<img style="width: 600px;" alt="" src="images/tutorial/2.1.large.png"><br>
-
-<p>Alternative Color schemes (SeaView)</p>
-<img style="width: 600px;" alt="" src="images/tutorial/3.color-seaview.png"><br>
-
-<p>ClustalX consensus color scheme</p>
-<img style="width: 600px;" alt="" src="images/tutorial/3.5.clustalx.color.png"><br>
-
-<p>View nucleotides colored as translated Amino Acids</p>
-<img style="width: 600px;" alt="" src="images/tutorial/4.translated.png"><br>
-
-<p>View nucleotides colored as translated Amino Acids (1-position)</p>
-<img style="width: 600px;" alt="" src="images/tutorial/4.1.translated.1pos.png"><br>
-
-<p>Highlight characters deviating from Consensus</p>
-<img style="width: 600px;" alt="" src="images/tutorial/5.non.consensus.png"><br>
-
-<p>Highlight characters deviating from selected "Trace" sequence</p>
-<img style="width: 600px;" alt="" src="images/tutorial/5.2.trace.png"><br>
-
-<p>Highlight characters belonging to Consensus</p>
-<img style="width: 600px;" alt="" src="images/tutorial/5.1.consensus.png"><br>
-
-<p>MUSCLE or other alignment program to realign sequences</p>
-<img style="width: 600px;" alt="" src="images/tutorial/6.realign.png"><br>
-
-<p>Realign selected <b>block</b> with muscle or other aligner program</p>
-<img style="width: 600px;" alt="" src="images/tutorial/6.1.realign.block.png"><br>
-
-<p>Realign <b>single sequence</b> with MUSCLE or other aligner program</p>
-<img style="width: 600px;" alt="" src="images/tutorial/6.2.realign.sequence.png"><br>
-
-<p>Nucleotides realigned as translated AminoAcids and then retranslated to nucleotides</p>
-<img style="width: 600px;" alt="" src="images/tutorial/6.3.realign.translated.png"><br>
-
-<p>Manual Alignment with Keyboard or Mouse</p>
-<img style="width: 600px;" alt="" src="images/tutorial/7.1.manual.edit.png"><br>
-
-<p>Delete sequences, reorder, move to top, move to bottom</p>
-<img style="width: 600px;" alt="" src="images/tutorial/7.2.reorder.delete.png"><br>
-
-<p>Merge sequences (overlapping or not - create consensus if overlapping)</p>
-<img style="width: 600px;" alt="" src="images/tutorial/7.3.merge.png"><br>
-
-<p>Drag and drop file/sequences, if you hold Shift when dropping<br>then you add to current alignment, otherwise open new</p>
-<img style="width: 600px;" alt="" src="images/tutorial/8.3.dragdrop.png"><br>
-
-<p>Find degenerate primers in selected blocks</p>
-<img style="width: 600px;" alt="" src="images/tutorial/8.primer.png"><br>
-
-<p>Configure external programs</p>
-<img style="width: 600px;" alt="" src="images/tutorial/8.1.external.png"><br>
-
-<p>Add and configure other alignment programs to use e.g. MAFFT</p>
-<img style="width: 600px;" alt="" src="images/tutorial/8.2.aligner.config.png"><br>
-
-</b>
 
 <p></p>
 

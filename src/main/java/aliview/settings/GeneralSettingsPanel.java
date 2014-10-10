@@ -29,12 +29,14 @@ import javax.swing.SwingConstants;
 public class GeneralSettingsPanel extends JPanel{
 	JCheckBox cbxReverseHorizontalMouseWheel;
 	JCheckBox cbxReverseVerticalMouseWheel;
+	JCheckBox checkBoxHideAskBeforeEditMode;
 	private JTextField txtHWheelMod;
 	private JTextField txtVWheelMod;
 	private JTextField txtLargeFileIndexingl;
 	private JTextField txtFontSize;
 	private JTextField txtMaxHistogramLargeFiles;
 	private JCheckBox chckbxOverrideDefaultFont;
+	
 	static JFrame parFrame;
 	
 	public GeneralSettingsPanel(final JFrame parFrame) {
@@ -42,9 +44,9 @@ public class GeneralSettingsPanel extends JPanel{
 		this.setBorder(new EmptyBorder(10, 10, 10, 10));
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{324, 100, 100, 0};
-		gridBagLayout.rowHeights = new int[]{23, 23, 23, 23, 0, 23, 0, 23, 0, 0, 23, 23, 0};
+		gridBagLayout.rowHeights = new int[]{23, 23, 23, 23, 0, 23, 0, 0, 23, 0, 0, 23, 23, 0};
 		gridBagLayout.columnWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
 		
 		
@@ -180,18 +182,36 @@ public class GeneralSettingsPanel extends JPanel{
 		gbc_clearCBXbutton.gridy = 6;
 		add(clearCbxButton, gbc_clearCBXbutton);
 		
+		JLabel lblAskBeforeEntering = new JLabel("Hide dialog asking before entering edit mode");
+		lblAskBeforeEntering.setHorizontalAlignment(SwingConstants.LEFT);
+		GridBagConstraints gbc_lblAskBeforeEntering = new GridBagConstraints();
+		gbc_lblAskBeforeEntering.anchor = GridBagConstraints.WEST;
+		gbc_lblAskBeforeEntering.insets = new Insets(0, 0, 5, 5);
+		gbc_lblAskBeforeEntering.gridx = 0;
+		gbc_lblAskBeforeEntering.gridy = 7;
+		add(lblAskBeforeEntering, gbc_lblAskBeforeEntering);
+		
+		checkBoxHideAskBeforeEditMode = new JCheckBox("");
+		checkBoxHideAskBeforeEditMode.setSelected(Settings.getHideAskBeforeEditMode().getBooleanValue());
+		GridBagConstraints gbc_checkBox = new GridBagConstraints();
+		gbc_checkBox.anchor = GridBagConstraints.WEST;
+		gbc_checkBox.insets = new Insets(0, 0, 5, 0);
+		gbc_checkBox.gridx = 2;
+		gbc_checkBox.gridy = 7;
+		add(checkBoxHideAskBeforeEditMode, gbc_checkBox);
+		
 		GridBagConstraints gbc_lblNumberOfFiles = new GridBagConstraints();
 		gbc_lblNumberOfFiles.fill = GridBagConstraints.BOTH;
 		gbc_lblNumberOfFiles.insets = new Insets(0, 0, 5, 5);
 		gbc_lblNumberOfFiles.gridx = 0;
-		gbc_lblNumberOfFiles.gridy = 7;
+		gbc_lblNumberOfFiles.gridy = 8;
 		JLabel lblNumberOfFiles = new JLabel("Number of sequences to Index at a time in very large files");
 		add(lblNumberOfFiles, gbc_lblNumberOfFiles);
 		GridBagConstraints gbc_txtLargeFileIndexingl = new GridBagConstraints();
 		gbc_txtLargeFileIndexingl.fill = GridBagConstraints.BOTH;
 		gbc_txtLargeFileIndexingl.insets = new Insets(0, 0, 5, 0);
 		gbc_txtLargeFileIndexingl.gridx = 2;
-		gbc_txtLargeFileIndexingl.gridy = 7;
+		gbc_txtLargeFileIndexingl.gridy = 8;
 		txtLargeFileIndexingl = new JTextField();
 		txtLargeFileIndexingl.setText("" + Settings.getLargeFileIndexing().getIntValue());
 		add(txtLargeFileIndexingl, gbc_txtLargeFileIndexingl);
@@ -201,7 +221,7 @@ public class GeneralSettingsPanel extends JPanel{
 		gbc_lblNumberOfSequences.anchor = GridBagConstraints.WEST;
 		gbc_lblNumberOfSequences.insets = new Insets(0, 0, 5, 5);
 		gbc_lblNumberOfSequences.gridx = 0;
-		gbc_lblNumberOfSequences.gridy = 8;
+		gbc_lblNumberOfSequences.gridy = 9;
 		add(lblNumberOfSequences, gbc_lblNumberOfSequences);
 		
 		txtMaxHistogramLargeFiles = new JTextField();
@@ -210,14 +230,14 @@ public class GeneralSettingsPanel extends JPanel{
 		gbc_textField_1.insets = new Insets(0, 0, 5, 0);
 		gbc_textField_1.fill = GridBagConstraints.HORIZONTAL;
 		gbc_textField_1.gridx = 2;
-		gbc_textField_1.gridy = 8;
+		gbc_textField_1.gridy = 9;
 		add(txtMaxHistogramLargeFiles, gbc_textField_1);
 		JLabel lblNewLabel = new JLabel("consensus on large files");
 		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
 		gbc_lblNewLabel.anchor = GridBagConstraints.WEST;
 		gbc_lblNewLabel.insets = new Insets(0, 0, 5, 5);
 		gbc_lblNewLabel.gridx = 0;
-		gbc_lblNewLabel.gridy = 9;
+		gbc_lblNewLabel.gridy = 10;
 		add(lblNewLabel, gbc_lblNewLabel);
 		
 		
@@ -225,7 +245,7 @@ public class GeneralSettingsPanel extends JPanel{
 		gbc_4.fill = GridBagConstraints.BOTH;
 		gbc_4.insets = new Insets(0, 0, 5, 5);
 		gbc_4.gridx = 0;
-		gbc_4.gridy = 10;
+		gbc_4.gridy = 11;
 		JLabel label_1 = new JLabel("");
 		add(label_1, gbc_4);
 		
@@ -240,7 +260,7 @@ public class GeneralSettingsPanel extends JPanel{
 		gbc_btnHelp.anchor = GridBagConstraints.WEST;
 		gbc_btnHelp.insets = new Insets(0, 0, 0, 5);
 		gbc_btnHelp.gridx = 0;
-		gbc_btnHelp.gridy = 11;
+		gbc_btnHelp.gridy = 12;
 		add(btnHelp, gbc_btnHelp);
 		
 		
@@ -255,7 +275,7 @@ public class GeneralSettingsPanel extends JPanel{
 		gbc_btnCancel.anchor = GridBagConstraints.EAST;
 		gbc_btnCancel.insets = new Insets(0, 0, 0, 5);
 		gbc_btnCancel.gridx = 1;
-		gbc_btnCancel.gridy = 11;
+		gbc_btnCancel.gridy = 12;
 		add(btnCancel, gbc_btnCancel);
 		JButton btnOk = new JButton("OK");
 		btnOk.setPreferredSize(new Dimension(100, 30));
@@ -269,7 +289,7 @@ public class GeneralSettingsPanel extends JPanel{
 		gbc_btnOk.anchor = GridBagConstraints.EAST;
 		gbc_btnOk.fill = GridBagConstraints.VERTICAL;
 		gbc_btnOk.gridx = 2;
-		gbc_btnOk.gridy = 11;
+		gbc_btnOk.gridy = 12;
 		add(btnOk, gbc_btnOk);
 		
 	}
@@ -312,6 +332,7 @@ public class GeneralSettingsPanel extends JPanel{
 		
 		Settings.putBooleanValue(Settings.getUseCustomFontSize(), chckbxOverrideDefaultFont.isSelected());
 		
+		Settings.putBooleanValue(Settings.getHideAskBeforeEditMode(), checkBoxHideAskBeforeEditMode.isSelected());
 		
 		
 		
@@ -343,6 +364,9 @@ public class GeneralSettingsPanel extends JPanel{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		
+		
 		
 		try {
 			Settings.getLargeFileIndexing().putIntValue(Integer.parseInt(txtLargeFileIndexingl.getText()));

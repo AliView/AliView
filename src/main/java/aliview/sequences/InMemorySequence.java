@@ -639,14 +639,18 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 		if(position > 1000000){
 			return -1;
 		}
+		
 
-		int gapcount = 0;
-		for(int n = 0; n < position; n++){
+		int posCount = 0;
+		int gapCount = 0;
+		for(int n = 0; n <= position; n++){
 			if(NucleotideUtilities.isGap(getBaseAtPos(n))){
-				gapcount ++;
+				gapCount ++;
+			}else{
+				posCount ++;
 			}
 		}	
-		return position - gapcount;
+		return posCount;
 	}
 
 	public String getUngapedSequence() {

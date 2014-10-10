@@ -193,7 +193,7 @@ public class FileSequence implements Sequence {
 
 	public int getUngapedPos(int position) {
 		// TODO Auto-generated method stub
-		return 0;
+		return -1;
 	}
 
 	public String getBasesAtThesePosAsString(ArrayList<Integer> allPositions) {

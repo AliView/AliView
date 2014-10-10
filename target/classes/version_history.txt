@@ -1,5 +1,14 @@
 Version history
 
+1.14
+
+- Fixed bug on Windows that caused message window always to be on top when running external commands
+- Changed message window not to be on top of other programs when running alignment programs on Linux
+- Now possible to hide "Allow edit" dialog
+- Info message if alignment contains duplicate sequence names 
+- Adjusted status panel, selected position is now zero before first non gap residue
+- Changed header slightly when saving in Clustal format
+
 1.13
 
 - Fixed bug when realigning a selected block of residues
@@ -9,7 +18,6 @@ Version history
 - Fixed issue with screen tearing on Linux versions running Open-JDK
 - Fixed issue with pixelation on Mac retina-screen
 - Fixed issue with tooltips on Linux versions running Open-JDK
-
 
 1.11
 
@@ -46,7 +54,6 @@ Version history
 - Added button "Count stop codons" on translate sequence toolbar
 - Added info message if MUSCLE profile algorithm is used for adding sequences
 
-
 1.08
 
 -Fixed error in Mac-version where all Menus got greyed out after alignment program error
@@ -62,7 +69,6 @@ Version history
 -Added "Sort sequences by char in selected column"
 -Added Menu "Count stop codons"
 -Added message when no primers were found in selected region (instead of just silently do nothing).
-
 
 1.07
 

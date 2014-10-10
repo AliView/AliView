@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
@@ -78,18 +79,32 @@ public class SubProcessWindow{
 			public void windowClosing(WindowEvent e) {
 				if(subProcess != null){
 					logger.info("destroy-subprocess");
-					try {
-						subProcess.getInputStream().close();
-						subProcess.getOutputStream().close();
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
 					
-					subProcess.destroy();
+					// On windows there is a risk that closing stream command takes a long
+					// time to return or blocks - therefore do it in a separate thread
+					
+					// Even better - Dont close streams - it might block on windows
+					
+//					Thread thread = new Thread(new Runnable(){
+//						public void run(){
+//								try {
+//									subProcess.getInputStream().close();
+//									subProcess.getOutputStream().close();
+//								} catch (IOException e) {
+//									// TODO Auto-generated catch block
+//									e.printStackTrace();
+//								}	
+//							}
+//					});
+//					thread.start();
+					
+							
+					logger.info("before destroy");
 					subProcessDestrouedByUser = true;
+					subProcess.destroy();		
+					logger.info("now after destroy");
+					dialog.dispose();
 				}
-				dialog.dispose();
 			}
 		});
 		

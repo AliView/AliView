@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.awt.Dialog.ModalityType;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
@@ -90,7 +91,6 @@ public class Messenger {
 	public static void main(String[] args) {
 		boolean cbxSelected = showOKOnlyMessageWithCbx(MUSCLE_PROFILE_INFO_MESSAGE, true, null);
 		logger.info("cbxSelected" + cbxSelected);
-		
 	}
 	
 	public static void showGeneralErrorMessage(Error error, JFrame parentFrame) {
@@ -112,14 +112,7 @@ public class Messenger {
 	public static void showOKOnlyMessage(Message message) {
 		showOKOnlyMessage(message, "",  AliView.getActiveWindow());
 	}
-	
-	public static void showOKOnlyMessage(String message, String title, JFrame parentFrame) {
-		showOKOnlyMessage(new Message(message, title), "",  parentFrame);
-	}
-	
-	public static void showOKOnlyMessage(String message, String title) {
-		showOKOnlyMessage(new Message(message, title), "",  AliView.getActiveWindow());
-	}
+
 	
 	public static void showOKOnlyMessage(Message message, String appendMessageText) {
 		showOKOnlyMessage(message, appendMessageText,  AliView.getActiveWindow());
@@ -252,54 +245,47 @@ public class Messenger {
 		//return dialog;
 		
 	}
-   
-   public static boolean showOKCancelMessage(Message message, AliViewWindow aliViewWindow) {
-		
-		final JDialog dialog = new JDialog(aliViewWindow);
-		dialog.setTitle(message.title);
-		// OBS DO NOT MODAL - Then there is problem in MAC when executed from error thread
-		dialog.setModal(true);
-		dialog.setAlwaysOnTop(true);
-		JCheckBox cbx = new JCheckBox("Don't show this message again");
-		//cbx.setSelected(cbxSelected);
-		cbx.setFocusPainted(false);
-		JOptionPane optPane = new JOptionPaneWithCheckbox(cbx, message.text,JOptionPane.INFORMATION_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
-		optPane.addPropertyChangeListener(new PropertyChangeListener()
-		   {
-		      public void propertyChange(PropertyChangeEvent e)
-		      {
-		         if (e.getPropertyName().equals("value"))
-		         {
-		            switch ((Integer)e.getNewValue())
-		            {
-		               case JOptionPane.OK_OPTION:
-		            	   logger.info("lastSelectedOption" + JOptionPane.OK_OPTION);
-		            	   lastSelectedOption = JOptionPane.OK_OPTION;
-		                  break;
-		               case JOptionPane.CANCEL_OPTION:
-		            	   logger.info("lastSelectedOption" + JOptionPane.CANCEL_OPTION);
-		                  lastSelectedOption = JOptionPane.CANCEL_OPTION;
-		                  break;                       
-		            }
-		            dialog.dispose();
-		         }
-		      }
-		   });
-		
-		dialog.setContentPane(optPane);
-		dialog.pack();
-		dialog.setLocationRelativeTo(aliViewWindow);
-		dialog.setVisible(true);
-		
-		return cbx.isSelected();
-		
-	}
-   
-
+ 
    public static void showCountCodonMessage(int count, AliViewWindow aliViewWindow) {
 	   Message countMessage = new Message("Stop codons in alignment: " + count, "Stop codon count");
 	   showOKOnlyMessage(countMessage, aliViewWindow);
    }
+   
+   public static void showDuplicateSeqNamesMessage(ArrayList<String> dupeNames){
+	   	   
+	   boolean hideMessage = Settings.getHideDuplicateSeqNamesMessage().getBooleanValue();
+	   if(! hideMessage){
+	   
+		   String dupeString = "";
+		   int dupeCount = 0;
+		   for(String dupe: dupeNames){	   
+			   dupeString += dupe + LF;
+			   
+			   // Only list 10 names
+			   dupeCount ++;
+			   if(dupeCount == 10){
+				   break;
+			   }
+		   }
+		   
+		   String prep = "are";
+		   if(dupeCount == 1){
+			   prep = "is";
+		   }
+	
+		   
+		   Message dupeMessage = new Message("There " + prep + " " + dupeCount + " duplicate sequence name(s) in alignment, this might cause " + LF + 
+				                              "unexpected problems when calling alignment programs for example." + LF + 
+				                              "Duplicate name(s) " + prep + ": " + dupeString, 
+				                              "Duplicate sequence names");
+		   
+		   boolean hideMessageNextTime = showOKOnlyMessageWithCbx(dupeMessage, hideMessage, AliView.getActiveWindow());
+		   Settings.getHideDuplicateSeqNamesMessage().putBooleanValue(hideMessageNextTime);
+	   }
+	   
+	   
+   }
+   
 
    public static void showMaxJPanelSizeMessageOnceThisSession(){
 	   if(! showedMaxJPanelSizeMessageOnceThisSession){
@@ -312,10 +298,25 @@ public class Messenger {
 	   }
 
    }
+
+public static boolean askAllowEditMode() {
+	
+	boolean allowEditMode = false;
+	boolean hideMessage = Settings.getHideAskBeforeEditMode().getBooleanValue();
+	if(hideMessage){
+		allowEditMode = true;
+	}else{
+		boolean hideMessageNextTime = showOKCancelMessageWithCbx(EDIT_MODE_QUESTION, hideMessage, AliView.getActiveWindow());
+		Settings.getHideAskBeforeEditMode().putBooleanValue(hideMessageNextTime);
+		if(getLastSelectedOption() == JOptionPane.OK_OPTION){
+			allowEditMode = true;
+		}
+	}
+	return allowEditMode;
+}
    
    
 }
-
 
 class Message{
 	String title;

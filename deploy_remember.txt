@@ -14,12 +14,10 @@ git add .
 // removing
 git add -u
 // commit local
-git commit -m "version 1.10-beta-3"
+git commit -m "version 1.13"
 git push AliView master
 username: AliView
 
 
 move old versions on webserver to /old 
-
-
 

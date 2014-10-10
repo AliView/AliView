@@ -5,7 +5,7 @@
     <key>CFBundleName</key>
     <string>AliView</string>
     <key>CFBundleVersion</key>
-    <string>1.13</string>
+    <string>1.14</string>
     <key>CFBundleAllowMixedLocalizations</key>
     <string>true</string>
     <key>CFBundleExecutable</key>
@@ -56,7 +56,7 @@
       <key>JVMVersion</key>
       <string>1.4+</string>
       <key>ClassPath</key>
-      <array><string>$JAVAROOT/repo/AliView/AliView/1.13/AliView-1.13.jar</string><string>$JAVAROOT/repo/log4j/log4j/1.2.13/log4j-1.2.13.jar</string><string>$JAVAROOT/repo/commons-lang/commons-lang/2.6/commons-lang-2.6.jar</string><string>$JAVAROOT/repo/commons-io/commons-io/2.2/commons-io-2.2.jar</string><string>$JAVAROOT/repo/jebl2/jebl/0.1/jebl-0.1.jar</string></array>
+      <array><string>$JAVAROOT/repo/AliView/AliView/1.14/AliView-1.14.jar</string><string>$JAVAROOT/repo/log4j/log4j/1.2.13/log4j-1.2.13.jar</string><string>$JAVAROOT/repo/commons-lang/commons-lang/2.6/commons-lang-2.6.jar</string><string>$JAVAROOT/repo/commons-io/commons-io/2.2/commons-io-2.2.jar</string><string>$JAVAROOT/repo/jebl2/jebl/0.1/jebl-0.1.jar</string></array>
       <key>VMOptions</key>
       <string>-Xmx512m -Xms128m -splash:$JAVAROOT/splash_128x128.png</string>
       <key>Properties</key>

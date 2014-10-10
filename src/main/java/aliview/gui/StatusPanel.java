@@ -75,7 +75,7 @@ public class StatusPanel extends JPanel implements AlignmentListener{
 		public void updateSelectionText(){
 			if(alignment != null && selectionSize > 0){
 				// +1 because internally we are working with 0 as first pos and first sequence
-				String ungapPosPadded = StringUtils.leftPad("" + (posInUngapedSeq + 1), 4);
+				String ungapPosPadded = StringUtils.leftPad("" + (posInUngapedSeq), 4);
 				String posInSeqPadded = StringUtils.leftPad("" + (posInSeq + 1), 4);
 				String selSizePadded = StringUtils.leftPad("" + selectionSize, 6);
 				String selectedColumnCounPadded = StringUtils.leftPad("" + selectedColumnCount, 4);

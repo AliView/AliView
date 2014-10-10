@@ -76,6 +76,8 @@ public class Settings {
 	private static SettingValue hideMuscleProfileAlignInfoMessage = new SettingValue("hideMuscleProfileAlignInfoMessage", false);
 	private static SettingValue hideRealignEverythingMessage = new SettingValue("hideRealignEverythingMessage", false);
 	private static SettingValue hideAlignmentProgressWindowWhenDone = new SettingValue("hideAlignmentProgressWindowWhenDone", false);
+	private static SettingValue hideDuplicateSeqNamesMessage = new SettingValue("hideDuplicateSeqNamesMessage", false);
+	private static SettingValue hideAskBeforeEditMode  = new SettingValue("hideAskBeforeEditMode", false);
 	
 
 	public static SettingValue getMinPrimerLength(){
@@ -573,12 +575,22 @@ public class Settings {
 		return hideAlignmentProgressWindowWhenDone;
 	}
 	
+	public static SettingValue getHideDuplicateSeqNamesMessage() {
+		return hideDuplicateSeqNamesMessage;
+	}
+	
+	public static SettingValue getHideAskBeforeEditMode() {
+		return hideAskBeforeEditMode;
+	}
+	
 	public static void clearAllHideThisDialogCheckboxes() {
 		getHideFileSeqLimitedEditCapabilities().putBooleanValue(false);
 		getHideEditModeMessage().putBooleanValue(false);
 		getHideMuscleProfileAlignInfoMessage().putBooleanValue(false);
 		getHideRealignEverythingMessage().putBooleanValue(false);
 		getHideAlignmentProgressWindowWhenDone().putBooleanValue(false);
+		getHideDuplicateSeqNamesMessage().putBooleanValue(false);
+		getHideAskBeforeEditMode().putBooleanValue(false);
 	}
 	
 

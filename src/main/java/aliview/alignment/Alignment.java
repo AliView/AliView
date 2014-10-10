@@ -246,7 +246,7 @@ public class Alignment implements FileSequenceLoadListener {
 	private void storeAlignmetAsClustal(Writer out) throws IOException {
 		
 		// First write meta
-		out.write("CLUSTAL multiple sequence alignment" + LF);
+		out.write("CLUSTAL W (1.99) multiple sequence alignment" + LF);
 		out.write(LF);
 		out.write(LF);
 		
@@ -1290,6 +1290,14 @@ public class Alignment implements FileSequenceLoadListener {
 			e.printStackTrace();
 		}
 	}
+	
+	public ArrayList<String> findDuplicateNames(){
+		if(sequences != null){
+			return sequences.findDuplicateNames();
+		}else{
+			return null;
+		}
+	}
 
 	/*
 	 * 
@@ -1526,8 +1534,10 @@ public class Alignment implements FileSequenceLoadListener {
 	public int getFirstSelectedUngapedPositionX() {
 		Point pos = sequences.getFirstSelectedUngapedPos();
 		if(pos == null){
-			return 0;
+			logger.info("pos == null");
+			return -1;
 		}else{
+			logger.info("pos == " + pos.x);
 			return pos.x;
 		}
 	}

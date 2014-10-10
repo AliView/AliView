@@ -21,6 +21,7 @@ import aliview.sequencelist.FileSequenceListModel;
 import aliview.sequencelist.SequenceListModel;
 import aliview.sequences.NexusSequence;
 import aliview.sequences.SequenceUtils;
+import aliview.settings.Settings;
 
 public class AlignmentFactory {
 	private static final String LF = System.getProperty("line.separator");
@@ -97,6 +98,18 @@ public class AlignmentFactory {
 
 			}
 			
+			// Check if unique names - otherwise warn
+			if(alignment != null){
+				boolean hideMessage = Settings.getHideDuplicateSeqNamesMessage().getBooleanValue();
+				if(! hideMessage){
+					ArrayList duplicateSeqNames = alignment.findDuplicateNames();
+					if(duplicateSeqNames != null && duplicateSeqNames.size() > 0){
+						Messenger.showDuplicateSeqNamesMessage(duplicateSeqNames);
+					}
+				}
+			}
+			
+		
 			long endTime = System.currentTimeMillis();
 			System.out.println("Importing sequences took " + (endTime - startTime) + " milliseconds");
 			

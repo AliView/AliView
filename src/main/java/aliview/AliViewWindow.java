@@ -1320,7 +1320,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 			final SubProcessWindow subProcessWin = SubProcessWindow.getAlignmentProgressWindow(aliViewWindow, true);
 			subProcessWin.setCloseWhenDoneCbxSelection(Settings.getHideAlignmentProgressWindowWhenDone().getBooleanValue());
 			subProcessWin.setTitle("Align and add sequences with " + alignItem.getName());
-			subProcessWin.setAlwaysOnTop(true);
+			subProcessWin.setAlwaysOnTop(false);
 			subProcessWin.show();
 			
 			alignItem.setParameterCurrentFile(origSequences);
@@ -1477,7 +1477,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 			final SubProcessWindow subProcessWin = SubProcessWindow.getAlignmentProgressWindow(aliViewWindow, true);
 			subProcessWin.setCloseWhenDoneCbxSelection(Settings.getHideAlignmentProgressWindowWhenDone().getBooleanValue());
 			subProcessWin.setTitle("Align with " + alignItem.getName());
-			subProcessWin.setAlwaysOnTop(true);
+			subProcessWin.setAlwaysOnTop(false);
 			subProcessWin.show();
 
 
@@ -1661,9 +1661,8 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		}
 
 		logger.info("Finished reAlignWithDefault");
-
+		
 	}
-
 
 
 	public static void logAllLogs(){
@@ -1960,6 +1959,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		alignment.setTranslationOnePos(alignmentPane.isShowTranslationOnePos());
 
 		aliViewMenuBar.setEditFunctionsEnabled(alignment.isEditable());
+		//aliViewMenuBar.setSelectionFunctionsEnabled(alignment.isSelectable());
 		logger.info("alignment.isEditable()" + alignment.isEditable());
 		requestPaneAndRulerRepaint();
 	}
@@ -3479,7 +3479,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		final SubProcessWindow subProcessWin = new SubProcessWindow(aliViewWindow);
 		//subProcessWin.init();
 		subProcessWin.setTitle(cmdItem.getName());
-		subProcessWin.setAlwaysOnTop(true);
+		subProcessWin.setAlwaysOnTop(false);
 		subProcessWin.placeFrameupperLeftLocationOfThis(aliViewWindow);
 		if(cmdItem.isShowCommandWindow()){
 			subProcessWin.show();
@@ -3542,6 +3542,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 	public boolean requestEditMode(){	
 		if(isEditMode() == false){
 				// optionpane
+		/*				
 				String message = "Edit key/menu pressed (or mouse edit), " + LF + "do you want to allow edits?";
 				int retVal = JOptionPane.showConfirmDialog(aliViewWindow, message, "Edit mode?", JOptionPane.OK_CANCEL_OPTION);
 				if(retVal == JOptionPane.OK_OPTION){
@@ -3553,7 +3554,14 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 				// return false after question always
 				// return false;
 
-			
+			*/
+				boolean allowEdit = Messenger.askAllowEditMode();
+				if(allowEdit){
+					aliViewWindow.setEditMode(true);
+				}else{
+					// do nothing
+				}
+				
 			
 			/*
 			// Skip asking if checkbox "hide this message"

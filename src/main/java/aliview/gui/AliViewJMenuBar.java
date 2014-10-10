@@ -1535,7 +1535,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 
 	public final void setEditFunctionsEnabled(boolean enable){
 		setAllEnabled(editFunctions, enable);
-	}
+	}	
 
 	public final void setAlwaysFunctionsEnabled(boolean enable){
 		setAllEnabled(alwaysAvailableFunctions, enable);

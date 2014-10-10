@@ -134,10 +134,16 @@ public class ExternalCommandExecutor {
 		logger.info("before wait for subprocess");
 		
 		// kill output thread if this was interrupted
-		if(subProcessWin.wasSubProcessDestrouedByUser()){
-			subprocess.getInputStream().close();
-			subprocess.getOutputStream().close();
-		}
+		
+		
+		// Dont close streams - it might block on windows		
+		//		if(subProcessWin.wasSubProcessDestrouedByUser()){
+		//			subprocess.getInputStream().close();
+		//			subprocess.getOutputStream().close();
+		//		}
+		
+		// close streams
+		
 		
 		// clean up external process
 		/*

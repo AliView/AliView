@@ -484,6 +484,10 @@ public class AlignmentPane extends JPanel{
 		if(base != null){
 			ungapedPos = base.getUngapedPosition();
 		}
+		else{
+			
+		}
+		
 		return ungapedPos;
 	}
 

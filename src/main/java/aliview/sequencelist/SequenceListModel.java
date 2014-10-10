@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -1664,7 +1665,15 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 		return names;
 	}
 
-	
-
-	
+	public ArrayList<String> findDuplicateNames() {
+		ArrayList<String> dupes = new ArrayList<String>();
+		HashSet set = new HashSet<String>(sequences.size());
+		for(Sequence seq: sequences){
+			boolean isNotDuplicate = set.add(seq.getName());
+			if(isNotDuplicate == false){
+				dupes.add(seq.getName());
+			}
+		}
+		return dupes;
+	}
 }

@@ -99,12 +99,28 @@ public class PositionsArray {
 		}
 	}
 
-	public boolean isAnythingButDefault() {
+	private boolean isBackendAnythingBut123(){
+		boolean isAnythingBut123 = false; 
 		if(backend != null){
-			return true;
-		}else{
-			return false;
+			for(int n = 0; n < backend.length; n++){
+				int defaltVal = (n % 3) + 1;
+				if(backend[n] != defaltVal){
+					isAnythingBut123 = true;
+					break;
+				}
+			}
 		}
+		return isAnythingBut123;
+	}
+	
+	public boolean isAnythingButDefault() {
+		boolean isAnythingButDefault = false;
+		if(backend == null){
+			isAnythingButDefault = false;
+		}else{
+			isAnythingButDefault = isBackendAnythingBut123();
+		}
+		return isAnythingButDefault;
 	}
 
 }

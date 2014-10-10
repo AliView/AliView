@@ -492,7 +492,7 @@ public class AliView implements ApplicationListener{
 		createNewAliViewWindow(null);
 	}
 	
-	public static JFrame getActiveWindow(){
+	public static AliViewWindow getActiveWindow(){
 		return activeWindow;
 	}
 
@@ -544,6 +544,7 @@ public class AliView implements ApplicationListener{
 
 			}); // end WindowAdapter
 
+			
 			// if there is another active window save that geom first
 			if(activeWindow != null){
 				activeWindow.saveWindowGeometry();

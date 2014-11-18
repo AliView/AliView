@@ -16,6 +16,8 @@ import javax.swing.UIManager;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import aliview.AliView;
+
 public class OSNativeUtils {
 	private static final Logger logger = Logger.getLogger(OSNativeUtils.class);
 	private static float cachedContentScaleFactor = -1; // 1 indicates a regular mac display. 2= retina
@@ -78,7 +80,7 @@ public class OSNativeUtils {
 	
 	
 	public static boolean isMac() {
- 
+		
 		String os = System.getProperty("os.name").toLowerCase();
 		// Mac
 		return (os.indexOf("mac") >= 0);
@@ -303,6 +305,23 @@ public class OSNativeUtils {
 		}
 	}
 	
+	public static KeyStroke getSelectionExpandRightKeyAccelerator() {
+		if(isMac()){
+			return KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.ALT_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
+		}else{
+			return KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.ALT_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
+		}
+	}
+	
+	public static KeyStroke getSelectionExpandLeftKeyAccelerator() {
+		if(isMac()){
+			return KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.ALT_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
+		}else{
+			return KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.ALT_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
+		}
+	}
+	
+	
 	public static KeyStroke getToggleTranslationOnePosKeyAccelerator() {
 		if(isMac()){
 			return KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.META_DOWN_MASK | InputEvent.ALT_DOWN_MASK);
@@ -500,7 +519,38 @@ public class OSNativeUtils {
 	    return style;
 	}
 
+	/*
+	 * 
+	 * Register through reflection and other OS wont be affected
+	 * 
+	 */
+	public static boolean registerMacAdapter(AliView aliView) {
 
+		boolean registerOK = false;
+		if(isMac()){
+			logger.info("register Mac Adapter");
+			try {
+				Class macAdapter = Class.forName("utils.MacAdapter");
+				
+				if(macAdapter != null){
 	
+					Class[] defArgs = {AliView.class};
+					Method regAppMethod = macAdapter.getDeclaredMethod("registerApplication", defArgs);
+	
+					if(regAppMethod != null){
+						Object[] args = {aliView};
+						regAppMethod.invoke(macAdapter, args);
+						registerOK = true;
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			} catch (Error err){
+				err.printStackTrace();
+			}
+		}
+		return registerOK;
+	}
+
 
 }

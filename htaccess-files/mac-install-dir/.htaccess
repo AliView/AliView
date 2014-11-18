@@ -1,0 +1,5 @@
+Options All +Indexes
+AddType text/html .shtml
+AddOutputFilter INCLUDES .shtml
+# HeaderName .header.html
+ReadmeName .footer.shtml

@@ -303,6 +303,10 @@ public class FileSequence implements Sequence {
 	public void selectAllBases() {
 		selectionModel.selectAll();
 	}
+	
+	public void invertSelection(){
+		selectionModel.invertSelection(getLength());
+	}
 
 	public boolean hasSelection() {
 		return selectionModel.hasSelection();
@@ -506,5 +510,23 @@ public class FileSequence implements Sequence {
 		return count;
 	}
 
+	public void selectionExtendRight() {
+		if(selectionModel.hasSelection()){
+			int lastSelectedPos = selectionModel.getLastSelectedPosition();
+			int seqEndPos = getLength() + 1;
+			selectionModel.setSelection(lastSelectedPos, seqEndPos, true);
+		}
+	}
+	
+	public void selectionExtendLeft() {
+		if(selectionModel.hasSelection()){
+			int firstSelectedPos = selectionModel.getLastSelectedPosition();
+			selectionModel.setSelection(0, firstSelectedPos, true);
+		}
+	}
+	
+	public int getLastSelectedPosition() {
+		return selectionModel.getLastSelectedPosition();
+	}
 
 }

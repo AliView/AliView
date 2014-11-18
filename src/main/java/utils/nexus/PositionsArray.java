@@ -1,8 +1,11 @@
 package utils.nexus;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.log4j.Logger;
+
 
 public class PositionsArray {
+	private static final Logger logger = Logger.getLogger(PositionsArray.class);
 	private int [] backend;
 	private int length;
 	
@@ -55,8 +58,12 @@ public class PositionsArray {
 	}
 	
 	private void fillArrayWith123(int[] array){
+		fillArrayWith123(array, 1);
+	}
+	
+	private void fillArrayWith123(int[] array, int startVal){
 		for(int n = 0; n < array.length; n++){
-			int posVal = (n % 3) + 1;
+			int posVal = ((n + startVal - 1) % 3) + 1;
 			array[n] = posVal;
 		}
 	}
@@ -98,6 +105,12 @@ public class PositionsArray {
 			backend = ArrayUtils.remove(backend, n);
 		}
 	}
+	
+	public void insert(int n) {
+		if(backend != null){
+			backend = ArrayUtils.add(backend, n, 0);
+		}
+	}
 
 	private boolean isBackendAnythingBut123(){
 		boolean isAnythingBut123 = false; 
@@ -122,5 +135,27 @@ public class PositionsArray {
 		}
 		return isAnythingButDefault;
 	}
+
+	public void resize(int len) {
+		this.length = len;
+		if(backend != null){
+			if(backend.length > len){
+				backend = ArrayUtils.subarray(backend, 0, len);
+			}
+			if(backend.length < len){
+				int[] newVals = new int[len - backend.length];
+				int lastPos = getPos(backend.length - 1);
+				if(lastPos != 0){
+					logger.info("lastPos" + lastPos);
+					fillArrayWith123(newVals, lastPos + 1);
+				}
+				logger.info("newVals.length" + newVals.length);
+				logger.info("backend.length" + backend.length);
+				backend = ArrayUtils.addAll(backend, newVals);
+			}
+		}
+	}
+
+	
 
 }

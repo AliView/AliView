@@ -15,5 +15,10 @@
   <classpathentry kind="var" path="M2_REPO/jebl2/jebl/0.1/jebl-0.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/junit/junit/3.8.1/junit-3.8.1.jar" sourcepath="M2_REPO/junit/junit/3.8.1/junit-3.8.1-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.13/log4j-1.2.13.jar" sourcepath="M2_REPO/log4j/log4j/1.2.13/log4j-1.2.13-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/yuvimasory/orange-extensions/1.3.0/orange-extensions-1.3.0.jar" sourcepath="M2_REPO/com/yuvimasory/orange-extensions/1.3.0/orange-extensions-1.3.0-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/home/anders/.m2/repository/com/yuvimasory/orange-extensions/1.3.0/orange-extensions-1.3.0-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
   <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 </classpath>

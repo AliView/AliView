@@ -379,13 +379,22 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 		
 		return indices;
 	}
+	
+	public ArrayList<Integer> getIndicesOfSequencesWithAllSelected() {
+		ArrayList<Integer> indices = new ArrayList<Integer>();
+		for(int n = 0; n < sequences.size(); n++){
+			if(sequences.get(n).isAllSelected()){
+				indices.add(new Integer(n));
+			}
+		}
+		return indices;
+	}
 
 
 	public void selectSequencesWithIndex(int[] selectedIndex){
 		for(int index: selectedIndex){
 			sequences.get(index).selectAllBases();
 		}
-		
 	}
 
 	public void clearSelection() {
@@ -1115,13 +1124,16 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 		return name;
 	}
 	
-	public void setFirstSelectedName(String newName) {
+	public List<Sequence> setFirstSelectedName(String newName) {
+		List<Sequence> editedSequences = new ArrayList<Sequence>();
 		if(newName == null){
-			return;
+			return editedSequences;
 		}
 		if(getFirstSelected() != null){
+			editedSequences.add(getFirstSelected().getCopy());
 			getFirstSelected().setName(newName);
 		}
+		return editedSequences;
 	}
 	
 	public Sequence getFirstSelected() {
@@ -1166,6 +1178,24 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 	public void selectAll() {
 		for(Sequence seq: sequences){
 			seq.selectAllBases();
+		}
+	}
+	
+	public void selectionExtendRight() {
+		for(Sequence seq: sequences){
+			seq.selectionExtendRight();
+		}
+	}
+	
+	public void selectionExtendLeft() {
+		for(Sequence seq: sequences){
+			seq.selectionExtendLeft();
+		}
+	}
+	
+	public void invertSelection() {
+		for(Sequence seq: sequences){
+			seq.invertSelection();
 		}
 	}
 
@@ -1224,6 +1254,15 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 		for(int n = 0; n < sequences.size(); n++){
 			if(sequences.get(n).hasSelection()){
 				return new Point(sequences.get(n).getFirstSelectedPosition(), n);
+			}
+		}
+		return null;
+	}
+	
+	public Point getLastSelectedPos() {
+		for(int n = 0; n < sequences.size(); n++){
+			if(sequences.get(n).hasSelection()){
+				return new Point(sequences.get(n).getLastSelectedPosition(), n);
 			}
 		}
 		return null;
@@ -1539,13 +1578,11 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 		return editedSequences;
 	}
 
-	public List<Sequence> deleteSelectedBases(boolean undoable) {
+	public List<Sequence> deleteSelectedBases() {
 		List<Sequence> editedSequences = new ArrayList<Sequence>();
 		for(Sequence sequence : sequences){
 			if(sequence.hasSelection()){
-				if(undoable){
-					editedSequences.add(sequence.getCopy());
-				}
+				editedSequences.add(sequence);
 				sequence.deleteSelectedBases();
 			}
 		}	
@@ -1676,4 +1713,40 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 		}
 		return dupes;
 	}
+
+	public int getFirstSelectedWholeColumn() {
+		Point pos = getFirstSelectedPos();
+		if(pos == null){
+			return -1;
+		}
+		else{
+			for(Sequence seq: sequences){
+				// seq has to be long enough
+				if(seq.getLength() > pos.x && !seq.hasSelection()){
+					return -1;
+				}
+			}
+			return pos.x;
+		}	
+	}
+	
+	public int getLastSelectedWholeColumn() {
+		Point pos = getLastSelectedPos();
+		if(pos == null){
+			return -1;
+		}
+		else{
+			for(Sequence seq: sequences){
+				// seq has to be long enough
+				if(seq.getLength() > pos.x && !seq.hasSelection()){
+					return -1;
+				}
+			}
+			return pos.x;
+		}	
+	}
+
+	
+
+	
 }

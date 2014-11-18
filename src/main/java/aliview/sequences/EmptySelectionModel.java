@@ -15,6 +15,9 @@ public class EmptySelectionModel implements SequenceSelectionModel {
 	public void selectAll() {
 		// TODO Auto-generated method stub
 	}
+	
+	public void invertSelection(int length){
+	}
 
 	public int getFirstSelectedPosition() {
 		// TODO Auto-generated method stub

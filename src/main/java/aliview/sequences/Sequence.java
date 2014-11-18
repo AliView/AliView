@@ -103,6 +103,8 @@ public interface Sequence extends Comparable<Sequence>{
 	
 	public int getFirstSelectedPosition();
 	
+	public int getLastSelectedPosition();
+	
 	// selectable movable
 	public void moveSelectionRightIfGapIsPresent();
 	
@@ -141,5 +143,13 @@ public interface Sequence extends Comparable<Sequence>{
 	public int indexOf(char c);
 	
 	public int countChar(char targetChar, int startpos, int endpos);
+
+	public void invertSelection();
+	
+	public void selectionExtendRight();
+	
+	public void selectionExtendLeft();
+	
+	
 
 }

@@ -40,4 +40,6 @@ public interface SequenceSelectionModel extends Cloneable {
 
 	public abstract boolean isAllSelected();
 
+	public abstract void invertSelection(int length);
+
 }

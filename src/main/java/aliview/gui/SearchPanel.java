@@ -13,6 +13,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.DocumentFilter;
+import javax.swing.text.PlainDocument;
 
 import org.apache.log4j.Logger;
 
@@ -34,6 +42,35 @@ public class SearchPanel extends JPanel{
 		searchField = new JTextField();
 		defaultBG_color = searchField.getBackground();
 		searchField.setText("Search");
+//		searchField.getDocument().addDocumentListener(new DocumentListener(){
+//		     public void changedUpdate(    DocumentEvent e){
+//		       logger.info("changed");
+//		      }
+//		     public void insertUpdate(    DocumentEvent e){
+//		    	 logger.info("insert");
+//		    	 String text = searchField.getText();
+//		    	 if(text.contains("\n")){
+//		    		   logger.info("contains \n");
+//				       text = text.replaceAll("\n", "");
+//				       searchField.setText(text);
+//			       }
+//		    	 if(text.contains("\r")){
+//		    		   logger.info("contains \r");
+//				       text = text.replaceAll("\r", "");
+//				       searchField.setText(text);
+//			       }
+//		      }
+//		     public void removeUpdate(    DocumentEvent e){
+//		       
+//		      }
+//		    });
+		
+		
+		if(searchField.getDocument() instanceof PlainDocument){
+			PlainDocument doc = (PlainDocument) searchField.getDocument();
+			doc.setDocumentFilter(new TrimPastedTextFilter());
+		}
+		
 		searchField.setColumns(10);
 		searchField.setEnabled(false);
 		searchField.setHorizontalAlignment(SwingConstants.LEFT);
@@ -108,5 +145,37 @@ public class SearchPanel extends JPanel{
 		searchField.setBackground(NOT_FOUND_COLOR);
 	}
 	
+	class TrimPastedTextFilter extends DocumentFilter {
+		   @Override
+		   public void insertString(FilterBypass fb, int offset, String inText, AttributeSet attrs) throws BadLocationException {
+
+			  logger.info("instr:" + inText);	  
+			  // trim pasted data from spaces (new line or CR are converted to this when pasted=
+			  // length larger than > 1 makes sure we are checking pasted data an still allowing space if typed
+			  if(inText != null && inText.length() > 1){
+				  inText = inText.trim();
+			  }		      
+		      super.insertString(fb, offset, inText, attrs);
+		   }	  
+
+		   @Override
+		   public void replace(FilterBypass fb, int offset, int length, String inText, AttributeSet attrs) throws BadLocationException {		   
+			   logger.info("replace");		   
+			   // trim pasted data from spaces (new line or CR are converted to this when pasted=
+			   // length larger than > 1 makes sure we are checking pasted data an still allowing space if typed
+			   if(inText != null && inText.length() > 1){
+					  inText = inText.trim();
+			   }			   
+			   super.replace(fb, offset, length, inText, attrs);
+		   }
+
+		   @Override
+		   public void remove(FilterBypass fb, int offset, int length) throws BadLocationException { 
+			   logger.info("remove");
+			   super.remove(fb, offset, length);
+		   }
+	}
+	
 }
+
 

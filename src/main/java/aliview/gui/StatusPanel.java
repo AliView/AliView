@@ -134,6 +134,8 @@ public class StatusPanel extends JPanel implements AlignmentListener{
 
 		public void selectionChanged(Alignment source) {
 			
+			logger.info("selectionChanged");
+			
 			this.selectionSize = alignment.getSelectionSize();
 			this.selectedColumnCount = alignment.getSelectedColumnCount();
 			this.selectedSeqCount = alignment.getSelectedSequencesCount();

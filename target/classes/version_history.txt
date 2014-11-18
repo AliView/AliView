@@ -1,5 +1,21 @@
 Version history
 
+
+1.15
+
+- Fixed bug in "count stop codons" function
+- Fixed bug where translation into Aminoacids sometimes not included the end of the alignment
+- Fixed bug on Mac OS X Yosemite and Mavericks and latest java JRE that caused program not to start 
+- Unwanted blanks are trimmed away at start and end of text pasted into the search field
+- Unwanted blanks are trimmed away at start and end of clipboard text in function "Reverse complement clipboard"
+- Removed function "Invert selection"
+- Added functions "Expand selection Right" and "Expand selection Left"
+- Added shortcut keys to menus (Mnemonics)
+- Small change in how shift selection works
+- Selection is displayed in info-panel after performing a Find/search
+- Small improvement in "Recent files" handling
+- Fixed bug where Excludes did not move when whole column was deleted
+
 1.14
 
 - Fixed bug on Windows that caused message window always to be on top when running external commands

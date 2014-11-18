@@ -202,6 +202,11 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 	public int getFirstSelectedPosition() {
 		return selectionModel.getFirstSelectedPosition();
 	}
+	
+	public int getLastSelectedPosition() {
+		return selectionModel.getLastSelectedPosition();
+	}
+	
 
 	/*
 	 * 
@@ -559,9 +564,11 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 
 	public void deleteBasesFromMask(boolean[] mask){
 		int nTruePos = ArrayUtilities.count(mask, true);
-		byte[] newBases = new byte[getBases().length - nTruePos];
+		
+		int maxLen = Math.max(mask.length, getBases().length);
+		byte[] newBases = new byte[maxLen - nTruePos];
 		int destPos = 0;				
-		for(int n = 0; n < getBases().length || n < mask.length ; n++){
+		for(int n = 0; n < getBases().length && n < mask.length ; n++){
 			if(mask[n] == true){
 				// dont copy - this pos is to be deleted
 
@@ -686,6 +693,26 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 			}
 		}
 	}
+	
+	public void selectionExtendRight() {
+		if(selectionModel.hasSelection()){
+			int lastSelectedPos = selectionModel.getLastSelectedPosition();
+			int seqEndPos = getLength() + 1;
+			selectionModel.setSelection(lastSelectedPos, seqEndPos, true);
+		}
+	}
+	
+	public void selectionExtendLeft() {
+		if(selectionModel.hasSelection()){
+			int firstSelectedPos = selectionModel.getLastSelectedPosition();
+			selectionModel.setSelection(0, firstSelectedPos, true);
+		}
+	}
+	
+	public void invertSelection(){
+		selectionModel.invertSelection(getLength());
+	}
+	
 
 	public void deleteAllGaps(){
 		setBases(getUngapedSequence().getBytes());
@@ -747,11 +774,5 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 		}
 		return count;
 	}
-
-
-
-
-
-
 
 }

@@ -106,12 +106,23 @@ public class Alignment implements FileSequenceLoadListener {
 		alignmentListeners .add(listener);
 	}
 	
-	private void fireSequencesChanged(){
-		cachedHistogram = null;
+	private void sequencesChanged(){	
+		// verify alignment meta
+		int len = sequences.getLongestSequenceLength();
 		
+		boolean changed = alignmentMeta.verifyLength(len);
+		if(changed){
+			logger.info("changed");
+			fireAlignmentMetaChanged();
+		}
+		
+		cachedHistogram = null;
 		logger.info("fireSequencesChanged");
 		logger.info("alignmentListeners.size" + alignmentListeners.size());
 		
+		fireSequencesChanged();
+	}
+	private void fireSequencesChanged(){
 		for(AlignmentListener listener: alignmentListeners){
 			listener.sequencesChanged(new AlignmentEvent(this));
 		}
@@ -710,7 +721,7 @@ public class Alignment implements FileSequenceLoadListener {
 		sequences.deleteBasesInAllSequencesFromMask(deleteMask);
 		//and finally remove in AlignmentMeta(excludes, codonpos & charset)
 		alignmentMeta.removeFromMask(deleteMask);
-		fireSequencesChanged();
+		sequencesChanged();
 	}
 
 
@@ -856,7 +867,7 @@ public class Alignment implements FileSequenceLoadListener {
 	public void reverseComplementAlignment(){
 		sequences.reverseComplement();
 		alignmentMeta.reverse();
-		fireSequencesChanged();
+		sequencesChanged();
 	}
 
 
@@ -867,7 +878,9 @@ public class Alignment implements FileSequenceLoadListener {
 	 */
 	
 	public FindObject findInNames(FindObject findObj) {
-		return sequences.findInNames(findObj);	
+		findObj = sequences.findInNames(findObj);
+		fireSelectionChanged();
+		return findObj;
 	}
 	
 	public void clearFindLastPos() {
@@ -876,7 +889,9 @@ public class Alignment implements FileSequenceLoadListener {
 	}
 	
 	public FindObject findInSequences(FindObject findObj){
-		return sequences.findAndSelect(findObj);
+		findObj = sequences.findAndSelect(findObj);
+		fireSelectionChanged();
+		return findObj;
 	}
 	
 	public Sequence getSequenceByName(String name){
@@ -912,17 +927,40 @@ public class Alignment implements FileSequenceLoadListener {
 	public List<Sequence> clearSelectedBases(boolean undoable){
 		List<Sequence> affected =  sequences.replaceSelectedBasesWithGap(undoable);
 		if(affected.size() > 0){
-			fireSequencesChanged();
+			sequencesChanged();
 		}
 		return affected;
 	}
 
-	public List<Sequence> deleteSelectedBases(boolean undoable) {
-		List<Sequence> affected =  sequences.deleteSelectedBases(undoable);
-		if(affected.size() > 0){
-			fireSequencesChanged();
+	public void deleteSelectedBases() {
+		
+		int first = sequences.getFirstSelectedWholeColumn();
+		// If whole column is selected do a bit different since we also want to delete
+		// in meta
+		if(first != -1){
+			int last = sequences.getLastSelectedWholeColumn();
+			
+			logger.info("first" + first);
+			logger.info("last" + last);
+			
+			// create a bit-mask with pos to delete
+			boolean[] deleteMask = new boolean[getMaxX()];
+			for(int n = first; n <= last; n++){
+				deleteMask[n] = true;
+			}
+			sequences.deleteBasesInAllSequencesFromMask(deleteMask);
+			//and finally remove in AlignmentMeta(excludes, codonpos & charset)
+			alignmentMeta.removeFromMask(deleteMask);
+			sequencesChanged();
 		}
-		return affected;
+		// only delete in selected sequences
+		else{	
+			List<Sequence> affected =  sequences.deleteSelectedBases();
+			if(affected.size() > 0){
+				sequencesChanged();
+			}
+		}
+		
 	}
 
 	public String getConsensus(){
@@ -952,7 +990,7 @@ public class Alignment implements FileSequenceLoadListener {
 
 			//and finally remove in AlignmentMeta(excludes, codonpos & charset)
 			alignmentMeta.removeFromMask(deleteMask);
-			fireSequencesChanged();
+			sequencesChanged();
 		}
 
 	}
@@ -1002,7 +1040,7 @@ public class Alignment implements FileSequenceLoadListener {
 		logger.info("move");
 		List<Sequence> previousState = sequences.moveSelectionRightIfGapIsPresent(undoable);
 		if(previousState.size()> 0){
-			fireSequencesChanged();
+			sequencesChanged();
 		}
 		return previousState;
 	}
@@ -1010,7 +1048,7 @@ public class Alignment implements FileSequenceLoadListener {
 	public List<Sequence> moveSelectionLeft(boolean undoable) {
 		List<Sequence> previousState = sequences.moveSelectionLeftIfGapIsPresent(undoable);
 		if(previousState.size()> 0){
-			fireSequencesChanged();
+			sequencesChanged();
 		}
 		return previousState;
 	}
@@ -1018,7 +1056,7 @@ public class Alignment implements FileSequenceLoadListener {
 	public List<Sequence> moveSelection(int diff, boolean undoable) {
 		List<Sequence> previousState = sequences.moveSelectionIfGapIsPresent(diff, undoable);
 		if(previousState.size()> 0){
-			fireSequencesChanged();
+			sequencesChanged();
 		}
 		return previousState;
 	}
@@ -1033,7 +1071,7 @@ public class Alignment implements FileSequenceLoadListener {
 		List<Sequence> previousState = sequences.deleteGapMoveLeft(undoable);
 		if(previousState.size()> 0){
 			sequences.rightPadWithGapUntilEqualLength();
-			fireSequencesChanged();
+			sequencesChanged();
 		}
 		return previousState;
 	}
@@ -1042,7 +1080,7 @@ public class Alignment implements FileSequenceLoadListener {
 		List<Sequence> previousState = sequences.deleteGapMoveRight(undoable);
 		if(previousState.size()> 0){
 			sequences.rightPadWithGapUntilEqualLength();
-			fireSequencesChanged();
+			sequencesChanged();
 		}
 		return previousState;
 	}
@@ -1051,7 +1089,7 @@ public class Alignment implements FileSequenceLoadListener {
 		List<Sequence> previousState = sequences.insertGapLeftOfSelectedBase(undoable);
 		if(previousState.size()> 0){
 			sequences.rightPadWithGapUntilEqualLength();
-			fireSequencesChanged();
+			sequencesChanged();
 		}
 		return previousState;
 	}
@@ -1060,7 +1098,7 @@ public class Alignment implements FileSequenceLoadListener {
 		List<Sequence> previousState = sequences.insertGapRightOfSelectedBase(undoable);
 		if(previousState.size()> 0){
 			sequences.leftPadWithGapUntilEqualLength();
-			fireSequencesChanged();
+			sequencesChanged();
 		}
 		return previousState;
 	}
@@ -1068,7 +1106,7 @@ public class Alignment implements FileSequenceLoadListener {
 	public boolean rightPadSequencesWithGapUntilEqualLength(){	
 		boolean wasPadded = sequences.rightPadWithGapUntilEqualLength();
 		if(wasPadded){
-			fireSequencesChanged();
+			sequencesChanged();
 		}
 		return wasPadded;
 		
@@ -1077,7 +1115,7 @@ public class Alignment implements FileSequenceLoadListener {
 	public boolean leftPadSequencesWithGapUntilEqualLength() {
 		boolean wasPadded = sequences.leftPadWithGapUntilEqualLength();
 		if(wasPadded){
-			fireSequencesChanged();
+			sequencesChanged();
 		}
 		return wasPadded;
 	}
@@ -1171,7 +1209,7 @@ public class Alignment implements FileSequenceLoadListener {
 				}
 			}
 		}	
-		this.alignmentMeta.getCodonPositions().fireUpdated();
+		this.alignmentMeta.getCodonPositions().positionsUpdated();
 		fireAlignmentMetaChanged();
 	}
 
@@ -1184,13 +1222,13 @@ public class Alignment implements FileSequenceLoadListener {
 				}
 			}
 		}
-		this.alignmentMeta.getCodonPositions().fireUpdated();
+		this.alignmentMeta.getCodonPositions().positionsUpdated();
 		fireAlignmentMetaChanged();
 	}
 
 	public void complementAlignment() {	
 		sequences.complement();
-		fireSequencesChanged();
+		sequencesChanged();
 	}
 
 	public boolean isEditedAfterLastSave() {
@@ -1428,15 +1466,10 @@ public class Alignment implements FileSequenceLoadListener {
 		return (sequences.getSequenceType() == SequenceUtils.TYPE_AMINO_ACID);
 	}
 
-	public void expandSelectionDown() {
-		sequences.expandSelectionDown();
-		fireSelectionChanged();
-	}
-
 	public boolean replaceSelectedWithChar(char newChar) {
 		boolean wasReplaced = sequences.replaceSelectedWithChar(newChar);
 		if(wasReplaced){
-			fireSequencesChanged();
+			sequencesChanged();
 		}
 		return wasReplaced;
 		
@@ -1449,7 +1482,7 @@ public class Alignment implements FileSequenceLoadListener {
 
 	public void realignNucleotidesUseThisAAAlignmentAsTemplate(Alignment realignment) {
 		sequences.realignNucleotidesUseTheseAASequenceAsTemplate(realignment.getSequences(), alignmentMeta.getCodonPositions(), geneticCode);
-		fireSequencesChanged();
+		sequencesChanged();
 	}
 
 	public void deleteAllGaps() {
@@ -1460,19 +1493,42 @@ public class Alignment implements FileSequenceLoadListener {
 		boolean wasPadded = sequences.rightPadWithGapUntilEqualLength();
 		boolean wasTrimed = sequences.rightTrimSequencesRemoveGapsUntilEqualLength();
 		if(wasPadded || wasTrimed){
-			fireSequencesChanged();
+			sequencesChanged();
 		}
 	}
 	
 	public void trimSequences(){
 		boolean wasTrimed = sequences.rightTrimSequencesRemoveGapsUntilEqualLength();
 		if( wasTrimed){
-			fireSequencesChanged();
+			sequencesChanged();
 		}
 	}
 
 	public void selectAll(){
 		sequences.selectAll();
+		fireSelectionChanged();
+	}
+	
+	public void selectionExtendRight() {
+		sequences.selectionExtendRight();
+		fireSelectionChanged();
+	}
+	
+	public void selectionExtendLeft() {
+		sequences.selectionExtendLeft();
+		fireSelectionChanged();
+	}
+	
+	public void expandSelectionDown() {
+		sequences.expandSelectionDown();
+		fireSelectionChanged();
+	}
+	
+	public void invertSelection() {
+		long startTime = System.currentTimeMillis();
+		sequences.invertSelection();
+		long endTime = System.currentTimeMillis();
+		logger.info("Invert took" + (endTime - startTime) + " milliseconds");
 		fireSelectionChanged();
 	}
 
@@ -1579,7 +1635,7 @@ public class Alignment implements FileSequenceLoadListener {
 		boolean undoable = true;
 		List<Sequence> affected = sequences.replaceSelectedCharactersWithThis(realignment.getSequences(), undoable);
 		if(affected.size() > 0){
-			fireSequencesChanged();
+			sequencesChanged();
 		}
 	}
 
@@ -1667,10 +1723,13 @@ public class Alignment implements FileSequenceLoadListener {
 
 	public int countStopCodons() {
 		int totalCount = 0;
-		if(isNucleotideAlignment()){		
+		if(isNucleotideAlignment()){
+	//		logger.info("is nucleotide");
 			AATranslator aaTransSeq = new AATranslator(getAlignentMeta().getCodonPositions(),getGeneticCode());
 			for(Sequence seq: sequences){
 				aaTransSeq.setSequence(seq);
+	//			logger.info("seq len" + seq.getLength());
+	//			logger.info(aaTransSeq.countStopCodon());
 				totalCount += aaTransSeq.countStopCodon();	
 			}
 		}else{
@@ -1808,6 +1867,5 @@ public class Alignment implements FileSequenceLoadListener {
 			Messenger.showOKOnlyMessage(Messenger.NO_FASTA_INDEX_COULD_BE_SAVED);
 		}
 	}
-
 	
 }

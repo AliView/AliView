@@ -40,6 +40,7 @@ public class Test implements Cloneable{
 
 	public static void main(String[] args) throws CloneNotSupportedException {
 		
+		
 		//getAATextInfo(true);
 		
 		logger.info(8 % 3);

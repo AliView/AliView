@@ -102,7 +102,7 @@ public class TranslationToolPanel extends JPanel implements AlignmentListener {
 	Integer[] readingFrames = new Integer[]{1,2,3};
 	
 	readingFrameBox = new JComboBox();
-	readingFrameBox.setMaximumSize(new Dimension(40, 25));
+	readingFrameBox.setMaximumSize(new Dimension(60, 25));
 	readingFrameBox.setPreferredSize(new Dimension(40, 25));
 	for(Integer value: readingFrames){
 			readingFrameBox.addItem(value);

@@ -38,14 +38,11 @@ public class AlignmentMeta {
 			isMetaNeeded = true;
 		}
 		return isMetaNeeded;
-		
 	}
-
 
 	public Excludes getExcludes() {
 		return this.excludes;
 	}
-
 
 	public CodonPositions getCodonPositions() {
 		return this.codonPositions;
@@ -111,19 +108,36 @@ public class AlignmentMeta {
 
 
 	public void removeFromMask(boolean[] deleteMask) {
+		// Null check
+		if(deleteMask == null || deleteMask.length == 0){
+			return;
+		}
 
-		logger.info(deleteMask.length);
-
-		for(int n = excludes.getLength() - 1; n>= 0; n--){
+		// remove reverse
+		for(int n = deleteMask.length - 1; n>= 0; n--){
 			if(deleteMask[n] == true){
-				excludes.removePosition(n);
-				codonPositions.removePosition(n);
-				for(CharSet charset: charsets){
-					charset.removePosition(n); 
-				}
+				removePosition(n);
 			}		
 		}
 	}
+	
+	public void removePosition(int n) {	
+		excludes.removePosition(n);
+		codonPositions.removePosition(n);
+		for(CharSet charset: charsets){
+			charset.removePosition(n); 
+		}
+	}
+	
+	public void insertPosition(int n) {	
+		excludes.insertPosition(n);
+		codonPositions.insertPosition(n);
+		// dont do anything with charset
+//		for(CharSet charset: charsets){
+//			charset.removePosition(n); 
+//		}
+	}
+	
 
 
 	public void excludePosition(int i) {
@@ -134,6 +148,24 @@ public class AlignmentMeta {
 
 	public ArrayList<CharSet> getCharsets() {
 		return this.charsets;
+	}
+
+	public boolean verifyLength(int len){
+		boolean chandged = false;
+		if(excludes != null){
+			if(excludes.getLength() != len){
+//				excludes.insertPosition(excludes.getLength());
+			}
+		}
+		if(codonPositions != null){
+			if(codonPositions.getLength() != len){
+				//codonPositions.insertPosition(codonPositions.getLength());
+				codonPositions.resize(len);
+				chandged = true;
+			}
+		}
+		
+		return chandged;
 	}
 
 

@@ -208,7 +208,8 @@ public class AATranslator{
 			return AminoAcid.X;
 		}else{
 			byte[] codon = getTripletAt(codonPos.startPos);
-			return AminoAcid.getAminoAcidFromCodon(codon, genCode);
+			AminoAcid aa = AminoAcid.getAminoAcidFromCodon(codon, genCode);
+			return aa;
 		}
 	}
 	
@@ -263,6 +264,7 @@ public class AATranslator{
 	public int countStopCodon(){
 		int counter = 0;
 		int transLen = getTranslatedAminAcidSequenceLength();
+//		logger.info("transLen" + transLen);
 		for(int n = 0; n < transLen; n++){
 			AminoAcid aa = getAAinTranslatedPos(n);
 			if(aa == AminoAcid.STOP){

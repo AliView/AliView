@@ -2,38 +2,42 @@ package utils.nexus;
 
 import java.util.ArrayList;
 
+import org.apache.log4j.Logger;
+
+
 public class TranslatedCodonPos {
-	
+	private static final Logger logger = Logger.getLogger(TranslatedCodonPos.class);
 	private ArrayList<CodonPos> backend;
 	private PositionsArray positionsArray;
-	private int readingFrame;
+	private int readingFrame = 1;
 	
-	public TranslatedCodonPos(PositionsArray positionsArray) {
+	public TranslatedCodonPos(PositionsArray positionsArray, int readingFrame) {
 		this.positionsArray = positionsArray;
-		this.readingFrame = 1;
+		this.readingFrame = readingFrame;
 		if(positionsArray.isAnythingButDefault()){
 			createNewBackend(positionsArray);
 		}
-		
 	}
 	
 	private void createNewBackend(PositionsArray positionsArray) {
-	
+		logger.info("create new backend" + positionsArray.getLength());
 		int x = 0;
 		int gap = 0;
 		this.backend = new ArrayList<CodonPos>();
-		
 		CodonPos orfanPos = null;
 		while(x < positionsArray.getLength()){
 			if(isFullCodonStartingAt(x)){
 				backend.add(new CodonPos(x,  x + 2));
 				// clear gap
 				gap = 0;
+				
 				x = x + 3; // move one frame ahead (this is a full codon)
 			}
 			else{
+				logger.info("no full codon gap = " + gap);
+				logger.info("no full codon x = " + x);
 				if(gap > 0){
-					// add new end pos to the last Pos
+					// add new end pos to  the last Pos
 					orfanPos.addEndPos(x);
 				}
 				// there is a gap in protein translation
@@ -86,19 +90,23 @@ public class TranslatedCodonPos {
 	}
 
 	public int size() {
+		int size = 0;
 		if(backend != null && backend.size() > 0){
-			return backend.size();
+			size = backend.size();
 		}else{
-			return (int) Math.ceil(positionsArray.getLength() / 3);
+			size = (int) Math.ceil((double)positionsArray.getLength() / (double)3);
 		}
+		return size;
 	}
 
 	public CodonPos get(int n) {
 		if(backend != null && backend.size() > 0){
 			return backend.get(n);
-		}else{		
-			int start = n * 3;
+		}else{
+//			logger.info("readingFrame" + readingFrame);
+			int start = n * 3 + (readingFrame - 1);
 			int end = start + 2;
+//			logger.info("start" + start);
 			return new CodonPos(start, end);
 		}
 			

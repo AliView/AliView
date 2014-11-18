@@ -107,7 +107,7 @@ public class NexusUtilities {
 						codonPositions.setPosition(n - 1,0);
 					}
 				}
-				codonPositions.fireUpdated();
+				codonPositions.positionsUpdated();
 			}
 			// TODO questionmarkpos is treated as n
 			// TODO with n range does not ends with \3

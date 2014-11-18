@@ -40,6 +40,9 @@ public class NexusBoolArray{
 	}
 
 	public boolean valueAt(int position) {
+		if(!rangeCheck(position)){
+			return false;
+		}
 		return positions[position];
 	}
 
@@ -55,7 +58,21 @@ public class NexusBoolArray{
 	}
 	
 	public void removePosition(int index){
-		positions = ArrayUtils.remove(positions, index);
+		if(rangeCheck(index)){
+			positions = ArrayUtils.remove(positions, index);
+		}
+		
+	}
+
+	private boolean rangeCheck(int index) {
+		if(positions == null){
+			return false;
+		}
+		if(positions.length <= index){
+			return false;
+		}
+		return true;
+		
 	}
 
 	public int countValue(boolean value) {
@@ -72,7 +89,9 @@ public class NexusBoolArray{
 
 	public void setTrueFromNexusRange(NexusRange range) {
 		for(int n = range.getMinimumInteger(); n <= range.getMaximumInteger(); n++){
-			positions[n - 1] = true; // always minus one because alignment start with pos 1 in exset (but 0 internally in program)
+			if(rangeCheck(n - 1)){
+				positions[n - 1] = true; // always minus one because alignment start with pos 1 in exset (but 0 internally in program)
+			}
 		}	
 	}
 
@@ -90,6 +109,12 @@ public class NexusBoolArray{
 		System.arraycopy(positions, 0, newPositions, 0, positions.length);
 		System.arraycopy(morePositions.getBooleanArray(), 0, newPositions, positions.length, morePositions.getBooleanArray().length);
 		this.positions = newPositions;
+	}
+	
+	public void insertPosition(int n) {
+		if(this.positions != null){
+			this.positions = ArrayUtils.add(this.positions, n, false);
+		}
 	}
 
 	public boolean isTrueValContinous() {

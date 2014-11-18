@@ -2058,6 +2058,348 @@ public class AlignmentPane extends JPanel{
 		}
 
 	} // end Ruler class
+	
+	private class AlignmentCharsetRuler extends JPanel{
+
+		private AlignmentPane alignmentPane;
+
+		public AlignmentCharsetRuler(AlignmentPane alignmentPane) {
+			this.alignmentPane = alignmentPane;
+		}
+
+
+		public void paintComponent(Graphics g){
+			super.paintComponent(g);
+			paintRuler(g);
+		}
+
+		public void paintRuler(Graphics g){
+
+			long startTime = System.currentTimeMillis();
+
+			//super.paintComponent(g);
+			Graphics2D g2d = (Graphics2D) g;
+
+			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,  
+					RenderingHints.VALUE_ANTIALIAS_OFF); 
+			g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+					RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+			g2d.setRenderingHint(RenderingHints.KEY_RENDERING,
+					RenderingHints.VALUE_RENDER_SPEED);
+			//			g2d.setRenderingHint(RenderingHints.KEY_RENDERING,
+			//					RenderingHints.VALUE_RENDER_QUALITY);
+			g2d.setRenderingHint(RenderingHints.KEY_DITHERING,
+					RenderingHints.VALUE_DITHER_DISABLE);		
+
+			//			g2d.setRenderingHint(RenderingHints.KEY_RENDERING,
+			//					RenderingHints.VALUE_RENDER_QUALITY);
+			//			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+			//					RenderingHints.VALUE_ANTIALIAS_ON);
+			//			g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+			//								RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+			//			//g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
+			//					RenderingHints.VALUE_FRACTIONALMETRICS_OFF);
+			//g2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING,
+			//					RenderingHints.VALUE_COLOR_RENDER_SPEED);
+			//g2d.setRenderingHint(RenderingHints.KEY_DITHERING,
+			//					RenderingHints.VALUE_DITHER_DISABLE);
+	
+
+	//		g2d.setFont(baseFont);
+
+			// What part of alignment matrix is in view (what part of matrix is in graphical view)
+			Rectangle paneClip = alignmentPane.getVisibleRect();
+			Rectangle matrixClip = paneCoordToMatrixCoord(paneClip);
+
+			// todo calculate from font metrics
+			double charCenterXOffset = 0.9997;
+
+
+			// NUMBERS
+			int rulerCharWidth = 11;
+			//int rulerCharHeight = 11;
+			Font rulerFont = new Font(alignmentPane.getFont().getName(), alignmentPane.getFont().getStyle(), (int)rulerCharWidth);
+			g2d.setFont(rulerFont);
+
+			//
+			// Draw ruler background
+			//
+			Rectangle rulerRect = new Rectangle(this.getVisibleRect());
+			g2d.setColor(colorSchemeNucleotide.getBaseBackgroundColor(NucleotideUtilities.GAP));
+			g2d.fill(rulerRect);
+
+			int offsetDueToScrollPanePosition = 0;
+
+			
+			
+			
+
+			// Normal char-with smaller 
+			if(charWidth >= 1){
+
+				offsetDueToScrollPanePosition = paneClip.x % (int)charWidth;
+				offsetDueToScrollPanePosition = offsetDueToScrollPanePosition -1;
+
+				// Tickmarks
+				int posTick = 0;
+				int count = 0;
+				
+				int maxY = alignment.getMaxY();
+				int maxX = alignment.getMaxX();
+				if(showTranslationOnePos){
+					maxX = alignment.getAlignentMeta().getCodonPositions().getTranslatedAminAcidLength();
+				}
+
+				for(int x = matrixClip.x ; x < matrixClip.getMaxX() + 1; x++){
+
+					// Only draw part of matrix that exists 
+					if(maxY > 0 && x >= 0 && x < maxX){
+
+						// draw codon-pos background on ruler depending on codonpos
+						if(drawCodonPosRuler && ! showTranslationOnePos){
+							int codonPos = alignment.getCodonPosAt(x);
+							//logger.info(codonPos);
+							Color codonPosColor = Color.GREEN;
+							if(codonPos == 0){
+								codonPosColor = Color.LIGHT_GRAY;
+							}else if(codonPos == 1){
+								codonPosColor = Color.GREEN;
+							}else if(codonPos == 2){
+								codonPosColor = Color.orange;
+							}else if(codonPos == 3){
+								codonPosColor = Color.red;
+							}
+
+							g2d.setColor(codonPosColor);
+
+							int boxHeight = 5;
+							// we are drawing not on a large scrollable ruler, but a window sized fixed pane we have to adjust with offsetDueToScrollPanePosition
+							// since it is hidden in scrollpane 
+							g2d.fillRect((int)(posTick * charCenterXOffset * charWidth - offsetDueToScrollPanePosition), (int) (rulerRect.getMaxY() - boxHeight), (int)charWidth, boxHeight);
+						}
+
+
+
+						// draw tickmarks
+						g2d.setColor(Color.DARK_GRAY);
+						// make every 5 tickmarks a bit bigger
+						if(x % 5 == 4 && charWidth > 0.6){ // it has to be 4 and not 0 due to the fact that 1:st base har position 0 in matrix
+							// we are drawing not on a large scrollable ruler, but a window sized fixed pane we have to adjust with offsetDueToScrollPanePosition
+							// since it is hidden in scrollpane 
+							g2d.drawLine((int)(posTick * charCenterXOffset * charWidth + charWidth/2 - offsetDueToScrollPanePosition), (int) (rulerRect.getMaxY() - 2), (int)(posTick * charCenterXOffset * charWidth +  charWidth/2 - offsetDueToScrollPanePosition), (int)rulerRect.getMaxY() - 5);
+						}
+						// dont draw smallest tick if to small
+						else if(charWidth > 4){
+							// we are drawing not on a large scrollable ruler, but a window sized fixed pane we have to adjust with offsetDueToScrollPanePosition
+							// since it is hidden in scrollpane 
+							g2d.drawLine((int)(posTick * charCenterXOffset * charWidth + charWidth/2 - offsetDueToScrollPanePosition), (int) (rulerRect.getMaxY() - 2), (int)(posTick * charCenterXOffset * charWidth +  charWidth/2 - offsetDueToScrollPanePosition), (int)rulerRect.getMaxY() - 3);
+						}
+						
+						
+						// and numbers
+						
+						
+						posTick ++;
+					}
+					count ++;
+				}
+
+				// NUMBERS
+
+				// Only draw every xx pos
+				int drawEveryNpos = 10;
+
+				if(charWidth < 4){
+					drawEveryNpos = 50;
+				}else if(charWidth < 5){
+					drawEveryNpos = 20;
+				}
+
+				// position numbers
+				int lastTextEndPos = 0;
+				int pos = 0;
+				for(int x = matrixClip.x ; x < matrixClip.getMaxX() + 1; x++){
+
+					if(x % drawEveryNpos == 0){
+						String posText = Integer.toString(x);
+						int stringSizeOffset = g2d.getFontMetrics().stringWidth(posText) / 2;
+						//int stringSizeOffset = (int)((posText.length()*0.8 * rulerCharWidth) / 2) + 5;
+						//int stringSizeOffset = ( posText.length()*(rulerFont.getSize()) ) / 2;
+					//	int stringSizeOffset = (int)((posText.length()*0.8 * rulerCharWidth) / 2) + 5;
+						int textPosX = (int)((pos -1) * charCenterXOffset * charWidth + charWidth/2 - offsetDueToScrollPanePosition) - stringSizeOffset;
+						// dont draw on top of last (if number is very long)
+						if(lastTextEndPos < textPosX){
+							g2d.drawString(posText, textPosX, 10);
+							lastTextEndPos = textPosX + stringSizeOffset + 40; // add 40 extra space between numbers
+						}
+					}
+					pos ++;
+				}	
+			}
+			// Less than one pix char size 
+			else{
+
+
+
+				double seqOffsetVisiblePanePos = matrixClip.getMinX() -1; //(double)paneClip.x / charWidth;
+
+
+				// pos per pixel
+				//	double posPerPix = 1/charWidth;
+
+				double posPerPix = matrixClip.getWidth() / paneClip.getWidth();
+
+				int xStep = 10;
+
+				if(posPerPix < 2.5){
+					xStep = 10;
+				}
+				else{	
+					// This loop is the same as all the commented (else if) below
+					// first set something if something in loop goes wrong...
+					xStep = 100000000;
+					for(int posPixRange = 5; posPixRange < Integer.MAX_VALUE; posPixRange = (int)(posPixRange * 2)){		
+						if(posPerPix < posPixRange){
+							xStep = posPixRange * 5;
+
+							break;
+						}
+					}
+				}
+
+
+				/*
+				else if(posPerPix < 5){
+					xStep = 25;
+				}
+				else if(posPerPix < 10){
+					xStep = 50;
+				}
+				else if(posPerPix < 20){
+					xStep = 100;
+				}
+				else if(posPerPix < 40){
+					xStep = 200;
+				}
+				else if(posPerPix < 80){
+					xStep = 400;
+				}
+				else if(posPerPix < 160){
+					xStep = 800;
+				}
+				else if(posPerPix < 320){
+					xStep = 1600;
+				}
+				else if(posPerPix < 640){
+					xStep = 3200;
+				}
+				else if(posPerPix < 1000){
+					xStep = 5000;
+				}
+				else if(posPerPix < 2000){
+					xStep = 10000;
+				}
+				else{
+					xStep = 80000;
+				}
+
+				 */
+
+
+				double startPosSeq = roundToClosestUpper((int)seqOffsetVisiblePanePos,xStep);
+				
+				int startPosPane = (int) (charWidth * startPosSeq);
+
+				//				logger.info("ruler startPosSeq" + startPosSeq);
+				//				logger.info("ruler startPosPane" + startPosPane);		
+				//				logger.info("posPerPix" + posPerPix);
+
+				
+				int maxY = alignment.getMaxY();
+				int maxX = alignment.getMaxX();
+				if(showTranslationOnePos){
+					maxX = alignment.getAlignentMeta().getCodonPositions().getTranslatedAminAcidLength();
+				}
+
+				int maxVisibleSeq = (int)matrixClip.getMaxX();
+				logger.info("maxVisibleSeq" + maxVisibleSeq + 200);
+
+				int lastTextEndPos = 0;
+
+				// Tickmarks
+				int countTicks = 0;
+
+				// Same color for everything
+				g2d.setColor(Color.DARK_GRAY);
+
+				// X Loop Start
+				for(int xSeq = (int)startPosSeq; xSeq < maxVisibleSeq; xSeq = xSeq + xStep){
+
+					// get closest pane pos
+					int xPane = (int)  ( (double) xSeq / posPerPix ); 
+					//					
+					//					logger.info("maxX" + maxX);
+					//					logger.info("xPane" + xPane);
+
+					// Only draw part of matrix that exists 
+					if(maxY > 0 && xSeq >= 0 && xSeq < maxX){
+
+						// no no codon-pos-ruler
+
+
+						// we are drawing not on a large scrollable ruler, but a window sized fixed pane we have to adjust with pane.x
+						// since it is hidden in scrollpane
+						int tickPosX = (xPane - paneClip.x);
+
+						// larger and text every 10-interval
+						int tickSize;	
+						int largerInterval = xStep * 10;
+
+						if(xSeq % largerInterval == 0){																				
+							String posText = Integer.toString(xSeq);
+							
+							int stringSizeOffset = g2d.getFontMetrics().stringWidth(posText) / 2;
+							
+			//				int stringSizeOffset = ( posText.length()*(rulerFont.getSize() -1) ) / 2;
+							//int stringSizeOffset = (int)((posText.length() * (rulerCharWidth)) / 2) ;
+							int textPosX = (int)(tickPosX - stringSizeOffset);
+							// dont draw text outside
+							if(textPosX >=0){
+								// dont draw on top of last (if number is very long)
+								if(lastTextEndPos < textPosX){
+									g2d.drawString(posText, textPosX, 10);
+									lastTextEndPos = textPosX + stringSizeOffset + 40; // add 40 extra space between numbers
+								}
+							}
+							// larger tick size
+							tickSize = 3;	
+						}else{
+							// smaller tick size
+							tickSize = 1;
+						}		
+
+						// draw tick
+						g2d.drawLine(tickPosX, (int) (rulerRect.getMaxY() - 2),tickPosX, (int)rulerRect.getMaxY() - 2 - tickSize);
+
+						countTicks ++;
+					}
+				}
+
+			} // end draw small char
+
+			long endTime = System.currentTimeMillis();
+			logger.info("Ruler PaintComponent took " + (endTime - startTime) + " milliseconds");
+
+		}
+		
+		private int roundToClosestUpper(int inval, int roundTo) {
+			// int rounded = ((num + 99) / 100 ) * 100;
+			int rounded = ((inval + roundTo -1) / roundTo ) * roundTo;
+			return rounded;
+		}
+
+
+	} // end CodonPosRuler class
 
 }
 

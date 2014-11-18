@@ -102,4 +102,9 @@ public class Excludes{
 	public void removePosition(int n) {
 		this.positions.removePosition(n);
 	}
+
+	public void insertPosition(int n) {
+		this.positions.insertPosition(n);
+		
+	}
 }

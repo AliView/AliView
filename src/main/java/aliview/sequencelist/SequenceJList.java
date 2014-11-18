@@ -243,6 +243,23 @@ public class SequenceJList extends javax.swing.JList{
 		this.setSelected(selection);
 	}
 	
+	public boolean hasSelection() {
+		return ! getSelectionModel().isSelectionEmpty();
+	}
+	
+	public void invertSelection(){
+		List<Integer> newSelection = new ArrayList<Integer>();
+		
+		for(int n = 0; n < this.getModel().getSize(); n++){
+			if(! this.isSelectedIndex(n)){
+				newSelection.add(new Integer(n));
+			}
+		}
+		setSelectedIndices(newSelection);
+	}
+	
+
+	
 	@Override
 	public Sequence[] getSelectedValues() {
 		Object[] vals = super.getSelectedValues();
@@ -263,7 +280,8 @@ public class SequenceJList extends javax.swing.JList{
 	}
 
 	public void validateSelection() {
-		//ArrayList<Integer> indices = this.getModel().getIndicesOfSequencesWithSelection();		
-		//setSelectedIndices(indices);
+		ArrayList<Integer> indices = this.getModel().getIndicesOfSequencesWithAllSelected();
+		setSelectedIndices(indices);
 	}
+
 }

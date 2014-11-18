@@ -104,6 +104,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 		aliViewWindow = aliViewWin;
 
 		JMenu mnFile = new JMenu("File");
+		mnFile.setMnemonic(KeyEvent.VK_F);
 		this.add(mnFile);
 
 		JMenuItem mntmNew = new JMenuItem("New");
@@ -181,7 +182,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 		mnFile.add(mntmSaveAlignmentAsNexus);
 		loadedAlignmentFunctions.add(mntmSaveAlignmentAsNexus);
 
-		JMenuItem mntmSaveAlignmentAsSimpleNexus = new JMenuItem("Save as Nexus (Simplified Names - e.g. for MrBayes)");
+		JMenuItem mntmSaveAlignmentAsSimpleNexus = new JMenuItem("Save as Nexus (Illegal name chars replaced by _ (e.g. for MrBayes)");
 		mntmSaveAlignmentAsSimpleNexus.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				aliViewWindow.saveAlignmentAsFileViaChooser(FileFormat.NEXUS_SIMPLE, false);
@@ -410,6 +411,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 
 
 		JMenu mnEdit = new JMenu("Edit");
+		mnEdit.setMnemonic(KeyEvent.VK_E);
 		this.add(mnEdit);
 
 		undoButton = new JMenuItem("Undo");
@@ -699,6 +701,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 			mnEdit.add(mntmPreferences);
 		}
 		JMenu mnSelection = new JMenu("Selection");
+		mnSelection.setMnemonic(KeyEvent.VK_S);
 		this.add(mnSelection);
 
 
@@ -721,7 +724,38 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 		mnSelection.add(mntmClearSelection);
 		hasSelectionFunctions.add(mntmClearSelection);
 
-
+//		JMenuItem mntmInvertSelection = new JMenuItem("Invert selection");
+//		mntmInvertSelection.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//				aliViewWindow.invertSelection();
+//			}
+//		});
+//		//mntmInvertSelection.setAccelerator(OSNativeUtils.getSelectAllKeyAccelerator());
+//		mntmInvertSelection.setMnemonic(KeyEvent.VK_I);
+//		mnSelection.add(mntmInvertSelection);
+//		hasSelectionFunctions.add(mntmInvertSelection);
+		
+		JMenuItem mntmExpandSelectionRight = new JMenuItem("Expand selection Right");
+		mntmExpandSelectionRight.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				aliViewWindow.expandSelectionRight();
+			}
+		});
+		mntmExpandSelectionRight.setAccelerator(OSNativeUtils.getSelectionExpandRightKeyAccelerator());
+		mnSelection.add(mntmExpandSelectionRight);
+		hasSelectionFunctions.add(mntmExpandSelectionRight);
+		
+		JMenuItem mntmExpandSelectionLeft = new JMenuItem("Expand selection Left");
+		mntmExpandSelectionLeft.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				aliViewWindow.expandSelectionLeft();
+			}
+		});
+		mntmExpandSelectionLeft.setAccelerator(OSNativeUtils.getSelectionExpandLeftKeyAccelerator());
+		mnSelection.add(mntmExpandSelectionLeft);
+		hasSelectionFunctions.add(mntmExpandSelectionLeft);
+		
+		
 		mnSelection.add(new JSeparator());
 
 
@@ -868,6 +902,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 
 
 		JMenu mnViewMenu = new JMenu("View");
+		mnViewMenu.setMnemonic(KeyEvent.VK_V);
 		this.add(mnViewMenu);
 
 		// This way of binding key action to menu buttom makes repeat work much faster
@@ -1126,6 +1161,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 
 
 		JMenu mnAlign = new JMenu("Align");
+		mnAlign.setMnemonic(KeyEvent.VK_A);
 		this.add(mnAlign);
 
 
@@ -1374,6 +1410,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 		 */
 
 		JMenu mnPrimer = new JMenu("Primer");
+		mnPrimer.setMnemonic(KeyEvent.VK_P);
 		this.add(mnPrimer);
 
 		JMenuItem mntmPrimerInCurrent = new JMenuItem("Find primer in current selection");
@@ -1398,10 +1435,12 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 
 		// Menu with External Commands
 		mnExternal = new JMenu("External commands");
+		mnExternal.setMnemonic(KeyEvent.VK_E);
 		this.add(mnExternal);
 		rebuildExternalCommandsSubmenu();
 
 		JMenu mnHelp = new JMenu("Help");
+		mnHelp.setMnemonic(KeyEvent.VK_H);
 		this.add(mnHelp);
 
 		JMenuItem mntmHelpOpen = new JMenuItem("Help");

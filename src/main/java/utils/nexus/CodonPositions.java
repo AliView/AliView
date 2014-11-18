@@ -27,7 +27,8 @@ public class CodonPositions{
 	}
 	
 	public void createTranslatedCodonPositions(){
-		this.translatedCodonPos = new TranslatedCodonPos(positionsArray);	
+		logger.info("new translated");
+		this.translatedCodonPos = new TranslatedCodonPos(positionsArray, this.readingFrame);	
 	}
 
 	public boolean isNonCoding(int pos) {
@@ -39,8 +40,12 @@ public class CodonPositions{
 	}
 	
 	public int getAminoAcidPosFromNucleotidePos(int pos){
+//		logger.info("pos=" + pos);
+//		logger.info("getTranslatedCodonPos().size()" + getTranslatedCodonPos().size());
 		for(int n = 0; n < getTranslatedCodonPos().size(); n++){
 			CodonPos cPos = getTranslatedCodonPos().get(n);
+//			logger.info("cPos" + cPos.startPos);
+//			logger.info("cEndPos" + cPos.endPos);
 			if(pos >= cPos.startPos && pos <= cPos.endPos){
 				return n;
 			}
@@ -225,10 +230,21 @@ public class CodonPositions{
 	public void setPosition(int pos, int val) {
 		if(pos >= 0 && pos < getPositionsArray().getLength()){
 			getPositionsArray().set(pos, val);
+			positionsUpdated();
 		}
 	}
 	
-	public void fireUpdated() {
+	public void resize(int len) {
+		logger.info("len" + len);
+		logger.info(this.getPositionsArray().getLength());
+		logger.info("this.getTranslatedAminAcidLength()" + this.getTranslatedAminAcidLength());
+		this.getPositionsArray().resize(len);
+		positionsUpdated();
+		logger.info(this.getPositionsArray().getLength());
+		logger.info("this.getTranslatedAminAcidLength()" + this.getTranslatedAminAcidLength());
+	}
+	
+	public void positionsUpdated() {
 		createTranslatedCodonPositions();
 	}
 
@@ -274,7 +290,7 @@ public class CodonPositions{
 			}	
 		}
 		
-		codonPosWithout.fireUpdated();
+		codonPosWithout.positionsUpdated();
 		
 		return codonPosWithout;
 	}
@@ -293,6 +309,12 @@ public class CodonPositions{
 
 	public void removePosition(int n) {
 		this.positionsArray.remove(n);
+		positionsUpdated();
+	}
+	
+	public void insertPosition(int n) {
+		this.positionsArray.insert(n);
+		positionsUpdated();
 	}
 	
 	public CodonPos getCodonInTranslatedPos(int x) {
@@ -307,6 +329,10 @@ public class CodonPositions{
 	public boolean isAnythingButNormal() {
 		return positionsArray.isAnythingButDefault();
 	}
+
+	
+
+	
 
 	
 }

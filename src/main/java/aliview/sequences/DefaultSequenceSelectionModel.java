@@ -177,4 +177,19 @@ public class DefaultSequenceSelectionModel implements SequenceSelectionModel {
 		return allSelected;
 	}
 
+	public void invertSelection(int length) {
+		// Full selection
+		if(allSelected){
+			clearAll();
+		}else if(hasSelection() == false){
+			selectAll();
+		}
+		
+		// partial selection
+		if(hasSelection() && allSelected != true){
+			logger.info("partial");
+			bitSelection.flip(0, length);
+		}
+	}
+
 }

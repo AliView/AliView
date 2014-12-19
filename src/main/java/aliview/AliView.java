@@ -521,15 +521,6 @@ public class AliView implements ApplicationListener{
 
 	private static void createNewAliViewWindow(final File alignmentFile){
 
-		// If memory is low ask user first and break if wanted
-		//		if(aliViewWindows.size() > 0){
-		//			if(alignmentFile != null && !activeWindow.isEmpty()){			
-		//				if(souldBreakBecauseOfLowMemory(alignmentFile)){
-		//					return;
-		//				}		
-		//			}			
-		//		}
-
 		try {
 
 			AliViewWindow newWin = new AliViewWindow(alignmentFile,menuBarFactory);
@@ -549,20 +540,7 @@ public class AliView implements ApplicationListener{
 				public void windowClosing(WindowEvent e) {
 					AliViewWindow thisWin = (AliViewWindow) e.getWindow();
 
-					boolean isCloseOK = thisWin.requestWindowClose();
-
-					if(isCloseOK){
-						thisWin.dispose();
-						aliViewWindows.remove(thisWin);
-						// if this was last then quit
-						if(aliViewWindows.size() == 0){
-							aliView.quitProgram();
-						}
-
-					}
-					else{
-						// do nothing
-					}
+					AliView.closeWindow(thisWin);
 				}
 
 			}); // end WindowAdapter
@@ -587,7 +565,7 @@ public class AliView implements ApplicationListener{
 			newWin.setVisible(true);
 			newWin.toFront();
 
-		} catch (Exception e) {
+		}catch(Exception e) {
 			e.printStackTrace();
 		}catch(OutOfMemoryError memoryErr){
 			logger.info("memory err");
@@ -596,9 +574,25 @@ public class AliView implements ApplicationListener{
 		}catch(Error err){
 			err.printStackTrace();
 		}
-		//			}
-		//		});	
 
+	}
+
+	public static void closeWindow(AliViewWindow thisWin) {
+		boolean isCloseOK = thisWin.requestWindowClose();
+
+		if(isCloseOK){
+			thisWin.dispose();
+			aliViewWindows.remove(thisWin);
+			// if this was last then quit
+			if(aliViewWindows.size() == 0){
+				aliView.quitProgram();
+			}
+
+		}
+		else{
+			// do nothing
+		}
+		
 	}
 
 	public static void setUIFontSize (float newSize){
@@ -782,6 +776,23 @@ public class AliView implements ApplicationListener{
 
 	public static void doMacQuit(){
 		AliView.quitProgram();
+	}
+
+	public static void focusNextWin() {
+		int activeWinIndex = 0;
+		for(int n = 0; n < aliViewWindows.size(); n++){
+			if(activeWindow == aliViewWindows.get(n)){
+				activeWinIndex = n;
+			}
+		}
+		
+		int nextWin = activeWinIndex +1;
+		if(nextWin >= aliViewWindows.size()){
+			nextWin = 0;
+		}
+		
+		aliViewWindows.get(nextWin).requestFocus();
+		
 	}
 
 

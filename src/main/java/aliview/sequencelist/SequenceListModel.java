@@ -68,8 +68,6 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 		// clear cached values
 		cachedLongestSequenceName = -1;
 		cachedLongestSequenceLength = -1;
-		
-		
 	}
 
 	public void setSequences(List<Sequence> list){
@@ -119,10 +117,12 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 		if (index >= 0) {
 		    fireIntervalRemoved(this, index, index);
 		}
+		sequencesChanged();
 		return rv;
 	}
 
 	public void add(int index, Sequence seq) {
+		logger.info("add at=" + index);
 		sequences.add(index, seq);
 		fireIntervalRemoved(this, index, index);
 		sequencesChanged();
@@ -156,14 +156,18 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 	
 	public void addAll(List<Sequence> moreSeqs) {
 		sequences.addAll(moreSeqs);	
+		sequencesChanged();
 	}
 	
 	public void addAll(SequenceListModel otherSeqModel) {
 		sequences.addAll(otherSeqModel.getSequences());
+		sequencesChanged();
 	}
 
 	public void add(Sequence sequence) {
 		sequences.add(sequence);
+		logger.info("add" + sequence);
+		sequencesChanged();
 	}
 		
 	protected List<Sequence> getSequences() {
@@ -193,6 +197,19 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 			cachedLongestSequenceLength = maxLen;
 		}
 		return cachedLongestSequenceLength;
+	}
+	
+	public int getShortestSequenceLength() {
+			int minLen = getLongestSequenceLength();
+			for(int n = 0; n < sequences.size(); n++){
+				int len = sequences.get(n).getLength();
+				if(len < minLen){
+					minLen = len;
+				}
+			}
+		
+		return minLen;
+		
 	}
 	
 	public FileFormat getFileFormat() {
@@ -263,6 +280,7 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 		for(Sequence seq: toDelete){
 			deleteSequence(seq);
 		}
+		sequencesChanged();
 		return toDelete;
 	}
 
@@ -633,9 +651,8 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 				seq.insertGapRightOfSelectedBase();
 			}
 		}
-		if(editedSequences.size()>0){
-			sequencesChanged();
-		}
+		sequencesChanged();
+
 		return editedSequences;	
 	}
 	
@@ -649,9 +666,8 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 				seq.insertGapLeftOfSelectedBase();
 			}
 		}
-		if(editedSequences.size()>0){
-			sequencesChanged();
-		}
+		sequencesChanged();
+
 		return editedSequences;
 	}
 	
@@ -679,9 +695,8 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 			}
 		}
 		
-		if(editedSequences.size()>0){
-			sequencesChanged();
-		}
+		sequencesChanged();
+
 		return editedSequences;	
 	}
 	
@@ -708,9 +723,8 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 				}
 			}
 		}
-		if(editedSequences.size()>0){
-			sequencesChanged();
-		}
+		sequencesChanged();
+
 		return editedSequences;
 		
 	}	
@@ -771,9 +785,8 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 				}
 			}
 		}	
-		if(editedSequences.size()>0){
-			sequencesChanged();
-		}
+		sequencesChanged();
+
 		return editedSequences;
 	}
 
@@ -808,9 +821,7 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 			}
 		}				
 		selectionOffset = diff;
-		if(editedSequences.size()>0){
-			sequencesChanged();
-		}
+		sequencesChanged();
 		return editedSequences;
 	}
 	
@@ -843,6 +854,9 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 				seq.replaceSelectedBasesWithChar(newChar);
 				wasReplaced = true;
 			}
+		}
+		if(wasReplaced){
+			sequencesChanged();
 		}
 		return wasReplaced;
 	}
@@ -901,6 +915,7 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 				nextFindPos = posFound + 1;		
 			}
 		}
+		sequencesChanged();
 		nucSeq.setBases(newSeq.toString().getBytes());
 	}
 
@@ -918,6 +933,7 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 				e.printStackTrace();
 			}				
 		}
+		sequencesChanged();
 	}
 /*
 	private Sequence getSequenceByPartialName(String name) {
@@ -962,6 +978,7 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 		for(Sequence seq: sequences){
 			seq.deleteAllGaps();
 		}
+		sequencesChanged();
 	}
 
 	public boolean rightPadWithGapUntilEqualLength(){
@@ -973,6 +990,9 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 				sequence.rightPadSequenceWithGaps(diffLen);
 				wasPadded = true;
 			}
+		}
+		if(wasPadded){
+			sequencesChanged();
 		}
 		return wasPadded;	
 	}
@@ -986,6 +1006,9 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 				wasPadded = true;
 			}
 			
+		}
+		if(wasPadded){
+			sequencesChanged();
 		}
 		return wasPadded;
 	}
@@ -1036,6 +1059,9 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 				wasTrimmed = true;
 			}	
 		}
+		if(wasTrimmed){
+			sequencesChanged();
+		}
 		return wasTrimmed;
 	}
 	
@@ -1044,6 +1070,7 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 		for(Sequence sequence : sequences){
 			sequence.deleteBasesFromMask(deleteMask);
 		}
+		sequencesChanged();
 	}
 	
 	public String getConsensus() {
@@ -1092,6 +1119,7 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 		for(Sequence seq : sequences){
 			seq.reverseComplement();
 		}
+		sequencesChanged();
 	}
 
 	public String getSelectionAsNucleotides() {
@@ -1159,6 +1187,7 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 		for(Sequence seq : sequences){
 			seq.complement();	
 		}
+		sequencesChanged();
 	}
 
 	public int getLongestSequenceName() {
@@ -1231,7 +1260,6 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 		for(Sequence seq: sequences){
 			seq.setSelectionAt(columnIndex, selected);
 		}
-		
 	}
 
 	public void copySelectionFromPosX1toX2(int x1, int x2) {
@@ -1241,7 +1269,7 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 			}
 		}
 	}
-	public Sequence getSequenceFromID(int id){
+	public Sequence getSequenceByID(int id){
 		for(Sequence seq: sequences){
 			if(seq.getID() == id){
 				return seq;
@@ -1283,13 +1311,15 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 
 	public void sortSequencesByName() {
 		logger.info(sequences);
-		Collections.sort(sequences);	
+		Collections.sort(sequences);
+		sequencesChanged();
 	}
 	
 	public void sortSequencesByCharInSelectedColumn() {
 		// get first selected column
 		Point selPos = getFirstSelectedPos();
 		Collections.sort(sequences, new SequencePositionComparator(selPos.x));
+		sequencesChanged();
 	}
 
 	public AliHistogram getHistogram() {
@@ -1345,13 +1375,13 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 				}
 			}
 		}
+		sequencesChanged();
 		return editedSequences;	
 	}
 	
 	
 	
-	public boolean mergeTwoSequences(Sequence seq1, Sequence seq2, boolean allowOverlap){
-		
+	public boolean mergeTwoSequences(Sequence seq1, Sequence seq2, boolean allowOverlap){		
 		if(sequenceType == SequenceUtils.TYPE_NUCLEIC_ACID){
 			return mergeTwoNucleotideSequences(seq1, seq2, allowOverlap);
 		}
@@ -1422,6 +1452,10 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 			seq2.setName(seq2.getName() + "_merged_" + seq1.getName());
 			isMerged = true;
 		}
+		if(isMerged){
+			sequencesChanged();
+		}
+		
 		return isMerged;
 }
 	
@@ -1486,6 +1520,11 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 				seq2.setName(seq2.getName() + "_merged_" + seq1.getName());
 				isMerged = true;
 			}
+			
+			if(isMerged){
+				sequencesChanged();
+			}
+			
 			return isMerged;
 	}
 	
@@ -1575,6 +1614,7 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 				seq.replaceSelectedBasesWithGap();
 			}
 		}
+		sequencesChanged();
 		return editedSequences;
 	}
 
@@ -1585,7 +1625,8 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 				editedSequences.add(sequence);
 				sequence.deleteSelectedBases();
 			}
-		}	
+		}
+		sequencesChanged();
 		return editedSequences;
 	}
 
@@ -1662,6 +1703,7 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 		if(seqsInOrder.size() == sequences.size()){
 			setSequences(seqsInOrder);
 		}
+		sequencesChanged();
 	}
 
 	public int getSelectedColumnCount() {
@@ -1745,6 +1787,8 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 			return pos.x;
 		}	
 	}
+
+	
 
 	
 

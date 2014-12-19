@@ -28,7 +28,7 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 	private byte[] bases;
 	protected SequenceSelectionModel selectionModel;
 	protected String name;
-	private int id = SequenceUtils.createID();
+	private int id;
 
 	public InMemorySequence(){
 		selectionModel = new DefaultSequenceSelectionModel();
@@ -46,12 +46,14 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 
 		this.bases = bytes;
 		this.name = name;
+		this.id = SequenceUtils.createID();
 		this.selectionModel = new DefaultSequenceSelectionModel(); 
 	}
 
 
 	public InMemorySequence(InMemorySequence template) {
 		this.name = template.name;
+		this.id = template.id;
 		this.bases = ArrayUtils.clone(template.bases);
 		this.selectionModel = new DefaultSequenceSelectionModel();
 	}
@@ -697,7 +699,7 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 	public void selectionExtendRight() {
 		if(selectionModel.hasSelection()){
 			int lastSelectedPos = selectionModel.getLastSelectedPosition();
-			int seqEndPos = getLength() + 1;
+			int seqEndPos = getLength() - 1;
 			selectionModel.setSelection(lastSelectedPos, seqEndPos, true);
 		}
 	}

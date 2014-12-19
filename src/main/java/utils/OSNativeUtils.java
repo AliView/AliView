@@ -1,5 +1,6 @@
 package utils;
 
+import java.awt.AWTKeyStroke;
 import java.awt.Toolkit;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -418,6 +419,23 @@ public class OSNativeUtils {
 			return KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0);
 		}
 	}
+	
+	public static KeyStroke getCloseWinKeyAccelerator() {
+		if(isMac()){
+			return KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.META_DOWN_MASK);
+		}else{
+			return KeyStroke.getKeyStroke(KeyEvent.VK_W, InputEvent.CTRL_DOWN_MASK);
+		}
+	}
+	
+	public static KeyStroke getFocusNextWinKeyAccelerator() {
+		if(isMac()){
+			return KeyStroke.getKeyStroke(KeyEvent.VK_D, InputEvent.META_DOWN_MASK);
+		}else{
+			return KeyStroke.getKeyStroke(KeyEvent.VK_H, InputEvent.CTRL_DOWN_MASK);
+		}
+	}
+	
 	
 	/**
 	 * Swing menus are looking pretty bad on Linux when the GTK LaF is used (See

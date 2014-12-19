@@ -49,6 +49,17 @@ public class AlignmentPopupMenu extends JPopupMenu implements MouseListener {
 			JMenuItem pasteItem = new JMenuItem("Paste sequence(s) from clipboard");	
 			pasteItem.setModel(aliViewMenuBar.getPasteAsFastaButtonModel());
 			add(pasteItem);
+			
+			JMenuItem addEmptyItem = new JMenuItem("Add new empty sequence");	
+			addEmptyItem.setModel(aliViewMenuBar.getAddNewSequenceButtonModel());
+			add(addEmptyItem);
+			
+				
+			add(new JSeparator());
+			
+			JMenuItem renameItem = new JMenuItem("Rename sequence");
+			renameItem.setModel(aliViewMenuBar.getRenameButtonModel());
+			add(renameItem);
 				
 			add(new JSeparator());
 			

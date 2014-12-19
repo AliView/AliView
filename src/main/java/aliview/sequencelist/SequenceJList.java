@@ -89,7 +89,7 @@ public class SequenceJList extends javax.swing.JList{
 		Graphics2D g2 = (Graphics2D) g;
 		super.paintComponent(g);
 		long endTime = System.currentTimeMillis();
-		logger.info("Draw JList took " + (endTime - startTime) + " milliseconds");	
+//		logger.info("Draw JList took " + (endTime - startTime) + " milliseconds");	
 	}
 	
 	@Override
@@ -97,7 +97,7 @@ public class SequenceJList extends javax.swing.JList{
 		long startTime = System.currentTimeMillis();
 		super.validate();
 		long endTime = System.currentTimeMillis();
-		logger.info("Validate JList took " + (endTime - startTime) + " milliseconds");	
+//		logger.info("Validate JList took " + (endTime - startTime) + " milliseconds");	
 	}
 	
 	

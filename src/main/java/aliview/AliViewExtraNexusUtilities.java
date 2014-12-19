@@ -115,6 +115,7 @@ public class AliViewExtraNexusUtilities {
       	out.write(LF);
   		
       	
+      	int longestName = alignment.getLongestSequenceName();
       	
   		for(Sequence seq: alignment.getSequences()){
   			
@@ -122,7 +123,7 @@ public class AliViewExtraNexusUtilities {
   			String seqName = seq.getName();
   			seqName = seqName.replace(' ','_');
   			
-  			out.write("" + StringUtils.rightPad(seqName,100));
+  			out.write("" + StringUtils.rightPad(seqName,longestName + 3));
   			out.write(seq.getBasesAtThesePosAsString(allPos0));
   			out.write(seq.getBasesAtThesePosAsString(allPos1));
   			out.write(seq.getBasesAtThesePosAsString(allPos2));

@@ -89,6 +89,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 	private ButtonModel renameButtonModel;
 	private JMenu mnSelectCharset;
 	private ButtonModel countCodonButtonModel;
+	private ButtonModel addEmptySeqButtonModel;
 
 	/*
 	 * 
@@ -339,6 +340,17 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 		loadedAlignmentFunctions.add(mntmExportAlignmentAsImage);
 
 		mnFile.add(new JSeparator());
+		
+//		JMenuItem mntmGenoPheno = new JMenuItem("Genotype > phenotype");
+//		mntmGenoPheno.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//				aliViewWindow.genotype2phenotype();
+//			}
+//		});
+//		mnFile.add(mntmGenoPheno);
+//		alwaysAvailableFunctions.add(mntmGenoPheno);
+//		
+//		mnFile.add(new JSeparator());
 
 		JMenuItem mntmPrint = new JMenuItem("Print");
 		mntmPrint.addActionListener(new ActionListener() {
@@ -493,7 +505,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 			}
 		});
 		mntmRename.setAccelerator(OSNativeUtils.getRenameKeyAccelerator());
-		renameButtonModel = mntmPasteClipboard.getModel();
+		renameButtonModel = mntmRename.getModel();
 		mnEdit.add(mntmRename);
 		editFunctions.add(mntmRename);
 		hasSelectionFunctions.add(mntmRename);
@@ -508,6 +520,16 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 		});
 		mnEdit.add(mntmAddFromFile);
 		editFunctions.add(mntmAddFromFile);
+		
+		JMenuItem mntmAddNewSeq = new JMenuItem("Add new empty sequence");
+		mntmAddNewSeq.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				aliViewWindow.addNewSequence();
+			}
+		});
+		addEmptySeqButtonModel = mntmAddNewSeq.getModel();
+		mnEdit.add(mntmAddNewSeq);
+		editFunctions.add(mntmAddNewSeq);
 
 		mnEdit.add(new JSeparator());
 
@@ -1865,5 +1887,15 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 	public ButtonModel getCopyNameButtonModel() {
 		return copyNameButtonModel;
 	}
+
+	public ButtonModel getRenameButtonModel() {
+		return renameButtonModel;
+	}
+	
+	public ButtonModel getAddNewSequenceButtonModel() {
+		return addEmptySeqButtonModel;
+	}
+	
+	
 
 }

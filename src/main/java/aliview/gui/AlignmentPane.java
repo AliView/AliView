@@ -1525,10 +1525,12 @@ public class AlignmentPane extends JPanel{
 	public void validateSize() {
 		// Set component preferred size
 		Dimension prefSize = getCalculatedPreferredSize();
+		Rectangle prefRect = this.getVisibleRect();
 		this.setPreferredSize(prefSize);
 		this.updateStatisticsLabel();
 		this.rulerIsDirty = true;
 		this.revalidate();
+		this.scrollRectToVisible(prefRect);
 	}
 
 	@Override
@@ -1699,7 +1701,12 @@ public class AlignmentPane extends JPanel{
 
 	public void scrollToVisibleUpperLeftMatrixPos(Point ulPos) {
 		Point ulPanePos = matrixCoordToPaneCoord(ulPos);
-		this.setLocation(ulPanePos);
+		Rectangle rect = new Rectangle(ulPanePos, this.getVisibleRect().getSize());
+		rect.grow(-10, -10);
+		logger.info("ulPanePos" + ulPanePos);
+		logger.info("Scroll to rect" + rect);
+		this.scrollRectToVisible(rect);
+		logger.info("after this.getVisibleRect()" + this.getVisibleRect());
 	}
 
 	public void scrollMatrixX(int offset) {

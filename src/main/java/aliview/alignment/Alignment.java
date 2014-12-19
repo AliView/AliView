@@ -14,9 +14,11 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
 import javax.swing.undo.UndoableEdit;
@@ -50,6 +52,7 @@ import aliview.sequencelist.MemorySequenceListModel;
 import aliview.sequencelist.SequenceListModel;
 import aliview.sequencelist.FileSequenceLoadListener;
 import aliview.sequences.FastaFileSequence;
+import aliview.sequences.InMemoryBasicSequence;
 import aliview.sequences.PhylipSequence;
 import aliview.sequences.Sequence;
 import aliview.sequences.SequenceUtils;
@@ -897,6 +900,10 @@ public class Alignment implements FileSequenceLoadListener {
 	public Sequence getSequenceByName(String name){
 		return sequences.getSequenceByName(name);
 	}
+	
+	public Sequence getSequenceByID(int id){
+		return sequences.getSequenceByID(id);
+	}
 
 	
 	public void incReadingFrame() {
@@ -950,7 +957,9 @@ public class Alignment implements FileSequenceLoadListener {
 			}
 			sequences.deleteBasesInAllSequencesFromMask(deleteMask);
 			//and finally remove in AlignmentMeta(excludes, codonpos & charset)
+			logger.info(alignmentMeta.getCodonPositions().getLength());
 			alignmentMeta.removeFromMask(deleteMask);
+			logger.info(alignmentMeta.getCodonPositions().getLength());
 			sequencesChanged();
 		}
 		// only delete in selected sequences
@@ -1005,6 +1014,38 @@ public class Alignment implements FileSequenceLoadListener {
 			e.printStackTrace();
 		}
 	}
+	
+	public void addNewSequence() {
+			int minLen = sequences.getShortestSequenceLength();
+			int maxLen = sequences.getLongestSequenceLength();
+			int len;
+			if(maxLen == minLen){
+				len = maxLen;
+			}else{
+				len = 1;
+			}
+			String seqName = "New_sequence";
+			
+			byte[] bases = new byte[len];
+			Arrays.fill(bases,(byte)'-');
+			
+			// TODO this is not working on file sequences 
+			Sequence newSeq = new InMemoryBasicSequence(seqName, bases);
+			
+			Point lastSel = sequences.getLastSelectedPos();
+			
+//			logger.info("lastSel.y" + lastSel.y);
+//			logger.info("sequences.getSize()" + sequences.getSize());
+			
+			if(lastSel != null && lastSel.y + 1 <  sequences.getSize()){
+				sequences.add(lastSel.y +1, newSeq);
+			}else{
+				sequences.add(newSeq);
+			}
+			
+			fireNewSequences();
+	}
+	
 	
 	public void addSequences(File additionalFile) {
 		addSequences(additionalFile, 0);
@@ -1680,9 +1721,11 @@ public class Alignment implements FileSequenceLoadListener {
 		}
 	}
 
-	public void setTranslationOnePos(boolean showTranslationOnePos) {
-		this.showTranslationOnePos = showTranslationOnePos;
-		this.isSelectable = ! showTranslationOnePos;
+	public void setTranslationOnePos(boolean showTranslationOnePos){
+		if(isNucleotideAlignment()){
+			this.showTranslationOnePos = showTranslationOnePos;
+			this.isSelectable = ! showTranslationOnePos;
+		}
 	}
 
 	public boolean hasFullySelectedSequences() {
@@ -1705,8 +1748,9 @@ public class Alignment implements FileSequenceLoadListener {
 		return sequences.getFirstSelectedName();
 	}
 
-	public void setFirstSelectedSequenceName(String newName) {
-		sequences.setFirstSelectedName(newName);
+	public List<Sequence> setFirstSelectedSequenceName(String newName) {
+		List<Sequence> previous = sequences.setFirstSelectedName(newName);
+		return previous;
 	}
 
 	public void selectAll(CharSet aCharSet) {

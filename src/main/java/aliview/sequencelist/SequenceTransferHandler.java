@@ -41,6 +41,7 @@ public class SequenceTransferHandler extends TransferHandler {
     
     @Override
     protected Transferable createTransferable(JComponent c) {
+    	logger.info("create Transferable");
         source = c;
         JList list = (JList) c;
         SequenceListModel model = (SequenceListModel)list.getModel();
@@ -107,24 +108,4 @@ public class SequenceTransferHandler extends TransferHandler {
     	// here I could call something when done
         //cleanup(c, act == MOVE);
     }
-    /*
-    private void cleanup(JComponent src, boolean remove) {
-        if(remove && rows != null) {
-        	JList table = (JList)src;
-   //         src.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-            DefaultTableModel model = (DefaultTableModel)table.getModel();
-            if(addCount > 0) {
-                for(int i=0;i<rows.length;i++) {
-                    if(rows[i]>=addIndex) {
-                        rows[i] += addCount;
-                    }
-                }
-            }
-            for(int i=rows.length-1;i>=0;i--) model.removeRow(rows[i]);
-        }
-        rows     = null;
-        addCount = 0;
-        addIndex = -1;
-    }
-    */
 }

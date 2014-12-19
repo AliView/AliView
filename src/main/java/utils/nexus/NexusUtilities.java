@@ -107,7 +107,6 @@ public class NexusUtilities {
 						codonPositions.setPosition(n - 1,0);
 					}
 				}
-				codonPositions.positionsUpdated();
 			}
 			// TODO questionmarkpos is treated as n
 			// TODO with n range does not ends with \3
@@ -153,7 +152,9 @@ public class NexusUtilities {
 						codonPositions.setPosition(n - 1,3);
 					}
 				}	
-			}		
+			}
+			
+			codonPositions.positionsUpdated();
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

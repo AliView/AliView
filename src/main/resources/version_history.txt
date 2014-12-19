@@ -1,5 +1,16 @@
 Version history
 
+1.16
+
+- Added shortcut Command/Ctrl + W (for closing window)
+- Added undo functionality when renaming sequence name
+- Less padding after sequence names when saved in Nexus codonpos-format
+- Fixed bug when saving in Nexus codonpos-format after deleting columns
+- Fixed bug in function Expand selection right
+- Added "Add new empty sequence"
+- Added "Rename sequence" to right click menu
+- Fixed bug where "Align everything" did not stop if cancel was selected
+- Corrected position when switching between "Translate one pos aminoacid" and nucleotide view
 
 1.15
 

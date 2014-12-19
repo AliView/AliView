@@ -14,7 +14,6 @@ import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 
 import utils.DialogUtils;
-
 import aliview.AliView;
 import aliview.AliViewWindow;
 import aliview.AminoAcid;
@@ -82,6 +81,7 @@ public class Messenger {
 	public static final Message NO_FASTA_INDEX_COULD_BE_SAVED = new Message("Could not save Fasta index file: Alignment has to be indexed" + LF + 
 																			"from file when loaded and in Fasta format", "Problem");
 	public static final Message REALIGN_EVERYTHING = new Message("Are you sure you want to realign the whole alignment?", "Realign everything");
+	public static final Message PHENOTYPE_IMAGE_OPEN_ERROR = new Message("Could not create Phenotype from Image file. Wrong file type? (png,jpg)", "Wrong file");
 	
 
 	private static int lastSelectedOption = -1;
@@ -163,6 +163,12 @@ public class Messenger {
 	return lastSelectedOption;
   }
 	  
+  
+  /*
+   * 
+   * TODO this method should not be all static - due to problem with multiple dialogs and static variable (lastSelected)
+   * 
+   */
    public static boolean showOKOnlyMessageWithCbx(Message message, boolean cbxSelected, AliViewWindow aliViewWindow) {
 		
 		final JDialog dialog = new JDialog(aliViewWindow);

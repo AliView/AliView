@@ -34,8 +34,8 @@ public class TranslatedCodonPos {
 				x = x + 3; // move one frame ahead (this is a full codon)
 			}
 			else{
-				logger.info("no full codon gap = " + gap);
-				logger.info("no full codon x = " + x);
+//				logger.info("no full codon gap = " + gap);
+//				logger.info("no full codon x = " + x);
 				if(gap > 0){
 					// add new end pos to  the last Pos
 					orfanPos.addEndPos(x);

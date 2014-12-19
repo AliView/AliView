@@ -19,11 +19,6 @@ public class FastFastaSequence extends InMemorySequence{
 		super(name, basesAsString);
 	}
 
-	public String getName(){
-		return this.name;
-	}
-	
-	
 	
 	public String getSimpleName(){
 		String formatted = StringUtils.substringAfter(this.name, "-");

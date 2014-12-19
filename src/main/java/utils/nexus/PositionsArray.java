@@ -101,15 +101,20 @@ public class PositionsArray {
 	}
 
 	public void remove(int n) {
-		if(backend != null){
-			backend = ArrayUtils.remove(backend, n);
+		logger.info("remove" + n);
+		if(backend == null){
+			createNewBackend();
 		}
+		backend = ArrayUtils.remove(backend, n);
 	}
 	
+	
+	
 	public void insert(int n) {
-		if(backend != null){
-			backend = ArrayUtils.add(backend, n, 0);
+		if(backend == null){
+			createNewBackend();
 		}
+		backend = ArrayUtils.add(backend, n, 0);
 	}
 
 	private boolean isBackendAnythingBut123(){

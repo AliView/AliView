@@ -60,7 +60,20 @@ public class CodonPositions{
 		return translatedCodonPos;
 	}
 
-	public CodonPos getCodonPosAtNucleotidePos(int pos){
+	public int getCodonPosAtNucleotidePos(int pos){
+		int foundPos = 0;
+		for(int n = 0; n < getTranslatedCodonPos().size(); n++){
+			CodonPos cPos = getTranslatedCodonPos().get(n);
+			if(pos >= cPos.startPos && pos <= cPos.endPos){
+				foundPos = n;
+				break;
+			}
+		}
+		return foundPos;
+	}
+	
+	
+	public CodonPos getCodonAtNucleotidePos(int pos){
 		CodonPos foundPos = null;
 		for(int n = 0; n < getTranslatedCodonPos().size(); n++){
 			CodonPos cPos = getTranslatedCodonPos().get(n);
@@ -71,6 +84,7 @@ public class CodonPositions{
 		}
 		return foundPos;
 	}
+	
 	
 
 	public int getTranslatedAminAcidLength(){
@@ -230,9 +244,9 @@ public class CodonPositions{
 	public void setPosition(int pos, int val) {
 		if(pos >= 0 && pos < getPositionsArray().getLength()){
 			getPositionsArray().set(pos, val);
-			positionsUpdated();
 		}
 	}
+	
 	
 	public void resize(int len) {
 		logger.info("len" + len);

@@ -4,16 +4,21 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import aliview.AliView;
 import aliview.aligner.Aligner;
 import aliview.aligner.MuscleWrapper;
 import aliview.subprocesses.SubProcessWindow;
@@ -29,13 +34,38 @@ public class ExternalCommandExecutor {
 
 		boolean wasProcessInterrupted = false;
 		for(String[] commandLine: cmdItem.getParsedCommands()){
-			wasProcessInterrupted = executeCommand(commandLine, subProcessWin);
-			if(subProcessWin.wasSubProcessDestrouedByUser()){
-				wasProcessInterrupted = true;
-				break;
+			
+			if(StringUtils.startsWith(commandLine[0], "ALIVIEW_")){
+				executeInternalCommand(commandLine, subProcessWin);
+			}
+			else{
+				wasProcessInterrupted = executeCommand(commandLine, subProcessWin);
+				if(subProcessWin.wasSubProcessDestrouedByUser()){
+					wasProcessInterrupted = true;
+					break;
+				}
 			}
 		}
 		return wasProcessInterrupted;
+	}
+
+	private static void executeInternalCommand(final String[] commandLine, final SubProcessWindow subProcessWin) {
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				public void run(){
+					
+					if(commandLine[0].equals("ALIVIEW_OPEN")){	
+						AliView.openAlignmentFile(new File(commandLine[1]));
+					}
+					else{
+						subProcessWin.appendOutput("Failed: - Non recognized command: " + commandLine[0]);
+					}
+				}
+			});
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private static boolean executeCommand(String[] commandArray, final SubProcessWindow subProcessWin) throws IOException{

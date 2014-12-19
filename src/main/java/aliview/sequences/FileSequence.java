@@ -26,7 +26,7 @@ public class FileSequence implements Sequence {
 	private int seqIndex;
 	private long endPointer;
 	private SequenceSelectionModel selectionModel = new DefaultSequenceSelectionModel();
-	private int id = SequenceUtils.createID();
+	private int id;
 	private int seqWithoutWhitespaceLength;
 	private int lineCharLength;
 	private int lineAbsoluteLength;
@@ -51,6 +51,7 @@ public class FileSequence implements Sequence {
 		this.endPointer = template.endPointer;
 		this.raf = template.raf;
 		this.name = template.name;
+		this.id = template.id;
 	}
 	
 	public FileSequence(FileMMSequenceList seqList, int seqIndex, String name, int seqWithoutWhitespaceLength, long seqAfterNameStartPointer, long endPointer,
@@ -63,6 +64,7 @@ public class FileSequence implements Sequence {
 		this.endPointer = endPointer;
 		this.lineCharLength = lineCharLength;
 		this.lineAbsoluteLength = lineAbsoluteLength;
+		this.id = SequenceUtils.createID();
 	}
 
 	public Sequence getCopy() {

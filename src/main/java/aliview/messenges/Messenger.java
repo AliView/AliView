@@ -278,10 +278,18 @@ public class Messenger {
 		   if(dupeCount == 1){
 			   prep = "is";
 		   }
+		   
+		   String dupeCountString = "";
+		   if(dupeCount == 10){
+			   dupeCountString = "at least 10";
+		   }else{
+			   dupeCountString = "" + dupeCount;
+		   }
 	
 		   
-		   Message dupeMessage = new Message("There " + prep + " " + dupeCount + " duplicate sequence name(s) in alignment, this might cause " + LF + 
+		   Message dupeMessage = new Message("There " + prep + " " + dupeCountString + " duplicate sequence name(s) in alignment, this might cause " + LF + 
 				                              "unexpected problems when calling alignment programs for example." + LF + 
+				                              "Duplicate sequences will be selected in alignment." + LF + 
 				                              "Duplicate name(s) " + prep + ": " + dupeString, 
 				                              "Duplicate sequence names");
 		   

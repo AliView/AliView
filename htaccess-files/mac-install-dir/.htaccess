@@ -3,3 +3,5 @@ AddType text/html .shtml
 AddOutputFilter INCLUDES .shtml
 # HeaderName .header.html
 ReadmeName .footer.shtml
+IndexOptions DescriptionWidth=75
+AddDescription "If you get error msg: This application is damaged ... (see below)" -app.zip

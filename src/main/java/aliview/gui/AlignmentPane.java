@@ -33,7 +33,6 @@ import javax.swing.JPanel;
 import org.apache.log4j.Logger;
 
 import utils.OSNativeUtils;
-
 import aliview.AATranslator;
 import aliview.AliView;
 import aliview.AminoAcid;
@@ -47,6 +46,7 @@ import aliview.color.ColorScheme;
 import aliview.color.ColorUtils;
 import aliview.messenges.Messenger;
 import aliview.pane.AACharPixelsContainer;
+import aliview.pane.CharPixels;
 import aliview.pane.CharPixelsContainer;
 import aliview.pane.CompoundCharPixelsContainer;
 import aliview.pane.ImageUtils;
@@ -107,6 +107,7 @@ public class AlignmentPane extends JPanel{
 	private long endTime; // performance measure
 	private int drawCounter = 0; // performance measure
 	private int DRAWCOUNT_LOF_INTERVAL = 1; // performance measure
+	private int fontCase = Settings.getFontCase().getIntValue();
 	
 
 
@@ -254,30 +255,30 @@ public class AlignmentPane extends JPanel{
 		
 		
 
-		charPixDefaultNuc = CharPixelsContainer.createDefaultNucleotideImpl(charFont, charMaxSizeToDraw, charPixWidth, charPixHeight, colorSchemeNucleotide);
-		charPixSelectedNuc = CharPixelsContainer.createSelectedNucleotideImpl(charFont, charMaxSizeToDraw, charPixWidth, charPixHeight, colorSchemeNucleotide);
-		charPixConsensusNuc = CharPixelsContainer.createConsensusNucleotideImpl(charFont, charMaxSizeToDraw, charPixWidth, charPixHeight, colorSchemeNucleotide);
+		charPixDefaultNuc = CharPixelsContainer.createDefaultNucleotideImpl(charFont, charMaxSizeToDraw, charPixWidth, charPixHeight, colorSchemeNucleotide, getFontCase());
+		charPixSelectedNuc = CharPixelsContainer.createSelectedNucleotideImpl(charFont, charMaxSizeToDraw, charPixWidth, charPixHeight, colorSchemeNucleotide, getFontCase());
+		charPixConsensusNuc = CharPixelsContainer.createConsensusNucleotideImpl(charFont, charMaxSizeToDraw, charPixWidth, charPixHeight, colorSchemeNucleotide, getFontCase());
 
 		charPixTranslationDefault = TranslationCharPixelsContainer.createDefaultTranslationPixelsImpl(charFont, charMaxSizeToDraw,
-				charPixWidth, charPixHeight, colorSchemeNucleotide);
+				charPixWidth, charPixHeight, colorSchemeNucleotide, getFontCase());
 
 		charPixTranslationSelected = TranslationCharPixelsContainer.createSelectedTranslationPixelsImpl(charFont, charMaxSizeToDraw,
-				charPixWidth, charPixHeight, colorSchemeNucleotide);
+				charPixWidth, charPixHeight, colorSchemeNucleotide, getFontCase());
 
 		charPixTranslationLetter = TranslationCharPixelsContainer.createLetterTranslationPixelsImpl(charFont, charMaxSizeToDraw,
-				charPixWidth, charPixHeight, colorSchemeNucleotide);
+				charPixWidth, charPixHeight, colorSchemeNucleotide, getFontCase());
 
 		charPixTranslationSelectedLetter = TranslationCharPixelsContainer.createSelectedLetterTranslationPixelsImpl(charFont, charMaxSizeToDraw,
-				charPixWidth, charPixHeight, colorSchemeNucleotide);
+				charPixWidth, charPixHeight, colorSchemeNucleotide, getFontCase());
 
 
 		charPixDefaultAA =  new AACharPixelsContainer();
 		if(colorSchemeAminoAcid.getALLCompundColors() != null){
 			CompoundCharPixelsContainer compContainer = CompoundCharPixelsContainer.createDefaultCompoundColorImpl(charFont, charMaxSizeToDraw,
-					charPixWidth, charPixHeight, colorSchemeAminoAcid);
+					charPixWidth, charPixHeight, colorSchemeAminoAcid, getFontCase());
 			charPixDefaultAA.setCompoundContainer(compContainer);
 		}else{
-			CharPixelsContainer container = CharPixelsContainer.createDefaultAAImpl(charFont, charMaxSizeToDraw, charPixWidth, charPixHeight, colorSchemeAminoAcid);
+			CharPixelsContainer container = CharPixelsContainer.createDefaultAAImpl(charFont, charMaxSizeToDraw, charPixWidth, charPixHeight, colorSchemeAminoAcid, getFontCase());
 			charPixDefaultAA.setContainer(container);
 		}
 
@@ -285,27 +286,31 @@ public class AlignmentPane extends JPanel{
 		if(colorSchemeAminoAcid.getALLCompundColors() != null){
 
 			CompoundCharPixelsContainer compContainer = CompoundCharPixelsContainer.createSelectedCompoundColorImpl(charFont, charMaxSizeToDraw,
-					charPixWidth, charPixHeight, colorSchemeAminoAcid);
+					charPixWidth, charPixHeight, colorSchemeAminoAcid, getFontCase());
 			charPixSelectedAA.setCompoundContainer(compContainer);
 		}else{
-			CharPixelsContainer container = CharPixelsContainer.createSelectedAAImpl(charFont, charMaxSizeToDraw, charPixWidth, charPixHeight, colorSchemeAminoAcid);
+			CharPixelsContainer container = CharPixelsContainer.createSelectedAAImpl(charFont, charMaxSizeToDraw, charPixWidth, charPixHeight, colorSchemeAminoAcid, getFontCase());
 			charPixSelectedAA.setContainer(container);
 		}
 
 		charPixConsensusAA =  new AACharPixelsContainer();
 		if(colorSchemeAminoAcid.getALLCompundColors() != null){
 			CompoundCharPixelsContainer compContainer = CompoundCharPixelsContainer.createDefaultCompoundColorImpl(charFont, charMaxSizeToDraw,
-					charPixWidth, charPixHeight, colorSchemeAminoAcid);
+					charPixWidth, charPixHeight, colorSchemeAminoAcid, getFontCase());
 			charPixConsensusAA.setCompoundContainer(compContainer);
 
 		}else{
-			CharPixelsContainer container = CharPixelsContainer.createConsensusAAImpl(charFont, charMaxSizeToDraw, charPixWidth, charPixHeight, colorSchemeAminoAcid);
+			CharPixelsContainer container = CharPixelsContainer.createConsensusAAImpl(charFont, charMaxSizeToDraw, charPixWidth, charPixHeight, colorSchemeAminoAcid, getFontCase());
 			charPixConsensusAA.setContainer(container);
 		}
 
 		endTime = System.currentTimeMillis();
 		logger.info("Creating charPixContainers took " + (endTime - startTime) + " milliseconds");
 
+	}
+
+	private int getFontCase() {
+		return fontCase;
 	}
 
 	@Override
@@ -2407,6 +2412,11 @@ public class AlignmentPane extends JPanel{
 
 
 	} // end CodonPosRuler class
+
+	public void setFontCase(int fontCase){
+		this.fontCase = fontCase;
+		createCharPixelsContainers();
+	}
 
 }
 

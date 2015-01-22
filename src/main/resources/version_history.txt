@@ -1,16 +1,27 @@
 Version history
 
+1.17-beta2
+
+- Now possible to find and select duplicate sequence, "Edit" | "Find and select duplicate sequences"  (this function is still beta)
+- Duplicate sequences are being selected in alignment at startup
+- Adjusted simplified nexus format, it now also replaces all non alfanumeric characters (A-Z a-z 0-9) with _ in the sequence name
+
+1.17-beta1
+
+- Fixed bug that made it impossible to close error message if something went wrong when aligning
+
 1.16
 
 - Added shortcut Command/Ctrl + W (for closing window)
+- Added function "Upper case" under View menu
 - Added undo functionality when renaming sequence name
 - Less padding after sequence names when saved in Nexus codonpos-format
-- Fixed bug when saving in Nexus codonpos-format after deleting columns
+- Fixed bug affecting saving in Nexus codonpos-format after deleting columns
 - Fixed bug in function Expand selection right
-- Added "Add new empty sequence"
+- Added function "Add new empty sequence"
 - Added "Rename sequence" to right click menu
-- Fixed bug where "Align everything" did not stop if cancel was selected
-- Corrected position when switching between "Translate one pos aminoacid" and nucleotide view
+- Fixed bug where "Align everything" did not stop if cancel button was selected
+- Corrected viewing position when switching between "Translate one pos aminoacid" and nucleotide view
 
 1.15
 

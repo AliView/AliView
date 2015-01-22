@@ -10,7 +10,6 @@ import java.util.prefs.Preferences;
 import org.apache.log4j.Logger;
 
 import utils.OSNativeUtils;
-
 import aliview.AliViewWindow;
 import aliview.aligner.AlignemtItem;
 import aliview.aligner.MuscleWrapper;
@@ -21,6 +20,7 @@ import aliview.color.ColorSchemeFactory;
 import aliview.externalcommands.CommandItem;
 import aliview.hacks.FilePreferencesFactory;
 import aliview.old.ExternalCmdFrame;
+import aliview.pane.CharPixels;
 
 public class Settings {
 	private static final Logger logger = Logger.getLogger(Settings.class);
@@ -78,6 +78,7 @@ public class Settings {
 	private static SettingValue hideAlignmentProgressWindowWhenDone = new SettingValue("hideAlignmentProgressWindowWhenDone", false);
 	private static SettingValue hideDuplicateSeqNamesMessage = new SettingValue("hideDuplicateSeqNamesMessage", false);
 	private static SettingValue hideAskBeforeEditMode  = new SettingValue("hideAskBeforeEditMode", false);
+	private static SettingValue fontCase = new SettingValue("fontCase", CharPixels.CASE_UNTOUCHED, 0, 10);
 	
 
 	public static SettingValue getMinPrimerLength(){
@@ -701,6 +702,10 @@ public class Settings {
 
 	public static String getAliViewHelpWebPage() {
 		return ALIVIEW_HELP_URL;
+	}
+
+	public static SettingValue getFontCase() {
+		return fontCase;
 	}
 
 }

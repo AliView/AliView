@@ -104,6 +104,7 @@ public class AlignmentFactory {
 				if(! hideMessage){
 					ArrayList duplicateSeqNames = alignment.findDuplicateNames();
 					if(duplicateSeqNames != null && duplicateSeqNames.size() > 0){
+						alignment.selectDuplicateNamesSequences();
 						Messenger.showDuplicateSeqNamesMessage(duplicateSeqNames);
 					}
 				}

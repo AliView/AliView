@@ -28,7 +28,7 @@ import java.lang.reflect.Method;
  * strings are displayed, and cells have a fixed preferred
  * height and width.   
  */
-class TextCellRenderer extends JLabel implements ListCellRenderer 
+class NotUsedTextCellRenderer extends JLabel implements ListCellRenderer 
 {
     String text;
     final int borderWidth = 1;
@@ -37,7 +37,7 @@ class TextCellRenderer extends JLabel implements ListCellRenderer
     final BufferedImage buffImg = new BufferedImage(200, 20, BufferedImage.TYPE_INT_ARGB);
     
 
-    TextCellRenderer(int width, int height, Font font) {
+    NotUsedTextCellRenderer(int width, int height, Font font) {
 	super();
 	this.height = height;
 	this.width = width;
@@ -46,7 +46,7 @@ class TextCellRenderer extends JLabel implements ListCellRenderer
     }
 
     /** 
-     * Return the renderers fixed size here.  
+     * Return the renderers fixed size here.
      */
     public Dimension getPreferredSize() {
 	return new Dimension(width, height);

@@ -15,6 +15,11 @@ import aliview.gui.AlignmentPane;
 
 public class CharPixels {
 	private static final Logger logger = Logger.getLogger(CharPixels.class);
+	
+	public static final int CASE_UNTOUCHED = 0;
+	public static final int CASE_UPPER = 1;
+	public static final int CASE_LOWER = 2;
+	
 	private char ch;
 	private Color color;
 	private RGBArray rgbArray;
@@ -26,8 +31,9 @@ public class CharPixels {
 	private Color fgColor;
 	private Font font;
 	private int minFontSize;
+	private int fontCase;
 
-	public CharPixels(char ch, int width, int height, Color fgColor, Color bgColor, Font font, int minFontSize){
+	public CharPixels(char ch, int width, int height, Color fgColor, Color bgColor, Font font, int minFontSize, int fontCase){
 		
 		if(width < 1){
 			width = 1;
@@ -44,6 +50,7 @@ public class CharPixels {
 		this.fgColor = fgColor;
 		this.bgColor = bgColor;
 		this.minFontSize = minFontSize;
+		this.fontCase = fontCase;
 	}
 	
 	public int[] getPixels() {
@@ -93,7 +100,15 @@ public class CharPixels {
 			g2.setColor(fgColor);	
 			int leftCharOffset = (int)(0.15 * width);
 			int bottomCharOffset = (int)(0.2 * height);
-			g2.drawString("" + ch, leftCharOffset, height - bottomCharOffset);
+			
+			char displayChar = ch;
+			if(fontCase == CASE_UPPER){
+				displayChar = Character.toUpperCase(ch);
+			}else if(fontCase == CASE_LOWER){
+				displayChar = Character.toLowerCase(ch);
+			}
+
+			g2.drawString("" + displayChar, leftCharOffset, height - bottomCharOffset);
 		}
 		
 		

@@ -77,6 +77,8 @@ public class SubProcessWindow{
 		dialog.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		dialog.addWindowListener(new WindowAdapter() {		
 			public void windowClosing(WindowEvent e) {
+				
+				// destroy subprocess if there is one
 				if(subProcess != null){
 					logger.info("destroy-subprocess");
 					
@@ -103,8 +105,9 @@ public class SubProcessWindow{
 					subProcessDestrouedByUser = true;
 					subProcess.destroy();		
 					logger.info("now after destroy");
-					dialog.dispose();
 				}
+				// and close window
+				dialog.dispose();
 			}
 		});
 		

@@ -73,8 +73,6 @@ public class AliView implements ApplicationListener{
 		//		System.setErr( new PrintStream( new LoggingOutputStream( logger, Level.ERROR ), true));
 		//		System.setOut( new PrintStream( new LoggingOutputStream( logger, Level.INFO ), true));
 
-
-
 		long startTime = System.currentTimeMillis();
 
 		Logger.getRootLogger().setLevel(Level.ALL);

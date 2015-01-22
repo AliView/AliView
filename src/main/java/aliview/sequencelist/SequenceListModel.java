@@ -27,7 +27,6 @@ import org.apache.log4j.Logger;
 import utils.DialogUtils;
 import utils.nexus.CodonPos;
 import utils.nexus.CodonPositions;
-
 import aliview.AATranslator;
 import aliview.AminoAcid;
 import aliview.FileFormat;
@@ -973,6 +972,26 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 		}
 		return foundSeq;	
 	}
+	
+	public ArrayList<Sequence> getSequencesByName(String name) {
+		ArrayList<Sequence> foundSeqs = new ArrayList<Sequence>();
+		if(name == null){
+			return foundSeqs;
+		}
+		for(Sequence seq: sequences){
+			if(name.equalsIgnoreCase(seq.getName())){
+				foundSeqs.add(seq);
+			}
+		}
+		return foundSeqs;	
+	}
+	
+	public void selectSequencesByName(String name) {
+		ArrayList<Sequence> foundSeqs = getSequencesByName(name);
+		for(Sequence seq: foundSeqs){
+			seq.selectAllBases();
+		}
+	}
 
 	public void deleteAllGaps() {
 		for(Sequence seq: sequences){
@@ -1393,8 +1412,8 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 	
 	public boolean mergeTwoAminoAcidSequences(Sequence seq1, Sequence seq2, boolean allowOverlap){
 		boolean isMerged = false;
-		int nExactOverlap = countExactAminoAcidOverlap(seq1, seq2);
-		int nDifferentOverlap = countDifferentAminoAcidOverlap(seq1, seq2);
+		int nExactOverlap = SequenceUtils.countExactAminoAcidOverlap(seq1, seq2);
+		int nDifferentOverlap = SequenceUtils.countDifferentAminoAcidOverlap(seq1, seq2);
 		
 		boolean isOverlap = false;
 		boolean isOverlapExactlySame = false;
@@ -1462,8 +1481,8 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 
 	public boolean mergeTwoNucleotideSequences(Sequence seq1, Sequence seq2, boolean allowOverlap){
 			boolean isMerged = false;
-			int nExactOverlap = countExactNucleotideOverlap(seq1, seq2);
-			int nDifferentOverlap = countDifferentNucleotideOverlap(seq1, seq2);
+			int nExactOverlap = SequenceUtils.countExactNucleotideOverlap(seq1, seq2);
+			int nDifferentOverlap = SequenceUtils.countDifferentNucleotideOverlap(seq1, seq2);
 			
 			boolean isOverlap = false;
 			boolean isOverlapExactlySame = false;
@@ -1528,81 +1547,6 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 			return isMerged;
 	}
 	
-	public int countExactNucleotideOverlap(Sequence seq1, Sequence seq2) {
-		int nExactOverlap = 0;
-		int nDifferentOverlap = 0;
-		
-		for(int n = 0; n < seq1.getLength(); n++){
-			if(NucleotideUtilities.isAtLeastOneGap(seq1.getBaseAtPos(n),seq2.getBaseAtPos(n))){
-				// Nothing to do
-			}else{
-				if(NucleotideUtilities.baseValFromBase(seq1.getBaseAtPos(n)) == NucleotideUtilities.baseValFromBase(seq2.getBaseAtPos(n))){
-					nExactOverlap ++;	
-				}
-				else{
-					nDifferentOverlap ++;
-				}
-			}
-		}
-		return nExactOverlap;		
-	}
-	
-	public int countDifferentNucleotideOverlap(Sequence seq1, Sequence seq2) {
-		int nExactOverlap = 0;
-		int nDifferentOverlap = 0;
-		
-		for(int n = 0; n < seq1.getLength(); n++){
-			if(NucleotideUtilities.isAtLeastOneGap(seq1.getBaseAtPos(n),seq2.getBaseAtPos(n))){
-				// Nothing to do
-			}else{
-				if(NucleotideUtilities.baseValFromBase(seq1.getBaseAtPos(n)) == NucleotideUtilities.baseValFromBase(seq2.getBaseAtPos(n))){
-					nExactOverlap ++;	
-				}
-				else{
-					nDifferentOverlap ++;
-				}
-			}
-		}
-		return nDifferentOverlap;		
-	}
-	
-	public int countDifferentAminoAcidOverlap(Sequence seq1, Sequence seq2) {
-		int nExactOverlap = 0;
-		int nDifferentOverlap = 0;
-		
-		for(int n = 0; n < seq1.getLength(); n++){
-			if(AminoAcid.isGap(seq1.getBaseAtPos(n)) || AminoAcid.isGap(seq2.getBaseAtPos(n))){
-				// nothing to do
-			}else{
-				if(AminoAcid.getAminoAcidFromByte(seq1.getBaseAtPos(n)) == AminoAcid.getAminoAcidFromByte(seq2.getBaseAtPos(n))){
-					nExactOverlap ++;	
-				}
-				else{
-					nDifferentOverlap ++;
-				}
-			}
-		}
-		return nDifferentOverlap;		
-	}
-	
-	public int countExactAminoAcidOverlap(Sequence seq1, Sequence seq2) {
-		int nExactOverlap = 0;
-		int nDifferentOverlap = 0;
-		
-		for(int n = 0; n < seq1.getLength(); n++){
-			if(AminoAcid.isGap(seq1.getBaseAtPos(n)) || AminoAcid.isGap(seq2.getBaseAtPos(n))){
-				// nothing to do
-			}else{
-				if(AminoAcid.getAminoAcidFromByte(seq1.getBaseAtPos(n)) == AminoAcid.getAminoAcidFromByte(seq2.getBaseAtPos(n))){
-					nExactOverlap ++;	
-				}
-				else{
-					nDifferentOverlap ++;
-				}
-			}
-		}
-		return nExactOverlap;		
-	}
 
 	public List<Sequence> replaceSelectedBasesWithGap(boolean undoable) {
 		List<Sequence> editedSequences = new ArrayList<Sequence>();
@@ -1631,26 +1575,41 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 	}
 
 	
-	public String findDuplicates() {
-		StringBuilder dupeMessage = new StringBuilder();
+	public ArrayList<Sequence> findDuplicates(){
+		ArrayList<Sequence> uniqueSequences = new ArrayList<Sequence>();
+		ArrayList<Sequence> dupeSequences = new ArrayList<Sequence>();
 		for(int n = 0; n < sequences.size(); n++){
-			Sequence seq1 = getSequences().get(n);
-			String duplicates = "";
-			for(int m = n + 1; m < sequences.size(); m++){
-				Sequence seq2 = getSequences().get(m);
-				int exactOverlap = countExactNucleotideOverlap(seq1, seq2);
-				int differentOverlap = countDifferentNucleotideOverlap(seq1, seq2);
+			Sequence testSeq = getSequences().get(n);
+			
+			boolean isUnique = true;
+			
+			for(int m = 0; m < uniqueSequences.size(); m++){
 				
-				if(exactOverlap > 100 && differentOverlap == 0){					
-					duplicates += seq2.getName() + " (" + exactOverlap + ") " + seq2.getUngapedLength()  + LF;				
+				Sequence anUniqe = uniqueSequences.get(m);
+				
+				if(testSeq.getLength() == anUniqe.getLength()){
+					if(SequenceUtils.isSeqResiduesIdentical(testSeq, anUniqe)){
+						isUnique = false;
+						break;
+					}else{
+						
+					}
+				}
+				else{
+					logger.info("wrong len");
 				}
 			}
-			if(duplicates.length() > 0){
-				dupeMessage.append(seq1.getName() + " " + seq1.getUngapedLength()  + "=" + LF); 
-				dupeMessage.append(duplicates + "-------------------------------------------------------------------" + LF);
+			
+			if(isUnique){
+				uniqueSequences.add(testSeq);
+			}else{
+				dupeSequences.add(testSeq);
 			}
+			logger.info("dupeSequences.size()" + dupeSequences.size());
+			logger.info("uniqueSequences.size()" + uniqueSequences.size());
+			
 		}
-		return dupeMessage.toString();
+		return dupeSequences;
 	}
 
 	public void setSelectionWithin(Rectangle bounds, boolean isSelected) {
@@ -1755,6 +1714,7 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 		}
 		return dupes;
 	}
+	
 
 	public int getFirstSelectedWholeColumn() {
 		Point pos = getFirstSelectedPos();
@@ -1787,6 +1747,8 @@ public class SequenceListModel extends DefaultListModel implements Iterable<Sequ
 			return pos.x;
 		}	
 	}
+
+	
 
 	
 

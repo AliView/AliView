@@ -24,7 +24,7 @@ public class TranslationCharPixelsContainer {
 	}
 
 
-	public static TranslationCharPixelsContainer createDefaultTranslationPixelsImpl(Font font, int minFontSize, int width, int height, ColorScheme colorScheme) {
+	public static TranslationCharPixelsContainer createDefaultTranslationPixelsImpl(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCase) {
 		TranslationCharPixelsContainer transContainer = new TranslationCharPixelsContainer();
 		transContainer.allAAContainers = new CharPixelsContainer[AminoAcid.HIGEST_AA_INT_VAL + 1];
 		for(AminoAcid containerAcid: AminoAcid.GROUP_ALL){
@@ -33,14 +33,14 @@ public class TranslationCharPixelsContainer {
 				int baseVal = NucleotideUtilities.baseValFromBase((byte)n);
 				Color fgColor = colorScheme.getBaseForegroundColor(baseVal);
 				Color bgColor = colorScheme.getAminoAcidBackgroundColor(containerAcid);
-				container.backend[n] = new CharPixels((char)n, width, height, fgColor, bgColor, font, minFontSize);
+				container.backend[n] = new CharPixels((char)n, width, height, fgColor, bgColor, font, minFontSize, fontCase);
 			}
 			transContainer.allAAContainers[containerAcid.intVal] = container;
 		}
 		return transContainer;
 	}
 	
-	public static TranslationCharPixelsContainer createSelectedTranslationPixelsImpl(Font font, int minFontSize, int width, int height, ColorScheme colorScheme) {
+	public static TranslationCharPixelsContainer createSelectedTranslationPixelsImpl(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCase) {
 		TranslationCharPixelsContainer transContainer = new TranslationCharPixelsContainer();
 		transContainer.allAAContainers = new CharPixelsContainer[AminoAcid.HIGEST_AA_INT_VAL + 1];
 		for(AminoAcid containerAcid: AminoAcid.GROUP_ALL){
@@ -50,14 +50,14 @@ public class TranslationCharPixelsContainer {
 				// It looks better without the selected color for foreground
 				Color fgColor = colorScheme.getBaseForegroundColor(baseVal);
 				Color bgColor = colorScheme.getAminoAcidSelectionBackgroundColor(containerAcid);
-				container.backend[n] = new CharPixels((char)n, width, height, fgColor, bgColor, font, minFontSize);
+				container.backend[n] = new CharPixels((char)n, width, height, fgColor, bgColor, font, minFontSize, fontCase);
 			}
 			transContainer.allAAContainers[containerAcid.intVal] = container;
 		}
 		return transContainer;
 	}
 	
-	public static TranslationCharPixelsContainer createLetterTranslationPixelsImpl(Font font, int minFontSize, int width, int height, ColorScheme colorScheme) {
+	public static TranslationCharPixelsContainer createLetterTranslationPixelsImpl(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCase) {
 		TranslationCharPixelsContainer transContainer = new TranslationCharPixelsContainer();
 		transContainer.allAAContainers = new CharPixelsContainer[AminoAcid.HIGEST_AA_INT_VAL + 1];
 		for(AminoAcid containerAcid: AminoAcid.GROUP_ALL){
@@ -65,14 +65,14 @@ public class TranslationCharPixelsContainer {
 			for(int n = 0; n < container.backend.length; n++){	
 				Color fgColor = Color.white; //colorScheme.getAminoAcidForgroundColor(containerAcid);
 				Color bgColor = colorScheme.getAminoAcidBackgroundColor(containerAcid);
-				container.backend[n] = new CharPixels(containerAcid.getCodeCharVal(), width, height, fgColor, bgColor, font, minFontSize);
+				container.backend[n] = new CharPixels(containerAcid.getCodeCharVal(), width, height, fgColor, bgColor, font, minFontSize, fontCase);
 			}
 			transContainer.allAAContainers[containerAcid.intVal] = container;
 		}
 		return transContainer;
 	}
 	
-	public static TranslationCharPixelsContainer createSelectedLetterTranslationPixelsImpl(Font font, int minFontSize, int width, int height, ColorScheme colorScheme) {
+	public static TranslationCharPixelsContainer createSelectedLetterTranslationPixelsImpl(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCase) {
 		TranslationCharPixelsContainer transContainer = new TranslationCharPixelsContainer();
 		transContainer.allAAContainers = new CharPixelsContainer[AminoAcid.HIGEST_AA_INT_VAL + 1];
 		for(AminoAcid containerAcid: AminoAcid.GROUP_ALL){
@@ -80,7 +80,7 @@ public class TranslationCharPixelsContainer {
 			for(int n = 0; n < container.backend.length; n++){	
 				Color fgColor = Color.white; //colorScheme.getAminoAcidForgroundColor(containerAcid);
 				Color bgColor = colorScheme.getAminoAcidSelectionBackgroundColor(containerAcid);
-				container.backend[n] = new CharPixels(containerAcid.getCodeCharVal(), width, height, fgColor, bgColor, font, minFontSize);
+				container.backend[n] = new CharPixels(containerAcid.getCodeCharVal(), width, height, fgColor, bgColor, font, minFontSize, fontCase);
 			}
 			transContainer.allAAContainers[containerAcid.intVal] = container;
 		}

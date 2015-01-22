@@ -469,18 +469,26 @@ public class NexusUtilities {
 
 
 	public static String replaceProblematicChars(String text){
-		text = text.replace(' ', '_');
-		text = text.replace('-', '_');
-		text = text.replace('\'', '_');
-		text = text.replace( '?', '_');
-		text = text.replace( '.', '_');
-		text = text.replace( '/', '_');
-		text = text.replace( '|', '_');
-		text = text.replace( '\"', '_');
-		text = text.replace( ',', '_');
-		text = text.replace( '&', '_');
-		text = text.replace( '\\', '_');
-
+		
+		text = text.replaceAll("[^A-Za-z0-9]", "_");
+		
+//		text = text.replace(' ', '_');
+//		text = text.replace('-', '_');
+//		text = text.replace('\'', '_');
+//		text = text.replace( '?', '_');
+//		text = text.replace( '.', '_');
+//		text = text.replace( '/', '_');
+//		text = text.replace( '|', '_');
+//		text = text.replace( '\"', '_');
+//		text = text.replace( ',', '_');
+//		text = text.replace( '&', '_');
+//		text = text.replace( '\\', '_');
+//		text = text.replace( '(', '_');
+//		text = text.replace( ')', '_');
+//		text = text.replace( ':', '_');
+//		text = text.replace( ';', '_');
+//		text = text.replace( '>', '_');
+		
 		return text;
 	}
 

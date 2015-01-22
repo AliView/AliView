@@ -43,6 +43,7 @@ import aliview.alignment.AlignmentListener;
 import aliview.color.ColorScheme;
 import aliview.color.ColorSchemeFactory;
 import aliview.externalcommands.CommandItem;
+import aliview.pane.CharPixels;
 import aliview.sequencelist.FilePage;
 import aliview.sequencelist.FileSequenceListModel;
 import aliview.settings.Settings;
@@ -387,16 +388,9 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 
 		mnFile.add(new JSeparator());
 
-		/*
-		JMenuItem mntmFindDupes = new JMenuItem("Find duplicates");
-		mntmFindDupes.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				aliViewWindow.findDuplicates();
-			}
-		});
-		mnFile.add(mntmFindDupes);
-		loadedFunctions.add(mntmFindDupes);
-		 */
+		
+		
+		
 		/*
 				JMenuItem mntmShowStats = new JMenuItem("Show statistics");
 				mntmShowStats.addActionListener(new ActionListener() {
@@ -637,6 +631,16 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 		});
 		mnEdit.add(mntmFind);
 		loadedAlignmentFunctions.add(mntmFind);
+		
+		JMenuItem mntmFindDupes = new JMenuItem("Find and select duplicate sequences");
+		//mntmFindDupes.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+		mntmFindDupes.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				aliViewWindow.selectDuplicates();
+			}
+		});
+		mnEdit.add(mntmFindDupes);
+		loadedAlignmentFunctions.add(mntmFindDupes);
 
 		JMenuItem mntmFindClipboardNames = new JMenuItem("Find sequence names from clipboard");
 		mntmFindClipboardNames.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
@@ -1135,10 +1139,29 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 		mnViewMenu.add(mntmCountStopCodons);
 		loadedAlignmentFunctions.add(mntmCountStopCodons);
 
-
-
+		
 		mnViewMenu.add(new JSeparator());
-
+		
+		
+		JCheckBoxMenuItem mntmFontCase = new JCheckBoxMenuItem("Upper case");
+		mntmFontCase.setMnemonic(KeyEvent.VK_U);
+		int fontCase = Settings.getFontCase().getIntValue();
+		if(fontCase == CharPixels.CASE_UPPER){
+			mntmFontCase.setSelected(true);
+		}
+		mntmFontCase.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e){
+				JCheckBoxMenuItem btn = (JCheckBoxMenuItem ) e.getSource();
+				aliViewWindow.setFontCaseUpper(btn.isSelected());	
+			}
+		});
+		//mntmFontCase.setAccelerator(OSNativeUtils.getToggleTranslationKeyAccelerator());
+		//buttonGroupOneViewAtATime.add(highlightNonCons);
+		//toggleTranslationButtonModel = mntmToggleTranslation.getModel();
+		mnViewMenu.add(mntmFontCase);
+		alwaysAvailableFunctions.add(mntmFontCase);
+		
+		
 		// create ColorMenu and submenu
 		JMenu mnColorScheme = new JMenu("Colors");
 		JMenu mnNucleotideSub = new JMenu("Nucleotide");

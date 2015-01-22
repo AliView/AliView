@@ -1353,21 +1353,13 @@ public class Alignment implements FileSequenceLoadListener {
 
 	/*
 	 * 
-	 * This one is just dumping result to stdout
-	 * 
 	 */
-	public void findDuplicates() {
-		StringBuilder dupeMessage = new StringBuilder("duplicates in alignment: " + getAlignmentFile().getName() + 
-				                                      LF + "time: " + SimpleDateFormat.getDateTimeInstance().format(new Date()) + LF);
-		String message = sequences.findDuplicates();
-		dupeMessage.append(message);
-		
-		try {
-			FileUtils.writeStringToFile(new File(getAlignmentFile().getParentFile(), "duplicates.log"), dupeMessage.toString() );
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	public void selectDuplicates(){
+		ArrayList<Sequence> dupes = sequences.findDuplicates();
+		for(Sequence seq: dupes){
+			seq.selectAllBases();
 		}
+		fireSelectionChanged();
 	}
 	
 	public ArrayList<String> findDuplicateNames(){
@@ -1377,6 +1369,15 @@ public class Alignment implements FileSequenceLoadListener {
 			return null;
 		}
 	}
+	
+	public void selectDuplicateNamesSequences(){
+		ArrayList<String> dupeNames = sequences.findDuplicateNames();
+		for(String dupeName: dupeNames){
+			sequences.selectSequencesByName(dupeName);
+		}
+		fireSelectionChanged();
+	}
+	
 
 	/*
 	 * 

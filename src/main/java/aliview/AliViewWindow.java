@@ -149,6 +149,7 @@ import aliview.messenges.Messenger;
 import aliview.messenges.TextEditDialog;
 import aliview.old.ExternalCmdFrame;
 import aliview.old.MyScrollPane;
+import aliview.pane.CharPixels;
 import aliview.primer.Primer;
 import aliview.primer.PrimerResultsFrame;
 import aliview.sequencelist.FilePage;
@@ -2504,8 +2505,10 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		return isEmpty;
 	}
 
-	public void findDuplicates() {
-		alignment.findDuplicates();
+	public void selectDuplicates() {
+		alignment.clearSelection();
+		alignment.selectDuplicates();
+		requestPaneRepaint();
 	}
 
 	private void setPaneAndListBGColor(Color color){
@@ -3941,6 +3944,16 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 
 	public void addNewSequence() {
 		alignment.addNewSequence();
+		requestRepaintAndRevalidateALL();
+	}
+
+	public void setFontCaseUpper(boolean selected) {
+		int fontCase = CharPixels.CASE_UNTOUCHED;
+		if(selected){
+			fontCase = CharPixels.CASE_UPPER;
+		}
+		alignmentPane.setFontCase(fontCase);
+		Settings.getFontCase().putIntValue(fontCase);		
 		requestRepaintAndRevalidateALL();
 	}
 }

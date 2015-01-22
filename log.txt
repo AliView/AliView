@@ -1,0 +1,233 @@
+sending incremental file list
+AliView.desktop
+README.txt
+aliicon_128x128.png
+aliview
+create-makeself-archive.sh
+install.readme.txt
+install.sh
+
+sent 4742 bytes  received 145 bytes  9774.00 bytes/sec
+total size is 4237  speedup is 0.87
+
+About to compress 3164 KB of data...
+Adding files to archive named "../aliview.install.run"...
+CRC: 154896879
+MD5: 07e45d5853b52be1b7d0bac84586aba4
+
+Self-extractible archive "../aliview.install.run" successfully created.
+
+About to compress 3164 KB of data...
+Adding files to archive named "../aliview.install.run"...
+CRC: 154896879
+MD5: 07e45d5853b52be1b7d0bac84586aba4
+
+Self-extractible archive "../aliview.install.run" successfully created.
+AliView.desktop
+README.txt
+aliicon_128x128.png
+aliview
+aliview.jar
+create-makeself-archive.sh
+install.readme.txt
+install.sh
+sending incremental file list
+install.readme.txt
+
+sent 1298 bytes  received 31 bytes  2658.00 bytes/sec
+total size is 1195  speedup is 0.90
+sending incremental file list
+.htaccess
+
+sent 181 bytes  received 31 bytes  424.00 bytes/sec
+total size is 87  speedup is 0.41
+Inno Setup 5 Command-Line Compiler
+Copyright (C) 1997-2012 Jordan Russell. All rights reserved.
+Portions Copyright (C) 2000-2012 Martijn Laan
+Inno Setup Preprocessor
+Copyright (C) 2001-2004 Alex Yackimoff. All rights reserved.
+
+Compiler engine version: Inno Setup 5.5.4 (a)
+
+[ISPP] Preprocessing.
+[ISPP] Preprocessed.
+
+Parsing [Setup] section, line 14
+Parsing [Setup] section, line 15
+Parsing [Setup] section, line 16
+Parsing [Setup] section, line 18
+Parsing [Setup] section, line 19
+Parsing [Setup] section, line 20
+Parsing [Setup] section, line 21
+Parsing [Setup] section, line 22
+Parsing [Setup] section, line 23
+Parsing [Setup] section, line 24
+Parsing [Setup] section, line 25
+Parsing [Setup] section, line 26
+Parsing [Setup] section, line 27
+Parsing [Setup] section, line 28
+Reading file (WizardImageFile)
+   File: C:\Program Files\Inno Setup 5\WIZMODERNIMAGE.BMP
+Reading file (WizardSmallImageFile)
+   File: C:\Program Files\Inno Setup 5\WIZMODERNSMALLIMAGE.BMP
+Preparing Setup program executable
+Reading default messages from Default.isl
+Parsing [Languages] section, line 31
+   File: C:\Program Files\Inno Setup 5\Default.isl
+Parsing [LangOptions], [Messages], and [CustomMessages] sections
+   Messages in script file
+Reading [Code] section
+Parsing [Tasks] section, line 34
+Parsing [Tasks] section, line 35
+Parsing [Tasks] section, line 36
+Parsing [Tasks] section, line 37
+Parsing [Tasks] section, line 38
+Parsing [Tasks] section, line 39
+Parsing [Tasks] section, line 40
+Parsing [Icons] section, line 70
+Parsing [Icons] section, line 71
+Parsing [Icons] section, line 72
+Parsing [Registry] section, line 43
+Parsing [Registry] section, line 44
+Parsing [Registry] section, line 45
+Parsing [Registry] section, line 46
+Parsing [Registry] section, line 47
+Parsing [Registry] section, line 48
+Parsing [Registry] section, line 49
+Parsing [Registry] section, line 50
+Parsing [Registry] section, line 51
+Parsing [Registry] section, line 52
+Parsing [Registry] section, line 53
+Parsing [Registry] section, line 54
+Parsing [Registry] section, line 55
+Parsing [Registry] section, line 56
+Parsing [Registry] section, line 57
+Parsing [Registry] section, line 58
+Parsing [Registry] section, line 59
+Parsing [Registry] section, line 60
+Parsing [Registry] section, line 61
+Parsing [Registry] section, line 62
+Parsing [Run] section, line 75
+Parsing [Files] section, line 65
+Parsing [Files] section, line 66
+   Reading version info: Z:\home\anders\maven\AliView\AliView.l4j.ini
+Creating setup files
+   Compressing: Z:\home\anders\maven\AliView\target\windows-latest\AliView.exe
+   Compressing: Z:\home\anders\maven\AliView\AliView.l4j.ini
+   Compressing Setup program executable
+   Updating version info
+
+
+Successful compile (0.594 sec). Resulting Setup program filename is:
+Z:\home\anders\maven\AliView\target\windows-latest\AliView-Setup.exe
+sending incremental file list
+install.readme.txt
+
+sent 507 bytes  received 31 bytes  1076.00 bytes/sec
+total size is 404  speedup is 0.75
+sending incremental file list
+
+sent 12 bytes  received 12 bytes  48.00 bytes/sec
+total size is 0  speedup is 0.00
+sending incremental file list
+.htaccess
+
+sent 145 bytes  received 31 bytes  352.00 bytes/sec
+total size is 51  speedup is 0.29
+sending incremental file list
+windows-version-1.17/
+windows-version-1.17/AliView-Setup.exe
+windows-version-1.17/without_installer_version/
+windows-version-1.17/without_installer_version/AliView.exe
+windows-version-1.17/without_installer_version/aliview.jar
+
+sent 7290608 bytes  received 77 bytes  14581370.00 bytes/sec
+total size is 7289772  speedup is 1.00
+sending incremental file list
+linux-version-1.17/
+linux-version-1.17/aliview.install.run
+linux-version-1.17/aliview.tgz
+linux-version-1.17/aliview/
+linux-version-1.17/aliview/aliview.jar
+
+sent 9247267 bytes  received 77 bytes  18494688.00 bytes/sec
+total size is 9251125  speedup is 1.00
+sending incremental file list
+AliView-1.17-app.zip
+
+sent 2492815 bytes  received 31 bytes  4985692.00 bytes/sec
+total size is 2492406  speedup is 1.00
+sending incremental file list
+windows-version-1.17/
+windows-version-1.17/AliView-Setup.exe
+windows-version-1.17/without_installer_version/
+windows-version-1.17/without_installer_version/AliView.exe
+windows-version-1.17/without_installer_version/aliview.jar
+
+sent 3581696 bytes  received 18803 bytes  2400332.67 bytes/sec
+total size is 7289772  speedup is 2.02
+sending incremental file list
+version_history.txt
+
+sent 817 bytes  received 85 bytes  1804.00 bytes/sec
+total size is 6220  speedup is 6.90
+sending incremental file list
+linux-version-1.17/
+linux-version-1.17/aliview.install.run
+linux-version-1.17/aliview.tgz
+linux-version-1.17/aliview/
+linux-version-1.17/aliview/aliview.jar
+
+sent 4075735 bytes  received 31751 bytes  2738324.00 bytes/sec
+total size is 9251125  speedup is 2.25
+sending incremental file list
+version_history.txt
+
+sent 817 bytes  received 85 bytes  1804.00 bytes/sec
+total size is 6220  speedup is 6.90
+sending incremental file list
+AliView-1.17-app.zip
+
+sent 2230323 bytes  received 9523 bytes  1493230.67 bytes/sec
+total size is 2492406  speedup is 1.11
+sending incremental file list
+version_history.txt
+
+sent 817 bytes  received 85 bytes  1804.00 bytes/sec
+total size is 6220  speedup is 6.90
+sending incremental file list
+
+sent 54 bytes  received 15 bytes  46.00 bytes/sec
+total size is 254  speedup is 3.68
+sending incremental file list
+
+sent 57 bytes  received 15 bytes  144.00 bytes/sec
+total size is 476  speedup is 6.61
+sending incremental file list
+
+sent 58 bytes  received 15 bytes  48.67 bytes/sec
+total size is 125  speedup is 1.71
+sending incremental file list
+version_history.txt
+
+sent 817 bytes  received 85 bytes  1804.00 bytes/sec
+total size is 6220  speedup is 6.90
+sending incremental file list
+version.properties
+
+sent 103 bytes  received 37 bytes  280.00 bytes/sec
+total size is 14  speedup is 0.10
+sending incremental file list
+index.html
+downloads/
+downloads/linux/
+downloads/mac/
+downloads/windows/
+help/
+help/images/
+images/
+images/tutorial/
+style/
+
+sent 3447 bytes  received 457 bytes  2602.67 bytes/sec
+total size is 8761715  speedup is 2244.29

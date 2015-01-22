@@ -1,14 +1,11 @@
 Version history
 
-1.17-beta2
-
-- Now possible to find and select duplicate sequence, "Edit" | "Find and select duplicate sequences"  (this function is still beta)
-- Duplicate sequences are being selected in alignment at startup
-- Adjusted simplified nexus format, it now also replaces all non alfanumeric characters (A-Z a-z 0-9) with _ in the sequence name
-
-1.17-beta1
+1.17
 
 - Fixed bug that made it impossible to close error message if something went wrong when aligning
+- Duplicate sequence names are being selected in alignment at startup
+- Adjusted simplified nexus format, it now replaces all non alfanumeric characters (A-Z a-z 0-9) with _ in the sequence name
+- Now possible to find and select duplicate sequence, "Edit" | "Find and select duplicate sequences"  (this function is still beta)
 
 1.16
 

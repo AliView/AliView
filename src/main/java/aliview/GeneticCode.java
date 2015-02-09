@@ -19,7 +19,7 @@ public final class GeneticCode {
 	public static final GeneticCode  GC2 = new GeneticCode(2,"Vertebrate Mitochondrial", "FFLLSSSSYY**CCWWLLLLPPPPHHQQRRRRIIMMTTTTNNKKSS**VVVVAAAADDEEGGGG","AUG");
 	public static final GeneticCode  GC3 = new GeneticCode(3,"Yeast Mitochondrial","FFLLSSSSYY**CCWWTTTTPPPPHHQQRRRRIIMMTTTTNNKKSSRRVVVVAAAADDEEGGGG","AUG");
 	public static final GeneticCode  GC4 = new GeneticCode(4,"Mold, Protozoan, and Coelenterate Mitochondrial and Mycoplasma/Spiroplasma", "FFLLSSSSYY**CCWWLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG","AUG");
-	public static final GeneticCode  GC5 = new GeneticCode(5,"Invertebrate Mitochondrial","FFLLSSSSYY**CC*WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG","AUG");
+	public static final GeneticCode  GC5 = new GeneticCode(5,"Invertebrate Mitochondrial","FFLLSSSSYY**CCWWLLLLPPPPHHQQRRRRIIMMTTTTNNKKSSSSVVVVAAAADDEEGGGG","AUG"); 
 	public static final GeneticCode  GC6 = new GeneticCode(6,"The Ciliate, Dasycladacean and Hexamita Nuclear Code", "FFLLSSSSYYQQCC*WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG");	  
 	public static final GeneticCode  GC9 = new GeneticCode(9,"The Echinoderm and Flatworm Mitochondrial", "FFLLSSSSYY**CCWWLLLLPPPPHHQQRRRRIIIMTTTTNNNKSSSSVVVVAAAADDEEGGGG");
 	public static final GeneticCode  GC10 = new GeneticCode(10,"The Euplotid Nuclear Code", "FFLLSSSSYY**CCCWLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG");

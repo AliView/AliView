@@ -6,11 +6,18 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.datatransfer.FlavorMap;
+import java.awt.dnd.Autoscroll;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.TooManyListenersException;
 
 import javax.swing.BoundedRangeModel;
 import javax.swing.DefaultBoundedRangeModel;
@@ -23,13 +30,18 @@ import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
 import javax.swing.ListCellRenderer;
+import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeListener;
+import javax.swing.plaf.basic.BasicListUI;
 
 import org.apache.log4j.Logger;
 
 import utils.OSNativeUtils;
+import aliview.AliView;
+import aliview.AliViewWindow;
 import aliview.UndoControler;
 import aliview.gui.AlignmentPane_Orig;
 import aliview.sequences.Sequence;
@@ -38,28 +50,63 @@ import aliview.settings.Settings;
 import aliview.undo.UndoSavedStateSequenceOrder;
 
 
-public class SequenceJList extends javax.swing.JList{
+public class SequenceJList extends javax.swing.JList implements Autoscroll{
 	private static final Logger logger = Logger.getLogger(SequenceJList.class);
 	// todo These two constants should be synchronized in one class (AlignmentPane & this)
 	private static final int MIN_CHAR_SIZE = 2;
 	private static final int MAX_CHAR_SIZE = 100;
 	private double charHeight;
 	private ListCellRenderer storedCellRenderer;
+	private BasicListUI builist;
+	//private DefaultListModel<String> notUsed;
+	private JScrollPane alignmentScrollPane;
+	private JScrollPane listScrollPane;
 	
 	
-	public SequenceJList(SequenceListModel model, double charHeight) {
+	public SequenceJList(AlignmentListModel model, double charHeight, AliViewWindow aliWindow) {
 		super(model);
-		this.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		this.setTransferHandler(new SequenceTransferHandler());
+		//this.addMouseMotionListener(new SequenceListMouseListener());
+		//this.getParent().addMouseMotionListener(new SequenceListMouseListener());
+		
+		/*
+		DropTarget old = this.getDropTarget();
+		DropTarget newDT = new MyOtherDropTarget();	
+		newDT.setComponent(old.getComponent());
+		newDT.setFlavorMap(old.getFlavorMap());
+		newDT.setDefaultActions(old.getDefaultActions());
+		this.setDropTarget(newDT);
+		*/
+		
+		//jComponent.setTransferHandler(new MyTransferHandler());
 		this.setDropMode(DropMode.INSERT);
+		this.setTransferHandler(new SequenceTransferHandler(aliWindow));
+		
+		// Add modified drop target due to otherwise erratic drag-scrolling
+		DropTarget original = this.getDropTarget();// the Swing DropTarget
+		MyDropTarget myDropTarget = new MyDropTarget();
+		try {
+			myDropTarget.addDropTargetListener(original);
+		} catch (TooManyListenersException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}// delegate for original behavior
+		this.setDropTarget(myDropTarget);
+		
+		this.setDragEnabled(true);
+		
+		
+		this.setSelectionModel(model.getAlignmentSelectionModel().getSequenceListSelectionModel());
+		//this.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		
+		
 		this.setCharSize(charHeight);
+		
 		
 		// int width = model.getLongestSequenceName();
 		// int fixedWidth = 300;
 		
 		this.setCellRenderer(new FasterTextCellRenderer()); 	
 		
-		this.setDragEnabled(true);
 		
 		this.setBorder(new EmptyBorder(0,0,0,0));
 
@@ -78,9 +125,13 @@ public class SequenceJList extends javax.swing.JList{
 	}
 	
 	@Override
-	public SequenceListModel getModel() {
+	public AlignmentListModel getModel() {
 		// TODO Auto-generated method stub
-		return (SequenceListModel) super.getModel();
+		return (AlignmentListModel) super.getModel();
+	}
+	
+	public void setModel(AlignmentListModel model) {
+		super.setModel(model);
 	}
 
 	
@@ -89,7 +140,7 @@ public class SequenceJList extends javax.swing.JList{
 		Graphics2D g2 = (Graphics2D) g;
 		super.paintComponent(g);
 		long endTime = System.currentTimeMillis();
-//		logger.info("Draw JList took " + (endTime - startTime) + " milliseconds");	
+		logger.info("Draw JList took " + (endTime - startTime) + " milliseconds");	
 	}
 	
 	@Override
@@ -97,10 +148,18 @@ public class SequenceJList extends javax.swing.JList{
 		long startTime = System.currentTimeMillis();
 		super.validate();
 		long endTime = System.currentTimeMillis();
-//		logger.info("Validate JList took " + (endTime - startTime) + " milliseconds");	
+		synchAlignmentScrollPane();
+		logger.info("Validate JList took " + (endTime - startTime) + " milliseconds");	
 	}
 	
 	
+	private void synchAlignmentScrollPane() {
+		JScrollPane source = listScrollPane;
+		JScrollPane dest = alignmentScrollPane;
+		Point viewPos = new Point(dest.getViewport().getViewPosition().x, source.getViewport().getViewPosition().y );
+		dest.getViewport().setViewPosition(viewPos);	
+	}
+
 	@Override
 	public Dimension getPreferredScrollableViewportSize() {
 		//logger.info("super.getPreferredScrollableViewportSize();" + super.getPreferredScrollableViewportSize());
@@ -150,6 +209,8 @@ public class SequenceJList extends javax.swing.JList{
 				}
 
 	}
+	
+	/*
 
 	public void deleteSelectedSequences() {
 		Sequence[] selection = this.getSelectedValues();
@@ -161,6 +222,8 @@ public class SequenceJList extends javax.swing.JList{
 		}	
 	}
 	
+	
+	
 	private boolean isSelectionValid(Object[] array) {
 		if(array != null && array.length > 0){
 			return true;
@@ -170,62 +233,13 @@ public class SequenceJList extends javax.swing.JList{
 		}
 	}
 
+	
 	public void reverseComplementSelectedSequences() {
 		Sequence[] selection = this.getSelectedValues();
-		this.getModel().reverseComplement(selection);
+		List<Sequence> seqs = Arrays.asList(selection);
+		this.getModel().reverseComplement(seqs);
 	}
 	
-	/*
-	 * 
-	 * TODO this should be changed into "Sequences-class" that includes JListModel
-	 * 
-	 */
-	public void moveSelectionDown() {
-		Sequence[] selection = this.getSelectedValues();
-		this.getModel().moveSequencesDown(selection);
-		this.setSelected(selection);
-	}
-	
-	public void moveSelectionUp() {
-		Sequence[] selection = this.getSelectedValues();
-		this.getModel().moveSequencesUp(selection);
-		this.setSelected(selection);
-	}
-	
-	public void moveSelectedSequencesTo(int toIndex){
-		Sequence[] selection = this.getSelectedValues();
-		if(! isSelectionValid(selection)){
-			return;
-		}
-		// Since move is between list in same list the input index has to be lowered because the
-		// target sequence is one of the lower index sequences
-		if(this.getSelectedIndex() < toIndex){
-			if(toIndex > 0){
-				toIndex --;
-			}
-		}
-		this.getModel().moveSequencesTo(toIndex, selection);
-		this.setSelected(selection);
-	}
-
-
-	public void moveSelectionToTop() {
-		Sequence[] selection = this.getSelectedValues();
-		this.getModel().moveSequencesToTop(selection);
-		this.setSelected(selection);
-	}
-	
-	private void setSelected(Sequence[] selection) {
-		int[] indicies = new int[selection.length];
-		int n = 0;
-		for(Sequence seq: selection){
-			indicies[n] = this.getModel().indexOf(seq);
-			n++;
-		}
-		this.setValueIsAdjusting(true);
-		this.setSelectedIndices(indicies);	
-		this.setValueIsAdjusting(false);
-	}
 	
 	public void setSelectedIndices(List<Integer> indices) {
 		int[] indexArray = new int[indices.size()];
@@ -237,11 +251,7 @@ public class SequenceJList extends javax.swing.JList{
 		this.setValueIsAdjusting(false);
 	}
 
-	public void moveSelectionToBottom() {
-		Sequence[] selection = this.getSelectedValues();
-		this.getModel().moveSequencesToBottom(selection);
-		this.setSelected(selection);
-	}
+
 	
 	public boolean hasSelection() {
 		return ! getSelectionModel().isSelectionEmpty();
@@ -259,7 +269,7 @@ public class SequenceJList extends javax.swing.JList{
 	}
 	
 
-	
+
 	@Override
 	public Sequence[] getSelectedValues() {
 		Object[] vals = super.getSelectedValues();
@@ -278,10 +288,100 @@ public class SequenceJList extends javax.swing.JList{
 		}
 		return seqs;
 	}
+	
+	*/
 
-	public void validateSelection() {
-		ArrayList<Integer> indices = this.getModel().getIndicesOfSequencesWithAllSelected();
-		setSelectedIndices(indices);
+
+	/*
+	 * This is for drop support from SequenceTransferHandler
+	 */
+	public void moveSelectedSequencesTo(int index) {
+		getModel().moveSelectedSequencesTo(index);
 	}
 
+	public void addSynchPanes(JScrollPane listScrollPane, JScrollPane alignmentScrollPane) {
+		this.listScrollPane = listScrollPane;
+		this.alignmentScrollPane = alignmentScrollPane;	
+	}
+	
+	/*
+	 * 
+	 * Drop target Autoscroll interface
+	 * 
+	 */
+
+	public Insets getAutoscrollInsets(){
+		//return autoscrollInsets;
+		return new Insets(this.HEIGHT, 100, this.HEIGHT, 100);
+		//return getInsets();
+	}
+
+
+	public void autoscroll(Point cursor) {
+	//	logger.info("autoscroll loc=" + cursor);
+		Rectangle visiRect = this.getVisibleRect();
+	//	logger.info("visiRect=" + visiRect);
+		
+		
+		// depending on how close pointer is to border the more indexex get visible at a time
+		
+		int topDist = cursor.y - visiRect.y;
+		int bottomDist = (visiRect.y + visiRect.height) - cursor.y;
+		
+		int scrollSpeed = 0;
+		if(topDist < 20){
+			scrollSpeed = -1;
+		}
+		if(topDist < 15){
+			scrollSpeed = -2;
+		}
+		if(topDist < 10){
+			scrollSpeed = -3;
+		}
+		if(topDist < 5){
+			scrollSpeed = -4;
+		}
+		if(topDist < 2){
+			scrollSpeed = -5;
+		}
+		
+		if(bottomDist < 20){
+			scrollSpeed = 1;
+		}
+		if(bottomDist < 15){
+			scrollSpeed = 2;
+		}
+		if(bottomDist < 10){
+			scrollSpeed = 3;
+		}
+		if(bottomDist < 5){
+			scrollSpeed = 4;
+		}
+		if(bottomDist < 2){
+			scrollSpeed = 5;
+		}
+		
+		if(scrollSpeed > 0){
+			int lastVisible = this.getLastVisibleIndex();
+			ensureIndexIsVisible(lastVisible + scrollSpeed);
+		}
+		
+		if(scrollSpeed < 0){
+			int firstVisible = this.getFirstVisibleIndex();
+			ensureIndexIsVisible(firstVisible + scrollSpeed);
+		}
+		
+	}
+
+	public Point getFirstSelectedCellPos(){
+		int index = getSelectedIndex();
+		if(index < 0){
+			return new Point(0,0);
+		}
+		Point pos = indexToLocation(index);
+		SwingUtilities.convertPointToScreen(pos, this);
+		return pos;
+	}
+
+	
 }

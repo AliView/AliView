@@ -14,6 +14,7 @@ import org.bitbucket.kienerj.io.OptimizedRandomAccessFile;
 
 import aliview.NucleotideUtilities;
 import aliview.sequencelist.FileMMSequenceList;
+import aliview.sequencelist.Interval;
 
 public class FileSequence implements Sequence {
 	private static final Logger logger = Logger.getLogger(FileSequence.class);
@@ -246,9 +247,9 @@ public class FileSequence implements Sequence {
 	}
 
 
-	public int findAndSelect(Pattern pattern, int startPos) {
+	public Interval find(Pattern pattern, int startPos) {
 
-		int findPos = -1;
+		Interval foundInterval = null;
 		// split into chunks length = 5MB
 		int buffSize = 5000*1000;
 		for(int buffStart = startPos; buffStart < getLength(); buffStart += buffSize){
@@ -264,38 +265,36 @@ public class FileSequence implements Sequence {
 			// Allocate a Matcher object from the compiled regexe pattern,
 			// and provide the input to the Matcher
 			Matcher matcher = pattern.matcher(buff);
-
 			boolean wasFound = matcher.find(0);
 
 			if(wasFound){
 				int foundStart = matcher.start();
 				int foundEnd = matcher.end();
-				
-				// select
-				selectionModel.setSelection(foundStart+buffStart+1,foundEnd+buffStart -1,true);
-				
-				findPos = foundStart+buffStart;
+				foundInterval = new Interval(foundStart+buffStart, foundEnd+buffStart);
 			}
 
 			else{
 				// 	logger.info("not found");
 			}			
 		}
-		return findPos;
+		return foundInterval;
 	}
 
-
-
-	public void setSelectionAt(int n, boolean selected){
-		selectionModel.setSelectionAt(n, selected);
+	
+	public void setSelectionAt(int i){
+		selectionModel.setSelectionAt(i);
+	}
+	
+	public void clearSelectionAt(int i){
+		selectionModel.clearSelectionAt(i);
 	}
 
-	public void selectBases(int startPos, int endPos) {
-		selectionModel.setSelection(startPos, endPos, true);
+	public void setSelection(int startPos, int endPos, boolean clearFirst) {
+		selectionModel.setSelection(startPos, endPos, clearFirst);
 	}
 
 	public boolean isBaseSelected(int position) {
-		return selectionModel.isBaseSelected(position);
+		return selectionModel.isSelected(position);
 	}
 
 	public void clearAllSelection() {
@@ -372,12 +371,12 @@ public class FileSequence implements Sequence {
 
 	}
 
-	public void moveSelectionRightIfGapIsPresent() {
+	public void moveSelectedResiduesRightIfGapIsPresent() {
 		// TODO Auto-generated method stub
 
 	}
 
-	public void moveSelectionLeftIfGapIsPresent() {
+	public void moveSelectedResiduesLeftIfGapIsPresent() {
 		// TODO Auto-generated method stub
 
 	}
@@ -514,7 +513,7 @@ public class FileSequence implements Sequence {
 
 	public void selectionExtendRight() {
 		if(selectionModel.hasSelection()){
-			int lastSelectedPos = selectionModel.getLastSelectedPosition();
+			int lastSelectedPos = selectionModel.getLastSelectedPosition(getLength());
 			int seqEndPos = getLength() + 1;
 			selectionModel.setSelection(lastSelectedPos, seqEndPos, true);
 		}
@@ -522,13 +521,13 @@ public class FileSequence implements Sequence {
 	
 	public void selectionExtendLeft() {
 		if(selectionModel.hasSelection()){
-			int firstSelectedPos = selectionModel.getLastSelectedPosition();
+			int firstSelectedPos = selectionModel.getFirstSelectedPosition();
 			selectionModel.setSelection(0, firstSelectedPos, true);
 		}
 	}
 	
 	public int getLastSelectedPosition() {
-		return selectionModel.getLastSelectedPosition();
+		return selectionModel.getLastSelectedPosition(getLength());
 	}
 
 }

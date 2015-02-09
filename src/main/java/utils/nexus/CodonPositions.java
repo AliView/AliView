@@ -340,7 +340,7 @@ public class CodonPositions{
 		return Math.max(0,size);
 	}
 
-	public boolean isAnythingButNormal() {
+	public boolean isAnythingButDefault() {
 		return positionsArray.isAnythingButDefault();
 	}
 

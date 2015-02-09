@@ -10,7 +10,7 @@ fi
 
 # make dir if needed
 if [ ! -d /usr/share/aliview ]; then
-  mkdir -v /usr/share/aliview/
+  mkdir -v -m 755 /usr/share/aliview/
 fi
 
 # archive etc.

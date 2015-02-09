@@ -67,7 +67,7 @@ public class CmdItemsPanel extends JPanel {
 			itemsPanel.add(itemPanel);
 		}
 	
-		// Butttons att bottom
+		// Buttons att bottom
 		JPanel bottomButtonPanel = new JPanel();
 		bottomButtonPanel.setLayout(new BoxLayout(bottomButtonPanel, BoxLayout.X_AXIS));
 		

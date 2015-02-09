@@ -21,11 +21,6 @@ public class Base {
 	public int getUngapedPosition() {
 		return sequence.getUngapedPos(this.position);
 	}
-	/*
-	public void setSelection(boolean selected) {
-		this.sequence.setSelectionAt(this.position, selected);	
-	}
-	*/
 
 	public boolean isSelected() {
 		// TODO Auto-generated method stub

@@ -4,7 +4,7 @@
   <groupId>AliView</groupId>
   <artifactId>AliView</artifactId>
   <packaging>jar</packaging>
-  <version>1.17</version>
+  <version>1.18-beta2</version>
   <name>AliView</name>
   <url>http://maven.apache.org</url>  
   <properties>
@@ -106,6 +106,7 @@
 				  </goals>
 				  <configuration>
 					   <finalName>aliview</finalName>
+					   <fileMode>0755</fileMode>
 					   <outputDirectory>target/windows-version-${project.version}</outputDirectory>
 					   <appendAssemblyId>false</appendAssemblyId>
 					   <descriptorRefs>
@@ -129,6 +130,7 @@
 				   </goals>
 				   <configuration>
 					  <finalName>aliview</finalName>
+					  <fileMode>0755</fileMode>
 					  <outputDirectory>target/linux-version-${project.version}/aliview/</outputDirectory>
 					  <appendAssemblyId>false</appendAssemblyId>
 					  <descriptorRefs>
@@ -152,6 +154,7 @@
                      </goals>
 			         <configuration>
 						  <finalName>aliview</finalName>
+						  <fileMode>0755</fileMode>
 						  <appendAssemblyId>false</appendAssemblyId>
 						  <descriptorRefs>
 							   <descriptorRef>jar-with-dependencies</descriptorRef>

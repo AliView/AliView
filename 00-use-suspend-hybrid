@@ -1,0 +1,6 @@
+# Always use suspend_hybrid instead of suspend
+if [ "$METHOD" = "suspend" ]; then
+  METHOD=suspend_hybrid
+fi
+# The delay after which hibernation gets triggered (default: 900 seconds, 15 minutes):
+PM_HIBERNATE_DELAY=30

@@ -19,7 +19,7 @@ import org.apache.log4j.Logger;
 
 import aliview.FileFormat;
 import aliview.sequencelist.FileMMSequenceList;
-import aliview.sequencelist.FileSequenceListModel;
+import aliview.sequencelist.FileSequenceAlignmentListModel;
 import aliview.sequences.ClustalFileSequence;
 import aliview.sequences.FileSequence;
 import aliview.sequences.PositionToPointer;
@@ -37,7 +37,7 @@ public class ClustalFileIndexer {
 		//	File alignmentFile = new File("/home/anders/projekt/alignments/SMALL-FLAVI-v7-dating.nuc.aed.ALL.protfnuc.mafft.glob.cod.seav.aln");
 
 		File alignmentFile = new File("/home/anders/projekt/alignments/testseq1.aln");
-		FileSequenceListModel model = new FileSequenceListModel(alignmentFile, FileFormat.CLUSTAL);
+		FileSequenceAlignmentListModel model = new FileSequenceAlignmentListModel(alignmentFile, FileFormat.CLUSTAL);
 	}
 
 

@@ -26,6 +26,7 @@ import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.ListDataEvent;
 import javax.swing.text.DefaultEditorKit.PasteAction;
 
 import org.apache.log4j.Level;
@@ -44,12 +45,16 @@ import aliview.color.ColorScheme;
 import aliview.color.ColorSchemeFactory;
 import aliview.externalcommands.CommandItem;
 import aliview.pane.CharPixels;
+import aliview.sequencelist.AlignmentDataEvent;
+import aliview.sequencelist.AlignmentDataListener;
+import aliview.sequencelist.AlignmentSelectionEvent;
+import aliview.sequencelist.AlignmentSelectionListener;
 import aliview.sequencelist.FilePage;
-import aliview.sequencelist.FileSequenceListModel;
+import aliview.sequencelist.FileSequenceAlignmentListModel;
 import aliview.settings.Settings;
 import aliview.settings.SettingsListener;
 
-public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, SettingsListener{
+public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, AlignmentDataListener, AlignmentSelectionListener, SettingsListener{
 	private static final Logger logger = Logger.getLogger(AliViewJMenuBar.class);
 	private AliViewWindow aliViewWindow;
 	private ArrayList<AbstractButton> editFunctions = new ArrayList<AbstractButton>();
@@ -792,7 +797,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 				putValue(ACCELERATOR_KEY, OSNativeUtils.getMoveSelectionUpKeyAccelerator());
 			}
 			public void actionPerformed(ActionEvent e) {
-				aliViewWindow.moveSelectionUp();
+				aliViewWindow.moveSelectedUp();
 			}
 		};
 		aliViewWin.getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(OSNativeUtils.getMoveSelectionUpKeyAccelerator(), "meveSelUpAction");
@@ -810,7 +815,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 				putValue(ACCELERATOR_KEY, OSNativeUtils.getMoveSelectionDownKeyAccelerator());
 			}
 			public void actionPerformed(ActionEvent e) {
-				aliViewWindow.moveSelectionDown();
+				aliViewWindow.moveSelectedDown();
 			}
 		};
 		aliViewWin.getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(OSNativeUtils.getMoveSelectionDownKeyAccelerator(), "moveSelDownAction");
@@ -825,7 +830,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 		JMenuItem mntmMoveSelectionToTop = new JMenuItem("Move selected sequences to top");
 		mntmMoveSelectionToTop.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				aliViewWindow.moveSelectionToTop();
+				aliViewWindow.moveSelectedToTop();
 			}
 		});
 		mntmMoveSelectionToTop.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.ALT_MASK));
@@ -837,7 +842,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 		JMenuItem mntmMoveSelectionToBottom = new JMenuItem("Move selected sequences to bottom");
 		mntmMoveSelectionToBottom.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				aliViewWindow.moveSelectionToBottom();
+				aliViewWindow.moveSelectedToBottom();
 			}
 		});
 		mntmMoveSelectionToBottom.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.ALT_MASK));
@@ -1744,7 +1749,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 		}
 	}
 
-	public void createDynamicLoadFilePages(final FileSequenceListModel seqList, List<FilePage> pages) {
+	public void createDynamicLoadFilePages(final FileSequenceAlignmentListModel seqList, List<FilePage> pages) {
 		logger.info("beforemenu");
 		if(mnFilePages == null){
 			mnFilePages = new JMenu("Load more sequences from file");
@@ -1843,33 +1848,58 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Sett
 	 * 
 	 * 
 	 */
-	public void selectionChanged(Alignment source) {
-		// TODO Auto-generated method stub
-	}
-
-	public void sequencesChanged(AlignmentEvent alignmentEvent) {
-		// TODO Auto-generated method stub
-	}
-
 	public void newSequences(AlignmentEvent alignmentEvent) {
 		this.updateAllMenuEnabled();
-	}
-
-	public void sequenceOrderChanged(AlignmentEvent alignmentEvent) {
-		// TODO Auto-generated method stub
 	}
 
 	public void alignmentMetaChanged(AlignmentEvent alignmentEvent) {
 
 	}
-
-	public void sequencesRemoved(AlignmentEvent alignmentEvent) {
-		// TODO Auto-generated method stub
+	
+	//
+	// AlignmentDataListener
+	//
+	public void intervalAdded(ListDataEvent e) {
+		if(e instanceof AlignmentDataEvent){
+			contentsChanged((AlignmentDataEvent)e);
+		}
 	}
 
+	public void intervalRemoved(ListDataEvent e) {
+        if(e instanceof AlignmentDataEvent){
+			contentsChanged((AlignmentDataEvent)e);
+		}
+	}  	
+	
+	public void contentsChanged(ListDataEvent e) {
+		if(e instanceof AlignmentDataEvent){
+			contentsChanged((AlignmentDataEvent)e);
+		}
+	}
+	
+	public void contentsChanged(AlignmentDataEvent e) {
+		//this.updateAllMenuEnabled();
+	}
+	
+	
+	//
+	// AlignmentSelectionListener
+	//
+	public void selectionChanged(AlignmentSelectionEvent e) {
+		if(aliViewWindow.getAlignment().isNucleotideAlignment()){
+			setHasSelectionFunctionsEnabled(aliViewWindow.getAlignment().hasSelection());
+			setAAFunctionsEnabled(false);
+			setEditFunctionsEnabled(aliViewWindow.getAlignment().isEditable());
+		}
+		if(aliViewWindow.getAlignment().isAAAlignment()){
+			setHasSelectionFunctionsEnabled(aliViewWindow.getAlignment().hasSelection());
+			setNucleotideFunctionsEnabled(false);
+			setEditFunctionsEnabled(aliViewWindow.getAlignment().isEditable());
+		}
+	}
+	
 	public void recentFilesChanged() {
 		rebuildRecentFilesSubmenu();
-
 	}
 
 	public void alignAllCmdsChanged() {

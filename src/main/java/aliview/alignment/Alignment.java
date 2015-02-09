@@ -46,10 +46,13 @@ import aliview.messenges.Messenger;
 import aliview.messenges.TextEditDialog;
 import aliview.primer.Dimer;
 import aliview.primer.Primer;
-import aliview.sequencelist.FileSequenceListModel;
+import aliview.sequencelist.AlignmentDataListener;
+import aliview.sequencelist.AlignmentSelectionEvent;
+import aliview.sequencelist.AlignmentSelectionListener;
+import aliview.sequencelist.FileSequenceAlignmentListModel;
 import aliview.sequencelist.FindObject;
-import aliview.sequencelist.MemorySequenceListModel;
-import aliview.sequencelist.SequenceListModel;
+import aliview.sequencelist.MemorySequenceAlignmentListModel;
+import aliview.sequencelist.AlignmentListModel;
 import aliview.sequencelist.FileSequenceLoadListener;
 import aliview.sequences.FastaFileSequence;
 import aliview.sequences.InMemoryBasicSequence;
@@ -63,7 +66,7 @@ public class Alignment implements FileSequenceLoadListener {
 	private static final Logger logger = Logger.getLogger(Alignment.class);
 	private static final String LF = System.getProperty("line.separator");
 	private static final SequencesFactory seqFactory = new SequencesFactory();
-	SequenceListModel sequences;
+	AlignmentListModel sequences;
 	protected int nextFindSequenceNumber;
 	protected int nextFindStartPos;
 	private File alignmentFile;
@@ -74,30 +77,41 @@ public class Alignment implements FileSequenceLoadListener {
 	private int readingFrame = 1;
 	private GeneticCode geneticCode = GeneticCode.DEFAULT;
 	private boolean editMode;
-	private AliHistogram cachedHistogram;
 	private ArrayList<AlignmentListener> alignmentListeners = new ArrayList<AlignmentListener>();
 	private boolean showTranslationOnePos;
 	private boolean isSelectable;
-	private AliHistogram translatedHistogram;
 
 	public Alignment(){
-		this.sequences = new MemorySequenceListModel();
-		this.alignmentMeta = new AlignmentMeta(sequences.getLongestSequenceLength());
-		setEditedAfterLastSave(false);
-		fireNewSequences();
+		this(null, null, new MemorySequenceAlignmentListModel(), new AlignmentMeta());
 	}
 
-	public Alignment(File file, FileFormat fileFormat, SequenceListModel sequences, AlignmentMeta aliMeta) {
+	public Alignment(File file, FileFormat fileFormat, AlignmentListModel sequences, AlignmentMeta aliMeta) {
 		setAlignmentFile(file);
 		this.fileFormat = fileFormat;
 		this.sequences = sequences;
+		//this.sequences.addAlignmentSelectionListener(this);
 		this.alignmentMeta = aliMeta;
 		setEditedAfterLastSave(false);
-		if(this.sequences instanceof FileSequenceListModel){
-			((FileSequenceListModel) sequences).addSequenceLoadLisetner(this);
+		if(this.sequences instanceof FileSequenceAlignmentListModel){
+			((FileSequenceAlignmentListModel) sequences).addSequenceLoadLisetner(this);
 		}
-		fireNewSequences();
+		fireAllSequencesAreNew();
 	}
+	
+	public Alignment(AlignmentListModel sequences) {
+		this.sequences = sequences;
+		this.alignmentMeta = new AlignmentMeta(this.getMaximumSequenceLength());
+		fireAllSequencesAreNew();
+	}
+	
+	public void setNewSequences(AlignmentListModel seqs){
+		this.sequences = seqs;			
+		// TODO this should also be read from file
+		this.alignmentMeta = new AlignmentMeta(this.getMaximumSequenceLength());	
+		setEditedAfterLastSave(false);
+		fireAllSequencesAreNew();
+	}
+	
 	
 	public double getApproximateMemorySizeMB(){
 		double seqSize = sequences.getSize() * sequences.getLongestSequenceLength();
@@ -105,10 +119,19 @@ public class Alignment implements FileSequenceLoadListener {
 		return seqSize /MB;
 	}
 	
-	public void addAlignmentListener(AlignmentListener listener){
-		alignmentListeners .add(listener);
+	public void addAlignmentListener(AlignmentListener l){
+		alignmentListeners.add(l);
 	}
 	
+	public void addAlignmentDataListener(AlignmentDataListener l){
+		sequences.addAlignmentDataListener(l);
+	}
+	
+	public void addAlignmentSelectionListener(AlignmentSelectionListener l){
+		sequences.addAlignmentSelectionListener(l);
+	}
+	
+	/*
 	private void sequencesChanged(){	
 		// verify alignment meta
 		int len = sequences.getLongestSequenceLength();
@@ -125,19 +148,29 @@ public class Alignment implements FileSequenceLoadListener {
 		
 		fireSequencesChanged();
 	}
+	*/
+	
+	
+	/*
 	private void fireSequencesChanged(){
 		for(AlignmentListener listener: alignmentListeners){
 			listener.sequencesChanged(new AlignmentEvent(this));
 		}
 	}
+	
+	//
+	// This is AlignmentSelectionListener
+	//
+	public void selectionChanged(AlignmentSelectionEvent e) {
+		fireSelectionChanged();
+	}
+	
 	private void fireSelectionChanged(){
 		int count = 0;
 		for(AlignmentListener listener: alignmentListeners){
 			listener.selectionChanged(this);
-//			logger.info("fire" + count);
 			count ++;
-		}
-		
+		}		
 	}
 	
 	private void fireNewSequences(){
@@ -166,21 +199,21 @@ public class Alignment implements FileSequenceLoadListener {
 			listener.sequencesRemoved(new AlignmentEvent(this));
 		}
 	}
+	*/
 	
-
-	public Alignment(SequenceListModel sequences) {
-		this.sequences = sequences;
-		this.alignmentMeta = new AlignmentMeta(this.getMaximumSequenceLength());
-		fireNewSequences();
+	private void fireAlignmentMetaOnlyChanged(){
+		for(AlignmentListener listener: alignmentListeners){
+			listener.alignmentMetaChanged(new AlignmentEvent(this));
+		}
 	}
 	
-	public void setNewSequences(SequenceListModel seqs){
-		this.sequences = seqs;			
-		// TODO this should also be read from file
-		this.alignmentMeta = new AlignmentMeta(this.getMaximumSequenceLength());	
-		setEditedAfterLastSave(false);
-		fireNewSequences();
+	// instead listen to sequence change and then set cached histogram
+	private void fireAllSequencesAreNew(){
+		for(AlignmentListener listener: alignmentListeners){
+			listener.newSequences(new AlignmentEvent(this));
+		}
 	}
+	
 	
 	public int getMaxY() {
 		return sequences.getSize();
@@ -199,10 +232,9 @@ public class Alignment implements FileSequenceLoadListener {
 	}
 	
 	// TODO this is the only place where sequences are checked for modification when they are "outside"
-	public SequenceListModel getSequences() {
+	public AlignmentListModel getSequences() {
 		return sequences;
 	}
-	
 
 	public int getMaximumSequenceLength() {
 		return getMaxX();
@@ -213,11 +245,11 @@ public class Alignment implements FileSequenceLoadListener {
 	}
 
 	public void clearSelection() {
-		sequences.clearSelection();
-		fireSelectionChanged();
+		sequences.clearSequenceSelection();
+		//fireSelectionChanged();
 	}
 
-	public int getSequencePosition(Sequence seq) {
+	public int getSequenceIndex(Sequence seq) {
 		return sequences.indexOf(seq);
 	}
 	
@@ -236,7 +268,6 @@ public class Alignment implements FileSequenceLoadListener {
 	public void setAlignmentFile(File alignmentFile) {
 		if(alignmentFile != null && alignmentFile.exists()){
 			this.alignmentFile = alignmentFile.getAbsoluteFile();
-			fireNewSequences();
 		}
 	}
 	
@@ -645,7 +676,7 @@ public class Alignment implements FileSequenceLoadListener {
 
 	private Alignment getTranslatedAlignment(){
 		AlignmentMeta transMeta = getTranslatedMeta();
-		SequenceListModel transSeq = createTranslatedSequences();
+		AlignmentListModel transSeq = createTranslatedSequences();
 		Alignment translatedAlignment = new Alignment(null, null, transSeq, transMeta);
 		return translatedAlignment;
 	}
@@ -653,8 +684,8 @@ public class Alignment implements FileSequenceLoadListener {
 	//
 	//  TODO this is not working for fileSequences
 	//
-	private SequenceListModel createTranslatedSequences(){
-		SequenceListModel transSeqs = new MemorySequenceListModel();
+	private AlignmentListModel createTranslatedSequences(){
+		AlignmentListModel transSeqs = new MemorySequenceAlignmentListModel();
 		for(Sequence seq: sequences){			
 			transSeqs.add(new PhylipSequence(seq.getName(), translateSequence(seq)));
 		}
@@ -695,10 +726,10 @@ public class Alignment implements FileSequenceLoadListener {
 	/*
 	 * Alternate method
 	 */
-	public boolean mergeTwoSelected(Sequence[] selected, boolean allowOverlap) {
+	public boolean mergeTwoSequences(List<Sequence> seqs, boolean allowOverlap) {
 		boolean isMerged = false;
-		if(selected.length == 2){
-			isMerged = mergeTwoSequences(selected[0],selected[1], allowOverlap);
+		if(seqs.size() == 2){
+			isMerged = mergeTwoSequences(seqs.get(0),seqs.get(1), allowOverlap);
 		}
 		return isMerged;
 	}
@@ -706,9 +737,7 @@ public class Alignment implements FileSequenceLoadListener {
 
 	public boolean mergeTwoSequences(Sequence seq1, Sequence seq2, boolean allowOverlap){
 		boolean wasMerged = sequences.mergeTwoSequences(seq1, seq2, allowOverlap);
-		if(wasMerged){
-			fireNewSequences();
-		}
+		
 		return wasMerged;
 	}
 
@@ -724,7 +753,7 @@ public class Alignment implements FileSequenceLoadListener {
 		sequences.deleteBasesInAllSequencesFromMask(deleteMask);
 		//and finally remove in AlignmentMeta(excludes, codonpos & charset)
 		alignmentMeta.removeFromMask(deleteMask);
-		sequencesChanged();
+//		sequencesChanged();
 	}
 
 
@@ -775,7 +804,7 @@ public class Alignment implements FileSequenceLoadListener {
 		Dimer.setDimerLengthThreashold(Settings.getDimerReportThreashold().getIntValue());
 		
 		long nCount = 0;
-		int selectionStartPos = getFirstSelectedPos();
+		int selectionStartPos = getFirstSelectedPositionX();
 		for(int winSize = primerMinLen; winSize <= primerMaxLen; winSize ++){
 
 			int offset = 0;		
@@ -819,9 +848,6 @@ public class Alignment implements FileSequenceLoadListener {
 	 * 
 	 * 
 	 */
-	private int getFirstSelectedPos() {	
-		return sequences.getFirstSelectedYPos();
-	}
 
 	private String getSelectionAsNucleotides(){
 		return sequences.getSelectionAsNucleotides();
@@ -856,22 +882,30 @@ public class Alignment implements FileSequenceLoadListener {
 		return sequences.isBaseSelected(x, y);
 	}
 
+	public void setSelectionAt(int xPos, int yPos) {
+		setSelectionAt(xPos, yPos, false);
 
-	public void setSelectionAt(int xPos, int yPos, boolean b) {
-		sequences.setSelectionAt(xPos, yPos, b);
-		fireSelectionChanged();
+	}
+
+	public void setSelectionAt(int xPos, int yPos, boolean clearFirst) {
+		sequences.setSelectionAt(xPos, yPos, clearFirst);
+		//fireSelectionChanged();
 	}
 	
-	public void setSelectionWithin(Rectangle bounds, boolean isSelected) {
-		sequences.setSelectionWithin(bounds, isSelected);
-		fireSelectionChanged();
+	public void setSelectionWithin(Rectangle bounds) {
+		sequences.setSelectionWithin(bounds);
+		//fireSelectionChanged();
 	}
 
 	public void reverseComplementAlignment(){
 		sequences.reverseComplement();
 		alignmentMeta.reverse();
-		sequencesChanged();
 	}
+	
+	public void reverseComplementFullySelectedSequences(){
+		sequences.reverseComplementFullySelectedSequences();
+	}
+
 
 
 	/*
@@ -882,7 +916,6 @@ public class Alignment implements FileSequenceLoadListener {
 	
 	public FindObject findInNames(FindObject findObj) {
 		findObj = sequences.findInNames(findObj);
-		fireSelectionChanged();
 		return findObj;
 	}
 	
@@ -891,9 +924,8 @@ public class Alignment implements FileSequenceLoadListener {
 		nextFindStartPos = 0;
 	}
 	
-	public FindObject findInSequences(FindObject findObj){
+	public FindObject findAndSelectInSequences(FindObject findObj){
 		findObj = sequences.findAndSelect(findObj);
-		fireSelectionChanged();
 		return findObj;
 	}
 	
@@ -913,7 +945,6 @@ public class Alignment implements FileSequenceLoadListener {
 			newReadFrame = 1;
 		}
 		this.setReadingFrame(newReadFrame);
-		fireAlignmentMetaChanged();
 	}
 
 	public int getReadingFrame() {
@@ -927,18 +958,18 @@ public class Alignment implements FileSequenceLoadListener {
 			newReadFrame = 3;
 		}
 		this.setReadingFrame(newReadFrame);
-		fireAlignmentMetaChanged();
 	}
 
 
 	public List<Sequence> clearSelectedBases(boolean undoable){
 		List<Sequence> affected =  sequences.replaceSelectedBasesWithGap(undoable);
-		if(affected.size() > 0){
-			sequencesChanged();
-		}
 		return affected;
 	}
 
+	public void deleteFullySelectedSequences(){
+		sequences.deleteFullySelectedSequences();
+	}
+	
 	public void deleteSelectedBases() {
 		
 		int first = sequences.getFirstSelectedWholeColumn();
@@ -960,16 +991,12 @@ public class Alignment implements FileSequenceLoadListener {
 			logger.info(alignmentMeta.getCodonPositions().getLength());
 			alignmentMeta.removeFromMask(deleteMask);
 			logger.info(alignmentMeta.getCodonPositions().getLength());
-			sequencesChanged();
+
 		}
 		// only delete in selected sequences
 		else{	
 			List<Sequence> affected =  sequences.deleteSelectedBases();
-			if(affected.size() > 0){
-				sequencesChanged();
-			}
 		}
-		
 	}
 
 	public String getConsensus(){
@@ -999,16 +1026,14 @@ public class Alignment implements FileSequenceLoadListener {
 
 			//and finally remove in AlignmentMeta(excludes, codonpos & charset)
 			alignmentMeta.removeFromMask(deleteMask);
-			sequencesChanged();
 		}
 
 	}
 
 	public void addFasta(String clipboardSelection) {
 		try {
-			SequenceListModel sequencesFromClipboard = seqFactory.createFastaSequences(new StringReader(clipboardSelection));
+			AlignmentListModel sequencesFromClipboard = seqFactory.createFastaSequences(new StringReader(clipboardSelection));
 			sequences.addAll(sequencesFromClipboard);
-			fireNewSequences();
 		} catch (AlignmentImportException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1042,8 +1067,6 @@ public class Alignment implements FileSequenceLoadListener {
 			}else{
 				sequences.add(newSeq);
 			}
-			
-			fireNewSequences();
 	}
 	
 	
@@ -1053,11 +1076,9 @@ public class Alignment implements FileSequenceLoadListener {
 	
 	public void addSequences(File additionalFile, int index) {
 		try {
-			SequenceListModel additionalSequences = seqFactory.createSequences(additionalFile);
-			for(Sequence seq: additionalSequences){
-				sequences.add(index, seq);
-			}
-			fireNewSequences();
+			AlignmentListModel additionalSequences = seqFactory.createSequences(additionalFile);
+			sequences.addAll(index, additionalSequences);
+
 		} catch (AlignmentImportException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1079,26 +1100,17 @@ public class Alignment implements FileSequenceLoadListener {
 	
 	public List<Sequence> moveSelectionRight(boolean undoable){
 		logger.info("move");
-		List<Sequence> previousState = sequences.moveSelectionRightIfGapIsPresent(undoable);
-		if(previousState.size()> 0){
-			sequencesChanged();
-		}
+		List<Sequence> previousState = sequences.moveSelectedResiduesRightIfGapIsPresent(undoable);
 		return previousState;
 	}
 
 	public List<Sequence> moveSelectionLeft(boolean undoable) {
-		List<Sequence> previousState = sequences.moveSelectionLeftIfGapIsPresent(undoable);
-		if(previousState.size()> 0){
-			sequencesChanged();
-		}
+		List<Sequence> previousState = sequences.moveSelectedResiduesLeftIfGapIsPresent(undoable);
 		return previousState;
 	}
 
 	public List<Sequence> moveSelection(int diff, boolean undoable) {
-		List<Sequence> previousState = sequences.moveSelectionIfGapIsPresent(diff, undoable);
-		if(previousState.size()> 0){
-			sequencesChanged();
-		}
+		List<Sequence> previousState = sequences.moveSelectedResiduesIfGapIsPresent(diff, undoable);
 		return previousState;
 	}
 	public boolean isMoveSelectionLeftPossible() {
@@ -1112,7 +1124,6 @@ public class Alignment implements FileSequenceLoadListener {
 		List<Sequence> previousState = sequences.deleteGapMoveLeft(undoable);
 		if(previousState.size()> 0){
 			sequences.rightPadWithGapUntilEqualLength();
-			sequencesChanged();
 		}
 		return previousState;
 	}
@@ -1121,7 +1132,6 @@ public class Alignment implements FileSequenceLoadListener {
 		List<Sequence> previousState = sequences.deleteGapMoveRight(undoable);
 		if(previousState.size()> 0){
 			sequences.rightPadWithGapUntilEqualLength();
-			sequencesChanged();
 		}
 		return previousState;
 	}
@@ -1130,7 +1140,6 @@ public class Alignment implements FileSequenceLoadListener {
 		List<Sequence> previousState = sequences.insertGapLeftOfSelectedBase(undoable);
 		if(previousState.size()> 0){
 			sequences.rightPadWithGapUntilEqualLength();
-			sequencesChanged();
 		}
 		return previousState;
 	}
@@ -1139,25 +1148,18 @@ public class Alignment implements FileSequenceLoadListener {
 		List<Sequence> previousState = sequences.insertGapRightOfSelectedBase(undoable);
 		if(previousState.size()> 0){
 			sequences.leftPadWithGapUntilEqualLength();
-			sequencesChanged();
 		}
 		return previousState;
 	}
 
 	public boolean rightPadSequencesWithGapUntilEqualLength(){	
 		boolean wasPadded = sequences.rightPadWithGapUntilEqualLength();
-		if(wasPadded){
-			sequencesChanged();
-		}
 		return wasPadded;
 		
 	}
 	
 	public boolean leftPadSequencesWithGapUntilEqualLength() {
 		boolean wasPadded = sequences.leftPadWithGapUntilEqualLength();
-		if(wasPadded){
-			sequencesChanged();
-		}
 		return wasPadded;
 	}
 
@@ -1172,6 +1174,9 @@ public class Alignment implements FileSequenceLoadListener {
 	}
 
 	public Rectangle getSelectionAsMinRect(){
+		if(! hasSelection()){
+			return null;
+		}
 		int minX = Integer.MAX_VALUE;
 		int minY = Integer.MAX_VALUE;
 		int maxX = Integer.MIN_VALUE;
@@ -1225,7 +1230,8 @@ public class Alignment implements FileSequenceLoadListener {
 				}
 			}
 		}
-		fireAlignmentMetaChanged();
+		fireAlignmentMetaOnlyChanged();
+		
 	}
 
 	public void removeSelectionFromExcludes() {
@@ -1237,7 +1243,7 @@ public class Alignment implements FileSequenceLoadListener {
 				}
 			}
 		}
-		fireAlignmentMetaChanged();
+		fireAlignmentMetaOnlyChanged();
 	}
 
 	public void setSelectionAsCoding(int startOffset) {
@@ -1251,7 +1257,7 @@ public class Alignment implements FileSequenceLoadListener {
 			}
 		}	
 		this.alignmentMeta.getCodonPositions().positionsUpdated();
-		fireAlignmentMetaChanged();
+		fireAlignmentMetaOnlyChanged();
 	}
 
 	public void setSelectionAsNonCoding() {
@@ -1264,12 +1270,11 @@ public class Alignment implements FileSequenceLoadListener {
 			}
 		}
 		this.alignmentMeta.getCodonPositions().positionsUpdated();
-		fireAlignmentMetaChanged();
+		fireAlignmentMetaOnlyChanged();
 	}
 
 	public void complementAlignment() {	
 		sequences.complement();
-		sequencesChanged();
 	}
 
 	public boolean isEditedAfterLastSave() {
@@ -1280,14 +1285,14 @@ public class Alignment implements FileSequenceLoadListener {
 		this.isEditedAfterLastSave = isEditedAfterLastSave;
 	}
 
-
+/*
 	public boolean isAllCharactersValid() {
-		return getFirstInvalidCharacter().length() == 0;
+		return getFirstMuscleInvalidCharacter().length() == 0;
 	}
-
+*/
 
 	// TODO should be different depending on alignment class nuc or protein
-	public String getFirstInvalidCharacter() {
+	public String getFirstMuscleInvalidCharacter() {
 		String testChars = "?ÅÄÖ*";
 		String invalidCharsInAlignment = "";
 		for(int n = 0; n < testChars.length(); n++){
@@ -1322,7 +1327,8 @@ public class Alignment implements FileSequenceLoadListener {
 	public void setReadingFrame(int readingFrame){
 		if(readingFrame > 0 && readingFrame <=3){
 			this.readingFrame = readingFrame;
-			alignmentMeta.setReadingFrame(readingFrame);	
+			alignmentMeta.setReadingFrame(readingFrame);
+			fireAlignmentMetaOnlyChanged();
 		}
 	}
 
@@ -1340,7 +1346,7 @@ public class Alignment implements FileSequenceLoadListener {
 
 	public void setAlignentMeta(AlignmentMeta aliMeta) {
 		this.alignmentMeta = aliMeta;
-		fireAlignmentMetaChanged();
+		fireAlignmentMetaOnlyChanged();
 	}
 
 	public AlignmentMeta getAlignentMeta() {
@@ -1355,11 +1361,7 @@ public class Alignment implements FileSequenceLoadListener {
 	 * 
 	 */
 	public void selectDuplicates(){
-		ArrayList<Sequence> dupes = sequences.findDuplicates();
-		for(Sequence seq: dupes){
-			seq.selectAllBases();
-		}
-		fireSelectionChanged();
+		sequences.findAndSelectDuplicates();
 	}
 	
 	public ArrayList<String> findDuplicateNames(){
@@ -1371,11 +1373,7 @@ public class Alignment implements FileSequenceLoadListener {
 	}
 	
 	public void selectDuplicateNamesSequences(){
-		ArrayList<String> dupeNames = sequences.findDuplicateNames();
-		for(String dupeName: dupeNames){
-			sequences.selectSequencesByName(dupeName);
-		}
-		fireSelectionChanged();
+		sequences.selectDuplicateNamesSequences();
 	}
 	
 
@@ -1452,15 +1450,11 @@ public class Alignment implements FileSequenceLoadListener {
 
 	public ArrayList<Sequence> deleteEmptySequences() {
 		ArrayList<Sequence> deleted = sequences.deleteEmptySequences();
-		if(deleted.size() > 0){
-			fireSequencesRemoved();
-		}
 		return deleted;
 	}
 
 	public void deleteSequence(Sequence sequence) {
 		sequences.deleteSequence(sequence);
-		fireSequencesRemoved();
 	}
 
 	public int getFirstSelectedSequenceIndex() {
@@ -1476,9 +1470,12 @@ public class Alignment implements FileSequenceLoadListener {
 		return selectedIndex;
 	}
 
+	public void selectSequencesWithIndex(List<Integer> selectedIndex) {
+		sequences.selectSequencesWithIndex(selectedIndex);
+	}
+	
 	public void selectSequencesWithIndex(int[] selectedIndex) {
 		sequences.selectSequencesWithIndex(selectedIndex);
-		fireSelectionChanged();
 	}
 
 	public GeneticCode getGeneticCode() {
@@ -1487,13 +1484,13 @@ public class Alignment implements FileSequenceLoadListener {
 	
 	public void setGeneticCode(GeneticCode genCode) {
 		this.geneticCode = genCode;
-		fireAlignmentMetaChanged();
+		fireAlignmentMetaOnlyChanged();
 	}
 
 	public boolean isUndoable() {
 		boolean isUndoable = true;
 		if(this.getSequences() != null){
-			if(this.getSequences() instanceof FileSequenceListModel){
+			if(this.getSequences() instanceof FileSequenceAlignmentListModel){
 				isUndoable = false;
 			}
 		}
@@ -1509,22 +1506,21 @@ public class Alignment implements FileSequenceLoadListener {
 	}
 
 	public boolean replaceSelectedWithChar(char newChar) {
-		boolean wasReplaced = sequences.replaceSelectedWithChar(newChar);
-		if(wasReplaced){
-			sequencesChanged();
+		List<Sequence> replacedSeqs = sequences.replaceSelectedWithChar(newChar, isUndoable());
+		if(replacedSeqs.size() > 0){
+			return true;
+		}else{
+			return false;
 		}
-		return wasReplaced;
 		
 	}
 
 	public void selectEverythingWithinGaps(Point point) {
 		sequences.selectEverythingWithinGaps(point);
-		fireSelectionChanged();
 	}
 
 	public void realignNucleotidesUseThisAAAlignmentAsTemplate(Alignment realignment) {
 		sequences.realignNucleotidesUseTheseAASequenceAsTemplate(realignment.getSequences(), alignmentMeta.getCodonPositions(), geneticCode);
-		sequencesChanged();
 	}
 
 	public void deleteAllGaps() {
@@ -1534,44 +1530,31 @@ public class Alignment implements FileSequenceLoadListener {
 	public void padAndTrimSequences(){
 		boolean wasPadded = sequences.rightPadWithGapUntilEqualLength();
 		boolean wasTrimed = sequences.rightTrimSequencesRemoveGapsUntilEqualLength();
-		if(wasPadded || wasTrimed){
-			sequencesChanged();
-		}
 	}
 	
 	public void trimSequences(){
 		boolean wasTrimed = sequences.rightTrimSequencesRemoveGapsUntilEqualLength();
-		if( wasTrimed){
-			sequencesChanged();
-		}
 	}
 
 	public void selectAll(){
 		sequences.selectAll();
-		fireSelectionChanged();
 	}
+	
 	
 	public void selectionExtendRight() {
 		sequences.selectionExtendRight();
-		fireSelectionChanged();
 	}
 	
 	public void selectionExtendLeft() {
 		sequences.selectionExtendLeft();
-		fireSelectionChanged();
 	}
 	
-	public void expandSelectionDown() {
-		sequences.expandSelectionDown();
-		fireSelectionChanged();
-	}
 	
 	public void invertSelection() {
 		long startTime = System.currentTimeMillis();
 		sequences.invertSelection();
 		long endTime = System.currentTimeMillis();
 		logger.info("Invert took" + (endTime - startTime) + " milliseconds");
-		fireSelectionChanged();
 	}
 
 	public boolean isPositionValid(int x, int y) {
@@ -1584,28 +1567,30 @@ public class Alignment implements FileSequenceLoadListener {
 
 	public void setAllHorizontalSelectionAt(int y, boolean selection) {
 		if(selection == true){
-			sequences.get(y).selectAllBases();
+			sequences.selectSequenceWithIndex(y);
 		}else{
-			sequences.get(y).clearAllSelection();
+			sequences.clearAllSelectionInSequenceWithIndex(y);
 		}
-		fireSelectionChanged();
 	}
 
 	public void copySelectionFromSequenceTo(int indexFrom, int indexTo) {
 		sequences.copySelectionFromInto(indexFrom,indexTo);
-		fireSelectionChanged();
+		//fireSelectionChanged();
 		
 	}
 
-	public void setColumnSelection(int columnIndex, boolean selected) {
-		sequences.selectColumn(columnIndex, selected);
-		fireSelectionChanged();
+	public void selectColumn(int columnIndex) {
+		sequences.selectColumn(columnIndex);
+	}
+	
+	public void clearColumnSelection(int columnIndex) {
+		sequences.clearColumnSelection(columnIndex);
+		//fireSelectionChanged();
 	}
 
 	public void copySelectionFromPosX1toX2(int x1, int x2) {
 		sequences.copySelectionFromPosX1toX2(x1, x2);
-		fireSelectionChanged();
-		
+		//fireSelectionChanged();
 	}
 
 	public void setEditMode(boolean editMode) {
@@ -1642,43 +1627,31 @@ public class Alignment implements FileSequenceLoadListener {
 
 	public void sortSequencesByName() {
 		sequences.sortSequencesByName();
-		fireSequenceOrderChanged();
 	}
 	
 	public void sortSequencesByCharInSelectedColumn() {
-		sequences.sortSequencesByCharInSelectedColumn();
-		fireSequenceOrderChanged();
+		sequences.sortSequencesByCharInSelectedColumn(getHistogram());
 	}
 
 	public AliHistogram getHistogram(){
 		if(showTranslationOnePos){
 			return getTranslatedHistogram();
 		}
-		
-		// TODO this cached histogram should be pushed into sequences
-		if(cachedHistogram == null){
-			cachedHistogram = sequences.getHistogram();	
-		}
-		return cachedHistogram;
+		return sequences.getHistogram();
 	}
 
-	private AliHistogram getTranslatedHistogram() {
-		if(translatedHistogram == null){
-			translatedHistogram = sequences.getTranslatedHistogram(new AATranslator(getAlignentMeta().getCodonPositions(),getGeneticCode()));	
-		}
-		return translatedHistogram;
+	private AliHistogram getTranslatedHistogram() {	
+		return sequences.getTranslatedHistogram(new AATranslator(getAlignentMeta().getCodonPositions(),getGeneticCode()));	
 	}
 
 	public boolean hasSelection() {
 		return sequences.hasSelection();
 	}
 
-	public void replaceSelectedCharactersWithThis(Alignment realignment) {
+	public List<Sequence> replaceSelectedCharactersWithThis(Alignment realignment) {
 		boolean undoable = true;
 		List<Sequence> affected = sequences.replaceSelectedCharactersWithThis(realignment.getSequences(), undoable);
-		if(affected.size() > 0){
-			sequencesChanged();
-		}
+		return affected;
 	}
 
 	public void saveSelectedSequencesAsFastaFile(File outFile, boolean useIDAsName) throws IOException {
@@ -1733,7 +1706,7 @@ public class Alignment implements FileSequenceLoadListener {
 		return sequences.hasFullySelectedSequences();
 	}
 
-	public void sortSequencesByThisModel(SequenceListModel prevSeqOrder) {
+	public void sortSequencesByThisModel(AlignmentListModel prevSeqOrder) {
 		sequences.sortSequencesByThisModel(prevSeqOrder);
 	}
 
@@ -1743,6 +1716,10 @@ public class Alignment implements FileSequenceLoadListener {
 
 	public int getSelectedSequencesCount() {
 		return sequences.getSelectedSequencesCount();
+	}
+	
+	public List<Sequence> getSelectedSequences() {
+		return sequences.getSelectedSequences();
 	}
 
 	public String getFirstSelectedSequenceName() {
@@ -1755,15 +1732,7 @@ public class Alignment implements FileSequenceLoadListener {
 	}
 
 	public void selectAll(CharSet aCharSet) {
-		sequences.clearSelection();
-		for(int n = 0; n < sequences.getLongestSequenceLength(); n++){
-			if(aCharSet.isPositionIncluded(n)){
-				sequences.selectColumn(n, true);
-			}else{
-				// nothing to do - everything was deselected in beginning
-			}
-		}
-		fireSelectionChanged();
+		sequences.selectAll(aCharSet);
 	}
 
 	public int countStopCodons() {
@@ -1789,8 +1758,8 @@ public class Alignment implements FileSequenceLoadListener {
 	public void saveFastaIndex() {
 		logger.info(this.fileFormat);
 		
-		if(this.fileFormat == FileFormat.FASTA && sequences instanceof FileSequenceListModel){
-			FileSequenceListModel model = (FileSequenceListModel) getSequences();
+		if(this.fileFormat == FileFormat.FASTA && sequences instanceof FileSequenceAlignmentListModel){
+			FileSequenceAlignmentListModel model = (FileSequenceAlignmentListModel) getSequences();
 			
 			//String indexName = FileFormat.stripFileSuffixFromName(this.getAlignmentFile().getAbsolutePath());
 			String indexName = this.getAlignmentFile().getAbsolutePath();
@@ -1874,8 +1843,7 @@ public class Alignment implements FileSequenceLoadListener {
 					out.write("" + charsPerLine);
 					
 					out.write(LF);
-					
-					
+								
 				}	
 				
 				out.flush();
@@ -1887,30 +1855,51 @@ public class Alignment implements FileSequenceLoadListener {
 				e.printStackTrace();
 			}
 			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
 		}else{
 			Messenger.showOKOnlyMessage(Messenger.NO_FASTA_INDEX_COULD_BE_SAVED);
 		}
+	}
+
+	public void setTempSelection(Rectangle selectRectMatrixCoords) {
+		getSequences().setTempSelection(selectRectMatrixCoords);
+		
+	}
+
+	public Rectangle getTempSelection() {
+		return getSequences().getTempSelection();
+	}
+
+	public void clearTempSelection() {
+		getSequences().clearTempSelection();
+		
+	}
+
+	public void moveSelectedSequencesToBottom() {
+		getSequences().moveSelectedSequencesToBottom();
+		
+	}
+
+	public void moveSelectedSequencesToTop() {
+		getSequences().moveSelectedSequencesToTop();
+		
+	}
+	
+	public void moveSelectedSequencesUp() {
+		getSequences().moveSelectedSequencesUp();
+		
+	}
+	
+	public void moveSelectedSequencesDown() {
+		getSequences().moveSelectedSequencesDown();
+		
+	}
+
+	public void moveSelectedSequencesTo(int index) {
+		getSequences().moveSelectedSequencesTo(index);
+	}
+
+	public void selectIndices(List<Integer> allFoundIndices) {
+		getSequences().getAlignmentSelectionModel().selectSequencesWithIndex(allFoundIndices);
 	}
 	
 }

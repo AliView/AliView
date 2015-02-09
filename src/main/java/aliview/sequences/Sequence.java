@@ -7,7 +7,14 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
+import aliview.sequencelist.Interval;
 
+
+/*
+ * 
+ * TODO rename all Base into Residue (residues)
+ * 
+ */
 public interface Sequence extends Comparable<Sequence>{
 	
 	public int getLength();
@@ -77,13 +84,16 @@ public interface Sequence extends Comparable<Sequence>{
 	
 	
 	// Searchable
-	public int findAndSelect(Pattern pattern, int nextFindStartPos);
+	public Interval find(Pattern pattern, int nextFindStartPos);
+
 	
 	// Selectable version
 	
-	public void setSelectionAt(int n, boolean selected); // used in Base
+	public void setSelectionAt(int n);
 	
-	public void selectBases(int startPos, int endPos);
+	public void clearSelectionAt(int n);
+	
+	public void setSelection(int startPos, int endPos, boolean clearFirst);
 	
 	public boolean isBaseSelected(int position);
 	
@@ -106,11 +116,11 @@ public interface Sequence extends Comparable<Sequence>{
 	public int getLastSelectedPosition();
 	
 	// selectable movable
-	public void moveSelectionRightIfGapIsPresent();
+	public void moveSelectedResiduesRightIfGapIsPresent();
 	
 	public void moveSelectionRightIfGapIsPresent(int steps);
 
-	public void moveSelectionLeftIfGapIsPresent();
+	public void moveSelectedResiduesLeftIfGapIsPresent();
 	
 	public void moveSelectionLeftIfGapIsPresent(int steps);
 
@@ -146,10 +156,9 @@ public interface Sequence extends Comparable<Sequence>{
 
 	public void invertSelection();
 	
+	
 	public void selectionExtendRight();
 	
 	public void selectionExtendLeft();
 	
-	
-
 }

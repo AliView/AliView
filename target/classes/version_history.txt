@@ -1,11 +1,19 @@
 Version history
 
+1.18-beata2-still-unstable
+
+- Fixed error in invertebrate mitochondrial coding table TGA was not coded as STOP, all other coding tables were verified without errors.
+- Big rewrite of code handling selection. Improvements and more standardized mouse selection of sequences (compared to other software)
+- Added "slow" double click on name as a trigger for renaming a sequence
+- Mouse wheel zoom in and zoom out is also working when mouse pointer is on sequence list
+- Quicker scroll when dragging sequences outside visible part of list
+
 1.17
 
 - Fixed bug that made it impossible to close error message if something went wrong when aligning
 - Duplicate sequence names are being selected in alignment at startup
-- Adjusted simplified nexus format, it now replaces all non alfanumeric characters (A-Z a-z 0-9) with _ in the sequence name
-- Now possible to find and select duplicate sequence, "Edit" | "Find and select duplicate sequences"  (this function is still beta)
+- Adjusted simplified nexus format, it now replaces all non alfanumeric characters with _ in the sequence name, keeps only (A-Z a-z 0-9)
+- It is now possible to find and select duplicate sequence, "Edit" | "Find and select duplicate sequences"  (this function is still beta)
 
 1.16
 

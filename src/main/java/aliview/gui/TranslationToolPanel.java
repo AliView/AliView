@@ -12,14 +12,19 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
+import javax.swing.event.ListDataEvent;
 
 import aliview.AliViewWindow;
 import aliview.GeneticCode;
 import aliview.alignment.Alignment;
 import aliview.alignment.AlignmentEvent;
 import aliview.alignment.AlignmentListener;
+import aliview.sequencelist.AlignmentDataEvent;
+import aliview.sequencelist.AlignmentDataListener;
+import aliview.sequencelist.AlignmentSelectionEvent;
+import aliview.sequencelist.AlignmentSelectionListener;
 
-public class TranslationToolPanel extends JPanel implements AlignmentListener {
+public class TranslationToolPanel extends JPanel implements AlignmentListener, AlignmentDataListener, AlignmentSelectionListener {
 	
 	private JComboBox readingFrameBox;
 	private JComboBox genCodeBox;
@@ -137,20 +142,15 @@ public class TranslationToolPanel extends JPanel implements AlignmentListener {
 	this.add(genCodeBox);
 	}
 	
-	public void selectionChanged(Alignment source) {
-		// TODO Auto-generated method stub
-	}
 
-	public void sequencesChanged(AlignmentEvent alignmentEvent) {
-		// TODO Auto-generated method stub
-	}
-
+	/*
+	 * 
+	 * 
+	 * AlignmentListener
+	 * 
+	 * 
+	 */
 	public void newSequences(AlignmentEvent alignmentEvent) {
-		// TODO Auto-generated method stub	
-	}
-
-	public void sequenceOrderChanged(AlignmentEvent alignmentEvent) {
-		// TODO Auto-generated method stub	
 	}
 
 	public void alignmentMetaChanged(AlignmentEvent alignmentEvent) {
@@ -159,8 +159,37 @@ public class TranslationToolPanel extends JPanel implements AlignmentListener {
 		genCodeBox.setSelectedItem(aliment.getGeneticCode());
 	}
 
-	public void sequencesRemoved(AlignmentEvent alignmentEvent) {
-		// TODO Auto-generated method stub
+	
+	
+	//
+	// AlignmentDataListener
+	//
+	public void intervalAdded(ListDataEvent e) {
+		if(e instanceof AlignmentDataEvent){
+			contentsChanged((AlignmentDataEvent)e);
+		}
+	}
+
+	public void intervalRemoved(ListDataEvent e) {
+        if(e instanceof AlignmentDataEvent){
+			contentsChanged((AlignmentDataEvent)e);
+		}
+	}  	
+	
+	public void contentsChanged(ListDataEvent e) {
+		if(e instanceof AlignmentDataEvent){
+			contentsChanged((AlignmentDataEvent)e);
+		}
+	}
+	
+	public void contentsChanged(AlignmentDataEvent e) {
+	}
+	
+	//
+	// AlignmentSelectionListener
+	//
+	public void selectionChanged(AlignmentSelectionEvent e) {
 		
 	}
+	
 }

@@ -2,6 +2,8 @@ package aliview.messenges;
 
 import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -18,8 +20,14 @@ public class TextEditDialog {
 	public static final Message EDIT_SEQUENCE_NAME = new Message("", "Rename sequence");
 	private static JTextField textEdit;
 	protected Integer selectedValue = -1;
+	private Point preferredPos;
+	
 
 	
+	public TextEditDialog(Point pos) {
+		this.preferredPos = pos;
+	}
+
 	public void showOKCancelTextEditor(String editString, Message message, AliViewWindow aliViewWindow) {
 		
 		final JDialog dialog = new JDialog(aliViewWindow);
@@ -61,10 +69,31 @@ public class TextEditDialog {
 		
 		dialog.setContentPane(optPane);
 		dialog.pack();
-		dialog.setLocationRelativeTo(aliViewWindow);
+		if(preferredPos != null){
+			dialog.setLocation(preferredPos);
+			makeSureWithinBounds(dialog, aliViewWindow);
+		}
+		else{
+			dialog.setLocationRelativeTo(aliViewWindow);
+		}
 		dialog.setVisible(true);
 	}
 	
+	private void makeSureWithinBounds(JDialog dialog, AliViewWindow aliViewWindow) {
+		Rectangle smaller = dialog.getBounds();
+		Rectangle larger = aliViewWindow.getBounds();
+		
+		int topDiff = larger.x - smaller.x;
+		int bottomDiff = larger.y + larger.height - (smaller.y + smaller.height);
+		
+		if(topDiff > 0){
+			dialog.setLocation(smaller.x, larger.y);
+		}
+		if(bottomDiff < 0){
+			dialog.setLocation(smaller.x, smaller.y + bottomDiff);
+		}
+	}
+
 	public Integer getSelectedValue() {
 		return selectedValue;
 	}

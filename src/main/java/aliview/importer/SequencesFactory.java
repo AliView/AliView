@@ -17,9 +17,9 @@ import org.apache.log4j.Logger;
 import aliview.AliView;
 import aliview.FileFormat;
 import aliview.MemoryUtils;
-import aliview.sequencelist.FileSequenceListModel;
-import aliview.sequencelist.MemorySequenceListModel;
-import aliview.sequencelist.SequenceListModel;
+import aliview.sequencelist.FileSequenceAlignmentListModel;
+import aliview.sequencelist.MemorySequenceAlignmentListModel;
+import aliview.sequencelist.AlignmentListModel;
 import aliview.sequences.ConvertedJEBLSequence;
 import aliview.sequences.Sequence;
 
@@ -51,11 +51,11 @@ public class SequencesFactory {
 	//  maybe create a "sequences" container that also keep track of longest seq
 	//
 	//
-	public SequenceListModel createSequences(File alignmentFile) throws AlignmentImportException{
+	public AlignmentListModel createSequences(File alignmentFile) throws AlignmentImportException{
 
 		// Check if file is to large - then create OnFile sequences instead of InMemory
 		String importErrorMessage = "";
-		SequenceListModel model = null;
+		AlignmentListModel model = null;
 				
 		// check if file size is to big for memory sequences
 		boolean memorySequences = true;
@@ -98,7 +98,7 @@ public class SequencesFactory {
 				try {
 					FastFastaImporter fastaImporter = new FastFastaImporter(new FileReader(alignmentFile));
 					List<Sequence> sequences = fastaImporter.importSequences();
-					model = new MemorySequenceListModel();
+					model = new MemorySequenceAlignmentListModel();
 					model.setSequences(sequences);
 					model.setFileFormat(FileFormat.FASTA);
 				} catch (FileNotFoundException e) {
@@ -117,7 +117,7 @@ public class SequencesFactory {
 				try {
 					MSFImporter importer = new MSFImporter(new FileReader(alignmentFile));
 					List<Sequence> sequences = importer.importSequences();
-					model = new MemorySequenceListModel();
+					model = new MemorySequenceAlignmentListModel();
 					model.setSequences(sequences);
 					model.setFileFormat(FileFormat.MSF);
 				} catch (FileNotFoundException e) {
@@ -132,7 +132,7 @@ public class SequencesFactory {
 				try {
 					ClustalImporter importer = new ClustalImporter(new FileReader(alignmentFile), alignmentFile.length());
 					List<Sequence> sequences = importer.importSequences();
-					model = new MemorySequenceListModel();
+					model = new MemorySequenceAlignmentListModel();
 					model.setSequences(sequences);
 					model.setFileFormat(FileFormat.CLUSTAL);
 				} catch (FileNotFoundException e) {
@@ -150,7 +150,7 @@ public class SequencesFactory {
 						PhylipImporter phylipImporter = new PhylipImporter(new FileReader(alignmentFile), PhylipImporter.LONG_NAME_SEQUENTIAL);
 						// this method will throw error if problem importing as this format and then we can try with other versions of phylip
 						List<Sequence> sequences = phylipImporter.importSequences();
-						model = new MemorySequenceListModel();
+						model = new MemorySequenceAlignmentListModel();
 						model.setSequences(sequences);
 						model.setFileFormat(FileFormat.PHYLIP);
 	
@@ -168,7 +168,7 @@ public class SequencesFactory {
 						PhylipImporter phylipImporter = new PhylipImporter(new FileReader(alignmentFile), PhylipImporter.LONG_NAME_INTERLEAVED);
 						// this method will throw error if problem importing as this format and then we can try with other versions of phylip
 						List<Sequence> sequences = phylipImporter.importSequences();
-						model = new MemorySequenceListModel();
+						model = new MemorySequenceAlignmentListModel();
 						model.setSequences(sequences);
 						model.setFileFormat(FileFormat.PHYLIP);	
 					} catch (Exception e) {
@@ -187,7 +187,7 @@ public class SequencesFactory {
 						PhylipImporter phylipImporter = new PhylipImporter(new FileReader(alignmentFile), PhylipImporter.SHORT_NAME_SEQUENTIAL);
 						// this method will throw error if problem importing as this format and then we can try with other versions of phylip
 						List<Sequence> sequences = phylipImporter.importSequences();
-						model = new MemorySequenceListModel();
+						model = new MemorySequenceAlignmentListModel();
 						model.setSequences(sequences);
 						model.setFileFormat(FileFormat.PHYLIP);	
 					} catch (Exception e) {
@@ -206,7 +206,7 @@ public class SequencesFactory {
 						PhylipImporter phylipImporter = new PhylipImporter(new FileReader(alignmentFile), PhylipImporter.SHORT_NAME_INTERLEAVED);
 						// this method will throw error if problem importing as this format and then we can try with other versions of phylip
 						List<Sequence> sequences = phylipImporter.importSequences();
-						model = new MemorySequenceListModel();
+						model = new MemorySequenceAlignmentListModel();
 						model.setSequences(sequences);
 						model.setFileFormat(FileFormat.PHYLIP);
 					} catch (Exception e) {
@@ -230,7 +230,7 @@ public class SequencesFactory {
 						NexusImporter importer = new jebl.evolution.io.NexusImporter(new FileReader(alignmentFile));
 						List<jebl.evolution.sequences.Sequence> jeblSequences = importer.importSequences();
 						if(jeblSequences != null && jeblSequences.size() > 0){
-							model = new MemorySequenceListModel();
+							model = new MemorySequenceAlignmentListModel();
 							model.setSequences(convertJEBLSequences(jeblSequences));
 							model.setFileFormat(FileFormat.NEXUS);
 						}
@@ -247,7 +247,7 @@ public class SequencesFactory {
 						FastNexusImporterSlow importer = new FastNexusImporterSlow(alignmentFile);
 						// this method will throw error if problem importing as this format and then we can try with other versions of phylip
 						List<Sequence> sequences = importer.importSequences();
-						model = new MemorySequenceListModel();
+						model = new MemorySequenceAlignmentListModel();
 						model.setSequences(sequences);
 						model.setFileFormat(FileFormat.NEXUS);
 					} catch (Exception e) {
@@ -279,7 +279,7 @@ public class SequencesFactory {
 						foundFormat == FileFormat.NEXUS || foundFormat == FileFormat.CLUSTAL ||
 						    foundFormat == FileFormat.MSF){
 					try{
-						model = new FileSequenceListModel(alignmentFile, foundFormat);
+						model = new FileSequenceAlignmentListModel(alignmentFile, foundFormat);
 						logger.info(model.getFileFormat());
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -295,8 +295,8 @@ public class SequencesFactory {
 		return model;
 	}
 	
-	public SequenceListModel createFastaSequences(StringReader stringReader) throws AlignmentImportException {
-		SequenceListModel model = new MemorySequenceListModel();
+	public AlignmentListModel createFastaSequences(StringReader stringReader) throws AlignmentImportException {
+		AlignmentListModel model = new MemorySequenceAlignmentListModel();
 			
 			try {
 				// First try fast fasta

@@ -2,7 +2,7 @@ package aliview.sequences;
 
 public interface SequenceSelectionModel extends Cloneable {
 
-	public abstract boolean isBaseSelected(int n);
+	public abstract boolean isSelected(int n);
 
 	public abstract void clearAll();
 
@@ -10,18 +10,21 @@ public interface SequenceSelectionModel extends Cloneable {
 
 	public abstract int getFirstSelectedPosition();
 
-	public abstract int getLastSelectedPosition();
+	public abstract int getLastSelectedPosition(int i);
 
 	public abstract boolean hasSelection();
 
-	public abstract void setSelectionAt(int i, boolean isSelected);
+	public abstract void setSelectionAt(int i);
+	
+	public abstract void clearSelectionAt(int i);
 
 	public abstract int[] getSelectedPositions(int startIndex, int endIndex);
 
 	public abstract int countSelectedPositions(int startIndex, int endIndex);
 
-	public abstract void setSelection(int startIndex, int endIndex,
-			boolean isSelected);
+	public abstract void setSelection(int startIndex, int endIndex, boolean clearFirst);
+	
+	public abstract void clearSelection(int startIndex, int endIndex, boolean clearFirst);
 	
 	/*
 	 * 

@@ -272,7 +272,7 @@ public class AlignmentPane_Orig extends JPanel{
 			return null;
 		}
 		int x = (int) (base.getPosition() * charWidth);
-		int y = (int) (alignment.getSequencePosition(base.getSequence()) * charHeight);
+		int y = (int) (alignment.getSequenceIndex(base.getSequence()) * charHeight);
 
 		Point pos = new Point(x,y);
 
@@ -285,7 +285,7 @@ public class AlignmentPane_Orig extends JPanel{
 
 		base = getBaseAt(pos);
 		if(base != null){
-			alignment.setSelectionAt(base.getPosition(), alignment.getSequencePosition(base.getSequence()),true);
+			alignment.setSelectionAt(base.getPosition(), alignment.getSequenceIndex(base.getSequence()),true);
 		}
 
 		return base;
@@ -316,7 +316,7 @@ public class AlignmentPane_Orig extends JPanel{
 
 	public void selectColumnAt(Point pos) {
 		int columnIndex = getColumnAt(pos);
-		getAlignment().setColumnSelection(columnIndex, true);
+		getAlignment().selectColumn(columnIndex);
 	}
 
 
@@ -1159,7 +1159,7 @@ public class AlignmentPane_Orig extends JPanel{
 		// calculate what part of alignment matrix is in view (what part of matrix is in graphical view)
 		Rectangle bounds = paneCoordToMatrixCoord(rect);
 
-		alignment.setSelectionWithin(bounds,true);
+		alignment.setSelectionWithin(bounds);
 
 		return nSelection;
 	}

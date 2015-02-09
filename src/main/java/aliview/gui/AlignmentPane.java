@@ -77,7 +77,7 @@ public class AlignmentPane extends JPanel{
 
 	private ColorScheme colorSchemeAminoAcid = Settings.getColorSchemeAminoAcid();
 	private ColorScheme colorSchemeNucleotide = Settings.getColorSchemeNucleotide();
-	private Rectangle tempSelectionRect;
+//	private Rectangle tempSelectionRect;
 
 	// TODO This should instead be tracing a sequence instead of a position?
 	private int differenceTraceSequencePosition = 0;
@@ -125,6 +125,10 @@ public class AlignmentPane extends JPanel{
 		alignmentRuler = new AlignmentRuler(this);
 		
 		
+	}
+	
+	public long getEndTime(){
+		return endTime;
 	}
 
 	public boolean isOnlyDrawDiff() {
@@ -459,7 +463,7 @@ public class AlignmentPane extends JPanel{
 			return null;
 		}
 		int x = (int) (base.getPosition() * charWidth);
-		int y = (int) (alignment.getSequencePosition(base.getSequence()) * charHeight);
+		int y = (int) (alignment.getSequenceIndex(base.getSequence()) * charHeight);
 
 		Point pos = new Point(x,y);
 
@@ -475,8 +479,8 @@ public class AlignmentPane extends JPanel{
 
 			base.getPosition();
 			base.getSequence();
-			alignment.getSequencePosition(base.getSequence());
-			alignment.setSelectionAt(base.getPosition(), alignment.getSequencePosition(base.getSequence()),true);
+			alignment.getSequenceIndex(base.getSequence());
+			alignment.setSelectionAt(base.getPosition(), alignment.getSequenceIndex(base.getSequence()),true);
 		}
 
 		return base;
@@ -511,7 +515,7 @@ public class AlignmentPane extends JPanel{
 
 	public void selectColumnAt(Point pos) {
 		int columnIndex = getColumnAt(pos);
-		getAlignment().setColumnSelection(columnIndex, true);
+		getAlignment().selectColumn(columnIndex);
 	}
 
 
@@ -568,7 +572,7 @@ public class AlignmentPane extends JPanel{
 	}
 
 
-	public void repaintForceRuler(){
+	public void repaintAndForceRuler(){
 		rulerIsDirty = true;
 		repaint();
 	}
@@ -578,6 +582,8 @@ public class AlignmentPane extends JPanel{
 		paintAlignment(g);
 	}
 
+	
+	
 
 
 	public void paintAlignment(Graphics g){
@@ -585,6 +591,7 @@ public class AlignmentPane extends JPanel{
 		long startTime = System.currentTimeMillis();	
 		if(drawCounter % DRAWCOUNT_LOF_INTERVAL == 0){
 			logger.info("Inside paintAlignment: Time from last endTim " + (startTime - endTime) + " milliseconds");
+			System.out.println("Inside paintAlignment: Time from last endTim " + (startTime - endTime) + " milliseconds");
 		}
 
 		Graphics2D g2d = (Graphics2D) g;
@@ -603,11 +610,11 @@ public class AlignmentPane extends JPanel{
 		//	return;
 		}
 		
-		 logger.info(clip);
+//		 logger.info(clip);
 
 		Rectangle matrixClip = paneCoordToMatrixCoord(clip);
 
-		 logger.info(matrixClip);
+//		 logger.info(matrixClip);
 
 		int xMin = matrixClip.x - 1;
 		int yMin = matrixClip.y - 1;
@@ -665,7 +672,7 @@ public class AlignmentPane extends JPanel{
 		// TODO adjust for retina
 		
 		int[] pixArray = new int[width* highDPIScaleFactor * height * highDPIScaleFactor];
-		logger.info(pixArray.length);
+	//	logger.info(pixArray.length);
 		RGBArray clipRGB = new RGBArray(pixArray, width*highDPIScaleFactor, height*highDPIScaleFactor);
 
 		// these vals are not going to change so get it only once
@@ -1161,12 +1168,12 @@ public class AlignmentPane extends JPanel{
 		// adjust colors if selected and temp selection
 		// We have to calculate within this way - because rect.contains(Point) is always returning false on a 0-width or 0 height Rectangle
 		boolean isPointWithinSelectionRect = false;
-		if(tempSelectionRect != null){
-			if(x <= tempSelectionRect.getMaxX() && x >= tempSelectionRect.getMinX() && y <= tempSelectionRect.getMaxY() && y >= tempSelectionRect.getMinY()){
+		if(alignment.getTempSelection() != null){
+			if(x <= alignment.getTempSelection().getMaxX() && x >= alignment.getTempSelection().getMinX() && y <= alignment.getTempSelection().getMaxY() && y >= alignment.getTempSelection().getMinY()){
 				isPointWithinSelectionRect = true;
 			}
 		}
-		if(alignment.isBaseSelected(x,y) || (tempSelectionRect != null && isPointWithinSelectionRect)){
+		if(alignment.isBaseSelected(x,y) || (alignment.getTempSelection() != null && isPointWithinSelectionRect)){
 			pixContainerToUse = charPixTranslationSelected;
 			pixLetterContainerToUse = charPixTranslationSelectedLetter;
 		}
@@ -1210,12 +1217,12 @@ public class AlignmentPane extends JPanel{
 		// adjust colors if selected and temp selection
 		// We have to calculate within this way - because rect.contains(Point) is always returning false on a 0-width or 0 height Rectangle
 		boolean isPointWithinSelectionRect = false;
-		if(tempSelectionRect != null){
-			if(x <= tempSelectionRect.getMaxX() && x >= tempSelectionRect.getMinX() && y <= tempSelectionRect.getMaxY() && y >= tempSelectionRect.getMinY()){
+		if(alignment.getTempSelection() != null){
+			if(x <= alignment.getTempSelection().getMaxX() && x >= alignment.getTempSelection().getMinX() && y <= alignment.getTempSelection().getMaxY() && y >= alignment.getTempSelection().getMinY()){
 				isPointWithinSelectionRect = true;
 			}
 		}
-		if(alignment.isBaseSelected(x,y) || (tempSelectionRect != null && isPointWithinSelectionRect)){
+		if(alignment.isBaseSelected(x,y) || (alignment.getTempSelection() != null && isPointWithinSelectionRect)){
 			pixContainerToUse = charPixTranslationSelected;
 			pixLetterContainerToUse = charPixTranslationSelectedLetter;
 		}
@@ -1284,12 +1291,12 @@ public class AlignmentPane extends JPanel{
 		// adjust colors if selected and temp selection
 		// We have to calculate within this way - because rect.contains(Point) is always returning false on a 0-width or 0 height Rectangle
 		boolean isPointWithinSelectionRect = false;
-		if(tempSelectionRect != null){
-			if(x <= tempSelectionRect.getMaxX() && x >= tempSelectionRect.getMinX() && y <= tempSelectionRect.getMaxY() && y >= tempSelectionRect.getMinY()){
+		if(alignment.getTempSelection() != null){
+			if(x <= alignment.getTempSelection().getMaxX() && x >= alignment.getTempSelection().getMinX() && y <= alignment.getTempSelection().getMaxY() && y >= alignment.getTempSelection().getMinY()){
 				isPointWithinSelectionRect = true;
 			}
 		}
-		if(alignment.isBaseSelected(x,y) || (tempSelectionRect != null && isPointWithinSelectionRect)){
+		if(alignment.isBaseSelected(x,y) || (alignment.getTempSelection() != null && isPointWithinSelectionRect)){
 			pixContainerToUse = charPixSelectedAA;
 		}
 
@@ -1352,8 +1359,8 @@ public class AlignmentPane extends JPanel{
 				// adjust colors if selected and temp selection
 				// We have to calculate within this way - because rect.contains(Point) is always returning false on a 0-width or 0 height Rectangle
 				boolean isPointWithinSelectionRect = false;
-				if(tempSelectionRect != null){
-					if(x <= tempSelectionRect.getMaxX() && x >= tempSelectionRect.getMinX() && y <= tempSelectionRect.getMaxY() && y >= tempSelectionRect.getMinY()){
+				if(alignment.getTempSelection() != null){
+					if(x <= alignment.getTempSelection().getMaxX() && x >= alignment.getTempSelection().getMinX() && y <= alignment.getTempSelection().getMaxY() && y >= alignment.getTempSelection().getMinY()){
 						isPointWithinSelectionRect = true;
 					}
 				}
@@ -1422,12 +1429,12 @@ public class AlignmentPane extends JPanel{
 		// adjust colors if selected and temp selection
 		// We have to calculate within this way - because rect.contains(Point) is always returning false on a 0-width or 0 height Rectangle
 		boolean isPointWithinSelectionRect = false;
-		if(tempSelectionRect != null){
-			if(x <= tempSelectionRect.getMaxX() && x >= tempSelectionRect.getMinX() && y <= tempSelectionRect.getMaxY() && y >= tempSelectionRect.getMinY()){
+		if(alignment.getTempSelection() != null){
+			if(x <= alignment.getTempSelection().getMaxX() && x >= alignment.getTempSelection().getMinX() && y <= alignment.getTempSelection().getMaxY() && y >= alignment.getTempSelection().getMinY()){
 				isPointWithinSelectionRect = true;
 			}
 		}
-		if(alignment.isBaseSelected(x,y) || (tempSelectionRect != null && isPointWithinSelectionRect)){
+		if(alignment.isBaseSelected(x,y) || (alignment.getTempSelection() != null && isPointWithinSelectionRect)){
 			pixContainerToUse = charPixSelectedNuc;
 		}
 
@@ -1484,19 +1491,23 @@ public class AlignmentPane extends JPanel{
 		// calculate what part of alignment matrix is in view (what part of matrix is in graphical view)
 		Rectangle bounds = paneCoordToMatrixCoord(rect);
 
-		alignment.setSelectionWithin(bounds,true);
+		alignment.setSelectionWithin(bounds);
 
 		return nSelection;
 	}
 
-	public void setTempSelection(Rectangle selectRect) {
-		// change rect to matrixCoordSys
-		this.tempSelectionRect = paneCoordToMatrixCoord(selectRect);
+	/*
+	private Rectangle getTempSelection() {
+		return alignment.getTempSelection();
 	}
+	*/
 
+	/*
 	public void clearTempSelection() {
 		this.tempSelectionRect = null;
 	}
+	
+	*/
 
 	public Rectangle paneCoordToMatrixCoord(Rectangle rect){
 
@@ -1510,6 +1521,13 @@ public class AlignmentPane extends JPanel{
 		int matrixMaxX = (int) Math.floor(rect.getMaxX()/charWidth); // always round up
 		int matrixMinY = (int) Math.floor(rect.getMinY()/charHeight); // always round down
 		int matrixMaxY = (int) Math.floor(rect.getMaxY()/charHeight); // always round down
+		
+		// also set min to 0
+		matrixMinX = Math.max(0, matrixMinX);
+		matrixMaxX = Math.max(0, matrixMaxX);
+		matrixMinY = Math.max(0, matrixMinY);
+		matrixMaxY = Math.max(0, matrixMaxY);
+		
 		//		logger.info("matrixMinX" + matrixMinX);
 		//		logger.info("matrixMaxX" + matrixMaxX);
 		////	logger.info(getMatrixTopOffset());
@@ -1653,8 +1671,6 @@ public class AlignmentPane extends JPanel{
 		}
 
 		return isSelected;
-
-
 	}
 
 	public void setShowTranslation(boolean showTranslation){
@@ -2059,6 +2075,7 @@ public class AlignmentPane extends JPanel{
 
 			long endTime = System.currentTimeMillis();
 			logger.info("Ruler PaintComponent took " + (endTime - startTime) + " milliseconds");
+			
 
 		}
 
@@ -2416,6 +2433,33 @@ public class AlignmentPane extends JPanel{
 	public void setFontCase(int fontCase){
 		this.fontCase = fontCase;
 		createCharPixelsContainers();
+	}
+	
+	public void scrollRectToSelection() {
+		Rectangle selectRect = alignment.getSelectionAsMinRect();
+		if(selectRect != null){
+			Rectangle grown1xtra = new Rectangle(selectRect.x - 1, selectRect.y - 1, selectRect.width + 3, selectRect.height + 3);
+			Rectangle paneCoord = matrixCoordToPaneCoord(grown1xtra);
+			if(! getVisibleRect().contains(selectRect)){
+				logger.info("not visible");
+				scrollRectToVisible(paneCoord);
+			}
+		}
+	}
+	
+	public void scrollRectToSelectionCenter() {
+		Rectangle selectRect = alignment.getSelectionAsMinRect();
+		if(selectRect != null){
+			Rectangle paneCoord = matrixCoordToPaneCoord(selectRect);
+			if(! getVisibleRect().contains(selectRect)){
+				logger.info("not visible");
+				Rectangle newVisible = new Rectangle(paneCoord);
+				//logger.info("new visible" + newVisible);
+				newVisible.grow(getVisibleRect().width/2,getVisibleRect().height/2);
+				//logger.info("newVisible" + newVisible);
+				scrollRectToVisible(newVisible);
+			}
+		}
 	}
 
 }

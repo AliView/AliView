@@ -8,83 +8,136 @@ import javax.swing.JList;
 
 import org.apache.log4j.Logger;
 
+import sun.swing.SwingUtilities2;
+import aliview.AliView;
+import aliview.AliViewWindow;
+
 /*
  * 
+ * These mouse listener events should be handled before the default List Mouse listener
+ * events, this way we add some specific select functionality
  * 
- * This class was created to test drag selection of multiple rows - but it is not really working
- * because it is conflicting with drag-drop
+ * Extra functionality provided by this class is:
  * 
- * 
- * 
+ * 1. Rubber band select in list
+ * 2. Rename by slow double click
+ *
  */
 public class SequenceListMouseListener implements MouseListener, MouseMotionListener{
 	private static final Logger logger = Logger.getLogger(SequenceListMouseListener.class);
 
-	private boolean novelSelection;
 	private int startIndex = -1;
+	private long lastReleaseTime;
+	private int lastReleaseIndex;
+	private long minReleaseInterval = 500;
+	private long maxReleaseInterval = 2000;
+	private AliViewWindow aliWin;
+	
+	
+	public SequenceListMouseListener(AliViewWindow aliWin) {
+		super();
+		this.aliWin = aliWin;
+	}
 
 
-	public void mouseClicked(MouseEvent e) {
+	public void mousePressed(MouseEvent e){
+	
+		logger.info("mousePressed");
+		if(e.isAltDown() || e.isControlDown() || e.isShiftDown() || e.isMetaDown()){
+			return;
+		}
+		
 		JList list = (JList) e.getSource();
-		int clickindex = list.locationToIndex(e.getPoint());
+		int clickIndex = list.locationToIndex(e.getPoint());
 		
-		
+		// if already selected return and let default mouseListener in JList
+		// take care about event - could for example be a drag event
+		if(list.isSelectedIndex(clickIndex)){
+			return;
+		}
+		// if not selected this could be the start of a rubber-band select in the list
+		else{
+			list.setSelectedIndex(clickIndex);
+			startIndex = clickIndex;
+			// give list focus
+			SwingUtilities2.adjustFocus(list);
+			e.consume();
+		}
 	}
 
 	
-	public void mousePressed(MouseEvent e) {
-		JList list = (JList) e.getSource();
-		int clickindex = list.locationToIndex(e.getPoint());
-		if(!list.isSelectedIndex(clickindex)){
-			list.setDragEnabled(false);
-			startIndex = clickindex;
-		}else{
-			startIndex = -1;
-		}	
-	}
-
-
 	public void mouseReleased(MouseEvent e) {
-		startIndex = -1;
+	
+		logger.info("mouseReleased");
 		
-	}
-
-
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	public void mouseDragged(MouseEvent e) {
-		JList list = (JList) e.getSource();
-		int clickindex = list.locationToIndex(e.getPoint());
-		if(startIndex > -1){
-			int endIndex = list.locationToIndex(e.getPoint());
-			int min = Math.min(startIndex, endIndex);
-			int max = Math.max(startIndex, endIndex);
-			int selSize = max-min + 1;
-			int[] indices = new int[selSize];
-			for(int n = 0; n < indices.length; n++){
-				indices[n] = min + n;
-			}
-			//logger.info
-			list.setSelectedIndices(indices);
-			
+		// check if this release is part of a rename-trigger-event
+		if(isRenameTrigger(e)){
+			aliWin.renameFirstSelected();		
+			e.consume();
 		}
+		
+		if(startIndex != -1){
+			startIndex = -1;
+			e.consume();
+		}	
+		
+	}
+
+
+	private boolean isRenameTrigger(MouseEvent e) {
+
+		long releaseTime = e.getWhen();
+		JList list = (JList) e.getSource();
+		int releaseIndex = list.locationToIndex(e.getPoint());
+		
+		boolean isRenameTrigger = false;
+		if(lastReleaseIndex == releaseIndex){
+			if(list.isSelectedIndex(releaseIndex)){
+				long timeBetweenReleases = releaseTime - lastReleaseTime;
+				if(timeBetweenReleases > minReleaseInterval && timeBetweenReleases < maxReleaseInterval){
+					isRenameTrigger = true;
+				}
+				
+			}
+		}
+
+		lastReleaseIndex = releaseIndex;
+		lastReleaseTime = releaseTime;
+		
+		return isRenameTrigger;
+		
+	}
+
+	//
+	// Select all index between start and this if mouse is dragged ("rubber-band" select)
+	//
+	public void mouseDragged(MouseEvent e) {
+		logger.info("mousePressed");
+		if(startIndex == -1){
+			return;
+		}
+		if(e.isAltDown() || e.isControlDown() || e.isShiftDown() || e.isMetaDown()){
+			return;
+		}
+		
+		JList list = (JList) e.getSource();
+		int pointerIndex = list.locationToIndex(e.getPoint());
+		logger.info(pointerIndex);
+		list.getSelectionModel().setSelectionInterval(startIndex, pointerIndex);
+		list.ensureIndexIsVisible(pointerIndex);
+		e.consume();	
 	}
 
 
 	public void mouseMoved(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 	
+	public void mouseEntered(MouseEvent e) {
+	}
+
+	public void mouseExited(MouseEvent e) {
+	}
 	
+	public void mouseClicked(MouseEvent e) {	
+	}
 }

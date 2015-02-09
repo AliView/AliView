@@ -2,14 +2,13 @@ package aliview.sequences;
 
 public class EmptySelectionModel implements SequenceSelectionModel {
 
-	public boolean isBaseSelected(int n) {
+	public boolean isSelected(int n) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	public void clearAll() {
 		// TODO Auto-generated method stub
-
 	}
 
 	public void selectAll() {
@@ -24,7 +23,7 @@ public class EmptySelectionModel implements SequenceSelectionModel {
 		return 0;
 	}
 
-	public int getLastSelectedPosition() {
+	public int getLastSelectedPosition(int seqLength) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
@@ -34,9 +33,14 @@ public class EmptySelectionModel implements SequenceSelectionModel {
 		return false;
 	}
 
-	public void setSelectionAt(int i, boolean isSelected) {
+	public void setSelectionAt(int i) {
 		// TODO Auto-generated method stub
+		
+	}
 
+	public void clearSelectionAt(int i) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	public int[] getSelectedPositions(int startIndex, int endIndex) {
@@ -49,7 +53,12 @@ public class EmptySelectionModel implements SequenceSelectionModel {
 		return 0;
 	}
 
-	public void setSelection(int startIndex, int endIndex, boolean isSelected) {
+	public void setSelection(int startIndex, int endIndex, boolean clearFirst) {
+		// TODO Auto-generated method stub
+
+	}
+	
+	public void clearSelection(int startIndex, int endIndex, boolean clearFirst) {
 		// TODO Auto-generated method stub
 
 	}
@@ -99,5 +108,7 @@ public class EmptySelectionModel implements SequenceSelectionModel {
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+	
 
 }

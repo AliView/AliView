@@ -14,6 +14,9 @@ public class AlignmentMeta {
 	private CodonPositions codonPositions = new CodonPositions(0);
 	private ArrayList<CharSet> charsets = new ArrayList<CharSet>();
 
+	public AlignmentMeta(){
+		this(0);
+	}
 
 	public AlignmentMeta(int alignmentLength){
 		//this(new Excludes(alignmentLength), new CodonPositions(alignmentLength), new ArrayList<CharSet>());
@@ -31,7 +34,7 @@ public class AlignmentMeta {
 		if(excludes.isAnythingExcluded()){
 			isMetaNeeded = true;
 		}
-		if(codonPositions.isAnythingButNormal()){
+		if(codonPositions.isAnythingButDefault()){
 			isMetaNeeded = true;
 		}
 		if(charsets.size() > 0){
@@ -48,24 +51,19 @@ public class AlignmentMeta {
 		return this.codonPositions;
 	}
 
-
 	public boolean isFullCodonStartingAt(int x) {
 		return this.codonPositions.isFullCodonStartingAt(x);
 	}
-
 
 	public void reverse() {
 		this.getExcludes().reverse();
 		this.getCodonPositions().reverse();
 	}
 
-
 	public int countIncludedPositionsBefore(int minimumInteger) {
 		int count = 0;
 		for(int n = 0; n < minimumInteger; n++){
-			if(this.excludes.isExcluded(n)){
-
-			}else{
+			if(! this.excludes.isExcluded(n)){
 				count ++;
 			}
 		}

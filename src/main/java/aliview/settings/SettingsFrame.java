@@ -45,8 +45,9 @@ public class SettingsFrame extends JFrame {
 		this.getContentPane().add(tabbedPane);
 		this.setIconImage(AppIcons.getProgramIconImage());
 		this.setTitle("Settings");
-		this.setPreferredSize(new Dimension(700,600));
+		this.setPreferredSize(new Dimension(750,600));
 	}
+	
 	
 	public void reload(){
 		int index = tabbedPane.getSelectedIndex();

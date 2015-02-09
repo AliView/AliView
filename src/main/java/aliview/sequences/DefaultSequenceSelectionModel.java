@@ -9,7 +9,7 @@ public class DefaultSequenceSelectionModel implements SequenceSelectionModel {
 	BitSet bitSelection;
 	boolean allSelected;
 
-	public boolean isBaseSelected(int n) {
+	public boolean isSelected(int n) {
 		if(allSelected){
 			return true;
 		}
@@ -47,9 +47,9 @@ public class DefaultSequenceSelectionModel implements SequenceSelectionModel {
 		}
 	}
 
-	public int getLastSelectedPosition() {
+	public int getLastSelectedPosition(int seqLength) {
 		if(allSelected){
-			return 0;
+			return seqLength - 1;
 		}
 		if(bitSelection == null){
 			return -1;
@@ -129,18 +129,33 @@ public class DefaultSequenceSelectionModel implements SequenceSelectionModel {
 		}	
 	}
 	
-	public void setSelectionAt(int n, boolean selected){
-		setSelection(n, n, selected);
+	public void clearSelectionAt(int n) {
+		clearSelection(n, n, false);
+	}
+	
+	public void clearSelection(int startIndex, int endIndex, boolean clearFirst){
+		if(clearFirst){
+			clearAll();
+		}
+		if(bitSelection == null){
+			return; // already clear
+		}	
+		bitSelection.set(startIndex, endIndex + 1, false); // bitselection end index is exclusive
+	}
+	
+	public void setSelectionAt(int n){
+		setSelection(n, n, false);
 	}
 
-	public void setSelection(int startIndex, int endIndex, boolean isSelected){
+	public void setSelection(int startIndex, int endIndex, boolean clearFirst){
+		if(clearFirst){
+			clearAll();
+		}
 		if(bitSelection == null){
 			bitSelection = createNewSelection();
 		}
-		bitSelection.set(startIndex, endIndex + 1, isSelected); // bitselection end index is exclusive
-		if(isSelected == false){
-			allSelected = false;
-		}
+		bitSelection.set(startIndex, endIndex + 1, true); // bitselection end index is exclusive
+		
 	}
 
 	public void rightPad(int length) {

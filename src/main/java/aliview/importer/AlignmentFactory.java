@@ -17,8 +17,8 @@ import aliview.MemoryUtils;
 import aliview.alignment.Alignment;
 import aliview.alignment.AlignmentMeta;
 import aliview.messenges.Messenger;
-import aliview.sequencelist.FileSequenceListModel;
-import aliview.sequencelist.SequenceListModel;
+import aliview.sequencelist.FileSequenceAlignmentListModel;
+import aliview.sequencelist.AlignmentListModel;
 import aliview.sequences.NexusSequence;
 import aliview.sequences.SequenceUtils;
 import aliview.settings.Settings;
@@ -44,7 +44,7 @@ public class AlignmentFactory {
 			Alignment alignment = null;
 			try {
 				
-				SequenceListModel sequences = seqFactory.createSequences(alignmentFile);			
+				AlignmentListModel sequences = seqFactory.createSequences(alignmentFile);			
 				
 				Excludes excludes = new Excludes(sequences.getLongestSequenceLength());
 				logger.info("sequences.getLongestSequenceLength()" + sequences.getLongestSequenceLength());
@@ -53,7 +53,7 @@ public class AlignmentFactory {
 
 					try {
 						// Try to read Excludes etc. from alignmentfile	
-						if(NexusUtilities.isNexusFile(alignmentFile) && sequences instanceof FileSequenceListModel == false && sequences.get(0) instanceof NexusSequence == false){
+						if(NexusUtilities.isNexusFile(alignmentFile) && sequences instanceof FileSequenceAlignmentListModel == false && sequences.get(0) instanceof NexusSequence == false){
 							NexusUtilities.updateExcludesFromFile(alignmentFile,excludes);
 							NexusUtilities.updateCodonPositionsFromNexusFile(alignmentFile, codonPositions);
 							charsets = NexusUtilities.createCharsetsFromNexusFile(alignmentFile, sequences.getLongestSequenceLength());

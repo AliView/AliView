@@ -138,9 +138,10 @@ public class AliItemPanel extends JPanel{
 			JButton btnBrowseProgram = new JButton("Browse");
 			btnBrowseProgram.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e){
-					String suggestedDir = Settings.getExternalCommandFileDirectory();
+					String suggestedDir = txtProgramFile.getText();
 					File suggestedFile = new File(suggestedDir);
 					File selectedFile = FileUtilities.selectOpenFileViaChooser(suggestedFile,aliItemPanel);
+					// check result
 					if(selectedFile != null){
 						txtProgramFile.setText(selectedFile.getAbsolutePath());
 						alignItem.setProgramPath(selectedFile.getAbsolutePath());

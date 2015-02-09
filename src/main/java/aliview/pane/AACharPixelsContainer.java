@@ -12,7 +12,7 @@ import aliview.NucleotideUtilities;
 import aliview.alignment.Alignment;
 import aliview.color.ColorScheme;
 import aliview.gui.AlignmentPane;
-import aliview.sequencelist.SequenceListModel;
+import aliview.sequencelist.AlignmentListModel;
 
 
 public class AACharPixelsContainer {

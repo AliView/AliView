@@ -236,7 +236,10 @@ public class AliView implements ApplicationListener{
 					e.printStackTrace();
 				}
 			}
-
+			
+			
+		    
+		    
 			// debugUIDefaults();
 
 			if(Settings.getUseCustomFontSize().getBooleanValue()){
@@ -251,6 +254,19 @@ public class AliView implements ApplicationListener{
 				// and some more keys
 				setUIFontSize(userSize);
 			}
+			
+			// On other system than windows (mac and linux) use smaller default font label size
+			if(!Settings.getUseCustomFontSize().getBooleanValue()){
+				if(! OSNativeUtils.isWindows()){
+					Object fontObj = UIManager.getLookAndFeelDefaults().get("Label.font");
+					if(fontObj != null && fontObj instanceof Font){
+						Font defaultFont = (Font) fontObj;
+						UIManager.getLookAndFeelDefaults().put("Label.font", defaultFont.deriveFont(12f));
+					}
+				}
+			}
+			
+			
 
 			aliView = new AliView();
 
@@ -296,7 +312,7 @@ public class AliView implements ApplicationListener{
 				//	alignmentFile = new File("/home/anders/projekt/alignments/sandies/euArc165F_F1.fasta");
 				//	alignmentFile = new File("/home/anders/projekt/alignments/Woodsia_chloroplast_min4_20131109_v2.excluded.nexus");
 
-				//			alignmentFile = new File("/home/anders/projekt/alignments/Woodsia_chloroplast_min1_20131029.nexus");
+							alignmentFile = new File("/home/anders/projekt/alignments/Woodsia_chloroplast_min1_20131029.nexus");
 				//	alignmentFile = new File("/vol2/big_data/test.nexus");
 
 				//			  alignmentFile = new File("/vol2/johns_454/SSURef_108_full_align_tax_silva_trunc.fasta");
@@ -317,7 +333,7 @@ public class AliView implements ApplicationListener{
 				//alignmentFile = new File("/home/anders/projekt/alignments/smalphylipInterlShortName.phy");
 				//				alignmentFile = new File("/home/anders/projekt/alignments/harris_CT144.phy");
 
-				alignmentFile = new File("/home/anders/projekt/alignments/gold_strains_gg16S_aligned.fasta");
+				//alignmentFile = new File("/home/anders/projekt/alignments/gold_strains_gg16S_aligned.fasta");
 				//					 alignmentFile = new File("/home/anders/projekt/alignments/woodsia_chloropl_excl_hybrid.fasta");
 				//			alignmentFile = new File("/home/anders/projekt/henriks_laboul/both.fasta");
 				//		alignmentFile = new File("/home/anders/projekt/ormbunkar/sekvenser_output/forkade_alignments/WoodsiapgiC-forked_2.nexus");
@@ -340,6 +356,7 @@ public class AliView implements ApplicationListener{
 				if(! alignmentFile.exists()){
 					alignmentFile = null;
 				}
+				
 			}
 			logger.info("6");
 
@@ -397,6 +414,8 @@ public class AliView implements ApplicationListener{
 		else{
 			Logger.getRootLogger().setLevel(Level.ERROR);
 		}
+		
+		//Logger.getRootLogger().setLevel(Level.ERROR);
 		
 		logger.info("done with main method");
 

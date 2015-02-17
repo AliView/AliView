@@ -23,7 +23,6 @@ import javax.script.ScriptException;
 
 import org.apache.log4j.Logger;
 
-
 import aliview.NucleotideUtilities;
 
 public class Test implements Cloneable{
@@ -39,11 +38,40 @@ public class Test implements Cloneable{
 	
 
 	public static void main(String[] args) throws CloneNotSupportedException {
+	
 		
+
+		int pos = 5;
+		int startVal = 2;
+		int start = 0;
+		
+		int diff = -5;
+		
+		diff = Math.abs(diff);
+		int posVal = ( ( (startVal - 1) + diff) % 3)  + 1;
+		posVal = 4 - Math.abs(posVal);
+		
+		logger.info(posVal);
+		
+		int endPos=2147483647;
+		int startCorrected=0;
+		
+		int val = (int) Math.ceil( (double)(endPos - startCorrected + 1) / 3 );
+		
+		logger.info(val);
+
+//		logger.info("pos" + pos);
+//		logger.info("startVal" + startVal);
+//		logger.info("(pos % 3)" + (pos % 3));
+//		logger.info("(pos % 3) + startVal=" + ((pos % 3) + startVal));
+		logger.info("((pos - start) % 3) + startVal=" + ((pos - start) % 3 + startVal));
+		
+		
+		//logger.info( (pos % 3) );
 		
 		//getAATextInfo(true);
 		
-		logger.info(8 % 3);
+	//	logger.info(8 % 3);
 		
 		testAlphaColor();
 		

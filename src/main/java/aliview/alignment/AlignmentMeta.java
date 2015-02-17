@@ -1,32 +1,38 @@
 package aliview.alignment;
 
+import java.awt.Rectangle;
 import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
 
+import aliview.GeneticCode;
 import utils.nexus.CharSet;
+import utils.nexus.CodonPos;
 import utils.nexus.CodonPositions;
 import utils.nexus.Excludes;
 
 public class AlignmentMeta {
 	private static final Logger logger = Logger.getLogger(AlignmentMeta.class);
-	private Excludes excludes = new Excludes(0);
-	private CodonPositions codonPositions = new CodonPositions(0);
-	private ArrayList<CharSet> charsets = new ArrayList<CharSet>();
+	private Excludes excludes;
+	private CodonPositions codonPositions;
+	private ArrayList<CharSet> charsets;
+	private GeneticCode geneticCode;
 
+	
 	public AlignmentMeta(){
-		this(0);
+		this(GeneticCode.DEFAULT);
 	}
 
-	public AlignmentMeta(int alignmentLength){
+	public AlignmentMeta(GeneticCode genCode){
 		//this(new Excludes(alignmentLength), new CodonPositions(alignmentLength), new ArrayList<CharSet>());
-		this(new Excludes(), new CodonPositions(alignmentLength), new ArrayList<CharSet>());
+		this(new Excludes(), new CodonPositions(), new ArrayList<CharSet>(), genCode);
 	}
 
-	public AlignmentMeta(Excludes excludes, CodonPositions codonPos, ArrayList<CharSet> charsets) {
+	public AlignmentMeta(Excludes excludes, CodonPositions codonPos, ArrayList<CharSet> charsets, GeneticCode genCode) {
 		this.excludes = excludes;
 		this.codonPositions = codonPos;
 		this.charsets = charsets;
+		this.geneticCode = genCode;
 	}
 
 	public boolean isMetaOutputNeeded(){
@@ -73,7 +79,6 @@ public class AlignmentMeta {
 
 	public void setReadingFrame(int readingFrame) {
 		this.codonPositions.setReadingFrame(readingFrame);
-
 	}
 
 
@@ -92,11 +97,11 @@ public class AlignmentMeta {
 		for(CharSet charset: this.charsets){
 			copyOfCharsets.add(charset.getCopy());
 		}
-		return new AlignmentMeta(excludes.getCopy(), codonPositions.getCopy(), copyOfCharsets);
+		return new AlignmentMeta(excludes.getCopy(), codonPositions.getCopy(), copyOfCharsets, this.geneticCode);
 	}
 
-	public ArrayList<Integer> getAllCodonPositions(int wanted, boolean removeExcluded) {
-		ArrayList<Integer> positions = codonPositions.getAllPositions(wanted);
+	public ArrayList<Integer> getAllCodonPositions(int wanted, boolean removeExcluded, int startPos, int endPosInclusive) {
+		ArrayList<Integer> positions = codonPositions.getAllPositions(wanted, startPos, endPosInclusive);
 		if(removeExcluded){
 			excludes.removeExcludedPositionsFromList(positions);
 		}
@@ -121,9 +126,11 @@ public class AlignmentMeta {
 	
 	public void removePosition(int n) {	
 		excludes.removePosition(n);
-		codonPositions.removePosition(n);
-		for(CharSet charset: charsets){
-			charset.removePosition(n); 
+		if(codonPositions.size() != 0){
+			codonPositions.removePosition(n);
+			for(CharSet charset: charsets){
+				charset.removePosition(n); 
+			}
 		}
 	}
 	
@@ -136,18 +143,37 @@ public class AlignmentMeta {
 //		}
 	}
 	
-
-
-	public void excludePosition(int i) {
-		this.excludes.getPositionsBooleanArray()[i] = true;
-
+	public void excludePositions(int[] positions) {
+		for(int n = 0; n < positions.length; n++){
+			this.excludes.getPositionsBooleanArray()[n] = true;
+		}
 	}
-
 
 	public ArrayList<CharSet> getCharsets() {
 		return this.charsets;
 	}
 
+	public int[] translatePositions(int[] selection) {
+		return codonPositions.translatePositions(selection);
+	}
+	
+	public int[] reTranslatePositions(int[] selection) {
+		return codonPositions.reTranslatePositions(selection);
+	}
+
+	public Rectangle reTranslatePositions(Rectangle bounds) {
+		return codonPositions.reTranslatePositions(bounds);
+	}
+
+	public GeneticCode getGeneticCode() {
+		return geneticCode;
+	}
+
+	public void setGeneticCode(GeneticCode genCode) {
+		this.geneticCode = genCode;
+	}
+
+	/*
 	public boolean verifyLength(int len){
 		boolean chandged = false;
 		if(excludes != null){
@@ -165,6 +191,7 @@ public class AlignmentMeta {
 		
 		return chandged;
 	}
+	*/
 
 
 }

@@ -35,7 +35,7 @@ public class CompoundCharPixelsContainer {
 	}
 	
 	
-	public static CompoundCharPixelsContainer createDefaultCompoundColorImpl(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCase) {
+	public static CompoundCharPixelsContainer createDefaultCompoundColorContainer(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCase) {
 		
 		if(colorScheme.getALLCompundColors() == null || colorScheme.getALLCompundColors().length == 0){
 			return null;
@@ -64,7 +64,7 @@ public class CompoundCharPixelsContainer {
 		
 	}
 
-	public static CompoundCharPixelsContainer createSelectedCompoundColorImpl(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCase) {
+	public static CompoundCharPixelsContainer createSelectedCompoundColorContainer(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCase) {
 		
 		if(colorScheme.getALLCompundColors() == null || colorScheme.getALLCompundColors().length == 0){
 			return null;

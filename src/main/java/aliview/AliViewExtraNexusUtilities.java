@@ -67,20 +67,20 @@ public class AliViewExtraNexusUtilities {
   		out.write("END;" + LF);
   		out.write(LF);
   		
-  		if(alignment.getAlignentMeta().getExcludes() != null){
-	  		out.write(NexusUtilities.getExcludesAsNexusBlock(alignment.getAlignentMeta().getExcludes()));
+  		if(alignment.getAlignmentMeta().getExcludes() != null){
+	  		out.write(NexusUtilities.getExcludesAsNexusBlock(alignment.getAlignmentMeta().getExcludes()));
 	  		out.write(LF);
 	  		out.write(LF);
   		}
   		
-  		if(alignment.getAlignentMeta().getCodonPositions() != null){
-	  		out.write(NexusUtilities.getCodonPosAsNexusBlock(alignment.getAlignentMeta().getCodonPositions()));
+  		if(alignment.getAlignmentMeta().getCodonPositions() != null){
+	  		out.write(NexusUtilities.getCodonPosAsNexusBlock(alignment.getAlignmentMeta().getCodonPositions(), 0, alignment.getMaximumSequenceLength()));
 	  		out.write(LF);
 	  		out.write(LF);
   		}
 		
-  		if(alignment.getAlignentMeta().getCharsets() != null){
-	  		out.write(NexusUtilities.getCharsetsBlockAsNexus(alignment.getAlignentMeta().getCharsets()));
+  		if(alignment.getAlignmentMeta().getCharsets() != null){
+	  		out.write(NexusUtilities.getCharsetsBlockAsNexus(alignment.getAlignmentMeta().getCharsets()));
 	  		out.write(LF);
 	  		out.write(LF);
  		}
@@ -96,13 +96,16 @@ public class AliViewExtraNexusUtilities {
   			dataTypeString = "PROTEIN";
   		}
     	  
+  		int length = alignment.getMaximumSequenceLength();
+  		
      	// dump pos
      	
      	boolean removeExcluded = true;
-     	ArrayList<Integer> allPos0 = alignment.getAllCodonPositions(0,removeExcluded);
-     	ArrayList<Integer> allPos1 = alignment.getAllCodonPositions(1,removeExcluded);
-       	ArrayList<Integer> allPos2 = alignment.getAllCodonPositions(2,removeExcluded);
-       	ArrayList<Integer> allPos3 = alignment.getAllCodonPositions(3,removeExcluded);
+     	
+     	ArrayList<Integer> allPos0 = alignment.getAllCodonPositions(0,removeExcluded, 0, length - 1);
+     	ArrayList<Integer> allPos1 = alignment.getAllCodonPositions(1,removeExcluded, 0, length - 1);
+       	ArrayList<Integer> allPos2 = alignment.getAllCodonPositions(2,removeExcluded, 0, length - 1);
+       	ArrayList<Integer> allPos3 = alignment.getAllCodonPositions(3,removeExcluded, 0, length - 1);
      	
        	int nChar = allPos0.size() + allPos1.size() + allPos2.size() + allPos3.size();
      	 

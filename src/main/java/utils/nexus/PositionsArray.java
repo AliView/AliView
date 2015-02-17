@@ -3,39 +3,66 @@ package utils.nexus;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 
+import com.sun.org.apache.bcel.internal.generic.BALOAD;
+
 
 public class PositionsArray {
 	private static final Logger logger = Logger.getLogger(PositionsArray.class);
 	private int [] backend;
-	private int length;
-	
-	public PositionsArray(int length) {
-		this.length = length;
-	}
 
+
+	public PositionsArray() {
+	}
+	
+	private PositionsArray(int[] backend) {
+		this.backend = backend;
+	}
+/*
 	public int getLength() {
 		if(backend != null){
 			return backend.length;
 		}else{
-			return length;
+			return 0;
 		}
 	}
-
-	public int getPos(int pos) {
+*/
+	
+	public int size() {
 		if(backend != null){
+			return backend.length;
+		}else{
+			return 0;
+		}
+	}
+	
+	public int getPos(int pos) {
+		
+		if(backend == null || backend.length == 0){
+			return (pos % 3) + 1;
+		}
+		else if(pos < backend.length){
 			return backend[pos];
 		}
 		else{
-			return (pos % 3) + 1;
-		}
+			int lastVal = backend[backend.length - 1];
+			if(lastVal == 0){
+				return 0;
+			}
+			else{
+				return (pos % 3) + lastVal;
+			}
+		}		
 	}
 
+
 	public PositionsArray getCopy() {
-		PositionsArray copy = new PositionsArray(this.length);
-		if(backend != null){
-			copy.backend = ArrayUtils.clone(this.backend);
+		if(backend == null){
+			return new PositionsArray();
 		}
-		return copy;
+		else{
+			int[] clonedBackend = backend = ArrayUtils.clone(this.backend);
+			return new PositionsArray(clonedBackend);
+		}
 	}
 
 	public int get(int x) {
@@ -43,16 +70,16 @@ public class PositionsArray {
 	}
 
 	public void set(int pos, int val) {
-		if(backend != null){
-			backend[pos] = val;
+		if(backend == null){
+			createNewBackend(pos + 1);
 		}
-		else{
-			createNewBackend();
-			backend[pos] = val;
+		else if(pos >= backend.length){
+			resizeBackend(pos + 1);
 		}
+		backend[pos] = val;
 	}
 
-	private void createNewBackend() {
+	private void createNewBackend(int length) {
 		backend = new int[length];
 		fillArrayWith123(backend);
 	}
@@ -88,7 +115,7 @@ public class PositionsArray {
 
 	public void append(PositionsArray otherPos) {
 		if(this.backend != null && otherPos.backend != null){
-			int newSize = this.getLength() + otherPos.getLength();
+			int newSize = backend.length + otherPos.backend.length;
 			int[] newPositions = new int[newSize];
 			System.arraycopy(backend, 0, newPositions, 0, backend.length);
 			System.arraycopy(otherPos.backend, 0, newPositions,backend.length, otherPos.backend.length);
@@ -100,21 +127,36 @@ public class PositionsArray {
 	
 	}
 
-	public void remove(int n) {
-		logger.info("remove" + n);
+	public void remove(int pos) {
+		logger.info("remove" + pos);
 		if(backend == null){
-			createNewBackend();
+			// should not happen... do nothing
+			return;
+			//createNewBackend(pos + 1);
 		}
-		backend = ArrayUtils.remove(backend, n);
+		else if(pos > backend.length){
+			// do nothing
+			return;
+			// resizeBackend(pos + 1);
+		}
+
+		backend = ArrayUtils.remove(backend, pos);
 	}
 	
 	
 	
-	public void insert(int n) {
+	public void insert(int pos) {
 		if(backend == null){
-			createNewBackend();
+			// should not happen... do nothing
+			return;
+			//createNewBackend(pos + 1);
 		}
-		backend = ArrayUtils.add(backend, n, 0);
+		else if(pos > backend.length){
+			// do nothing
+			return;
+			// resizeBackend(pos + 1);
+		}
+		backend = ArrayUtils.add(backend, pos, 0);
 	}
 
 	private boolean isBackendAnythingBut123(){
@@ -141,23 +183,26 @@ public class PositionsArray {
 		return isAnythingButDefault;
 	}
 
-	public void resize(int len) {
-		this.length = len;
-		if(backend != null){
-			if(backend.length > len){
-				backend = ArrayUtils.subarray(backend, 0, len);
+	public void resizeBackend(int len) {
+		if(backend == null){
+			createNewBackend(len);
+		}
+		if(backend.length > len){
+			backend = ArrayUtils.subarray(backend, 0, len);
+		}
+		if(backend.length < len){
+			
+			int[] newVals = new int[len - backend.length];
+			int lastPos = getPos(backend.length - 1);
+			if(lastPos != 0){
+				logger.info("lastPos" + lastPos);
+				fillArrayWith123(newVals, lastPos + 1);
 			}
-			if(backend.length < len){
-				int[] newVals = new int[len - backend.length];
-				int lastPos = getPos(backend.length - 1);
-				if(lastPos != 0){
-					logger.info("lastPos" + lastPos);
-					fillArrayWith123(newVals, lastPos + 1);
-				}
-				logger.info("newVals.length" + newVals.length);
-				logger.info("backend.length" + backend.length);
-				backend = ArrayUtils.addAll(backend, newVals);
-			}
+			logger.info("newVals.length" + newVals.length);
+			logger.info("backend.length" + backend.length);
+			backend = ArrayUtils.addAll(backend, newVals);
+			
+
 		}
 	}
 

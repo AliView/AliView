@@ -20,5 +20,10 @@
       <attribute value="jar:file:/home/anders/.m2/repository/com/yuvimasory/orange-extensions/1.3.0/orange-extensions-1.3.0-javadoc.jar!/" name="javadoc_location"/>
     </attributes>
   </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/net/sf/trove4j/trove4j/3.0.3/trove4j-3.0.3.jar" sourcepath="M2_REPO/net/sf/trove4j/trove4j/3.0.3/trove4j-3.0.3-sources.jar">
+    <attributes>
+      <attribute value="jar:file:/home/anders/.m2/repository/net/sf/trove4j/trove4j/3.0.3/trove4j-3.0.3-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
   <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 </classpath>

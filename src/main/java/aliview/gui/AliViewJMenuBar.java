@@ -394,18 +394,20 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 		mnFile.add(new JSeparator());
 
 		
+		// show stats
 		
-		
-		/*
-				JMenuItem mntmShowStats = new JMenuItem("Show statistics");
-				mntmShowStats.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						aliViewWindow.createStats();
-					}
-				});
-				mnFile.add(mntmShowStats);
-				alwaysAvailableFunctions.add(mntmShowStats);
-		 */
+		JMenuItem mntmShowStats = new JMenuItem("Show statistics");
+		mntmShowStats.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				aliViewWindow.createStats();
+			}
+		});
+		mnFile.add(mntmShowStats);
+		alwaysAvailableFunctions.add(mntmShowStats);
+		 
+		// end show stats		
+				
+				
 
 		// Mac has its own menu item
 		if(OSNativeUtils.isAnythingButMac()){
@@ -889,7 +891,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 		JMenuItem mntmSetSelectionAsCoding0 = new JMenuItem("Set selection as coding (selection starting with codon position=1)");
 		mntmSetSelectionAsCoding0.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				aliViewWindow.setSelectionAsCoding(0);
+				aliViewWindow.setSelectionAsCoding(1);
 			}
 		});
 		mnSelection.add(mntmSetSelectionAsCoding0);
@@ -900,7 +902,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 		JMenuItem mntmSetSelectionAsCoding1 = new JMenuItem("Set selection as coding (selection starting with codon position=2)");
 		mntmSetSelectionAsCoding1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				aliViewWindow.setSelectionAsCoding(1);
+				aliViewWindow.setSelectionAsCoding(2);
 			}
 		});
 		coding1ButtonModel=mntmSetSelectionAsCoding1.getModel();
@@ -911,7 +913,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 		JMenuItem mntmSetSelectionAsCoding2 = new JMenuItem("Set selection as coding (selection starting with codon position=3)");
 		mntmSetSelectionAsCoding2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				aliViewWindow.setSelectionAsCoding(2);
+				aliViewWindow.setSelectionAsCoding(3);
 			}
 		});
 		coding2ButtonModel=mntmSetSelectionAsCoding2.getModel();
@@ -1148,7 +1150,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 		mnViewMenu.add(new JSeparator());
 		
 		
-		JCheckBoxMenuItem mntmFontCase = new JCheckBoxMenuItem("Upper case");
+		JCheckBoxMenuItem mntmFontCase = new JCheckBoxMenuItem("Always display as Upper case characters");
 		mntmFontCase.setMnemonic(KeyEvent.VK_U);
 		int fontCase = Settings.getFontCase().getIntValue();
 		if(fontCase == CharPixels.CASE_UPPER){
@@ -1597,10 +1599,10 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 
 
 	public void rebuildSelectCharsetsSubmenu(){
-		logger.info("rebuildSelectCharsetsSubmenu()" + aliViewWindow.getAlignment().getAlignentMeta().getCharsets());
+		logger.info("rebuildSelectCharsetsSubmenu()" + aliViewWindow.getAlignment().getAlignmentMeta().getCharsets());
 		mnSelectCharset.removeAll();
 
-		ArrayList<CharSet> charsets = aliViewWindow.getAlignment().getAlignentMeta().getCharsets();
+		ArrayList<CharSet> charsets = aliViewWindow.getAlignment().getAlignmentMeta().getCharsets();
 		// submenu
 		for(final CharSet aCharset: charsets){
 			JMenuItem nextItem = new JMenuItem(aCharset.getName());

@@ -1,3 +1,4 @@
+
 package aliview.alignment;
 
 public class AlignmentEvent extends Alignment{

@@ -1,7 +1,8 @@
 package utils.nexus;
 
-import java.nio.charset.CodingErrorAction;
+import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.BitSet;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.math.IntRange;
@@ -11,90 +12,62 @@ import utils.RangeUtils;
 
 public class CodonPositions{
 	private static final Logger logger = Logger.getLogger(CodonPositions.class);
-	private PositionsArray positionsArray;
+	private NexusRangePositionsArray positionsArray;
 	private int readingFrame;
-	private TranslatedCodonPos translatedCodonPos;
+	private TranslatedAminoAcidPositions translatedAminoAcidPos;	
+	private BitSet notused;
 	
-	
-	public CodonPositions(int length){
-		setPositionsArray(new PositionsArray(length));
-		this.readingFrame = 1;
+	public CodonPositions(){
+		this(new NexusRangePositionsArray(), 1);
 	}
 	
-	private CodonPositions(PositionsArray positionsArray, int readingFrame) {
+	public int size() {
+		return positionsArray.size();
+	}
+
+	private CodonPositions(NexusRangePositionsArray positionsArray, int readingFrame) {
 		this.setPositionsArray(positionsArray);
 		this.readingFrame = readingFrame;	
 	}
-	
-	public void createTranslatedCodonPositions(){
-		logger.info("new translated");
-		this.translatedCodonPos = new TranslatedCodonPos(positionsArray, this.readingFrame);	
-	}
 
-	public boolean isNonCoding(int pos) {
+	public boolean isNonCoding(int pos){
 		return positionsArray.getPos(pos) == 0;
 	}
 	
 	public boolean isCoding(int pos) {
 		return positionsArray.getPos(pos) != 0;
 	}
+
+	
+	private TranslatedAminoAcidPositions getTranslatedAminoAcidPositions() {
+		if(translatedAminoAcidPos == null){
+			translatedAminoAcidPos = new TranslatedAminoAcidPositions(this.positionsArray, this.readingFrame);	
+		}
+		return translatedAminoAcidPos;
+	}
+	
+	/*
+	public int getTranslatedAminAcidLength(int nucleotideLength){
+		return getTranslatedAminAcidLength(nucleotideLength);
+	}
+	*/
 	
 	public int getAminoAcidPosFromNucleotidePos(int pos){
-//		logger.info("pos=" + pos);
-//		logger.info("getTranslatedCodonPos().size()" + getTranslatedCodonPos().size());
-		for(int n = 0; n < getTranslatedCodonPos().size(); n++){
-			CodonPos cPos = getTranslatedCodonPos().get(n);
-//			logger.info("cPos" + cPos.startPos);
-//			logger.info("cEndPos" + cPos.endPos);
-			if(pos >= cPos.startPos && pos <= cPos.endPos){
-				return n;
-			}
-		}
-		return 0;
+		TranslatedAminoAcidPositions aaPositions = getTranslatedAminoAcidPositions();
+		return getTranslatedAminoAcidPositions().getAAPosAtNucleotidePos(pos);
 	}
-	
-	private TranslatedCodonPos getTranslatedCodonPos() {
-		if(translatedCodonPos == null){
-			createTranslatedCodonPositions();
-		}
-		return translatedCodonPos;
-	}
-
-	public int getCodonPosAtNucleotidePos(int pos){
-		int foundPos = 0;
-		for(int n = 0; n < getTranslatedCodonPos().size(); n++){
-			CodonPos cPos = getTranslatedCodonPos().get(n);
-			if(pos >= cPos.startPos && pos <= cPos.endPos){
-				foundPos = n;
-				break;
-			}
-		}
-		return foundPos;
-	}
-	
 	
 	public CodonPos getCodonAtNucleotidePos(int pos){
-		CodonPos foundPos = null;
-		for(int n = 0; n < getTranslatedCodonPos().size(); n++){
-			CodonPos cPos = getTranslatedCodonPos().get(n);
-			if(pos >= cPos.startPos && pos <= cPos.endPos){
-				foundPos = cPos;
-				break;
-			}
-		}
-		return foundPos;
+		return getTranslatedAminoAcidPositions().getCodonAtNucleotidePos(pos);
 	}
 	
-	
+	public CodonPos getCodonInTranslatedPos(int pos) {
+		return getTranslatedAminoAcidPositions().getCodonAtTranslatedPos(pos);
+	}
 
-	public int getTranslatedAminAcidLength(){
-		return getTranslatedCodonPos().size();
-	}
-	
 	public boolean isFullCodonStartingAt(int x) {
 		boolean isFullCodon = false;
-		if(x >= 0 && x < getPositionsArray().getLength() - 2){
-			
+
 			if(getReadingFrame() == 1){
 				if(getPositionsArray().get(x) == 1 && getPositionsArray().get(x+1) == 2 && getPositionsArray().get(x+2) == 3){
 					isFullCodon = true;
@@ -112,7 +85,8 @@ public class CodonPositions{
 					isFullCodon = true;
 				}
 			}	
-		}
+
+//		logger.info("isFull" + isFullCodon);
 		return isFullCodon;
 	}
 	
@@ -129,15 +103,14 @@ public class CodonPositions{
 		}
 	}
 	
+
+//	public ArrayList<IntRange> getAllNonCodingPositionsAsRanges(int wanted) {
+//		return getAllNonCodingPositionsAsRanges(wanted, 0, getPositionsArray().getLength());
+//	}
 	
-	
-	public ArrayList<IntRange> getAllNonCodingPositionsAsRanges(int wanted) {
-		return getAllNonCodingPositionsAsRanges(wanted, 0, getPositionsArray().getLength());
-	}
-	
-	public ArrayList<IntRange> getAllCodingPositionsAsRanges(int wanted) {
-		return getAllNonCodingPositionsAsRanges(wanted, 0, getPositionsArray().getLength());
-	}
+//	public ArrayList<IntRange> getAllCodingPositionsAsRanges(int wanted) {
+//		return getAllNonCodingPositionsAsRanges(wanted, 0, getPositionsArray().getLength());
+//	}
 	
 	public ArrayList<IntRange> getAllNonCodingPositionsAsRanges(int wanted, int startPos, int endPos) {
 		ArrayList<IntRange> allRanges = new ArrayList<IntRange>();
@@ -149,7 +122,7 @@ public class CodonPositions{
 		// loop all position three times, start in position 0 (offset) and after that start in pos 1 and pos 2
 		
 		logger.info("endpos"+endPos);
-		logger.info("arrayLen"+getPositionsArray().getLength());
+//		logger.info("arrayLen"+getPositionsArray().getLength());
 		
 			for(int n = startPos; n < endPos; n++){
 				if(getPositionsArray().get(n) == wanted){
@@ -223,7 +196,6 @@ public class CodonPositions{
 
 	public void setReadingFrame(int readingFrame) {
 		this.readingFrame = readingFrame;
-		createTranslatedCodonPositions();
 	}
 
 	public int getReadingFrame() {
@@ -231,9 +203,9 @@ public class CodonPositions{
 	}
 
 	
-	public ArrayList<Integer> getAllPositions(int wantedCodonPosInteger) {
+	public ArrayList<Integer> getAllPositions(int wantedCodonPosInteger, int startPos, int endPosInclusive) {
 		ArrayList<Integer> allPos = new ArrayList<Integer>();
-		for(int n = 0; n < getPositionsArray().getLength(); n++){
+		for(int n = startPos; n <= endPosInclusive; n++){
 			if(getPositionsArray().get(n) == wantedCodonPosInteger){
 				allPos.add(new Integer(n));
 			}	
@@ -241,85 +213,98 @@ public class CodonPositions{
 		return allPos;
 	}
 
+	public void addRange(CodonRange range){
+		positionsArray.addRange(range);
+	}
+	
+	public void addRange(int start, int end, int firstVal) {
+		positionsArray.addRange(new CodonRange(start, end, firstVal));
+	}
+	
+	/*
 	public void setPosition(int pos, int val) {
-		if(pos >= 0 && pos < getPositionsArray().getLength()){
+		if(pos >= 0){
 			getPositionsArray().set(pos, val);
+			positionsUpdated();
 		}
 	}
+	*/
 	
-	
-	public void resize(int len) {
-		logger.info("len" + len);
-		logger.info(this.getPositionsArray().getLength());
-		logger.info("this.getTranslatedAminAcidLength()" + this.getTranslatedAminAcidLength());
-		this.getPositionsArray().resize(len);
-		positionsUpdated();
-		logger.info(this.getPositionsArray().getLength());
-		logger.info("this.getTranslatedAminAcidLength()" + this.getTranslatedAminAcidLength());
-	}
+//	public void resize(int len) {
+//		logger.info("len" + len);
+//		logger.info(this.getPositionsArray().getLength());
+//		logger.info("this.getTranslatedAminAcidLength()" + this.getTranslatedAminAcidLength());
+//		this.getPositionsArray().resize(len);
+//		positionsUpdated();
+//		logger.info(this.getPositionsArray().getLength());
+//		logger.info("this.getTranslatedAminAcidLength()" + this.getTranslatedAminAcidLength());
+//	}
 	
 	public void positionsUpdated() {
-		createTranslatedCodonPositions();
+		translatedAminoAcidPos = null;
 	}
 
-	public String debug() {
-		StringBuilder sb = new StringBuilder(getPositionsArray().getLength());
-		for(int n = 0; n < getPositionsArray().getLength(); n++){
-			sb.append(positionsArray.getPos(n));
-		}
-		return sb.toString();
-		
-	}
+//	public String debug() {
+//		StringBuilder sb = new StringBuilder(getPositionsArray().getLength());
+//		for(int n = 0; n < getPositionsArray().getLength(); n++){
+//			sb.append(positionsArray.getPos(n));
+//		}
+//		return sb.toString();
+//	}
 
 	public void reverse() {
 		positionsArray.reverse();
-		createTranslatedCodonPositions();	
+		positionsUpdated();
 	}
 	
 	public CodonPositions getCopy(){
 		return new CodonPositions(this.positionsArray.getCopy(), this.readingFrame);		
 	}
 
-	public PositionsArray getPositionsArray() {
+	public NexusRangePositionsArray getPositionsArray() {
 		return positionsArray;
 	}
 
-	public void setPositionsArray(PositionsArray positionsArray) {
+	public void setPositionsArray(NexusRangePositionsArray positionsArray) {
 		this.positionsArray = positionsArray;
+		positionsUpdated();
 	}
 
 	public int getPosAt(int x){
 		return this.positionsArray.getPos(x);
 	}
 	
-	public CodonPositions copyCodonPositionsWithExcludedRemoved(Excludes exset){
-
-		CodonPositions codonPosWithout = new CodonPositions(this.getPositionsArray().getLength() - exset.countExcludedSites());
-		
-		int posInNew = 0;
-		for(int n = 0; n < this.getPositionsArray().getLength(); n++){		
-			if(! exset.isExcluded(n)){
-				codonPosWithout.setPosition(posInNew, this.getPositionsArray().get(n));
-				posInNew ++;
-			}	
-		}
-		
-		codonPosWithout.positionsUpdated();
-		
-		return codonPosWithout;
-	}
+//	public CodonPositions copyCodonPositionsWithExcludedRemoved(Excludes exset){
+//
+//		CodonPositions codonPosWithout = new CodonPositions(this.getPositionsArray().getLength() - exset.countExcludedSites());
+//		
+//		int posInNew = 0;
+//		for(int n = 0; n < this.getPositionsArray().getLength(); n++){		
+//			if(! exset.isExcluded(n)){
+//				codonPosWithout.setPosition(posInNew, this.getPositionsArray().get(n));
+//				posInNew ++;
+//			}	
+//		}
+//		
+//		codonPosWithout.positionsUpdated();
+//		
+//		return codonPosWithout;
+//	}
 	
-	public int getLength() {
-		if(positionsArray != null){
-			return positionsArray.getLength();
-		}else{
-			return 0;
-		}
-	}
+//	public int getLength() {
+//		if(positionsArray != null){
+//			return positionsArray.getLength();
+//		}else{
+//			return 0;
+//		}
+//	}
 
+	/*
 	public void append(CodonPositions secondCodonPos) {
 		positionsArray.append(getPositionsArray());
+		positionsUpdated();
 	}
+	*/
 
 	public void removePosition(int n) {
 		this.positionsArray.remove(n);
@@ -330,23 +315,59 @@ public class CodonPositions{
 		this.positionsArray.insert(n);
 		positionsUpdated();
 	}
-	
-	public CodonPos getCodonInTranslatedPos(int x) {
-		return getTranslatedCodonPos().get(x);
-	}
-
-	public int getLengthOfTranslatedPos() {
-		int size = getTranslatedCodonPos().size();
-		return Math.max(0,size);
-	}
 
 	public boolean isAnythingButDefault() {
 		return positionsArray.isAnythingButDefault();
 	}
 
-	
+	public void addNexusRanges(ArrayList<NexusRange> allRanges) {
+		// TODO Auto-generated method stub
+		
+	}
 
-	
+	public int[] translatePositions(int[] selection) {
+		if(selection == null){
+			return null;
+		}
+		
+		int[] translated = new int[selection.length];
+		for(int n = 0; n < selection.length; n++){
+			translated[n] = getAminoAcidPosFromNucleotidePos(selection[n]);
+		}
+		return translated;
+	}
+
+	public int[] reTranslatePositions(int[] selection) {
+		if(selection == null){
+			return null;
+		}
+		
+		ArrayList<Integer> reTranslated = new ArrayList<Integer>(selection.length * 3);
+		for(int n = 0; n < selection.length; n++){
+			CodonPos codon = getCodonInTranslatedPos(selection[n]);
+			for(int i = codon.startPos; i <= codon.endPos; i++){
+				reTranslated.add(new Integer(i));
+			}
+		}
+		
+		return ArrayUtils.toPrimitive(reTranslated.toArray(new Integer[0]));
+	}
+
+	public Rectangle reTranslatePositions(Rectangle bounds) {
+		
+		CodonPos codonX1 = getCodonInTranslatedPos(bounds.x);
+		CodonPos codonX2 = getCodonInTranslatedPos((int)bounds.getMaxX());
+		CodonPos codonY1 = getCodonInTranslatedPos(bounds.y);
+		CodonPos codonY2 = getCodonInTranslatedPos((int)bounds.getMaxY());
+		
+		int width = codonX2.endPos - codonX1.startPos;
+		int height = codonY2.endPos - codonY2.startPos;
+		
+		Rectangle trans = new Rectangle(codonX1.startPos, codonY1.startPos, width, height);
+		
+		return trans;
+	}
+
 
 	
 }

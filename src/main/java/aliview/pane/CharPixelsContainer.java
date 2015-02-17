@@ -28,7 +28,7 @@ public class CharPixelsContainer {
 		return backend[target].getRGBArray();
 	}
 		
-	public static CharPixelsContainer createDefaultNucleotideImpl(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCalse){
+	public static CharPixelsContainer createDefaultNucleotideContainer(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCalse){
 		
 		CharPixelsContainer container = new CharPixelsContainer();	
 		for(int n = 0; n < container.backend.length; n++){
@@ -40,7 +40,7 @@ public class CharPixelsContainer {
 		return container;
 	}
 	
-	public static CharPixelsContainer createSelectedNucleotideImpl(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCase){
+	public static CharPixelsContainer createSelectedNucleotideContainer(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCase){
 		CharPixelsContainer container = new CharPixelsContainer();	
 		for(int n = 0; n < container.backend.length; n++){	
 			int baseVal = NucleotideUtilities.baseValFromBase((byte)n);
@@ -51,7 +51,7 @@ public class CharPixelsContainer {
 		return container;
 	}
 
-	public static CharPixelsContainer createConsensusNucleotideImpl(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCase){
+	public static CharPixelsContainer createConsensusNucleotideContainer(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCase){
 		CharPixelsContainer container = new CharPixelsContainer();	
 		for(int n = 0; n < container.backend.length; n++){	
 			int baseVal = NucleotideUtilities.baseValFromBase((byte)n);
@@ -62,7 +62,7 @@ public class CharPixelsContainer {
 		return container;
 	}
 	
-	public static CharPixelsContainer createDefaultAAImpl(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCase) {
+	public static CharPixelsContainer createDefaultAAContainer(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCase) {
 		CharPixelsContainer container = new CharPixelsContainer();	
 		for(int n = 0; n < container.backend.length; n++){	
 			AminoAcid aa = AminoAcid.getAminoAcidFromByte((byte)n);
@@ -73,7 +73,7 @@ public class CharPixelsContainer {
 		return container;
 	}
 	
-	public static CharPixelsContainer createSelectedAAImpl(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCase) {
+	public static CharPixelsContainer createSelectedAAContainer(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCase) {
 		CharPixelsContainer container = new CharPixelsContainer();	
 		for(int n = 0; n < container.backend.length; n++){	
 			AminoAcid aa = AminoAcid.getAminoAcidFromByte((byte)n);
@@ -84,7 +84,7 @@ public class CharPixelsContainer {
 		return container;
 	}
 
-	public static CharPixelsContainer createConsensusAAImpl(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCase) {
+	public static CharPixelsContainer createConsensusAAContainer(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCase) {
 		CharPixelsContainer container = new CharPixelsContainer();	
 		for(int n = 0; n < container.backend.length; n++){	
 			AminoAcid aa = AminoAcid.getAminoAcidFromByte((byte)n);

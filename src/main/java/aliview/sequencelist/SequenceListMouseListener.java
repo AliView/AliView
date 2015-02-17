@@ -1,5 +1,6 @@
 package aliview.sequencelist;
 
+import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -8,7 +9,6 @@ import javax.swing.JList;
 
 import org.apache.log4j.Logger;
 
-import sun.swing.SwingUtilities2;
 import aliview.AliView;
 import aliview.AliViewWindow;
 
@@ -41,8 +41,9 @@ public class SequenceListMouseListener implements MouseListener, MouseMotionList
 
 
 	public void mousePressed(MouseEvent e){
-	
 		logger.info("mousePressed");
+	
+		
 		if(e.isAltDown() || e.isControlDown() || e.isShiftDown() || e.isMetaDown()){
 			return;
 		}
@@ -60,15 +61,19 @@ public class SequenceListMouseListener implements MouseListener, MouseMotionList
 			list.setSelectedIndex(clickIndex);
 			startIndex = clickIndex;
 			// give list focus
-			SwingUtilities2.adjustFocus(list);
+			list.requestFocus();
 			e.consume();
 		}
 	}
 
 	
 	public void mouseReleased(MouseEvent e) {
-	
 		logger.info("mouseReleased");
+		
+		// return if not left click
+		if(e.getButton() != MouseEvent.BUTTON1){
+			return;
+		}
 		
 		// check if this release is part of a rename-trigger-event
 		if(isRenameTrigger(e)){

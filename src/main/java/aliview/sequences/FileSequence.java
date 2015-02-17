@@ -12,7 +12,9 @@ import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
 import org.bitbucket.kienerj.io.OptimizedRandomAccessFile;
 
+import aliview.AminoAcid;
 import aliview.NucleotideUtilities;
+import aliview.sequencelist.AlignmentListModel;
 import aliview.sequencelist.FileMMSequenceList;
 import aliview.sequencelist.Interval;
 
@@ -31,6 +33,8 @@ public class FileSequence implements Sequence {
 	private int seqWithoutWhitespaceLength;
 	private int lineCharLength;
 	private int lineAbsoluteLength;
+	private boolean translated;
+	private AlignmentListModel alignmentModel;
 
 	public FileSequence(OptimizedRandomAccessFile raf, long startPointer){
 		this.raf = raf;
@@ -529,5 +533,47 @@ public class FileSequence implements Sequence {
 	public int getLastSelectedPosition() {
 		return selectionModel.getLastSelectedPosition(getLength());
 	}
+
+	public void setTranslated(boolean b) {
+		this.translated = b;
+	}
+
+	public boolean isTranslated() {
+		return translated;
+	}
+
+	public AminoAcid getTranslatedAminoAcidAtNucleotidePos(int x) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public int getNonTranslatedLength() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public void insertGapAt(int n) {
+		// TODO Auto-generated method stub	
+	}
+
+	public void setAlignmentModel(AlignmentListModel alignmentModel) {
+		this.alignmentModel = alignmentModel;
+	}
+
+	public AlignmentListModel getAlignmentModel() {
+		return this.alignmentModel;
+	}
+
+	public byte[] getGapPaddedCodonInTranslatedPos(int pos) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public int find(byte find, int nextFindStartPos) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	
 
 }

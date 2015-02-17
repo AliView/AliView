@@ -7,6 +7,8 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
+import aliview.AminoAcid;
+import aliview.sequencelist.AlignmentListModel;
 import aliview.sequencelist.Interval;
 
 
@@ -47,6 +49,12 @@ public interface Sequence extends Comparable<Sequence>{
 	
 	public int getUngapedLength();
 	
+	public int getNonTranslatedLength();
+	
+	public AminoAcid getTranslatedAminoAcidAtNucleotidePos(int x);
+	
+	public byte[] getGapPaddedCodonInTranslatedPos(int pos);
+	
 	// Undecided which version
 	public boolean isEmpty();
 	
@@ -82,9 +90,13 @@ public interface Sequence extends Comparable<Sequence>{
 
 	public void insertGapRightOfSelectedBase();
 	
+	public void insertGapAt(int n);
+	
 	
 	// Searchable
 	public Interval find(Pattern pattern, int nextFindStartPos);
+	
+	public int find(byte find, int nextFindStartPos);
 
 	
 	// Selectable version
@@ -156,9 +168,14 @@ public interface Sequence extends Comparable<Sequence>{
 
 	public void invertSelection();
 	
-	
 	public void selectionExtendRight();
 	
 	public void selectionExtendLeft();
+
+	public void setAlignmentModel(AlignmentListModel alignmentModel);
 	
+	public AlignmentListModel getAlignmentModel();
+	
+	
+
 }

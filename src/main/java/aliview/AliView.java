@@ -700,8 +700,6 @@ public class AliView implements ApplicationListener{
 	}
 
 
-
-
 	/*
 	 * 
 	 * Mac OSX Application Listener (old versions of mac are using this) - Newer are Using MacAdapter

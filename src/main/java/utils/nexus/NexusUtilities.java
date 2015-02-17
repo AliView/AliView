@@ -102,22 +102,16 @@ public class NexusUtilities {
 			String nPos = StringUtils.substringBetween(codonPositionsBlock, "N:",",");
 			if(nPos != null){	
 				ArrayList<NexusRange> allRanges = parseNexusRanges(nPos);
-				for(NexusRange range: allRanges){
-					for(int n = range.getMinimumInteger(); n <= range.getMaximumInteger(); n++){
-						codonPositions.setPosition(n - 1,0);
-					}
-				}
+				
+				codonPositions.addNexusRanges(allRanges);
+
 			}
 			// TODO questionmarkpos is treated as n
 			// TODO with n range does not ends with \3
 			String questionmarkPos = StringUtils.substringBetween(codonPositionsBlock, "?:",",");
 			if(questionmarkPos != null){	
 				ArrayList<NexusRange> allRanges = parseNexusRanges(questionmarkPos);
-				for(NexusRange range: allRanges){
-					for(int n = range.getMinimumInteger(); n <= range.getMaximumInteger(); n++){
-						codonPositions.setPosition(n - 1,0);
-					}
-				}	
+				codonPositions.addNexusRanges(allRanges);	
 			}
 
 			// TODO check that range ends with \3
@@ -125,33 +119,20 @@ public class NexusUtilities {
 			if(pos1 != null){	
 				ArrayList<NexusRange> allRanges = parseNexusRanges(pos1);
 //				logger.info("allRangesSize" + allRanges.size());
-				for(NexusRange range: allRanges){
-//					logger.info("range" + range.toString());
-					for(int n = range.getMinimumInteger(); n <= range.getMaximumInteger(); n=n+3){
-						codonPositions.setPosition(n - 1,1);
-					}
-				}	
+				codonPositions.addNexusRanges(allRanges);
 			}
 
 			String pos2 = StringUtils.substringBetween(codonPositionsBlock, "2:",",");
 			if(pos2 != null){	
 				ArrayList<NexusRange> allRanges = parseNexusRanges(pos2);
 //				logger.info("allRangesSize" + allRanges.size());
-				for(NexusRange range: allRanges){
-					for(int n = range.getMinimumInteger(); n <= range.getMaximumInteger(); n=n+3){
-						codonPositions.setPosition(n-1,2);
-					}
-				}	
+				codonPositions.addNexusRanges(allRanges);
 			}
 
 			String pos3 = StringUtils.substringBetween(codonPositionsBlock, "3:",",");
 			if(pos3 != null){	
 				ArrayList<NexusRange> allRanges = parseNexusRanges(pos3);
-				for(NexusRange range: allRanges){
-					for(int n = range.getMinimumInteger(); n <= range.getMaximumInteger(); n=n+3){
-						codonPositions.setPosition(n - 1,3);
-					}
-				}	
+				codonPositions.addNexusRanges(allRanges);
 			}
 			
 			codonPositions.positionsUpdated();
@@ -463,8 +444,8 @@ public class NexusUtilities {
 		return nexusBlock;
 	}
 
-	public static final String getCodonPosAsNexusBlock(CodonPositions codonPositions) {
-		return getPartialCodonPosAsNexusBlock(codonPositions, 0, codonPositions.getLength() - 1);
+	public static final String getCodonPosAsNexusBlock(CodonPositions codonPositions, int startPos, int endPosInclusive) {
+		return getPartialCodonPosAsNexusBlock(codonPositions, startPos, endPosInclusive);
 	}
 
 

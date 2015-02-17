@@ -13,6 +13,7 @@ import utils.nexus.Excludes;
 import utils.nexus.NexusAlignmentImportException;
 import utils.nexus.NexusUtilities;
 import aliview.AliView;
+import aliview.GeneticCode;
 import aliview.MemoryUtils;
 import aliview.alignment.Alignment;
 import aliview.alignment.AlignmentMeta;
@@ -45,10 +46,11 @@ public class AlignmentFactory {
 			try {
 				
 				AlignmentListModel sequences = seqFactory.createSequences(alignmentFile);			
-				
 				Excludes excludes = new Excludes(sequences.getLongestSequenceLength());
+				
 				logger.info("sequences.getLongestSequenceLength()" + sequences.getLongestSequenceLength());
-				CodonPositions codonPositions = new CodonPositions(sequences.getLongestSequenceLength());
+				
+				CodonPositions codonPositions = new CodonPositions();
 				ArrayList<CharSet> charsets = new ArrayList<CharSet>();
 
 					try {
@@ -78,7 +80,7 @@ public class AlignmentFactory {
 				
 				
 				MemoryUtils.logMem();
-				AlignmentMeta aliMeta = new AlignmentMeta(excludes, codonPositions, charsets);
+				AlignmentMeta aliMeta = new AlignmentMeta(excludes, codonPositions, charsets, GeneticCode.DEFAULT);
 				if(sequences.getSequenceType() == SequenceUtils.TYPE_AMINO_ACID){
 					alignment = new Alignment(alignmentFile, sequences.getFileFormat(), sequences, aliMeta);
 				}

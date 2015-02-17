@@ -77,8 +77,10 @@ public class Settings {
 	private static SettingValue hideRealignEverythingMessage = new SettingValue("hideRealignEverythingMessage", false);
 	private static SettingValue hideAlignmentProgressWindowWhenDone = new SettingValue("hideAlignmentProgressWindowWhenDone", false);
 	private static SettingValue hideDuplicateSeqNamesMessage = new SettingValue("hideDuplicateSeqNamesMessage", false);
+	private static SettingValue hideAlignmentProgramInvalidCharsInfoMessage = new SettingValue("hideAlignmentProgramInvalidCharsInfoMessage", false);
 	private static SettingValue hideAskBeforeEditMode  = new SettingValue("hideAskBeforeEditMode", false);
 	private static SettingValue fontCase = new SettingValue("fontCase", CharPixels.CASE_UNTOUCHED, 0, 10);
+	
 	
 
 	public static SettingValue getMinPrimerLength(){
@@ -576,6 +578,11 @@ public class Settings {
 		return hideAlignmentProgressWindowWhenDone;
 	}
 	
+	public static SettingValue getHideAlignmentProgramInvalidCharsInfoMessage() {
+		
+		return hideAlignmentProgramInvalidCharsInfoMessage;
+	}
+	
 	public static SettingValue getHideDuplicateSeqNamesMessage() {
 		return hideDuplicateSeqNamesMessage;
 	}
@@ -707,5 +714,6 @@ public class Settings {
 	public static SettingValue getFontCase() {
 		return fontCase;
 	}
+
 
 }

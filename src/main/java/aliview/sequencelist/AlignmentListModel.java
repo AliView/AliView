@@ -35,15 +35,18 @@ import utils.DialogUtils;
 import utils.nexus.CharSet;
 import utils.nexus.CodonPos;
 import utils.nexus.CodonPositions;
-import aliview.AATranslator;
 import aliview.AliView;
 import aliview.AminoAcid;
 import aliview.FileFormat;
 import aliview.GeneticCode;
 import aliview.NucleotideUtilities;
 import aliview.alignment.AAHistogram;
+import aliview.alignment.AATranslator;
 import aliview.alignment.AliHistogram;
+import aliview.alignment.Alignment;
+import aliview.alignment.AlignmentMeta;
 import aliview.alignment.NucleotideHistogram;
+import aliview.importer.AlignmentImportException;
 import aliview.sequences.InMemorySequence;
 import aliview.sequences.Sequence;
 import aliview.sequences.SequenceUtils;
@@ -64,15 +67,20 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 	private DefaultListModel notUsed;
 	private AliHistogram cachedTranslatedHistogram;
 	private AliHistogram cachedHistogram;
+	private boolean isTranslated;
+	private Alignment alignment;
 	
 	
 	public AlignmentListModel() {
 		this.delegateSequences = new ArrayList<Sequence>();
 	}
 	
-	public AlignmentListModel(List<Sequence> seq) {
-		this.delegateSequences = seq;
-		fireSequenceIntervalAdded(0, seq.size() - 1);
+	public AlignmentListModel(List<Sequence> seqs) {
+		for(Sequence seq: seqs){
+			seq.setAlignmentModel(this);
+		}
+		this.delegateSequences = seqs;
+		fireSequenceIntervalAdded(0, seqs.size() - 1);
 	}
 	
 	public AlignmentListModel(AlignmentListModel template){
@@ -199,6 +207,10 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 
 	public void setSequences(List<Sequence> list){
 		if(list != null){
+			for(Sequence seq: list){
+				seq.setAlignmentModel(this);
+			}
+			
 			this.delegateSequences = list;
 			fireSequencesChangedAllNew();
 		}
@@ -249,20 +261,22 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 	
 	// TODO these three set and add methods might give problems if there is no 
 	// is adjusting method
-	public Sequence set(int index, Sequence element){
-		Sequence previous = delegateSequences.set(index, element);
+	public Sequence set(int index, Sequence sequence){
+		sequence.setAlignmentModel(this);
+		Sequence previous = delegateSequences.set(index, sequence);
 		// TODO Maybe add an adjusting parameter...
 		fireSequencesChanged(index, index);
 		return previous;
 	}
 	
 	public void add(Sequence sequence) {
+		sequence.setAlignmentModel(this);
 		delegateSequences.add(sequence);
 		fireSequenceIntervalAdded(this.size() -1, this.size() - 1);
 	}
 	
 	public void add(int index, Sequence seq) {
-		logger.info("add at=" + index);
+		seq.setAlignmentModel(this);
 		delegateSequences.add(index, seq);
 		// TODO Maybe add an adjusting parameter...
 		fireSequenceIntervalAdded(index, index);
@@ -273,12 +287,17 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 	}
 	
 	public void addAll(int index, AlignmentListModel otherSeqModel) {
-		logger.info("add at=" + index);
+		for(Sequence seq: otherSeqModel.getSequences()){
+			seq.setAlignmentModel(this);
+		}
 		delegateSequences.addAll(index, otherSeqModel.getSequences());
 		fireSequenceIntervalAdded(index, index + otherSeqModel.getSequences().size());
 	}
 	
 	public void addAll(List<Sequence> moreSeqs) {
+		for(Sequence seq: moreSeqs){
+			seq.setAlignmentModel(this);
+		}
 		delegateSequences.addAll(moreSeqs);
 		selectionModel.setSequenceSelection(moreSeqs);
 		fireSequenceIntervalAdded(this.size() - moreSeqs.size() -1, this.size() - 1);
@@ -620,6 +639,10 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 	public byte getBaseAt(int x, int y) {
 		return delegateSequences.get(y).getBaseAtPos(x);
 	}
+	
+	public AminoAcid getTranslatedAminoAcidAtNucleotidePos(int x, int y) {
+		return delegateSequences.get(y).getTranslatedAminoAcidAtNucleotidePos(x);
+	}
 
 	public int getLengthAt(int y) {
 		return delegateSequences.get(y).getLength();
@@ -955,98 +978,95 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		selectionOffset = diff;
 		return editedSequences;
 	}
+	
+	public void realignNucleotidesUseTheseAASequenceAsTemplate(AlignmentListModel templateSeqs) throws Exception{
+		
+		// make sure this alignment is translated
+		setTranslation(true);
+		
+		for(Sequence templateSeq: templateSeqs.getSequences()){
+			
+			// do partial name since it if being cut by some programs....
+			Sequence nucSeq =  this.getSequenceByName(templateSeq.getName());
+			logger.info("nucSeq=" + nucSeq.getName() + nucSeq.getBasesAsString());
+			logger.info("templateSeq=" + templateSeq.getName() + templateSeq.getBasesAsString());
+			
+			realignNucleotidesUseThisAASequenceAsTemplate(nucSeq, templateSeq);
+							
+			
+		}
+		// show result as nucleotides
+		setTranslation(false);
+		
+		fireSequencesChangedAll();
+	}
 
-	public void realignNucleotidesUseThisAASequenceAsTemplate(Sequence nucSeq, Sequence template, CodonPositions codonPos, GeneticCode genCode) throws IOException {
+	private void realignNucleotidesUseThisAASequenceAsTemplate(Sequence nucSeq, Sequence template) throws Exception {
+		
 		StringBuilder newSeq = new StringBuilder(nucSeq.getLength());
 		
-		AATranslator oldTranslator = new AATranslator(codonPos, genCode);
-		oldTranslator.setSequence(nucSeq);
-		
-		logger.info("oldtrans" + oldTranslator.getTranslatedAsString());
-		
-		int nextFindPos = 0;
+		int nextFindStartPos = 0;
 		for(int n = 0; n < template.getLength(); n++){
 			byte nextAAByte = template.getBaseAtPos(n);
 			AminoAcid aaTemplate = AminoAcid.getAminoAcidFromByte(nextAAByte);
 			
 						
-			logger.info("aaTemplate.getCodeCharVal()" + aaTemplate.getCodeCharVal());
+//			logger.info("aaTemplate.getCodeCharVal()" + aaTemplate.getCodeCharVal());
+			if(aaTemplate.getCodeCharVal() == AminoAcid.GAP.getCodeCharVal()){
+				newSeq.append((char)SequenceUtils.GAP_SYMBOL);
+				newSeq.append((char)SequenceUtils.GAP_SYMBOL);
+				newSeq.append((char)SequenceUtils.GAP_SYMBOL);
+			}else{
+	
+//				logger.info("search for " + aaTemplate.getCodeCharVal() + " in seq " + nucSeq.getName() + " from pos " + nextFindStartPos);
+				int posFound = nucSeq.find(aaTemplate.getCodeByteVal(), nextFindStartPos); 
+				if(posFound == -1){
+					logger.info("posnotfound");
+					throw new Exception("Alignments not matching-exception, when trying to align sequences");
+				}
+				byte[] nextNucs = nucSeq.getGapPaddedCodonInTranslatedPos(posFound);
+				newSeq.append(new String(nextNucs));
+				nextFindStartPos = posFound + 1;		
+			}
+		}
+		logger.info("newSeq.length()" + newSeq.length());
+		nucSeq.setBases(newSeq.toString().getBytes());
+		fireSequencesChanged(nucSeq);
+	}
+	/*
+	private void realignNucleotidesUseThisAASequenceAsTemplate(Sequence nucSeq, Sequence template) throws Exception {
+		
+		StringBuilder newSeq = new StringBuilder(nucSeq.getLength());
+		
+		int nextPos = 0;
+		for(int n = 0; n < template.getLength(); n++){
+			
+			byte nextAAByte = template.getBaseAtPos(n);
+			AminoAcid aaTemplate = AminoAcid.getAminoAcidFromByte(nextAAByte);
+			
+			
+			
 			if(aaTemplate.getCodeCharVal() == AminoAcid.GAP.getCodeCharVal()){
 				newSeq.append((char)SequenceUtils.GAP_SYMBOL);
 				newSeq.append((char)SequenceUtils.GAP_SYMBOL);
 				newSeq.append((char)SequenceUtils.GAP_SYMBOL);
 			}else{
 				
-//				// get all stopCodons
-//				AminoAcid oldAcid = oldTranslator.getAAinTranslatedPos(nextFindPos);
-//				logger.info("oldAcid=" + oldAcid.getCodeCharVal());
-//				while(oldAcid == AminoAcid.STOP){
-//					
-//					logger.info("isStop");
-//					
-//					byte[] nextNucs = oldTranslator.getGapPaddedCodonInTranslatedPos(nextFindPos);
-//					newSeq.append(new String(nextNucs));
-//					nextFindPos += 1;
-//					oldAcid = oldTranslator.getAAinTranslatedPos(nextFindPos);
-//				}
-				
-				
-//				logger.info("search for " + aaTemplate.getCodeCharVal() + " in seq " + nucSeq.getName() + " from pos " + nextFindPos);
-				int posFound = oldTranslator.findFistPos(nextFindPos,aaTemplate);
-				if(posFound == -1){
+				byte nextByte = nucSeq.getBaseAtPos(n);
+				AminoAcid translated = AminoAcid.getAminoAcidFromByte(nextByte);
+				if(translated != aaTemplate){
 					logger.info("posnotfound");
-					break;
-				}
-				byte[] nextNucs = oldTranslator.getGapPaddedCodonInTranslatedPos(posFound);
-				newSeq.append(new String(nextNucs));
-				nextFindPos = posFound + 1;		
+//					System.out.println("");
+//					throw new Exception("Alignments not matching-exception, when trying to align sequences");
+				}					
 			}
-		}
-		nucSeq.setBases(newSeq.toString().getBytes());
-		fireSequencesChanged(nucSeq);
-	}
-
-	public void realignNucleotidesUseTheseAASequenceAsTemplate(AlignmentListModel templateSeqs, CodonPositions codonPos, GeneticCode genCode){
-		for(Sequence templateSeq: templateSeqs.getSequences()){	
-			// do partial name since it if being cut by some programs....
-			Sequence nucSeq =  this.getSequenceByName(templateSeq.getName());
-			logger.info("nucSeq=" + nucSeq.getName() + nucSeq.getBasesAsString());
-			logger.info("templateSeq=" + templateSeq.getName() + templateSeq.getBasesAsString());
 			
-			try {
-				realignNucleotidesUseThisAASequenceAsTemplate(nucSeq, templateSeq, codonPos, genCode);
-			} catch (IOException e) {
-				// Nothing needs to be done just go to next seq
-				e.printStackTrace();
-			}				
+			
+			
 		}
-		fireSequencesChangedAll();
 	}
-/*
-	private Sequence getSequenceByPartialName(String name) {
-		if(name == null){
-			return null;
-		}
-		Sequence foundSeq = null;
-		for(Sequence seq: sequences){
-			if(seq.getName().toUpperCase().startsWith(name.toUpperCase())){
-				foundSeq = seq;
-				break;
-			}
-		}
-		// try other way round
-		if(foundSeq == null){
-			for(Sequence seq: sequences){
-				if(name.toUpperCase().startsWith(seq.getName().toUpperCase())){
-					foundSeq = seq;
-					break;
-				}
-			}
-		}
-		
-		return foundSeq;	
-	}
-*/
+	*/
+
 	public Sequence getSequenceByName(String name) {
 		if(name == null){
 			return null;
@@ -1990,9 +2010,40 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		fireSequencesChanged(index0, index1);
 	}
 
+	public void setTranslation(boolean b) {
+		if(b != isTranslated){
+			isTranslated = b;
+			if(isTranslated){
+				selectionModel.translateSelection(getAlignment().getAlignmentMeta());
+			}else{
+				selectionModel.reTranslateSelection(getAlignment().getAlignmentMeta());
+			}
+			fireSequencesChangedAll();
+		}
+	}
 	
+	public AlignmentMeta getAlignmentMeta(){
+		if(getAlignment() != null){
+			return getAlignment().getAlignmentMeta();
+		}
+		return null;
+	}
 	
-	
+	private Alignment getAlignment() {
+		return this.alignment;
+		
+	}
 
+	public boolean isTranslated() {
+		return isTranslated;
+	}
 
+	public Rectangle getSelectionBounds() {
+		return selectionModel.getSelectionBounds();
+	}
+
+	public void setAlignment(Alignment alignment) {
+		this.alignment = alignment;
+		
+	}
 }

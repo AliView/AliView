@@ -33,12 +33,12 @@ import javax.swing.JPanel;
 import org.apache.log4j.Logger;
 
 import utils.OSNativeUtils;
-import aliview.AATranslator;
 import aliview.AliView;
 import aliview.AminoAcid;
 import aliview.Base;
 import aliview.NucleotideUtilities;
 import aliview.alignment.AAHistogram;
+import aliview.alignment.AATranslator;
 import aliview.alignment.AliHistogram;
 import aliview.alignment.Alignment;
 import aliview.alignment.NucleotideHistogram;
@@ -82,7 +82,7 @@ public class AlignmentPane extends JPanel{
 	// TODO This should instead be tracing a sequence instead of a position?
 	private int differenceTraceSequencePosition = 0;
 	private boolean showTranslation = false;
-	private boolean showTranslationOnePos = false;
+//	private boolean showTranslationOnePos = false;
 	private AlignmentRuler alignmentRuler;
 	private boolean drawAminoAcidCode; 
 	private boolean drawCodonPosRuler;
@@ -259,52 +259,52 @@ public class AlignmentPane extends JPanel{
 		
 		
 
-		charPixDefaultNuc = CharPixelsContainer.createDefaultNucleotideImpl(charFont, charMaxSizeToDraw, charPixWidth, charPixHeight, colorSchemeNucleotide, getFontCase());
-		charPixSelectedNuc = CharPixelsContainer.createSelectedNucleotideImpl(charFont, charMaxSizeToDraw, charPixWidth, charPixHeight, colorSchemeNucleotide, getFontCase());
-		charPixConsensusNuc = CharPixelsContainer.createConsensusNucleotideImpl(charFont, charMaxSizeToDraw, charPixWidth, charPixHeight, colorSchemeNucleotide, getFontCase());
+		charPixDefaultNuc = CharPixelsContainer.createDefaultNucleotideContainer(charFont, charMaxSizeToDraw, charPixWidth, charPixHeight, colorSchemeNucleotide, getFontCase());
+		charPixSelectedNuc = CharPixelsContainer.createSelectedNucleotideContainer(charFont, charMaxSizeToDraw, charPixWidth, charPixHeight, colorSchemeNucleotide, getFontCase());
+		charPixConsensusNuc = CharPixelsContainer.createConsensusNucleotideContainer(charFont, charMaxSizeToDraw, charPixWidth, charPixHeight, colorSchemeNucleotide, getFontCase());
 
-		charPixTranslationDefault = TranslationCharPixelsContainer.createDefaultTranslationPixelsImpl(charFont, charMaxSizeToDraw,
+		charPixTranslationDefault = TranslationCharPixelsContainer.createDefaultTranslationPixelsContainer(charFont, charMaxSizeToDraw,
 				charPixWidth, charPixHeight, colorSchemeNucleotide, getFontCase());
 
-		charPixTranslationSelected = TranslationCharPixelsContainer.createSelectedTranslationPixelsImpl(charFont, charMaxSizeToDraw,
+		charPixTranslationSelected = TranslationCharPixelsContainer.createSelectedTranslationPixelsContainer(charFont, charMaxSizeToDraw,
 				charPixWidth, charPixHeight, colorSchemeNucleotide, getFontCase());
 
-		charPixTranslationLetter = TranslationCharPixelsContainer.createLetterTranslationPixelsImpl(charFont, charMaxSizeToDraw,
+		charPixTranslationLetter = TranslationCharPixelsContainer.createLetterTranslationPixelsContainer(charFont, charMaxSizeToDraw,
 				charPixWidth, charPixHeight, colorSchemeNucleotide, getFontCase());
 
-		charPixTranslationSelectedLetter = TranslationCharPixelsContainer.createSelectedLetterTranslationPixelsImpl(charFont, charMaxSizeToDraw,
+		charPixTranslationSelectedLetter = TranslationCharPixelsContainer.createSelectedLetterTranslationPixelsContainer(charFont, charMaxSizeToDraw,
 				charPixWidth, charPixHeight, colorSchemeNucleotide, getFontCase());
 
 
 		charPixDefaultAA =  new AACharPixelsContainer();
 		if(colorSchemeAminoAcid.getALLCompundColors() != null){
-			CompoundCharPixelsContainer compContainer = CompoundCharPixelsContainer.createDefaultCompoundColorImpl(charFont, charMaxSizeToDraw,
+			CompoundCharPixelsContainer compContainer = CompoundCharPixelsContainer.createDefaultCompoundColorContainer(charFont, charMaxSizeToDraw,
 					charPixWidth, charPixHeight, colorSchemeAminoAcid, getFontCase());
 			charPixDefaultAA.setCompoundContainer(compContainer);
 		}else{
-			CharPixelsContainer container = CharPixelsContainer.createDefaultAAImpl(charFont, charMaxSizeToDraw, charPixWidth, charPixHeight, colorSchemeAminoAcid, getFontCase());
+			CharPixelsContainer container = CharPixelsContainer.createDefaultAAContainer(charFont, charMaxSizeToDraw, charPixWidth, charPixHeight, colorSchemeAminoAcid, getFontCase());
 			charPixDefaultAA.setContainer(container);
 		}
 
 		charPixSelectedAA =  new AACharPixelsContainer();
 		if(colorSchemeAminoAcid.getALLCompundColors() != null){
 
-			CompoundCharPixelsContainer compContainer = CompoundCharPixelsContainer.createSelectedCompoundColorImpl(charFont, charMaxSizeToDraw,
+			CompoundCharPixelsContainer compContainer = CompoundCharPixelsContainer.createSelectedCompoundColorContainer(charFont, charMaxSizeToDraw,
 					charPixWidth, charPixHeight, colorSchemeAminoAcid, getFontCase());
 			charPixSelectedAA.setCompoundContainer(compContainer);
 		}else{
-			CharPixelsContainer container = CharPixelsContainer.createSelectedAAImpl(charFont, charMaxSizeToDraw, charPixWidth, charPixHeight, colorSchemeAminoAcid, getFontCase());
+			CharPixelsContainer container = CharPixelsContainer.createSelectedAAContainer(charFont, charMaxSizeToDraw, charPixWidth, charPixHeight, colorSchemeAminoAcid, getFontCase());
 			charPixSelectedAA.setContainer(container);
 		}
 
 		charPixConsensusAA =  new AACharPixelsContainer();
 		if(colorSchemeAminoAcid.getALLCompundColors() != null){
-			CompoundCharPixelsContainer compContainer = CompoundCharPixelsContainer.createDefaultCompoundColorImpl(charFont, charMaxSizeToDraw,
+			CompoundCharPixelsContainer compContainer = CompoundCharPixelsContainer.createDefaultCompoundColorContainer(charFont, charMaxSizeToDraw,
 					charPixWidth, charPixHeight, colorSchemeAminoAcid, getFontCase());
 			charPixConsensusAA.setCompoundContainer(compContainer);
 
 		}else{
-			CharPixelsContainer container = CharPixelsContainer.createConsensusAAImpl(charFont, charMaxSizeToDraw, charPixWidth, charPixHeight, colorSchemeAminoAcid, getFontCase());
+			CharPixelsContainer container = CharPixelsContainer.createConsensusAAContainer(charFont, charMaxSizeToDraw, charPixWidth, charPixHeight, colorSchemeAminoAcid, getFontCase());
 			charPixConsensusAA.setContainer(container);
 		}
 
@@ -582,9 +582,6 @@ public class AlignmentPane extends JPanel{
 		paintAlignment(g);
 	}
 
-	
-	
-
 
 	public void paintAlignment(Graphics g){
 		drawCounter ++;
@@ -628,7 +625,7 @@ public class AlignmentPane extends JPanel{
 //
 		// add one extra position when drawing translated
 		// otherwise there could be some white borders when scrolling
-		if(showTranslation || showTranslationOnePos){
+		if(showTranslation){
 			xMin --;
 			xMax ++;
 		}
@@ -683,8 +680,8 @@ public class AlignmentPane extends JPanel{
 
 		// If it is to be translated
 		AATranslator aaTransSeq = null;
-		if(showTranslation || showTranslationOnePos){
-			aaTransSeq = new AATranslator(alignment.getAlignentMeta().getCodonPositions(), alignment.getGeneticCode());
+		if(showTranslation){
+			aaTransSeq = new AATranslator(alignment.getAlignmentMeta().getCodonPositions(), alignment.getGeneticCode());
 		}
 
 		
@@ -743,47 +740,21 @@ public class AlignmentPane extends JPanel{
 		// small chars have their own loop here
 		if(charWidth < 1){
 
-			if(showTranslationOnePos || showTranslation){
+			if(showTranslation && ! isShowTranslationOnePos()){
 
 				// this only need to be calculated once
 				double maxX = clip.getMaxX();
-				if(maxX > alignment.getAlignentMeta().getCodonPositions().getLengthOfTranslatedPos()){
-					maxX = alignment.getAlignentMeta().getCodonPositions().getLengthOfTranslatedPos();
-				}
+//				if(maxX > alignment.getAlignentMeta().getCodonPositions().getLengthOfTranslatedPos()){
+//					maxX = alignment.getAlignentMeta().getCodonPositions().getLengthOfTranslatedPos();
+//				}
 				
 				int clipY = 0;
 				for(int y = clip.y; y < clip.getMaxY(); y ++){		
-					int ySeq = (int)((double)(y) * seqPerPixY);
-
 					
+					int ySeq = (int)((double)(y) * seqPerPixY);
+			
 					if(ySeq < ySeqMax && ySeq >= 0){	
 
-						aaTransSeq.setSequence(alignment.getSequences().get(ySeq));
-
-						if(showTranslationOnePos){
-
-							int maxSeqTransLen = aaTransSeq.getMaximumTranslationLength();
-
-							// X Loop Start
-							int clipX = 0;						
-							for(int x = clip.x; x < maxX ; x++){
-								int xSeqPos =(int)((double)x * seqPerPixX);
-
-								if(xSeqPos < maxSeqTransLen & xSeqPos >= 0){
-
-									AminoAcid acid;
-									if(ignoreGapInTranslation){
-										acid = aaTransSeq.getAAinNoGapTranslatedPos(xSeqPos);
-									}else{
-										acid = aaTransSeq.getAAinTranslatedPos(xSeqPos);
-									}
-									copyAminoAcidPixels(clipRGB,(byte)acid.getCodeCharVal(),xSeqPos,ySeq,clipX*highDPIScaleFactor, clipY*highDPIScaleFactor);
-
-								}
-								clipX ++;
-							}
-							// standard translation 3-pos
-						}else{
 							// X Loop Start
 							int seqMaxX = alignment.getLengthAt(ySeq);
 							int clipX = 0;
@@ -793,22 +764,24 @@ public class AlignmentPane extends JPanel{
 								if(xSeqPos < seqMaxX && xSeqPos >= 0){
 
 									byte residue = alignment.getBaseAt(xSeqPos,ySeq);
+									AminoAcid aminoAcid = alignment.getTranslatedAminoAcidAtNucleotidePos(xSeqPos,ySeq);
 	
 									if(ignoreGapInTranslation){
 										copyTranslatedNucleotidesPixelsSkipGap(clipRGB,residue,xSeqPos,ySeq,clipX*highDPIScaleFactor, clipY*highDPIScaleFactor, aaTransSeq);
 									}
 									else{
-										copyTranslatedNucleotidesPixels(clipRGB,residue,xSeqPos,ySeq,clipX*highDPIScaleFactor, clipY*highDPIScaleFactor, aaTransSeq);
+										copyTranslatedNucleotidesPixels(clipRGB,residue, aminoAcid,xSeqPos,ySeq,clipX*highDPIScaleFactor, clipY*highDPIScaleFactor, aaTransSeq);
 									}
 								}
 
 								clipX ++;
 							}
-						}
+						
 					}
 					clipY ++;
 				}
 
+			
 			}else{
 
 				// No longer: Always start at closest even 10
@@ -820,8 +793,6 @@ public class AlignmentPane extends JPanel{
 					int ySeq = (int)((double)(y) * seqPerPixY);
 					
 					if(ySeq < ySeqMax && ySeq >= 0){
-
-						
 
 						int seqMaxX = alignment.getLengthAt(ySeq);
 
@@ -841,7 +812,12 @@ public class AlignmentPane extends JPanel{
 
 								// Draw as Nucleotides
 								if(isNucleotideAlignment){
-									copyNucleotidePixels(clipRGB,residue,xSeqPos,ySeq,clipX*highDPIScaleFactor,clipY*highDPIScaleFactor);			
+									if(isShowTranslationOnePos()){
+										copyAminoAcidPixels(clipRGB,residue,xSeqPos,ySeq,clipX*highDPIScaleFactor,clipY*highDPIScaleFactor);
+									}
+									else{
+										copyNucleotidePixels(clipRGB,residue,xSeqPos,ySeq,clipX*highDPIScaleFactor,clipY*highDPIScaleFactor);
+									}			
 								}
 								// Draw as AA
 								else{
@@ -858,7 +834,7 @@ public class AlignmentPane extends JPanel{
 
 			}
 
-			// Now draw the pixels
+			// Now draw the pixels onto the image
 			Image img = createImage(new MemoryImageSource(clipRGB.getScanWidth(), clipRGB.getHeight(), clipRGB.getBackend(), 0, clipRGB.getScanWidth()));
 //
 //									logger.info(clipRGB.getBackend().length);
@@ -887,7 +863,7 @@ public class AlignmentPane extends JPanel{
 //											logger.info("x=" + (int)(xMin * charWidth));
 //											logger.info("y=" + (int)(yMin * charHeight));
 				
-				
+				// Mac retina screen
 				if(highDPIScaleFactor > 1){
 					
 					//translate and scale with AffineTransform
@@ -912,7 +888,8 @@ public class AlignmentPane extends JPanel{
 	                
 	                g.drawImage(img, dx1,dy1,dx2,dy2,sx1,sy1,sx2,sy2, null);
 	                //g.drawImage(img, (int)(xMin * charWidth), (int)(yMin * charHeight), null);
-	                
+	             
+	            // normal
 				}else{
 					g.drawImage(img, clip.x, clip.y, null);
 					//g.drawImage(img, (int)(xMin * charWidth), (int)(yMin * charHeight),null);
@@ -921,8 +898,8 @@ public class AlignmentPane extends JPanel{
 				
 			}
 
-			// Draw excludes - only if not 
-			if(!showTranslationOnePos){
+			// Draw excludes - only if not isShowTranslationOnePos
+			if(! isShowTranslationOnePos()){
 				// calculaate height for excludes (this is to avoid drawing below alignment if alignment is not filling panel)
 				int drawExcludesHeight = (int) Math.min(this.getVisibleRect().getHeight(), alignment.getSize()  * charHeight);
 				//for(int x = xMin; x < xMax ; x++){
@@ -944,43 +921,39 @@ public class AlignmentPane extends JPanel{
 		//
 		/////////////////////////
 		else{
-			if(showTranslationOnePos){			
-
-				int maxX = xMax;
-				if(maxX > alignment.getAlignentMeta().getCodonPositions().getLengthOfTranslatedPos()){
-					maxX = alignment.getAlignentMeta().getCodonPositions().getLengthOfTranslatedPos();
-				}
-
-				int clipY = 0;
-				for(int y = yMin; y < yMax; y = y + 1){
-
-					aaTransSeq.setSequence(alignment.getSequences().get(y));
-
-					// X Loop Start
-					int clipX = 0;
-					for(int x = xMin; x < maxX ; x++){
-
-						AminoAcid acid;
-						if(ignoreGapInTranslation){
-							acid = aaTransSeq.getAAinNoGapTranslatedPos(x);
-						}else{
-							acid = aaTransSeq.getAAinTranslatedPos(x);
-						}
-						copyAminoAcidPixels(clipRGB,(byte)acid.getCodeCharVal(),x,y,(int)(clipX*charWidth*highDPIScaleFactor), (int)(clipY*charHeight*highDPIScaleFactor));
-
-						clipX ++;
-					}		
-					clipY ++;
-				}// y loop end		
-			}else{
+//			if(showTranslationOnePos){			
+//
+//				int maxX = xMax;
+//				if(maxX > alignment.getAlignentMeta().getCodonPositions().getLengthOfTranslatedPos()){
+//					maxX = alignment.getAlignentMeta().getCodonPositions().getLengthOfTranslatedPos();
+//				}
+//
+//				int clipY = 0;
+//				for(int y = yMin; y < yMax; y = y + 1){
+//
+//					aaTransSeq.setSequence(alignment.getSequences().get(y));
+//
+//					// X Loop Start
+//					int clipX = 0;
+//					for(int x = xMin; x < maxX ; x++){
+//
+//						AminoAcid acid;
+//						if(ignoreGapInTranslation){
+//							acid = aaTransSeq.getAAinNoGapTranslatedPos(x);
+//						}else{
+//							acid = aaTransSeq.getAAinTranslatedPos(x);
+//						}
+//						copyAminoAcidPixels(clipRGB,(byte)acid.getCodeCharVal(),x,y,(int)(clipX*charWidth*highDPIScaleFactor), (int)(clipY*charHeight*highDPIScaleFactor));
+//
+//						clipX ++;
+//					}		
+//					clipY ++;
+//				}// y loop end		
+//			}else{
 				// Most normal one
 
 				int clipY = 0;			
 				for(int y = yMin; y < yMax; y = y + 1){
-
-					if(showTranslation){
-						aaTransSeq.setSequence(alignment.getSequences().get(y));
-					}
 
 					// X Loop Start
 					int clipX = 0;
@@ -990,13 +963,20 @@ public class AlignmentPane extends JPanel{
 						// Draw as nucleotides
 						if(isNucleotideAlignment){
 							// Draw as translated
-							if(showTranslation){
+							if(isShowTranslationOnePos()){
+								
+								copyAminoAcidPixels(clipRGB,residue,x,y,(int)(clipX*charWidth*highDPIScaleFactor), (int)(clipY*charHeight*highDPIScaleFactor));			
+								
+							}else if(showTranslation && !isShowTranslationOnePos()){
+								AminoAcid aminoAcid = alignment.getTranslatedAminoAcidAtNucleotidePos(x,y);
+								
 								if(ignoreGapInTranslation){
 									copyTranslatedNucleotidesPixelsSkipGap(clipRGB,residue,x,y,(int)(clipX*charWidth*highDPIScaleFactor), (int)(clipY*charHeight*highDPIScaleFactor), aaTransSeq);
 								}
 								else{
-									copyTranslatedNucleotidesPixels(clipRGB,residue,x,y,(int)(clipX*charWidth*highDPIScaleFactor), (int)(clipY*charHeight*highDPIScaleFactor), aaTransSeq);
+									copyTranslatedNucleotidesPixels(clipRGB,residue,aminoAcid,x,y,(int)(clipX*charWidth*highDPIScaleFactor), (int)(clipY*charHeight*highDPIScaleFactor), aaTransSeq);
 								}
+								
 							}else{
 								copyNucleotidePixels(clipRGB,residue,x,y,(int)(clipX*charWidth*highDPIScaleFactor), (int)(clipY*charHeight*highDPIScaleFactor));					
 							}
@@ -1009,7 +989,7 @@ public class AlignmentPane extends JPanel{
 					}		
 					clipY ++;
 				}// x loop end
-			}// y loop end
+		//	}// y loop end
 
 
 			//			logger.info(clip);
@@ -1118,7 +1098,7 @@ public class AlignmentPane extends JPanel{
 			
 
 			// Draw excludes
-			if(! showTranslationOnePos){
+			if(! isShowTranslationOnePos()){
 				// calculaate height for excludes (this is to avoid drawing below alignment if alignment is not filling panel)
 				int drawExcludesHeight = (int) Math.min(this.getVisibleRect().getHeight(), alignment.getSize()  * charHeight);
 				for(int x = xMin; x < xMax ; x++){
@@ -1153,7 +1133,7 @@ public class AlignmentPane extends JPanel{
 
 	private void copyTranslatedNucleotidesPixelsSkipGap(RGBArray clipArray, byte residue, int x, int y, int clipX, int clipY, AATranslator aaTransSeq){
 
-		// Ett litet hack
+		// A small hack
 		if(residue == 0){
 			residue = ' ';
 		}
@@ -1202,15 +1182,15 @@ public class AlignmentPane extends JPanel{
 	}
 
 
-	private void copyTranslatedNucleotidesPixels(RGBArray clipArray, byte residue, int x, int y, int clipX, int clipY, AATranslator aaTransSeq){
+	private void copyTranslatedNucleotidesPixels(RGBArray clipArray, byte residue, AminoAcid acid, int x, int y, int clipX, int clipY, AATranslator aaTransSeq){
 
-		// Ett litet hack
+		// A small hack
 		if(residue == 0){
 			residue = ' ';
 		}
 
 		// set defaults
-		AminoAcid acid =  aaTransSeq.getAminoAcidAtNucleotidePos(x);
+		//AminoAcid acid =  aaTransSeq.getAminoAcidAtNucleotidePos(x);
 		TranslationCharPixelsContainer pixContainerToUse = charPixTranslationDefault;
 		TranslationCharPixelsContainer pixLetterContainerToUse = charPixTranslationLetter;
 
@@ -1252,7 +1232,7 @@ public class AlignmentPane extends JPanel{
 
 	private void copyAminoAcidPixels(RGBArray clipArray, byte residue, int x, int y, int clipX, int clipY){
 
-		// Ett litet hack
+		// A small hack
 		if(residue == 0){
 			residue = ' ';
 		}
@@ -1311,7 +1291,7 @@ public class AlignmentPane extends JPanel{
 	}
 
 	private void copyNucleotidePixelsTimeTest(RGBArray clipArray, byte residue, int x, int y, int clipX, int clipY){
-		// Ett litet hack
+		// A small hack
 				if(residue == 0){
 					residue = ' ';
 				}
@@ -1385,7 +1365,7 @@ public class AlignmentPane extends JPanel{
 
 	private void copyNucleotidePixels(RGBArray clipArray, byte residue, int x, int y, int clipX, int clipY){
 
-		// Ett litet hack
+		// A small hack
 		if(residue == 0){
 			residue = ' ';
 		}
@@ -1572,11 +1552,11 @@ public class AlignmentPane extends JPanel{
 //		logger.info("charWidth" + charWidth);
 //		logger.info("charHeight" + charHeight);
 		
-		if(showTranslationOnePos){
-			newDim = new Dimension((int) (charWidth * alignment.getAlignentMeta().getCodonPositions().getLengthOfTranslatedPos()), (int)(charHeight * alignment.getSize()));
-		}else{
+//		if(showTranslationOnePos){
+//			newDim = new Dimension((int) (charWidth * alignment.getAlignentMeta().getCodonPositions().getLengthOfTranslatedPos()), (int)(charHeight * alignment.getSize()));
+//		}else{
 			newDim = new Dimension((int) (charWidth * alignment.getMaximumSequenceLength()), (int)(charHeight * alignment.getSize()));
-		}		
+//		}		
 //		logger.info("newDim" + newDim);
 		
 		if(newDim.width == Integer.MAX_VALUE || newDim.height == Integer.MAX_VALUE){
@@ -1681,13 +1661,8 @@ public class AlignmentPane extends JPanel{
 		return showTranslation;
 	}
 
-	public void toggleTranslationOnePos() {
-		this.showTranslationOnePos = ! this.showTranslationOnePos;
-		this.validateSize();
-	}
-
 	public boolean isShowTranslationOnePos() {
-		return showTranslationOnePos;
+		return alignment.isTranslatedOnePos();
 	}
 
 	public JComponent getRulerComponent(){
@@ -1833,9 +1808,9 @@ public class AlignmentPane extends JPanel{
 				
 				int maxY = alignment.getMaxY();
 				int maxX = alignment.getMaxX();
-				if(showTranslationOnePos){
-					maxX = alignment.getAlignentMeta().getCodonPositions().getTranslatedAminAcidLength();
-				}
+//				if(showTranslationOnePos){
+//					maxX = alignment.getAlignentMeta().getCodonPositions().getTranslatedAminAcidLength();
+//				}
 
 				for(int x = matrixClip.x ; x < matrixClip.getMaxX() + 1; x++){
 
@@ -1843,7 +1818,7 @@ public class AlignmentPane extends JPanel{
 					if(maxY > 0 && x >= 0 && x < maxX){
 
 						// draw codon-pos background on ruler depending on codonpos
-						if(drawCodonPosRuler && ! showTranslationOnePos){
+						if(drawCodonPosRuler && ! isShowTranslationOnePos()){
 							int codonPos = alignment.getCodonPosAt(x);
 							//logger.info(codonPos);
 							Color codonPosColor = Color.GREEN;
@@ -2003,9 +1978,9 @@ public class AlignmentPane extends JPanel{
 				
 				int maxY = alignment.getMaxY();
 				int maxX = alignment.getMaxX();
-				if(showTranslationOnePos){
-					maxX = alignment.getAlignentMeta().getCodonPositions().getTranslatedAminAcidLength();
-				}
+//				if(showTranslationOnePos){
+//					maxX = alignment.getAlignentMeta().getCodonPositions().getTranslatedAminAcidLength();
+//				}
 
 				int maxVisibleSeq = (int)matrixClip.getMaxX();
 				logger.info("maxVisibleSeq" + maxVisibleSeq + 200);
@@ -2175,9 +2150,9 @@ public class AlignmentPane extends JPanel{
 				
 				int maxY = alignment.getMaxY();
 				int maxX = alignment.getMaxX();
-				if(showTranslationOnePos){
-					maxX = alignment.getAlignentMeta().getCodonPositions().getTranslatedAminAcidLength();
-				}
+//				if(showTranslationOnePos){
+//					maxX = alignment.getAlignentMeta().getCodonPositions().getTranslatedAminAcidLength();
+//				}
 
 				for(int x = matrixClip.x ; x < matrixClip.getMaxX() + 1; x++){
 
@@ -2185,7 +2160,7 @@ public class AlignmentPane extends JPanel{
 					if(maxY > 0 && x >= 0 && x < maxX){
 
 						// draw codon-pos background on ruler depending on codonpos
-						if(drawCodonPosRuler && ! showTranslationOnePos){
+						if(drawCodonPosRuler && ! isShowTranslationOnePos()){
 							int codonPos = alignment.getCodonPosAt(x);
 							//logger.info(codonPos);
 							Color codonPosColor = Color.GREEN;
@@ -2346,9 +2321,9 @@ public class AlignmentPane extends JPanel{
 				
 				int maxY = alignment.getMaxY();
 				int maxX = alignment.getMaxX();
-				if(showTranslationOnePos){
-					maxX = alignment.getAlignentMeta().getCodonPositions().getTranslatedAminAcidLength();
-				}
+//				if(showTranslationOnePos){
+//					maxX = alignment.getAlignentMeta().getCodonPositions().getTranslatedAminAcidLength();
+//				}
 
 				int maxVisibleSeq = (int)matrixClip.getMaxX();
 				logger.info("maxVisibleSeq" + maxVisibleSeq + 200);

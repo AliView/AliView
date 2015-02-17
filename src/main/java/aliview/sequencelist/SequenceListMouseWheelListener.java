@@ -11,7 +11,6 @@ import javax.swing.JList;
 
 import org.apache.log4j.Logger;
 
-import sun.security.action.GetLongAction;
 import utils.OSNativeUtils;
 import aliview.AliView;
 import aliview.AliViewWindow;

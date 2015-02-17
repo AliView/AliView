@@ -22,6 +22,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import aliview.AliView;
+import aliview.alignment.AlignmentMeta;
 import aliview.sequences.Sequence;
 import aliview.sequencelist.Interval;
 import aliview.utils.Utils;
@@ -784,5 +785,38 @@ public class AlignmentSelectionModel{
 			return true;
 		}
 		return sequences.get(index).hasSelection();
+	}
+
+	public void translateSelection(AlignmentMeta aliMeta) {
+		for(Sequence seq: sequences){
+			if(seq.hasSelection()){
+				if(! seq.isAllSelected()){
+					int[] selection = seq.getSelectedPositions();
+					int[] translated = aliMeta.translatePositions(selection);
+					seq.clearAllSelection();
+					for(int pos: translated){
+						seq.setSelectionAt(pos);
+					}
+				}
+			}
+		}
+		fireSelectionChangedAll();
+	}
+	
+	public void reTranslateSelection(AlignmentMeta aliMeta) {
+		for(Sequence seq: sequences){
+			if(seq.hasSelection()){
+				if(! seq.isAllSelected()){
+					int[] selection = seq.getSelectedPositions();
+					int[] translated = aliMeta.reTranslatePositions(selection);
+					seq.clearAllSelection();
+					for(int pos: translated){
+						seq.setSelectionAt(pos);
+					}
+				}
+			}
+		}
+		fireSelectionChangedAll();
+		
 	}
 }

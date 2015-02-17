@@ -2,8 +2,6 @@ package aliview.sequencelist;
 
 import java.util.Comparator;
 
-import jebl.evolution.sequences.Nucleotides;
-import sun.nio.cs.HistoricallyNamedCharset;
 import aliview.NucleotideUtilities;
 import aliview.alignment.AliHistogram;
 import aliview.sequences.Sequence;

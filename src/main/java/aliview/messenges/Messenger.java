@@ -300,6 +300,26 @@ public class Messenger {
 	   
    }
    
+   public static boolean showHideAlignmentProgramInvalidCharsInfoMessage(String invalidChars){
+		 
+		   boolean hideMessage =  Settings.getHideAlignmentProgramInvalidCharsInfoMessage().getBooleanValue();
+		   if(! hideMessage){
+	  
+			   Message invalCharMessage = new Message("Some aligners (e.g. Muscle, Mafft) are sensiteive to invalid characters," + LF +
+					                             "the following were found: " + invalidChars + LF +
+					                             "and you might need to replace them with X in your alignment.",
+					                              "Problem characters");
+			   
+			   boolean hideMessageNextTime = showOKCancelMessageWithCbx(invalCharMessage, hideMessage, AliView.getActiveWindow());
+			   
+			   Settings.getHideAlignmentProgramInvalidCharsInfoMessage().putBooleanValue(hideMessageNextTime);
+		   }
+		   
+		   return hideMessage;
+
+	   
+   }
+   
 
    public static void showMaxJPanelSizeMessageOnceThisSession(){
 	   if(! showedMaxJPanelSizeMessageOnceThisSession){
@@ -328,6 +348,8 @@ public static boolean askAllowEditMode() {
 	}
 	return allowEditMode;
 }
+
+
    
    
 }

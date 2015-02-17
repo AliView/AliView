@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
-Ant-Version: Apache Ant 1.6.4
-Created-By: 1.3.1_16-b06 (Sun Microsystems Inc.)
-
-Name: org/apache/log4j/
-Implementation-Title: log4j
-Implementation-Version: 1.2.13
-Implementation-Vendor: "Apache Software Foundation"
+Ant-Version: Apache Ant 1.8.2
+Created-By: 1.6.0_31-b04-415-11M3646 (Apple Inc.)
+Built-By: root
+Implementation-Title: Trove
+Implementation-Version: 3.0.3
+Implementation-URL: http://trove4j.sourceforge.net/
+Sealed: false
 

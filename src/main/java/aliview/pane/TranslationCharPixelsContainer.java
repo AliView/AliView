@@ -86,5 +86,88 @@ public class TranslationCharPixelsContainer {
 		}
 		return transContainer;
 	}
+	
+	
+	
+	
+	public static TranslationCharPixelsContainer createDefaultTranslationAndNucPixelsContainer(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCase) {
+		TranslationCharPixelsContainer transContainer = new TranslationCharPixelsContainer();
+		transContainer.allAAContainers = new CharPixelsContainer[AminoAcid.HIGEST_AA_INT_VAL + 1];
+		for(AminoAcid containerAcid: AminoAcid.GROUP_ALL){
+			CharPixelsContainer container = new CharPixelsContainer();
+			for(int n = 0; n < container.backend.length; n++){	
+				int baseVal = NucleotideUtilities.baseValFromBase((byte)n);
+				Color aaFgColor = colorScheme.getAminoAcidBackgroundColor(containerAcid); //Color.white; //colorScheme.getAminoAcidForgroundColor(containerAcid);
+				//Color aaBgColor = colorScheme.getAminoAcidBackgroundColor(containerAcid);
+				Color aaBgColor =colorScheme.getBaseBackgroundColor(NucleotideUtilities.GAP);
+				Color nucFgColor = colorScheme.getBaseForegroundColor(baseVal);
+			//	Color nucBgColor = colorScheme.getBaseBackgroundColor(NucleotideUtilities.GAP);
+				Color nucBgColor = colorScheme.getBaseBackgroundColor(baseVal);//.brighter();
+				container.backend[n] = new CharPixelsBothNucAndAA((char)n,containerAcid.getCodeCharVal(), width, height, nucFgColor, nucBgColor, aaFgColor, aaBgColor, font.deriveFont((float)font.getSize()*.67f), minFontSize, fontCase);
+			}
+			transContainer.allAAContainers[containerAcid.intVal] = container;
+		}
+		return transContainer;
+	}
+	
+	public static TranslationCharPixelsContainer createSelectedTranslationAndNucPixelsContainer(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCase) {
+		TranslationCharPixelsContainer transContainer = new TranslationCharPixelsContainer();
+		transContainer.allAAContainers = new CharPixelsContainer[AminoAcid.HIGEST_AA_INT_VAL + 1];
+		for(AminoAcid containerAcid: AminoAcid.GROUP_ALL){
+			CharPixelsContainer container = new CharPixelsContainer();
+			for(int n = 0; n < container.backend.length; n++){	
+				int baseVal = NucleotideUtilities.baseValFromBase((byte)n);
+				Color aaFgColor = colorScheme.getAminoAcidSelectionBackgroundColor(containerAcid); //Color.white; //colorScheme.getAminoAcidForgroundColor(containerAcid);
+				//Color aaBgColor = colorScheme.getAminoAcidBackgroundColor(containerAcid);
+				Color aaBgColor = colorScheme.getBaseBackgroundColor(NucleotideUtilities.GAP);
+				Color nucFgColor = colorScheme.getBaseSelectionForegroundColor(baseVal);
+			//	Color nucBgColor = colorScheme.getBaseBackgroundColor(NucleotideUtilities.GAP);
+			//	Color nucBgColor = colorScheme.getBaseBackgroundColor(baseVal).brighter();
+				Color nucBgColor = colorScheme.getBaseSelectionBackgroundColor(baseVal); //.brighter();
+				container.backend[n] = new CharPixelsBothNucAndAA((char)n,containerAcid.getCodeCharVal(), width, height, nucFgColor, nucBgColor, aaFgColor, aaBgColor, font.deriveFont((float)font.getSize()*.67f), minFontSize, fontCase);
+			}
+			transContainer.allAAContainers[containerAcid.intVal] = container;
+		}
+		return transContainer;
+	}
+	
+	public static TranslationCharPixelsContainer createLetterTranslationAndNucPixelsContainer(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCase) {
+		TranslationCharPixelsContainer transContainer = new TranslationCharPixelsContainer();
+		transContainer.allAAContainers = new CharPixelsContainer[AminoAcid.HIGEST_AA_INT_VAL + 1];
+		for(AminoAcid containerAcid: AminoAcid.GROUP_ALL){
+			CharPixelsContainer container = new CharPixelsContainer();
+			for(int n = 0; n < container.backend.length; n++){	
+				int baseVal = NucleotideUtilities.baseValFromBase((byte)n);
+				Color aaFgColor = Color.white; //colorScheme.getAminoAcidForgroundColor(containerAcid);
+				Color aaBgColor = colorScheme.getAminoAcidBackgroundColor(containerAcid);
+				Color nucFgColor = colorScheme.getBaseForegroundColor(baseVal);//colorScheme.getBaseForegroundColor(baseVal);
+				Color nucBgColor = colorScheme.getBaseBackgroundColor(NucleotideUtilities.GAP);
+			///	Color nucBgColor = colorScheme.getBaseBackgroundColor(baseVal).brighter();
+				container.backend[n] = new CharPixelsBothNucAndAA((char)n, containerAcid.getCodeCharVal(), width, height, nucFgColor, nucBgColor, aaFgColor, aaBgColor, font.deriveFont((float)font.getSize()*.67f), minFontSize, fontCase);
+			}
+			transContainer.allAAContainers[containerAcid.intVal] = container;
+		}
+		return transContainer;
+	}
+	
+	public static TranslationCharPixelsContainer createSelectedLetterTranslationAndNucPixelsContainer(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCase) {
+		TranslationCharPixelsContainer transContainer = new TranslationCharPixelsContainer();
+		transContainer.allAAContainers = new CharPixelsContainer[AminoAcid.HIGEST_AA_INT_VAL + 1];
+		for(AminoAcid containerAcid: AminoAcid.GROUP_ALL){
+			CharPixelsContainer container = new CharPixelsContainer();
+			for(int n = 0; n < container.backend.length; n++){
+				int baseVal = NucleotideUtilities.baseValFromBase((byte)n);
+				Color aaFgColor = Color.white; //colorScheme.getAminoAcidForgroundColor(containerAcid);
+				Color aaBgColor = colorScheme.getAminoAcidSelectionBackgroundColor(containerAcid);
+				Color nucFgColor = colorScheme.getBaseSelectionForegroundColor(baseVal);//colorScheme.getBaseForegroundColor(baseVal);
+				Color nucBgColor = colorScheme.getBaseBackgroundColor(NucleotideUtilities.GAP);
+			///	Color nucBgColor = colorScheme.getBaseBackgroundColor(baseVal).brighter();
+				container.backend[n] = new CharPixelsBothNucAndAA((char)n, containerAcid.getCodeCharVal(), width, height, nucFgColor, nucBgColor, aaFgColor, aaBgColor, font.deriveFont((float)font.getSize()*.67f), minFontSize, fontCase);
+				
+			}
+			transContainer.allAAContainers[containerAcid.intVal] = container;
+		}
+		return transContainer;
+	}
 
 }

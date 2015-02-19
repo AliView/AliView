@@ -52,12 +52,14 @@ public class ArrayUtilities {
 		if(array == null || newBytes == null || newBytes.length == 0){
 			return array;
 		}
+		
+		
 
-		logger.info("array" + array);
-		logger.info("pos" + pos);
-		logger.info("newBytes" + newBytes);
-		logger.info("array" + array.length);
-		logger.info("newBytes" + newBytes.length);
+//		logger.info("array" + array);
+//		logger.info("pos" + pos);
+//		logger.info("newBytes" + newBytes);
+//		logger.info("array" + array.length);
+//		logger.info("newBytes" + newBytes.length);
 		
 		
 		byte[] newArray = new byte[array.length + newBytes.length];

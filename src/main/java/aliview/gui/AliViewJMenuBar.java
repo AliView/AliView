@@ -1071,10 +1071,22 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 				aliViewWindow.toggleDrawAminoAcidCode();
 			}
 		});
+		mntmToggleAminoAcidCode.setAccelerator(OSNativeUtils.getToggleTranslateShowAACodeKeyAccelerator());
 		showAACodeButtonMoes = mntmToggleAminoAcidCode.getModel();
 		mnViewMenu.add(mntmToggleAminoAcidCode);
 		nucleotideFunctions.add(mntmToggleAminoAcidCode);
 		loadedAlignmentFunctions.add(mntmToggleAminoAcidCode);
+		
+		JCheckBoxMenuItem mntmToggleTranslateShowBoth = new JCheckBoxMenuItem("Show both aminoacid and nucleotides when translating");
+		mntmToggleTranslateShowBoth.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				aliViewWindow.toggleTranslationShowBoth();
+			}
+		});
+		mntmToggleTranslateShowBoth.setAccelerator(OSNativeUtils.getToggleTranslateShowBothKeyAccelerator());
+		mnViewMenu.add(mntmToggleTranslateShowBoth);
+		nucleotideFunctions.add(mntmToggleTranslateShowBoth);
+		loadedAlignmentFunctions.add(mntmToggleTranslateShowBoth);
 
 		JCheckBoxMenuItem mntmToggleIgnoreGapInTranslation = new JCheckBoxMenuItem("Ignore gaps when translating");
 		mntmToggleIgnoreGapInTranslation.addActionListener(new ActionListener() {

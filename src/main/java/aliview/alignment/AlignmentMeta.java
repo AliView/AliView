@@ -143,11 +143,27 @@ public class AlignmentMeta {
 //		}
 	}
 	
-	public void excludePositions(int[] positions) {
-		for(int n = 0; n < positions.length; n++){
-			this.excludes.getPositionsBooleanArray()[n] = true;
+	public void excludePositions(int start, int end) {
+		for(int n = start; n <= end; n++){
+			this.excludes.set(n, true);
 		}
 	}
+	
+	public void excludesRemovePositions(int start, int end) {
+		for(int n = start; n <= end; n++){
+			this.excludes.set(n, false);
+		}
+	}
+	
+	public boolean excludesIntersectsPositions(int start, int end) {
+		for(int n = start; n <= end; n++){
+			if(this.excludes.isExcluded(n)){
+				return true;
+			}
+		}
+		return false;
+	}
+	
 
 	public ArrayList<CharSet> getCharsets() {
 		return this.charsets;

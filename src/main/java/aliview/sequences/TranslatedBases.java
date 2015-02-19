@@ -34,10 +34,7 @@ public class TranslatedBases implements Bases{
 	public TranslatedBases getCopy(){
 		return new TranslatedBases(delegate.getCopy(), sequence);
 	}
-	
-	public byte[] getBackend() {
-		return delegate.getBackend();
-	}
+
 	
 	public int getLength(){
 		// or translated
@@ -177,6 +174,7 @@ public class TranslatedBases implements Bases{
 		
 	}
 	
+	
 	// ?????
 	public void complement() {
 		delegate.complement();		
@@ -209,8 +207,12 @@ public class TranslatedBases implements Bases{
 			insertAt(getLength(), newBytes);
 		}
 		
+		
+		
+		
+		
 		// Translating help
-		private int cachedClosestStartPos = -1;
+		private int cachedClosestTranslatedNucleotideStartPos = -1;
 		private int cachedAminoTripletAcidPos = -1;
 		private AminoAcid cachedAminoAcid;
 		
@@ -250,8 +252,8 @@ public class TranslatedBases implements Bases{
 		public byte[] getTripletAt(int x){
 			byte[] codon = new byte[3];
 			for(int n = 0; n < 3; n ++){
-				if(x + n < delegate.getBackend().length){
-					codon[n] = delegate.getBackend()[x + n];
+				if(x + n < delegate.getLength()){
+					codon[n] = delegate.get(x + n);
 				}
 				else{
 					codon[n] = SequenceUtils.GAP_SYMBOL;
@@ -261,26 +263,26 @@ public class TranslatedBases implements Bases{
 		}
 		
 		public int getCachedClosestStartPos(){
-			return cachedClosestStartPos;
+			return cachedClosestTranslatedNucleotideStartPos;
 		}
 
 		
 		public AminoAcid getNoGapAminoAcidAtNucleotidePos(int target){
 			int tripCount = 0;
 			byte[] triplet = new byte[3];
-			int seqLen = delegate.getBackend().length;
+			int seqLen = delegate.getLength();
 			
 			
 			// skip pos depending on ReadingFrame
 			int startPos = 0;
 			
 			// if cached pos not is set, get a start pos
-			if(cachedClosestStartPos == -1){
+			if(cachedClosestTranslatedNucleotideStartPos == -1 || target < cachedClosestTranslatedNucleotideStartPos){ //
 				int skipCount = 0;
 				int readingFrame = getCodonPositions().getReadingFrame();
 				if(readingFrame > 1){
 					for(int n = 0; n < seqLen; n ++){
-						byte base = delegate.getBackend()[n];
+						byte base = delegate.get(n);
 						if(! NucleotideUtilities.isGap(base) && getCodonPositions().isCoding(n)){
 							skipCount ++;
 						}
@@ -290,12 +292,12 @@ public class TranslatedBases implements Bases{
 					}
 				}
 			}else{
-				startPos = cachedClosestStartPos;
+				startPos = cachedClosestTranslatedNucleotideStartPos;
 			}
 			
 			if(target >= startPos){
 				for(int n = startPos; n < seqLen; n++){
-					byte base = delegate.getBackend()[n];
+					byte base = delegate.get(n);
 					if(NucleotideUtilities.isGap(base) || getCodonPositions().isNonCoding(n)){			
 						if(n >= target && tripCount == 0){
 							return AminoAcid.GAP;
@@ -306,7 +308,7 @@ public class TranslatedBases implements Bases{
 						triplet[tripCount - 1] = base;
 						
 						if(tripCount == 1){
-							cachedClosestStartPos = n;
+							cachedClosestTranslatedNucleotideStartPos = n;
 						}
 						
 						if(tripCount == 3){				
@@ -334,7 +336,7 @@ public class TranslatedBases implements Bases{
 		}
 		
 		public String getTranslatedAsString(){
-			StringWriter out = new StringWriter(delegate.getBackend().length/3);
+			StringWriter out = new StringWriter(delegate.getLength()/3);
 			writeTranslation(out);
 			return out.toString();
 		}
@@ -344,7 +346,7 @@ public class TranslatedBases implements Bases{
 			int gap = 0;
 			
 			try {
-				while(x < delegate.getBackend().length){
+				while(x < delegate.getLength()){
 					if(isFullCodonStartingAt(x)){
 						byte[] codon = getTripletAt(x);
 						out.append(AminoAcid.getAminoAcidFromCodon(codon).getCodeCharVal());
@@ -369,10 +371,10 @@ public class TranslatedBases implements Bases{
 		}
 		
 		public int getTranslatedAminAcidSequenceLength(){
-			if(delegate.getBackend() == null || delegate.getBackend().length == 0){
+			if(delegate.getLength() == 0){
 				return 0;
 			}
-			int lastPos = getCodonPositions().getAminoAcidPosFromNucleotidePos(delegate.getBackend().length - 1);
+			int lastPos = getCodonPositions().getAminoAcidPosFromNucleotidePos(delegate.getLength() - 1);
 			return lastPos + 1;
 		}
 		
@@ -419,14 +421,20 @@ public class TranslatedBases implements Bases{
 
 		
 		private byte[] getNucleotidesAtCodon(CodonPos codonPos) {
-			if(codonPos == null || codonPos.startPos >= delegate.getBackend().length){
+			if(codonPos == null || codonPos.startPos >= delegate.getLength()){
 				return new byte[]{SequenceUtils.GAP_SYMBOL};
 			}
 			
 			int start = codonPos.startPos;
-			int end = Math.min(codonPos.endPos, delegate.getBackend().length -1);
+			int end = Math.min(codonPos.endPos, delegate.getLength() -1);
 			
-			byte[] codonBytes = ArrayUtils.subarray(delegate.getBackend(), codonPos.startPos, codonPos.endPos + 1); // endPos is exclusive
+			byte[] codonBytes = new byte[end - start + 1];
+			for(int n = start; n <= end; n++){
+				codonBytes[n - start] = delegate.get(n); 
+			}
+			
+			
+			//byte[] codonBytes = delegate.getBetween(codonPos.startPos, codonPos.endPos + 1);
 			
 			return codonBytes;
 		}

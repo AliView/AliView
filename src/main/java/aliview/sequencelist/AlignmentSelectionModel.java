@@ -135,9 +135,11 @@ public class AlignmentSelectionModel{
 		if(clearFirst && oldSelectRect != null){
 			logger.info("newRect" + newRect);
 			logger.info("oldRect" + oldSelectRect);
-			newRect.add(oldSelectRect);
-			logger.info("newRect + old" + newRect);
-			fireSelectionChanged(newRect, false);
+			if(Utils.hasSameBounds(newRect, oldSelectRect)){	
+				// do nothing
+			}else{
+				fireSelectionChanged(newRect, false);
+			}
 		}
 		else{
 			fireSelectionChanged(newRect, false);
@@ -596,14 +598,14 @@ public class AlignmentSelectionModel{
 	}
 	
 	public void clearSequenceSelection() {
-		logger.info("clear clearSequenceSelection");	
-		Rectangle oldSelectRectangle = getSelectionBounds();
-		for(Sequence seq: sequences){
-			seq.clearAllSelection();
-		}
-		if(oldSelectRectangle != null){
-			fireSelectionChanged(oldSelectRectangle, false);
-		}
+
+			Rectangle oldSelectRectangle = getSelectionBounds();
+			for(Sequence seq: sequences){
+				seq.clearAllSelection();
+			}
+			if(oldSelectRectangle != null){
+				fireSelectionChanged(oldSelectRectangle, false);
+			}
 	}
 	
 	
@@ -680,6 +682,7 @@ public class AlignmentSelectionModel{
   */  	
     	
     private void fireSelectionChanged(Rectangle rect, boolean isAdjusting) {
+    	logger.info("fire Selection changed");
     	 Object[] listeners = listenerList.getListenerList();
     	 AlignmentSelectionEvent e = null;
     	 

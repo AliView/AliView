@@ -55,7 +55,7 @@ public class CharSet {
 		ArrayList<IntRange> intRanges = RangeUtils.boolArrayToListOfTrueIntRanges(positions.getBooleanArray());
 		ArrayList<NexusRange> nexusRanges = new ArrayList<NexusRange>();
 		for(IntRange range: intRanges){
-			nexusRanges.add(new NexusRange(range, 1));
+			nexusRanges.add(new NexusRange(range, 1, 0));
 		}
 		return nexusRanges;
 	}

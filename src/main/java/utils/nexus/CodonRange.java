@@ -1,5 +1,7 @@
 package utils.nexus;
 
+import java.util.ArrayList;
+
 import org.apache.log4j.Logger;
 
 public class CodonRange implements Comparable<CodonRange>{
@@ -15,6 +17,9 @@ public class CodonRange implements Comparable<CodonRange>{
 		this.startVal = startVal;
 	}
 	
+	public static CodonRange newDefaultRange() {
+		return new CodonRange(0, Integer.MAX_VALUE - 1000, 1); // - 1000 on MaxVal to make sure there is room for adding one or two
+	}
 	
 	// includes partial at front and end as a position
 	public int countAllCodons(int readingFrame){
@@ -224,6 +229,5 @@ public class CodonRange implements Comparable<CodonRange>{
 			this.moveEnd(additionalRange.end);
 		}
 	}
-		
 
 }

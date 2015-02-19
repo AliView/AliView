@@ -46,8 +46,6 @@ public interface Bases {
 	// convenience
 	public abstract void append(byte[] newBytes);
 
-	public abstract byte[] getBackend();
-
 	public abstract void moveBaseLeft(int n);
 
 	public abstract void moveBaseRight(int n);

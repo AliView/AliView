@@ -55,6 +55,8 @@ public interface Sequence extends Comparable<Sequence>{
 	
 	public byte[] getGapPaddedCodonInTranslatedPos(int pos);
 	
+	public AminoAcid getNoGapAminoAcidAtNucleotidePos(int target);
+	
 	// Undecided which version
 	public boolean isEmpty();
 	
@@ -128,19 +130,25 @@ public interface Sequence extends Comparable<Sequence>{
 	public int getLastSelectedPosition();
 	
 	// selectable movable
-	public void moveSelectedResiduesRightIfGapIsPresent();
+	//public void moveSelectedResiduesRightIfGapIsPresent();
 	
-	public void moveSelectionRightIfGapIsPresent(int steps);
+	//public void moveSelectionRightIfGapIsPresent(int steps);
+	
+	public void moveSelectedResiduesRightIfGapOrEndIsPresent();
 
 	public void moveSelectedResiduesLeftIfGapIsPresent();
 	
-	public void moveSelectionLeftIfGapIsPresent(int steps);
-
+	//public void moveSelectionLeftIfGapIsPresent(int steps);
+	
 	public boolean contains(char testChar);
 
 	public boolean isGapRightOfSelection();
 
 	public boolean isGapLeftOfSelection();
+	
+	public boolean isEndRightOfSelection();
+	
+	public boolean isGapOrEndRightOfSelection();
 
 	public void deleteGapLeftOfSelection();
 	
@@ -175,7 +183,5 @@ public interface Sequence extends Comparable<Sequence>{
 	public void setAlignmentModel(AlignmentListModel alignmentModel);
 	
 	public AlignmentListModel getAlignmentModel();
-	
-	
 
 }

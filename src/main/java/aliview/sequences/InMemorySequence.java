@@ -16,7 +16,6 @@ import org.apache.log4j.Logger;
 import aliview.AliView;
 import aliview.AminoAcid;
 import aliview.NucleotideUtilities;
-import aliview.sequencelist.NotUsed_AlignmentDataAndSelectionListener;
 import aliview.sequencelist.AlignmentListModel;
 import aliview.sequencelist.Interval;
 import aliview.utils.ArrayUtilities;
@@ -101,6 +100,7 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 
 	private Bases getBases(){
 		if(isTranslated()){
+//			logger.info("is translated");
 			return getTranslatedBases();
 		}
 		return this.bases;
@@ -133,6 +133,10 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 
 	public AminoAcid getTranslatedAminoAcidAtNucleotidePos(int x) {
 		return getTranslatedBases().getAminoAcidAtNucleotidePos(x);
+	}
+	
+	public AminoAcid getNoGapAminoAcidAtNucleotidePos(int target){
+		return getTranslatedBases().getNoGapAminoAcidAtNucleotidePos(target);
 	}
 
 	public byte getBaseAtPos(int n){
@@ -305,6 +309,24 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 	public boolean isGapRightOfSelection(){
 		return isGapRightOfSelection(1);
 	}
+	
+	public boolean isEndRightOfSelection(){
+		int rightSelected = getLastSelectedPosition();
+		if(rightSelected + 1 == getLength()){
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean isGapOrEndRightOfSelection(){
+		if(isEndRightOfSelection()){
+			return true;
+		}
+		else{
+			return isGapRightOfSelection();
+		}
+	}
+	
 	public boolean isGapLeftOfSelection(){
 		return isGapLeftOfSelection(1);
 	}
@@ -355,17 +377,16 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 
 	}
 
-
-	public void moveSelectionRightIfGapIsPresent(int steps) {
+	public void moveSelectionRightIfGapOrEndIsPresent(int steps) {
 
 		for(int m = 0; m < steps; m++){
 			// get first selected position
 			int leftPosition = getFirstSelectedPosition();
 			int rightPosition = getLastSelectedPosition();
-			if(rangeCheck(leftPosition) && rangeCheck(rightPosition+1)){
+			//if(rangeCheck(leftPosition) && rangeCheck(rightPosition+1)){
 
 				// only if gap is right of selection
-				if(NucleotideUtilities.isGap(getBaseAtPos(rightPosition + 1))){
+				if(isGapOrEndRightOfSelection()){
 
 					// move bases one step at the time from right to left
 					for(int n = rightPosition; n >= leftPosition; n--){
@@ -384,7 +405,7 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 					getBases().set(leftPosition,'-');
 					clearSelectionAt(leftPosition);
 				}
-			}
+			//}
 		}
 	}
 
@@ -398,7 +419,7 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 			if(rangeCheck(leftPosition-1) && rangeCheck(rightPosition)){
 
 				// only if gap is left of selection
-				if(NucleotideUtilities.isGap(getBaseAtPos(leftPosition - 1))){
+				if(isGapLeftOfSelection()){
 
 					for(int n = leftPosition; n <= rightPosition; n++){
 						
@@ -423,9 +444,10 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 			}
 		}
 	}
+	
 
-	public void moveSelectedResiduesRightIfGapIsPresent(){
-		moveSelectionRightIfGapIsPresent(1);
+	public void moveSelectedResiduesRightIfGapOrEndIsPresent(){
+		moveSelectionRightIfGapOrEndIsPresent(1);
 	}
 
 	public void moveSelectedResiduesLeftIfGapIsPresent(){
@@ -538,8 +560,6 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 		selectionModel.removePosition(index);
 	}
 
-
-
 	public void reverseComplement() {
 		reverse();
 		complement();
@@ -554,16 +574,25 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 	}
 
 
-	public void rightPadSequenceWithGaps(int amount) {
-	
-		if(amount > 0){
-
-			byte[] padding = new byte[amount];
-			
-			Arrays.fill(padding, SequenceUtils.GAP_SYMBOL);
-			
-			getBases().append(padding);
-		}	
+	public void rightPadSequenceWithGaps(int finalLength) {
+		
+//		logger.info("finalLength" + finalLength);
+//		logger.info("getBases().getLength()" + getBases().getLength());
+		
+		int addCount = finalLength - getBases().getLength();
+		if(addCount > 0){
+			byte[] additional = new byte[addCount];
+			Arrays.fill(additional, SequenceUtils.GAP_SYMBOL);
+			getBases().append(additional);
+		}
+		
+		
+//		while(getBases().getLength() < finalLength){
+//			logger.info("append");
+//			getBases().append(new byte[]{SequenceUtils.GAP_SYMBOL});
+//		}
+//		logger.info("after getBases().getLength()" + getBases().getLength());
+		
 	}
 
 	public void leftPadSequenceWithGaps(int amount) {
@@ -820,5 +849,7 @@ public class InMemorySequence implements Sequence, Comparable<Sequence> {
 	public AlignmentListModel getAlignmentModel() {
 		return alignmentModel;
 	}
+
+
 
 }

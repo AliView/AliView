@@ -330,6 +330,22 @@ public class OSNativeUtils {
 			return KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
 		}
 	}
+	
+	public static KeyStroke getToggleTranslateShowBothKeyAccelerator() {
+		if(isMac()){
+			return KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.ALT_DOWN_MASK);
+		}else{
+			return KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.ALT_DOWN_MASK);
+		}
+	}
+	
+	public static KeyStroke getToggleTranslateShowAACodeKeyAccelerator() {
+		if(isMac()){
+			return KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.SHIFT_DOWN_MASK | InputEvent.ALT_DOWN_MASK);
+		}else{
+			return KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.SHIFT_DOWN_MASK | InputEvent.ALT_DOWN_MASK);
+		}
+	}
 
 	public static KeyStroke incReadingFrameKeyAccelerator() {
 		if(isMac()){
@@ -569,6 +585,8 @@ public class OSNativeUtils {
 		}
 		return registerOK;
 	}
+
+	
 
 
 }

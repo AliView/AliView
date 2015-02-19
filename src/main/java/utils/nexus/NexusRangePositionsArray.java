@@ -185,6 +185,11 @@ public class NexusRangePositionsArray {
 		return ranges.aaPosFromNucPos(pos, readingFrame);
 	}
 
+	public void setBackend(Ranges allRanges) {
+		ranges = allRanges;
+		
+	}
+
 	/*
 	public void resizeBackend(int len) {
 		if(backend == null){

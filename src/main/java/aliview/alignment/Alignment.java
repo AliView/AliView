@@ -656,8 +656,9 @@ public class Alignment implements FileSequenceLoadListener {
 				logger.info("rangesSize" + nexusRanges.size());
 				CharSet translatedSet = new CharSet(charset.getName(),alignmentMeta.getCodonPositions().getAminoAcidPosFromNucleotidePos(sequences.getLongestSequenceLength()));
 				for(NexusRange range: nexusRanges){	
-					NexusRange translatedRange = new NexusRange(alignmentMeta.getCodonPositions().getAminoAcidPosFromNucleotidePos(range.getMinimumInteger()) + 1, // +1 för Nexus ranges börjar på 1
-							                                         alignmentMeta.getCodonPositions().getAminoAcidPosFromNucleotidePos(range.getMaximumInteger()) + 1); // +1 för Nexus ranges börjar på 1
+					NexusRange translatedRange = new NexusRange(alignmentMeta.getCodonPositions().getAminoAcidPosFromNucleotidePos(range.getMinimumInt()) + 1, // +1 för Nexus ranges börjar på 1
+							                                         alignmentMeta.getCodonPositions().getAminoAcidPosFromNucleotidePos(range.getMaximumInt()) + 1, // +1 för Nexus ranges börjar på 1
+							                                           range.getPositionVal(), range.getSteps()); 
 					logger.info(translatedRange);
 					translatedSet.addRange(translatedRange);
 				}
@@ -665,8 +666,9 @@ public class Alignment implements FileSequenceLoadListener {
 			}
 		}
 		for(NexusRange range: alignmentMeta.getExcludes().getExcludedAsNexusRanges()){
-			NexusRange translatedRange = new NexusRange(alignmentMeta.getCodonPositions().getAminoAcidPosFromNucleotidePos(range.getMinimumInteger()),
-					                                         alignmentMeta.getCodonPositions().getAminoAcidPosFromNucleotidePos(range.getMaximumInteger()));
+			NexusRange translatedRange = new NexusRange(alignmentMeta.getCodonPositions().getAminoAcidPosFromNucleotidePos(range.getMinimumInt()),
+					                                         alignmentMeta.getCodonPositions().getAminoAcidPosFromNucleotidePos(range.getMaximumInt()),
+					                                         range.getPositionVal(), range.getSteps());
 			excludesTrans.addRange(translatedRange);
 		}
 		return metaTrans;
@@ -1154,23 +1156,13 @@ public class Alignment implements FileSequenceLoadListener {
 	public void addOrRemoveSelectionToExcludes() {
 		// check if anythin is excluded already - then remove
 		// otherwise add
-		boolean containsExcludedAlready = false;
-		for(Sequence sequence : sequences){
-			
-			int[] selection = sequence.getSelectedPositions();
-			if(sequences.isTranslated()){
-				selection = getAlignmentMeta().reTranslatePositions(selection);
-			}	
-			
-			if(selection != null){
-				for(int n = 0; n < selection.length; n++){
-					if(this.alignmentMeta.isExcluded(selection[n])){
-						containsExcludedAlready = true;
-						break;
-					}
-				}
-			}
+		Rectangle selection = getSelectionAsMinRect();
+		
+		if(isTranslatedOnePos()){
+			selection = getAlignmentMeta().reTranslatePositions(selection);
 		}
+		
+		boolean containsExcludedAlready = getAlignmentMeta().excludesIntersectsPositions(selection.x, selection.x + selection.width);
 		
 		logger.info("containsExcludedAlready" + containsExcludedAlready);
 		if(containsExcludedAlready){
@@ -1181,38 +1173,28 @@ public class Alignment implements FileSequenceLoadListener {
 	}
 	
 	public void addSelectionToExcludes() {
-		for(Sequence sequence : sequences){
-			
-			int[] selection = sequence.getSelectedPositions();
-			if(sequences.isTranslated()){
-				selection = getAlignmentMeta().reTranslatePositions(selection);
-			}
-			
-			if(selection != null){
-				this.alignmentMeta.excludePositions(selection);
-			}
+		
+	
+		Rectangle selection = getSelectionAsMinRect();
+		
+		if(isTranslatedOnePos()){
+			selection = getAlignmentMeta().reTranslatePositions(selection);
 		}
+			
+		getAlignmentMeta().excludePositions(selection.x, selection.x + selection.width);	
+			
 		//fireAlignmentMetaOnlyChanged();
 		
 	}
 
 	public void removeSelectionFromExcludes() {
-		for(Sequence sequence : sequences){
-			
-			int[] selection = sequence.getSelectedPositions();
-			if(sequences.isTranslated()){
-				selection = getAlignmentMeta().reTranslatePositions(selection);
-			}
-			
-			if(selection != null){
-				//this.alignmentMeta.doNotexcludePositions(selection);
-				
-				for(int n = 0; n < selection.length; n++){
-					this.alignmentMeta.getExcludes().getPositionsBooleanArray()[selection[n]] = false;
-				}
-			}
+		Rectangle selection = getSelectionAsMinRect();
+		
+		if(isTranslatedOnePos()){
+			selection = getAlignmentMeta().reTranslatePositions(selection);
 		}
-		//fireAlignmentMetaOnlyChanged();
+			
+		getAlignmentMeta().excludesRemovePositions(selection.x, selection.x + selection.width);	
 	}
 
 	public void setSelectionAsCoding(int startOffset) {
@@ -1631,9 +1613,9 @@ public class Alignment implements FileSequenceLoadListener {
 		if(sequences != null){
 			isEditable = sequences.isEditable();
 		}
-		if(sequences.isTranslated()){
-			isEditable = false;
-		}
+//		if(sequences.isTranslated()){
+//			isEditable = false;
+//		}
 		return isEditable;
 	}
 	

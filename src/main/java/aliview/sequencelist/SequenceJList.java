@@ -153,7 +153,8 @@ public class SequenceJList extends javax.swing.JList implements Autoscroll{
 	}
 	
 	
-	private void synchAlignmentScrollPane() {
+	private void synchAlignmentScrollPane(){
+		logger.info("synch ScrollPanes");
 		JScrollPane source = listScrollPane;
 		JScrollPane dest = alignmentScrollPane;
 		Point viewPos = new Point(dest.getViewport().getViewPosition().x, source.getViewport().getViewPosition().y );
@@ -197,100 +198,17 @@ public class SequenceJList extends javax.swing.JList implements Autoscroll{
 
 		this.setFont(this.getFont().deriveFont(listFontSize));
 		
-		//logger.info(getFont().getName());
-	    //logger.info("fontSize" + this.getFont().getSize());
 		
 		// Remove List cell renderer att small sizes (saves a lot of drawing speed)
-				if(charHeight < 3 && this.getCellRenderer() != null){
-					this.storedCellRenderer = this.getCellRenderer();
-					this.setCellRenderer(null);
-				}else if(charHeight >= 3 && this.getCellRenderer() == null){
-					this.setCellRenderer(this.storedCellRenderer);
-				}
-
-	}
-	
-	/*
-
-	public void deleteSelectedSequences() {
-		Sequence[] selection = this.getSelectedValues();
-		if(! isSelectionValid(selection)){
-			return;
+		if(charHeight < 3 && this.getCellRenderer() != null){
+			this.storedCellRenderer = this.getCellRenderer();
+			this.setCellRenderer(null);
+		}else if(charHeight >= 3 && this.getCellRenderer() == null){
+			this.setCellRenderer(this.storedCellRenderer);
 		}
-		for(Sequence seq: selection){
-			 this.getModel().deleteSequence(seq);
-		}	
-	}
-	
-	
-	
-	private boolean isSelectionValid(Object[] array) {
-		if(array != null && array.length > 0){
-			return true;
-		}
-		else{
-			return false;
-		}
-	}
 
-	
-	public void reverseComplementSelectedSequences() {
-		Sequence[] selection = this.getSelectedValues();
-		List<Sequence> seqs = Arrays.asList(selection);
-		this.getModel().reverseComplement(seqs);
 	}
 	
-	
-	public void setSelectedIndices(List<Integer> indices) {
-		int[] indexArray = new int[indices.size()];
-		for(int n = 0; n < indices.size(); n++){
-			indexArray[n] = indices.get(n).intValue();
-		}
-		this.setValueIsAdjusting(true);
-		this.setSelectedIndices(indexArray);
-		this.setValueIsAdjusting(false);
-	}
-
-
-	
-	public boolean hasSelection() {
-		return ! getSelectionModel().isSelectionEmpty();
-	}
-	
-	public void invertSelection(){
-		List<Integer> newSelection = new ArrayList<Integer>();
-		
-		for(int n = 0; n < this.getModel().getSize(); n++){
-			if(! this.isSelectedIndex(n)){
-				newSelection.add(new Integer(n));
-			}
-		}
-		setSelectedIndices(newSelection);
-	}
-	
-
-
-	@Override
-	public Sequence[] getSelectedValues() {
-		Object[] vals = super.getSelectedValues();
-		return convertArray(vals);
-	}
-	
-	private Sequence[] convertArray(Object[] vals){
-		Sequence[] seqs = null;
-		if(vals != null){
-			seqs = new Sequence[vals.length];
-			for(int n = 0; n <vals.length; n++){
-				if(vals[n] instanceof Sequence){
-					seqs[n] = (Sequence) vals[n];
-				}
-			}
-		}
-		return seqs;
-	}
-	
-	*/
-
 
 	/*
 	 * This is for drop support from SequenceTransferHandler

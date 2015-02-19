@@ -61,7 +61,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 	protected int sequenceType = SequenceUtils.TYPE_UNKNOWN;
 	private int selectionOffset;
 	private int cachedLongestSequenceName;
-	private int cachedLongestSequenceLength;
+	private int cachedLongestSequenceLength = -1;
 	private AlignmentSelectionModel selectionModel = new AlignmentSelectionModel(this);
 	protected EventListenerList listenerList = new EventListenerList();
 	private DefaultListModel notUsed;
@@ -283,15 +283,15 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 	}
 	
 	public void addAll(AlignmentListModel otherSeqModel) {
-		addAll(otherSeqModel.getSequences());
+		addAll(otherSeqModel.getBackendSequencesCopy());
 	}
 	
 	public void addAll(int index, AlignmentListModel otherSeqModel) {
-		for(Sequence seq: otherSeqModel.getSequences()){
+		for(Sequence seq: otherSeqModel.getBackendSequencesCopy()){
 			seq.setAlignmentModel(this);
 		}
-		delegateSequences.addAll(index, otherSeqModel.getSequences());
-		fireSequenceIntervalAdded(index, index + otherSeqModel.getSequences().size());
+		delegateSequences.addAll(index, otherSeqModel.getBackendSequencesCopy());
+		fireSequenceIntervalAdded(index, index + otherSeqModel.getBackendSequencesCopy().size());
 	}
 	
 	public void addAll(List<Sequence> moreSeqs) {
@@ -303,6 +303,11 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		fireSequenceIntervalAdded(this.size() - moreSeqs.size() -1, this.size() - 1);
 	}
 	
+	
+	public List<Sequence> getBackendSequencesCopy(){
+		return new ArrayList<Sequence>(delegateSequences);
+	}
+	
 		
 	protected List<Sequence> getSequences() {
 		return delegateSequences;
@@ -311,15 +316,17 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 	
 	// From previous SequenceList Interface
 	public int getLongestSequenceLength(){	
-		if(cachedLongestSequenceLength <=0){
+		if(cachedLongestSequenceLength <0){
 			int maxLen = 0;
 			for(int n = 0; n < delegateSequences.size(); n++){
 				int len = delegateSequences.get(n).getLength();
+//				logger.info("len" + len);
 				if(len > maxLen){
 					maxLen = len;
 				}
 			}
 			cachedLongestSequenceLength = maxLen;
+	//		return maxLen;
 		}
 		return cachedLongestSequenceLength;
 	}
@@ -879,17 +886,33 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		return gapPresentInAll;
 	}
 	
+	public boolean isGapOrEndPresentRightOfSelection() {
+		boolean gapOrEndPresentInAll = true;
+		List<Sequence> selectedSeqs = selectionModel.getSelectedSequences(); 
+		for(Sequence seq: selectedSeqs){
+			if(! seq.isGapOrEndRightOfSelection()){
+				gapOrEndPresentInAll = false;
+				break;
+			}
+		}
+		return gapOrEndPresentInAll;
+	}
+	
 	public List<Sequence> moveSelectedResiduesRightIfGapIsPresent(boolean undoable) {
 		Rectangle oldSelectRectangle = selectionModel.getSelectionBounds();
 		
 		List<Sequence> editedSequences = new ArrayList<Sequence>();
-		if(isGapPresentRightOfSelection()){
+		boolean wasEndRightOfSelection = false;
+		if(isGapOrEndPresentRightOfSelection()){
 			List<Sequence> selectedSeqs = selectionModel.getSelectedSequences(); 
 			for(Sequence seq: selectedSeqs){
 				if(undoable){
 					editedSequences.add(seq.getCopy());
 				}
-				seq.moveSelectedResiduesRightIfGapIsPresent();
+				if(seq.isEndRightOfSelection()){
+					wasEndRightOfSelection = true;
+				}
+				seq.moveSelectedResiduesRightIfGapOrEndIsPresent();
 			}
 		}
 
@@ -899,6 +922,9 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		}else{
 			newSelect.add(oldSelectRectangle);
 			fireSequencesChanged(newSelect);
+			if(wasEndRightOfSelection){
+				rightPadWithGapUntilEqualLength();
+			}
 		}
 
 		return editedSequences;
@@ -984,7 +1010,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		// make sure this alignment is translated
 		setTranslation(true);
 		
-		for(Sequence templateSeq: templateSeqs.getSequences()){
+		for(Sequence templateSeq: templateSeqs.getBackendSequencesCopy()){
 			
 			// do partial name since it if being cut by some programs....
 			Sequence nucSeq =  this.getSequenceByName(templateSeq.getName());
@@ -1107,9 +1133,8 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		int longLen = getLongestSequenceLength();
 		ArrayList<Sequence> paddedSeqs = new ArrayList<Sequence>();
 		for(Sequence sequence : delegateSequences){
-			int diffLen = longLen - sequence.getLength();
-			if(diffLen != 0){
-				sequence.rightPadSequenceWithGaps(diffLen);
+			if(sequence.getLength() < longLen){
+				sequence.rightPadSequenceWithGaps(longLen);
 				paddedSeqs.add(sequence);
 			}
 		}
@@ -1123,11 +1148,11 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 	}
 
 	public boolean leftPadWithGapUntilEqualLength() {
+		int longLen = getLongestSequenceLength();
 		ArrayList<Sequence> paddedSeqs = new ArrayList<Sequence>();
 		for(Sequence sequence : delegateSequences){
-			int diffLen = getLongestSequenceLength() - sequence.getLength();
-			if(diffLen != 0){
-				sequence.leftPadSequenceWithGaps(diffLen);
+			if(sequence.getLength() < longLen){
+				sequence.leftPadSequenceWithGaps(longLen);
 				paddedSeqs.add(sequence);
 			}
 			
@@ -1169,7 +1194,8 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 	*/
 	public boolean rightTrimSequencesRemoveGapsUntilEqualLength(){
 		boolean wasTrimmed = false;
-		String cons = getConsensus();			
+		String cons = getConsensus();	
+		logger.info("cons=" + cons);
 		// check if there are any
 		if(cons.indexOf(SequenceUtils.GAP_SYMBOL) > 0){		
 			// create a bit-mask with pos to delete
@@ -1559,7 +1585,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		ArrayList<Sequence> uniqueSequences = new ArrayList<Sequence>();
 		ArrayList<Sequence> dupeSequences = new ArrayList<Sequence>();
 		for(int n = 0; n < delegateSequences.size(); n++){
-			Sequence testSeq = getSequences().get(n);
+			Sequence testSeq = getBackendSequencesCopy().get(n);
 			
 			boolean isUnique = true;
 			
@@ -1943,7 +1969,6 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		}
 		
 		fireSequencesChanged(minIndex, maxIndex);
-		
 		
 	}
 	

@@ -411,15 +411,17 @@ public class FileSequence implements Sequence {
 		return selectionModel.countSelectedPositions(startIndex, endIndex);
 	}
 
-	public void moveSelectionRightIfGapIsPresent(int steps) {
+	
+	public void moveSelectedResiduesRightIfGapOrEndIsPresent() {
 		// TODO Auto-generated method stub
 		
 	}
 
-	public void moveSelectionLeftIfGapIsPresent(int steps) {
+	public boolean isGapOrEndRightOfSelection() {
 		// TODO Auto-generated method stub
-		
+		return false;
 	}
+
 
 	public boolean isGapRightOfSelection() {
 		// TODO Auto-generated method stub
@@ -573,6 +575,17 @@ public class FileSequence implements Sequence {
 		// TODO Auto-generated method stub
 		return 0;
 	}
+
+	public boolean isEndRightOfSelection() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public AminoAcid getNoGapAminoAcidAtNucleotidePos(int target) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 	
 

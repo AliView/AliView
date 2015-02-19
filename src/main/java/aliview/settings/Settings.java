@@ -18,8 +18,6 @@ import aliview.alignment.AlignmentListener;
 import aliview.color.ColorScheme;
 import aliview.color.ColorSchemeFactory;
 import aliview.externalcommands.CommandItem;
-import aliview.hacks.FilePreferencesFactory;
-import aliview.old.ExternalCmdFrame;
 import aliview.pane.CharPixels;
 
 public class Settings {

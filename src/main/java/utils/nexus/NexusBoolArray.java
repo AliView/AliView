@@ -7,33 +7,33 @@ import org.apache.log4j.Logger;
 public class NexusBoolArray{
 	private static final Logger logger = Logger.getLogger(NexusBoolArray.class);
 
-	private boolean[] positions;
+	private boolean[] backend;
 	
 	public NexusBoolArray(int length) {
-		positions = new boolean[length];
+		backend = new boolean[length];
 	}
 	
 	public NexusBoolArray(boolean[] positions) {
-		this.positions = positions;
+		this.backend = positions;
 	}
 	
 	public boolean[] getBooleanArray() {
-		return positions;
+		return backend;
 	}
 
 	public NexusBoolArray getCopy() {
-		return new NexusBoolArray(ArrayUtils.clone(positions));
+		return new NexusBoolArray(ArrayUtils.clone(backend));
 	}
 
 
 	public void reverse() {
-		ArrayUtils.reverse(positions);
+		ArrayUtils.reverse(backend);
 		
 	}
 	
 	public int getLength() {
-		if(positions != null){
-			return positions.length;
+		if(backend != null){
+			return backend.length;
 		}else{
 			return 0;
 		}
@@ -43,12 +43,12 @@ public class NexusBoolArray{
 		if(!rangeCheck(position)){
 			return false;
 		}
-		return positions[position];
+		return backend[position];
 	}
 
 	public boolean containsValue(boolean value) {
-		if(positions != null){
-			for(boolean position: positions){
+		if(backend != null){
+			for(boolean position: backend){
 				if(position == value){
 					return true;
 				}
@@ -59,16 +59,20 @@ public class NexusBoolArray{
 	
 	public void removePosition(int index){
 		if(rangeCheck(index)){
-			positions = ArrayUtils.remove(positions, index);
+			backend = ArrayUtils.remove(backend, index);
 		}
 		
 	}
+	
+	public void set(int pos, boolean b) {
+		backend[pos] = b;
+	}
 
 	private boolean rangeCheck(int index) {
-		if(positions == null){
+		if(backend == null){
 			return false;
 		}
-		if(positions.length <= index){
+		if(backend.length <= index){
 			return false;
 		}
 		return true;
@@ -77,8 +81,8 @@ public class NexusBoolArray{
 
 	public int countValue(boolean value) {
 		int size = 0;
-		if(positions != null){
-			for(boolean position: positions){
+		if(backend != null){
+			for(boolean position: backend){
 				if(position == value){
 					size ++;
 				}
@@ -88,32 +92,32 @@ public class NexusBoolArray{
 	}
 
 	public void setTrueFromNexusRange(NexusRange range) {
-		for(int n = range.getMinimumInteger(); n <= range.getMaximumInteger(); n++){
+		for(int n = range.getMinimumInt(); n <= range.getMaximumInt(); n++){
 			if(rangeCheck(n - 1)){
-				positions[n - 1] = true; // always minus one because alignment start with pos 1 in exset (but 0 internally in program)
+				backend[n - 1] = true; // always minus one because alignment start with pos 1 in exset (but 0 internally in program)
 			}
 		}	
 	}
 
 	public void debug() {
-		logger.info(positions);
-		for(boolean val: positions){
+		logger.info(backend);
+		for(boolean val: backend){
 //			logger.info(val);
 		}
 		
 	}
 
 	public void append(NexusBoolArray morePositions) {
-		int newSize = positions.length + morePositions.getBooleanArray().length;
+		int newSize = backend.length + morePositions.getBooleanArray().length;
 		boolean[] newPositions = new boolean[newSize];
-		System.arraycopy(positions, 0, newPositions, 0, positions.length);
-		System.arraycopy(morePositions.getBooleanArray(), 0, newPositions, positions.length, morePositions.getBooleanArray().length);
-		this.positions = newPositions;
+		System.arraycopy(backend, 0, newPositions, 0, backend.length);
+		System.arraycopy(morePositions.getBooleanArray(), 0, newPositions, backend.length, morePositions.getBooleanArray().length);
+		this.backend = newPositions;
 	}
 	
 	public void insertPosition(int n) {
-		if(this.positions != null){
-			this.positions = ArrayUtils.add(this.positions, n, false);
+		if(this.backend != null){
+			this.backend = ArrayUtils.add(this.backend, n, false);
 		}
 	}
 
@@ -122,10 +126,10 @@ public class NexusBoolArray{
 		boolean firstFound = false;
 		boolean isInterruptedOnce = false;
 		boolean isContinous = false;
-		if(positions != null){
-			for(int n = 0; n + 1 < positions.length; n++){
-				boolean positionVal = positions[n];
-				boolean nextPosVal = positions[n + 1];
+		if(backend != null){
+			for(int n = 0; n + 1 < backend.length; n++){
+				boolean positionVal = backend[n];
+				boolean nextPosVal = backend[n + 1];
 				
 				if(positionVal == searchVal && firstFound == false){
 					firstFound = true;
@@ -145,4 +149,5 @@ public class NexusBoolArray{
 		return isContinous;		
 	}
 
+	
 }

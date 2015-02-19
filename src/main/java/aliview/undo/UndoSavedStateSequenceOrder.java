@@ -8,10 +8,10 @@ import aliview.sequences.Sequence;
 
 public class UndoSavedStateSequenceOrder extends UndoSavedState{
 	public AlignmentMeta meta;
-	public AlignmentListModel sequenceListModel;
+	public List<Sequence> sequencesBackend;
 
-	public UndoSavedStateSequenceOrder(AlignmentListModel sequenceListModel,AlignmentMeta meta){
-		this.sequenceListModel = sequenceListModel;
+	public UndoSavedStateSequenceOrder(List<Sequence> sequencesBackendCopy,AlignmentMeta meta){
+		this.sequencesBackend = sequencesBackendCopy;
 		this.meta = meta;
 	}
 }

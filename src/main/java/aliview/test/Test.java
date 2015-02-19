@@ -21,8 +21,10 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
+import org.apache.commons.lang.math.IntRange;
 import org.apache.log4j.Logger;
 
+import utils.nexus.NexusRange;
 import aliview.NucleotideUtilities;
 
 public class Test implements Cloneable{
@@ -39,10 +41,25 @@ public class Test implements Cloneable{
 
 	public static void main(String[] args) throws CloneNotSupportedException {
 	
+		NexusRange range = new NexusRange(new IntRange(64, 80), 3, 1);
+		
+		int n = 64;
+		
+		int posInRange = n - range.getMinimumInt();
+		int rest = posInRange % range.getSteps();
+		
+		logger.info("rest=" + rest);
+
+		n = 3029;
+		int startVal = 1;
+		
+	//	int target = ((n + startValOffset) % 3) + 1;
+		
+	//	logger.info("target=" + target);
 		
 
 		int pos = 5;
-		int startVal = 2;
+		startVal = 2;
 		int start = 0;
 		
 		int diff = -5;

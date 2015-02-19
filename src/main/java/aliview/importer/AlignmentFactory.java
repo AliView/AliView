@@ -45,13 +45,12 @@ public class AlignmentFactory {
 			Alignment alignment = null;
 			try {
 				
+				
 				AlignmentListModel sequences = seqFactory.createSequences(alignmentFile);			
 				Excludes excludes = new Excludes(sequences.getLongestSequenceLength());
-				
-				logger.info("sequences.getLongestSequenceLength()" + sequences.getLongestSequenceLength());
-				
 				CodonPositions codonPositions = new CodonPositions();
 				ArrayList<CharSet> charsets = new ArrayList<CharSet>();
+				logger.info("sequences.getLongestSequenceLength()" + sequences.getLongestSequenceLength());
 
 					try {
 						// Try to read Excludes etc. from alignmentfile	

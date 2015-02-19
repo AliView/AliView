@@ -98,7 +98,7 @@ public class NexusParser {
 		return isNextTokensRange();
 	}
 
-	public NexusRange getNexusRange(){
+	public NexusRange getNexusRange(int positionVal){
 		String firstVal = getTokenAt(currentPos);
 		String secondVal = getTokenAt(currentPos + 2);
 		
@@ -110,7 +110,7 @@ public class NexusParser {
 			steps = splitted[1];
 		}
 		
-		NexusRange range = new NexusRange(Integer.parseInt(firstVal), Integer.parseInt(secondVal), Integer.parseInt(steps));
+		NexusRange range = new NexusRange(Integer.parseInt(firstVal), Integer.parseInt(secondVal), Integer.parseInt(steps), positionVal);
 		
 		// Spola fram
 		currentPos += 3;

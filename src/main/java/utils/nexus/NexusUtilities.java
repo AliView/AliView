@@ -56,7 +56,7 @@ public class NexusUtilities {
 			if(excludeString == null || excludeString.length() == 0){
 				return true;
 			}
-			ArrayList<NexusRange> allRanges = parseNexusRanges(excludeString);
+			ArrayList<NexusRange> allRanges = parseNexusRanges(excludeString, 0);
 			for(NexusRange range: allRanges){
 				excludes.addRange(range);
 			}
@@ -96,46 +96,51 @@ public class NexusUtilities {
 //			}
 			//
 
+			NexusRangesTranslator nexusRangesTranslator = new NexusRangesTranslator();
 			// Always set position n - 1 because program internally is working with first pos in alignment as 0 (and in codonpos block from 1)
 
 			// TODO with n range does not ends with \3
 			String nPos = StringUtils.substringBetween(codonPositionsBlock, "N:",",");
 			if(nPos != null){	
-				ArrayList<NexusRange> allRanges = parseNexusRanges(nPos);
-				
-				codonPositions.addNexusRanges(allRanges);
+				ArrayList<NexusRange> allRanges = parseNexusRanges(nPos, 0);
+				nexusRangesTranslator.addNexusRanges(allRanges);
 
 			}
 			// TODO questionmarkpos is treated as n
 			// TODO with n range does not ends with \3
 			String questionmarkPos = StringUtils.substringBetween(codonPositionsBlock, "?:",",");
 			if(questionmarkPos != null){	
-				ArrayList<NexusRange> allRanges = parseNexusRanges(questionmarkPos);
-				codonPositions.addNexusRanges(allRanges);	
+				ArrayList<NexusRange> allRanges = parseNexusRanges(questionmarkPos, 0);
+				nexusRangesTranslator.addNexusRanges(allRanges);
 			}
 
 			// TODO check that range ends with \3
 			String pos1 = StringUtils.substringBetween(codonPositionsBlock, "1:",",");
 			if(pos1 != null){	
-				ArrayList<NexusRange> allRanges = parseNexusRanges(pos1);
+				ArrayList<NexusRange> allRanges = parseNexusRanges(pos1, 1);
 //				logger.info("allRangesSize" + allRanges.size());
 				codonPositions.addNexusRanges(allRanges);
+				nexusRangesTranslator.addNexusRanges(allRanges);
 			}
 
 			String pos2 = StringUtils.substringBetween(codonPositionsBlock, "2:",",");
 			if(pos2 != null){	
-				ArrayList<NexusRange> allRanges = parseNexusRanges(pos2);
+				ArrayList<NexusRange> allRanges = parseNexusRanges(pos2, 2);
 //				logger.info("allRangesSize" + allRanges.size());
 				codonPositions.addNexusRanges(allRanges);
+				nexusRangesTranslator.addNexusRanges(allRanges);
 			}
 
 			String pos3 = StringUtils.substringBetween(codonPositionsBlock, "3:",",");
 			if(pos3 != null){	
-				ArrayList<NexusRange> allRanges = parseNexusRanges(pos3);
+				ArrayList<NexusRange> allRanges = parseNexusRanges(pos3, 3);
 				codonPositions.addNexusRanges(allRanges);
+				nexusRangesTranslator.addNexusRanges(allRanges);
 			}
 			
-			codonPositions.positionsUpdated();
+			Ranges allRanges = nexusRangesTranslator.convertToCodonRanges();
+			codonPositions.addRanges(allRanges);
+		
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -153,11 +158,11 @@ public class NexusUtilities {
 		String rangeBlock = "";
 		for(NexusRange range: ranges){
 
-			if(range.getMinimumInteger() == range.getMaximumInteger()){
-				rangeBlock += " " + (range.getMinimumInteger() + 1); // Add one because internally we work with array posiiton 0, but in charset first pos is 1 
+			if(range.getMinimumInt() == range.getMaximumInt()){
+				rangeBlock += " " + (range.getMinimumInt() + 1); // Add one because internally we work with array posiiton 0, but in charset first pos is 1 
 			}
 			else{
-				rangeBlock += " " + (range.getMinimumInteger() + 1) + "-" + (range.getMaximumInteger() + 1); // Add one because internally we work with array posiiton 0, but in exset spec first pos is 1 
+				rangeBlock += " " + (range.getMinimumInt() + 1) + "-" + (range.getMaximumInt() + 1); // Add one because internally we work with array posiiton 0, but in exset spec first pos is 1 
 				if(range.getSteps() != 1){
 					rangeBlock += "\\" + range.getSteps(); 
 				}
@@ -226,7 +231,7 @@ public class NexusUtilities {
 						String ranges = parts[1].trim();
 						CharSet charSet = new CharSet(name, alignmentWidth);
 
-						ArrayList<NexusRange> allRanges = parseNexusRanges(ranges);
+						ArrayList<NexusRange> allRanges = parseNexusRanges(ranges, 0);
 
 						// TODO also make it possible to read sets that are not
 						// continous but for example: 
@@ -264,7 +269,7 @@ public class NexusUtilities {
 		return allSets;
 	}
 
-	public static ArrayList<NexusRange> parseNexusRanges(String input){
+	public static ArrayList<NexusRange> parseNexusRanges(String input, int rangePositionVal){
 
 		ArrayList<NexusRange> allRanges = new ArrayList<NexusRange>();
 
@@ -280,7 +285,7 @@ public class NexusUtilities {
 		while(parser.hasMoreTokens()){
 			if(parser.isNextTokensIntRange()){
 //				logger.info("TOKENiSiNTRANGE");
-				allRanges.add(parser.getNexusRange());
+				allRanges.add(parser.getNexusRange(rangePositionVal));
 			}
 			else if(parser.isNextTokenNumeric()){
 //				logger.info("tokenIsNumeric");

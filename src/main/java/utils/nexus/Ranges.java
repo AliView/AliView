@@ -109,11 +109,11 @@ public class Ranges {
 	}
 	
 	
-	private void debug() {
+	public void debug() {
 		int count = 0;
 		for(CodonRange range: backend){
-			logger.info("count=" + count + " " + range.toString());
-			logger.info("codoncount = " + range.countAllCodons(1));
+//			logger.info("count=" + count + " " + range.toString());
+//			logger.info("codoncount = " + range.countAllCodons(1));
 			count ++;
 		}
 	}

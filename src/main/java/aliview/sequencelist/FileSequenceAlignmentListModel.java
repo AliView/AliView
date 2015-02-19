@@ -35,15 +35,15 @@ public class FileSequenceAlignmentListModel extends AlignmentListModel{
 	}
 
 	@Override
-	public FileMMSequenceList getSequences() {
-		return (FileMMSequenceList) super.getSequences();
+	public FileMMSequenceList getBackendSequencesCopy() {
+		return (FileMMSequenceList) super.getBackendSequencesCopy();
 	}
  
 	@Override
 	// only for the ones in the cache
 	public int getLongestSequenceLength() {		
 		int maxLen = 0;
-		for(Sequence seq: this.getSequences()){
+		for(Sequence seq: this.getBackendSequencesCopy()){
 			int len = seq.getLength();
 			if(len > maxLen){		
 				maxLen = len;
@@ -58,11 +58,11 @@ public class FileSequenceAlignmentListModel extends AlignmentListModel{
 */
 
 	public List<FilePage> getFilePages() {
-		return this.getSequences().getFilePages();
+		return this.getBackendSequencesCopy().getFilePages();
 	}
 
 	public void loadMoreSequencesFromFile(FilePage page) {
-		this.getSequences().loadMoreSequencesFromFile(page);
+		this.getBackendSequencesCopy().loadMoreSequencesFromFile(page);
 	}
 
 	@Override
@@ -109,11 +109,11 @@ public class FileSequenceAlignmentListModel extends AlignmentListModel{
 	}
 
 	public byte getBaseAt(int x, int y){
-		return getSequences().get(y).getBaseAtPos(x);
+		return getBackendSequencesCopy().get(y).getBaseAtPos(x);
 	}
 
 	public int getLengthAt(int y) {
-		return getSequences().get(y).getLength();
+		return getBackendSequencesCopy().get(y).getLength();
 	}
 
 	public boolean isEditable(){
@@ -121,7 +121,7 @@ public class FileSequenceAlignmentListModel extends AlignmentListModel{
 	}
 	
 	public FilePage getActivePage(){
-		return getSequences().getActivePage();
+		return getBackendSequencesCopy().getActivePage();
 	}
 	
 	@Override

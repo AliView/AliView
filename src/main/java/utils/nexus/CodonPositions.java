@@ -16,6 +16,7 @@ public class CodonPositions{
 	private int readingFrame;
 	private TranslatedAminoAcidPositions translatedAminoAcidPos;	
 	private BitSet notused;
+	private ArrayList<NexusRange> nexusRanges = new ArrayList<NexusRange>();
 	
 	public CodonPositions(){
 		this(new NexusRangePositionsArray(), 1);
@@ -146,7 +147,6 @@ public class CodonPositions{
 		// sort them
 		RangeUtils.sortIntRangeList(allRanges);
 		return allRanges;
-
 	}
 	
 	
@@ -320,10 +320,17 @@ public class CodonPositions{
 		return positionsArray.isAnythingButDefault();
 	}
 
+	//
+	// parse nexus indata
+	//
+	
 	public void addNexusRanges(ArrayList<NexusRange> allRanges) {
-		// TODO Auto-generated method stub
-		
+		nexusRanges.addAll(allRanges);
 	}
+	
+	//
+	// end parse nexus data
+	//
 
 	public int[] translatePositions(int[] selection) {
 		if(selection == null){
@@ -366,6 +373,11 @@ public class CodonPositions{
 		Rectangle trans = new Rectangle(codonX1.startPos, codonY1.startPos, width, height);
 		
 		return trans;
+	}
+
+	public void addRanges(Ranges allRanges) {
+		positionsArray.setBackend(allRanges);
+		positionsUpdated();
 	}
 
 

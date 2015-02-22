@@ -2133,6 +2133,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		// translated/nucleotide view, this is for scrolling to similar position
 		Point transPosTopLeft = alignmentPane.getVisibleUpperLeftMatrixPos();
 		Point nucPosTopLeft = alignmentPane.getVisibleUpperLeftMatrixPos();
+		Rectangle selectRect = alignment.getSelectionAsMinRect();
 			
 		boolean isPrevShowTrans = alignment.isTranslatedOnePos();
 		alignment.setTranslationOnePos(! alignment.isTranslatedOnePos());
@@ -2141,21 +2142,42 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		
 		// this is to scroll pane to similair position when changing nucleotide/translationOnePos
 		if(isPrevShowTrans != isNowShowTrans){
-			if(isPrevShowTrans){	
+			if(isPrevShowTrans){
+							
+				// adjust to make selection at same place after re-translation
+				// get first selected position diff from upper left;
+				int selectionDiff = 0;
+				if(selectRect != null){
+					selectionDiff = selectRect.x - transPosTopLeft.x;
+					if(selectionDiff > 0 && selectionDiff < 1000){
+						selectionDiff = (int) (2.01 * (double) selectionDiff);
+					}else{
+						selectionDiff = 0;
+					}
+				}
 				
 				// translated to nucleotide
-				
 				CodonPos codonPos = alignment.getAlignmentMeta().getCodonPositions().getCodonInTranslatedPos(transPosTopLeft.x);
-				Point nucPosUpperLeft = new Point(codonPos.startPos, transPosTopLeft.y);
-				alignmentPane.scrollToVisibleUpperLeftMatrixPos(nucPosUpperLeft);
+				Point nucPosUpperLeft = new Point(codonPos.startPos + selectionDiff, transPosTopLeft.y);
+				alignmentPane.scrollToVisibleUpperLeftMatrixPos(nucPosUpperLeft);	
 				
 			}
 			else{
+				// adjust to make selection at same place after translation
+				// get first selected position diff from upper left;
+				int selectionDiff = 0;
+				if(selectRect != null){
+					selectionDiff = selectRect.x - nucPosTopLeft.x;
+					if(selectionDiff > 0 && selectionDiff < 1000){
+						selectionDiff = (int) (0.685 * (double) selectionDiff);
+					}else{
+						selectionDiff = 0;
+					}
+				}
 				// nucleotide pos to translated
-							
 				int aaPos = alignment.getAlignmentMeta().getCodonPositions().getAminoAcidPosFromNucleotidePos( nucPosTopLeft.x);
 				//logger.info("codonPos" + codonPosition);
-				Point translatedUpperLeft = new Point(aaPos, nucPosTopLeft.y);
+				Point translatedUpperLeft = new Point(aaPos - selectionDiff, nucPosTopLeft.y);
 				//logger.info(translatedUpperLeft);
 				alignmentPane.scrollToVisibleUpperLeftMatrixPos(translatedUpperLeft);
 

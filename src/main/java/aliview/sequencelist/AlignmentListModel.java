@@ -2055,14 +2055,16 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		fireSequencesChanged(index0, index1);
 	}
 
-	public void setTranslation(boolean b) {
-		if(b != isTranslated){
-			isTranslated = b;
-			if(isTranslated){
+	public void setTranslation(boolean shouldTrans) {
+		if(shouldTrans != isTranslated){
+			if(shouldTrans){
 				selectionModel.translateSelection(getAlignment().getAlignmentMeta());
 			}else{
 				selectionModel.reTranslateSelection(getAlignment().getAlignmentMeta());
 			}
+			isTranslated = shouldTrans;
+			
+			
 			fireSequencesChangedAll();
 		}
 	}

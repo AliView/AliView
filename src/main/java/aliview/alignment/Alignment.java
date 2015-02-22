@@ -235,17 +235,18 @@ public class Alignment implements FileSequenceLoadListener {
 				// Write name space and up to 60 residues
 				Sequence seq = sequences.get(n);
 				String paddedName = StringUtils.rightPad(seq.getName(), namePadSize);
-				byte[] bases = seq.getBasesBetween(pos,  endPos);
+			//	byte[] bases = seq.getBasesBetween(pos,  endPos);
 
 				out.write(paddedName);
-				out.write(new String(bases));
+				seq.writeBasesBetween(pos, endPos, out);
 				out.write(LF);
-				out.flush();
+			//	out.flush();
 			}
 			
 			// add two blank lines
 			out.write(LF);
 			out.write(LF);
+			out.flush();
 		}
 		out.flush();
 		out.close();

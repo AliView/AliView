@@ -2126,7 +2126,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 	
 	
 	
-	public void mntmToggleTranslationOnePos() {
+	public void mntmToggleTranslationOnePos(){
 		logger.info("toggleOnePos");
 		
 		// translated pos to nucleotide pos - save the current vals before changing 
@@ -2723,7 +2723,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 
 	public void createOrUpdateDynamicLoadFileMenu(){
 		logger.info("create");
-
+/*
 		if(alignment.getSequences() instanceof FileSequenceAlignmentListModel && aliViewMenuBar != null){
 			final FileSequenceAlignmentListModel seqList = (FileSequenceAlignmentListModel) alignment.getSequences();		
 			List<FilePage> pages = seqList.getFilePages();
@@ -2732,6 +2732,8 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 				aliViewMenuBar.createDynamicLoadFilePages(seqList, pages);
 			}
 		}
+		
+		*/
 	}	 
 
 	/*

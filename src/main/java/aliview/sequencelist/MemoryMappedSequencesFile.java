@@ -6,10 +6,12 @@ import java.awt.Component;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.event.WindowStateListener;
+import java.io.BufferedReader;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
@@ -18,6 +20,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -26,6 +30,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import utils.DialogUtils;
@@ -38,7 +43,7 @@ import aliview.importer.ClustalFileIndexer;
 import aliview.importer.FastaFileIndexer;
 import aliview.importer.FileImportUtils;
 import aliview.importer.FileIndexer;
-import aliview.importer.IndexFileReader;
+import aliview.importer.NotUsed_IndexFileReader;
 import aliview.importer.MSFFileIndexer;
 import aliview.importer.NexusFileIndexer;
 import aliview.importer.PhylipFileIndexer;
@@ -50,120 +55,199 @@ import aliview.settings.Settings;
 import aliview.subprocesses.SubProcessWindow;
 import aliview.subprocesses.SubThreadProgressWindow;
 
-public class FileMMSequenceList implements List<Sequence>{
-	private static final Logger logger = Logger.getLogger(FileMMSequenceList.class);
+public class MemoryMappedSequencesFile{
+	private static final Logger logger = Logger.getLogger(MemoryMappedSequencesFile.class);
 	private static final String LF = System.getProperty("line.separator");
 	private FileFormat fileFormat;
-	private File aliFile;
-	//private MappedByteBuffer mappedBuff;
+	private File alignmentFile;
 	private ByteBufferInpStream mappedBuff;
-	private List<Sequence> seqList = Collections.synchronizedList(new ArrayList<Sequence>()); //new SequenceListCache(0); // TODO maybe synchronize this list
-	private FilePage currentPage = null;
-	private FileSequence lastCachedSeq;
+	private ReentrantLock mappedBuffLock = new ReentrantLock();
+//	private FileSequence lastCachedSeq;
 	private long fileSize = -1;
-	private int nSequencesPerPage;
-	ArrayList<ListDataListener> listeners = new ArrayList<ListDataListener>();
-	private ArrayList<FilePage> pages;
+//	ArrayList<ListDataListener> listeners = new ArrayList<ListDataListener>();
+//	private ArrayList<FilePage> pages;
 
 
-	public FileMMSequenceList(File aliFile, FileFormat foundFormat) throws IOException {
-		this.aliFile = aliFile;
+	public MemoryMappedSequencesFile(File aliFile, FileFormat foundFormat) throws IOException {
+		this.alignmentFile = aliFile;
 		this.fileFormat = foundFormat;
 
 		logger.info("new FileMMSequnceList");
-
-		// check if indexfile exists
-		File indexFile = new File(aliFile.getAbsolutePath() + ".fai");
-		if(foundFormat == FileFormat.FASTA && indexFile.exists()){
-			ArrayList<FileSequence> seqs = IndexFileReader.createSequences(indexFile, this);
+	}
+	
+	public ReentrantLock getMappedBuffLock() {
+		return mappedBuffLock;
+	}
+	
+	void indexFileAndAddSequencesToAlignmentModel(FileSequenceAlignmentListModel destinationModel) throws IOException{
+		
+		// check if index file exists
+		File indexFile = new File(alignmentFile.getAbsolutePath() + ".fai");
+		// read from index file if exists
+		if(fileFormat == FileFormat.FASTA && indexFile.exists()){
+			List<Sequence> seqs = createSequencesFromExistingIndexFile(indexFile);
 
 			// create memory mapped buffer
 			if(mappedBuff == null){
 				createMemoryMappedBuffer();	
 			}
 
-			if(pages == null){
-				if(seqs.size() > 0){
-					lastCachedSeq = seqs.get(seqs.size() - 1);
-					pages = getFilePages();
-					// set SeqList
-					seqList = pages.get(0).seqList;
-				}
-			}
-
 			// add sequences to cache
-			addSequencesToCache(seqs);
-
-			// fire contents changed
-			fireContentsChanged(this);		
+			addSequencesToDestination(seqs, destinationModel);
 		}
+		// Otherwise index file
 		else{
-
-			// first estimate number of sequences and number of sequences to read at once and how many pages that would be	
-			// read and split large file info pages if needed
-			if(fileFormat == FileFormat.PHYLIP || fileFormat == FileFormat.NEXUS || fileFormat == FileFormat.CLUSTAL){
-				nSequencesPerPage = 1000000;
-			}else{
-				nSequencesPerPage = Settings.getLargeFileIndexing().getIntValue();
-			}
-
-			FilePage initialPage = new FilePage(0,aliFile, Collections.synchronizedList(new ArrayList<Sequence>()),0,nSequencesPerPage,0,-1,nSequencesPerPage);
-			findAndAddSequencesToCacheInSubthread(initialPage);
+			indexFileAndAddSequencesToListInSubthread(destinationModel, fileFormat);
 		}
 	}
+		
+	
+	
+	public List<Sequence> createSequencesFromExistingIndexFile(File indexFile) {
+		
+		long startTime = System.currentTimeMillis();
+		ArrayList<Sequence> sequences = new ArrayList<Sequence>();
+		
+		try {
+			BufferedReader r = new BufferedReader(new FileReader(indexFile));
+			String line;
+			int nLine = 0;
+			int seqIndex = 0;
+	//		String[] splitted = new String[5];
+			while ((line = r.readLine()) != null) {
+				
+				line = line.trim();
+			
+				if(line.length() > 0){
+					
+					String[] splitted = StringUtils.split(line, '\t');
+				//	String[] splitted = line.split("\t");//StringUtils.split(line, '\t');
+					
+//					int startPos = 0;
+//					int endPos = line.indexOf('\t',startPos);
+//					
+//					splitted[0] = line.substring(startPos, endPos);
+//					startPos = endPos + 1;
+//					endPos = line.indexOf('\t',startPos);
+//					splitted[1] = line.substring(startPos, endPos);
+//					startPos = endPos + 1;
+//					endPos = line.indexOf('\t',startPos);
+//					splitted[2] = line.substring(startPos, endPos);
+//					startPos = endPos + 1;
+//					endPos = line.indexOf('\t',startPos);
+//					splitted[3] = line.substring(startPos, endPos);
+//					startPos = endPos + 1;
+//					endPos = line.indexOf('\t',startPos);
+//					splitted[4] = line.substring(startPos, endPos);
+					
+					String  seqName = splitted[0];
+					int seqWithoutWhitespaceLength = Integer.parseInt(splitted[1]);
+					long seqAfterNameStartPointer = Long.parseLong(splitted[2]);
+					int lineCharLength = Integer.parseInt(splitted[3]);
+					int lineAbsoluteLength = Integer.parseInt(splitted[4]);
+					
+					int nSeqFullLines = (int)Math.floor(seqWithoutWhitespaceLength/lineCharLength);
+					int lineDiff = lineAbsoluteLength - lineCharLength;
+					
+					
+					double partialLine = ((double)seqWithoutWhitespaceLength/(double)lineCharLength) - (double)nSeqFullLines;
+					
+					int extraChars = (int)Math.floor(partialLine * lineDiff);
+					
+					long endPointer = seqAfterNameStartPointer + seqWithoutWhitespaceLength + nSeqFullLines * lineDiff + extraChars;
+					
+					FileSequence seq = new FileSequence(this, seqIndex, seqName, seqWithoutWhitespaceLength, seqAfterNameStartPointer, endPointer, lineCharLength, lineAbsoluteLength);
+					sequences.add(seq);
+					seqIndex ++;
+				}
+				nLine ++;
+			}
+			
+		} catch (Exception e) {
+			logger.error(e);
+		}
+		long endTime = System.currentTimeMillis();
+		System.out.println("reading index took " + (endTime - startTime) + " milliseconds");
 
-	public void loadMoreSequencesFromFile(FilePage page) {
-		findAndAddSequencesToCacheInSubthread(page);
+		return sequences;
 	}
-
-	private void findAndAddSequencesToCacheInSubthread(final FilePage page){
-
-		// switchPage
-		currentPage = page;
-		seqList = page.seqList;
-
-		if(seqList.size() > 0){
-			fireContentsChanged(this);
-
-		}else{
-
-			final SubThreadProgressWindow progressWin = new SubThreadProgressWindow();
-			progressWin.setAlwaysOnTop(true);
-			progressWin.setTitle("Indexing");
-			progressWin.setMessage("Indexing file: " + 0 + "/" + page.nMaxSeqsToRetrieve);	
-			progressWin.show();
-			progressWin.centerLocationToThisComponentOrScreen(AliView.getActiveWindow());
+	
+	
+	private void indexFileAndAddSequencesToListInSubthread(final AlignmentListModel destinationModel, final FileFormat fileFormat){
+		
+		final SubThreadProgressWindow progressWin = new SubThreadProgressWindow();
+		progressWin.setAlwaysOnTop(true);
+		progressWin.setTitle("Background indexing");
+		progressWin.setInitialMessage("Indexing file: " + 0 + "/" + "number of sequences");
+		progressWin.show();
+		progressWin.centerLocationToThisComponentOrScreen(AliView.getActiveWindow());
+		//progressWin.setTopRightRelativeThisComponent(AliView.getActiveWindow());
+		progressWin.setBottomRightRelativeThisComponent(AliView.getActiveWindow());
+		
 
 			try{	
 				final Thread thread = new Thread(new Runnable(){
 
 					public void run(){
 						try {
-							// The standard JAVA-MappedFileBuffer, but it is limited to 2GB files
-							// mappedBuff = new FileInputStream(aliFile).getChannel().map(FileChannel.MapMode.READ_ONLY, 0, aliFile.length()); 
-							// This is extended version - any size files
-							if(mappedBuff == null){
-								progressWin.setTitle("Mapping file");
-								progressWin.setMessage("Mapping file - usually takes about 0-15sek" );
-								progressWin.setVisible(true);
-								createMemoryMappedBuffer();	
+							logger.info("Indexing Thread started");
+							int nMaxSeqsToRetrieveBeforeDestinationUpdate = 500;
+							// These formats are possibly sequential and it is good to retrieve all seqs at once
+							if(fileFormat == FileFormat.PHYLIP || fileFormat == FileFormat.NEXUS || fileFormat == FileFormat.CLUSTAL){
+								nMaxSeqsToRetrieveBeforeDestinationUpdate = Integer.MAX_VALUE;
 							}
+							boolean hasMoreSequencesToIndex = true;
+							FileSequence lastCachedSeq = null;
+							int indexOffset = 0;
+							while(hasMoreSequencesToIndex){
+									
+								// The standard JAVA-MappedFileBuffer, but it is limited to 2GB files
+								// mappedBuff = new FileInputStream(aliFile).getChannel().map(FileChannel.MapMode.READ_ONLY, 0, aliFile.length()); 
+								// This is extended version - any size files
+								if(mappedBuff == null){
+									progressWin.setTitle("Mapping file");
+								    progressWin.setMessage("Mapping file - usually takes about 0-15 sec." );
+									progressWin.setVisible(true);
 
-							List<FileSequence> seqs = findSequencesInFile(page.startPointer,page.startIndex,page.nMaxSeqsToRetrieve, progressWin);							
-
-							if(pages == null){
-								if(seqs.size() > 0){
-									lastCachedSeq = seqs.get(seqs.size() - 1);
-									pages = getFilePages();
-									// set SeqList
-									seqList = pages.get(0).seqList;
+									createMemoryMappedBuffer();
+									
+									progressWin.setTitle("Background indexing");
+									progressWin.setMessage("Indexing file: " + 0 + "/" + "number of sequences");
 								}
+								
+								
+								long startPointer = 0;
+								if(lastCachedSeq != null){
+									startPointer = lastCachedSeq.getEndPointer();
+								}
+								
+								List<Sequence> moreSeqs = findSequencesInFile(startPointer,indexOffset,nMaxSeqsToRetrieveBeforeDestinationUpdate, progressWin);		
+								logger.info("Thread here moreSeqs.size()" + moreSeqs.size());
+								
+								if(moreSeqs.size() > 0){
+									addSequencesToDestination(moreSeqs, destinationModel);
+									lastCachedSeq = (FileSequence) moreSeqs.get(moreSeqs.size() - 1);
+									indexOffset += moreSeqs.size();
+								}else{
+									hasMoreSequencesToIndex = false;
+								}
+								
+								if(Thread.interrupted()){
+									break;
+								}
+								
+//								// sleeep a while so file can be read by other thread
+//								try {
+//									logger.info("Thread sleep");
+//									Thread.sleep(100);
+//								} catch (InterruptedException e) {
+//									// TODO Auto-generated catch block
+//									e.printStackTrace();
+//								}
+								
 							}
-
-							// save index-file
-
-							// add seqs to cache
-							addSequencesToCache(seqs);
+							
+							
 						} catch (FileNotFoundException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -182,7 +266,7 @@ public class FileMMSequenceList implements List<Sequence>{
 							public void run(){
 								boolean wasThreadInterruptedByUser = progressWin.wasSubThreadInterruptedByUser();
 								progressWin.dispose();
-								fireContentsChanged(this);
+								//fireContentsChanged(this);
 								// unlock window
 								// AliViewWindow.getAliViewWindowGlassPane().setVisible(false);
 							}
@@ -198,17 +282,16 @@ public class FileMMSequenceList implements List<Sequence>{
 				// unlock window
 				//				AliViewWindow.getAliViewWindowGlassPane().setVisible(false);
 				progressWin.dispose();
-				fireContentsChanged(this);
+	//			fireContentsChanged(this);
 				e.printStackTrace();
 			}
-		}
 	}
 
 	// TODO close buffer maybe? When alignment is changed?
 	protected void createMemoryMappedBuffer() throws IOException{
 
 		try {
-			mappedBuff = ByteBufferInpStream.map(new FileInputStream(aliFile).getChannel(),FileChannel.MapMode.READ_ONLY );
+			mappedBuff = ByteBufferInpStream.map(new FileInputStream(alignmentFile).getChannel(),FileChannel.MapMode.READ_ONLY );
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			throw e;
@@ -223,16 +306,16 @@ public class FileMMSequenceList implements List<Sequence>{
 		}
 	}
 
-	private synchronized List<FileSequence> findSequencesInFile(long filePointerStart, int seqOffset, final int nSeqsToRetrieve, final SubThreadProgressWindow progressWin){
+	private List<Sequence> findSequencesInFile(long filePointerStart, int seqOffset, final int nSeqsToRetrieve, final SubThreadProgressWindow progressWin){
 		long startTime = System.currentTimeMillis();
 
 		int nSeqCount = 0;
 
-		ArrayList<FileSequence> allSeqs = new ArrayList<FileSequence>();
+		ArrayList<Sequence> allSeqs = new ArrayList<Sequence>();
 		if(this.fileFormat == FileFormat.PHYLIP){		
 			try {
 				PhylipFileIndexer fileIndexer = new PhylipFileIndexer();
-				allSeqs = fileIndexer.findSequencesInFile(mappedBuff, filePointerStart, seqOffset, nSeqsToRetrieve, progressWin, this);
+				allSeqs = fileIndexer.findSequencesInFile(this, filePointerStart, seqOffset, nSeqsToRetrieve, progressWin);
 			} catch (AlignmentImportException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -241,7 +324,7 @@ public class FileMMSequenceList implements List<Sequence>{
 		else if(this.fileFormat == FileFormat.NEXUS){
 			try {
 				NexusFileIndexer fileIndexer = new NexusFileIndexer();
-				allSeqs = fileIndexer.findSequencesInFile(mappedBuff, filePointerStart, seqOffset, nSeqsToRetrieve, progressWin, this);
+				allSeqs = fileIndexer.findSequencesInFile(this, filePointerStart, seqOffset, nSeqsToRetrieve, progressWin);
 			} catch (AlignmentImportException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -250,7 +333,7 @@ public class FileMMSequenceList implements List<Sequence>{
 		else if(this.fileFormat == FileFormat.CLUSTAL){
 			try {
 				ClustalFileIndexer fileIndexer = new ClustalFileIndexer();
-				allSeqs = fileIndexer.findSequencesInFile(mappedBuff, filePointerStart, seqOffset, nSeqsToRetrieve, progressWin, this);
+				allSeqs = fileIndexer.findSequencesInFile(this, filePointerStart, seqOffset, nSeqsToRetrieve, progressWin);
 			} catch (AlignmentImportException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -259,14 +342,16 @@ public class FileMMSequenceList implements List<Sequence>{
 		else if(this.fileFormat == FileFormat.MSF){
 			try {
 				MSFFileIndexer fileIndexer = new MSFFileIndexer();
-				allSeqs = fileIndexer.findSequencesInFile(mappedBuff, filePointerStart, seqOffset, nSeqsToRetrieve, progressWin, this);
+				allSeqs = fileIndexer.findSequencesInFile(this, filePointerStart, seqOffset, nSeqsToRetrieve, progressWin);
 			} catch (AlignmentImportException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}else{
 			FastaFileIndexer fileIndexer = new FastaFileIndexer();
-			allSeqs = fileIndexer.findSequencesInFile(mappedBuff, filePointerStart, seqOffset, nSeqsToRetrieve, progressWin, this);
+			mappedBuffLock.lock();
+				allSeqs = fileIndexer.findSequencesInFile(this, filePointerStart, seqOffset, nSeqsToRetrieve, progressWin);
+			mappedBuffLock.unlock();
 		}
 
 		long endTime = System.currentTimeMillis();
@@ -275,22 +360,19 @@ public class FileMMSequenceList implements List<Sequence>{
 	}
 
 
-	private synchronized void addSequencesToCache(List<FileSequence> seqs){
+	private void addSequencesToDestination(final List<Sequence> moreSeqs, final AlignmentListModel destinationModel){
 
-		logger.info("addSequencesToCache");
-
-		for(int n = 0; n < seqs.size(); n++){
-			//seqCache.put(new Integer(seqs.get(n).getSeqIndex()) ,seqs.get(n) );
-			seqList.add(seqs.get(n));
-		}
-
-		if(seqs.size() > 0){
-			this.lastCachedSeq = seqs.get(seqs.size() - 1);
-		}
-
+		logger.info("addSequencesToDestination");
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				destinationModel.addAll(moreSeqs, false);
+			}
+		});
+		
 	}
 
-	public ArrayList<FilePage> getFilePages() {
+	/*
+	public List<FilePage> getFilePages() {
 
 		if(pages == null && lastCachedSeq != null){
 
@@ -326,180 +408,98 @@ public class FileMMSequenceList implements List<Sequence>{
 		}		
 		return pages;	
 	}
+	*/
 
-	public synchronized byte readByteInFile(long pos) {
+	public byte readByteInFile(long pos) {
 		return (byte) readInFile(pos);
 	}
 
-	public synchronized int readInFile(long pos) {
+	public int readInFile(long pos) {
 		if(pos < 0){
 			return 0;
 		}
-		mappedBuff.position(pos);
-		return mappedBuff.read();
+		
+		mappedBuffLock.lock();
+			mappedBuff.position(pos);
+			int val = mappedBuff.read();
+		mappedBuffLock.unlock();
+		return val;
+
+		
 	}
 
 	public ByteBufferInpStream getMappedBuff() {
 		return mappedBuff;
 	}
 
-	public synchronized int readBytesInFile(long pos, int i, byte[] bytesToDraw) {
-		mappedBuff.position(pos);
-		return mappedBuff.read(bytesToDraw,0,i);
+	public int readBytesInFile(long pos, int i, byte[] bytesToDraw) {
+//		synchronized (mappedBuff) {
+//			mappedBuff.position(pos);
+//			return mappedBuff.read(bytesToDraw,0,i);
+//		}
+		
+		mappedBuffLock.lock();
+			mappedBuff.position(pos);
+			int val = mappedBuff.read(bytesToDraw,0,i);
+		mappedBuffLock.unlock();
+	return val;
+		
+		
 	}
 
-	public synchronized long getFileSize(){		
+	public long getFileSize(){	
+//		synchronized (mappedBuff) {
+//			if(fileSize == -1){
+//				fileSize = mappedBuff.length();
+//			}
+//			return fileSize;
+//		}
+		
+		mappedBuffLock.lock();
 		if(fileSize == -1){
 			fileSize = mappedBuff.length();
 		}
+		mappedBuffLock.unlock();
 		return fileSize;
+		
 	}
 
-	public int size() {
-
-		// return 400000;
-		return seqList.size();
-
-		//	return seqList.size() + extraUnloadedSeqs;
+	
 
 
-		/*		
-		if(totalSeqCount == -1){
-			return seqList.size() + extraUnloadedSeqs ;
-		}
-		else{
-			return totalSeqCount;
-		}
-		 */		
+	
+//	public int size() {
+//
+//		// return 400000;
+//		return seqList.size();
+//
+//		//	return seqList.size() + extraUnloadedSeqs;
+//
+//
+//		/*		
+//		if(totalSeqCount == -1){
+//			return seqList.size() + extraUnloadedSeqs ;
+//		}
+//		else{
+//			return totalSeqCount;
+//		}
+//		 */		
+//
+//		//return 10000;
+//
+//		/*
+//		int index = lastCachedSeq.getSeqIndex();
+//		long pointer = lastCachedSeq.getSeqStartPointer();
+//
+//		long seqFileSize = pointer / (index + 1);
+//
+//		long estimate = getFileSize() / seqFileSize;
+//
+//		return (int) estimate;
+//		 */
+//
+//	}
 
-		//return 10000;
-
-		/*
-		int index = lastCachedSeq.getSeqIndex();
-		long pointer = lastCachedSeq.getSeqStartPointer();
-
-		long seqFileSize = pointer / (index + 1);
-
-		long estimate = getFileSize() / seqFileSize;
-
-		return (int) estimate;
-		 */
-
-	}
-
-	public boolean isEmpty() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean contains(Object o) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public Object[] toArray() {
-		return seqList.toArray();
-	}
-
-	public <T> T[] toArray(T[] a) {
-		return seqList.toArray(a);
-	}
-
-	public boolean add(Sequence e) {
-		return seqList.add(e);
-	}
-
-	public boolean remove(Object o) {
-		return seqList.remove(o);
-	}
-
-	public boolean containsAll(Collection<?> c) {
-		return seqList.containsAll(c);
-	}
-
-	public boolean addAll(Collection<? extends Sequence> c) {
-		return seqList.addAll(c);
-	}
-
-	public boolean addAll(int index, Collection<? extends Sequence> c) {
-		return seqList.addAll(index, c);
-	}
-
-	public boolean removeAll(Collection<?> c) {
-		return seqList.removeAll(c);
-	}
-
-	public boolean retainAll(Collection<?> c) {
-		return seqList.retainAll(c);
-	}
-
-	public void clear() {
-		seqList.clear();
-	}
-
-	// Arraylistversion
-	public Sequence get(int index) {
-		Sequence seq = seqList.get(index);	
-		return seq;
-	}
-
-	public Sequence set(int index, Sequence element) {
-		return seqList.set(index, element);
-	}
-
-	public void add(int index, Sequence element) {
-		seqList.add(index, element);
-	}
-
-	public Sequence remove(int index) {
-		return seqList.remove(index);
-	}
-
-	public int indexOf(Object o) {
-		return seqList.indexOf(o);
-	}
-
-	public int lastIndexOf(Object o) {
-		return seqList.lastIndexOf(o);
-	}
-
-	public List<Sequence> subList(int fromIndex, int toIndex) {
-		return seqList.subList(fromIndex, toIndex);
-	}
-
-	public Iterator<Sequence> iterator() {
-		return seqList.iterator();
-	}
-
-	public ListIterator<Sequence> listIterator() {
-		return seqList.listIterator();
-	}
-
-	public ListIterator<Sequence> listIterator(int index) {
-		return seqList.listIterator(index);
-	}
-
-	protected void fireContentsChanged(Object source){
-		ListDataEvent e = new ListDataEvent(source, ListDataEvent.CONTENTS_CHANGED, 0, seqList.size() - 1);
-		for(ListDataListener listener: listeners){
-			listener.contentsChanged(e);
-		}
-	}
-
-	public void addListDataListener(ListDataListener listener){
-		if(listener == null || listeners.contains(listener)){
-			return;
-		}
-		listeners.add(listener);
-	}
-
-	public List<Sequence> getCachedSequences() {
-		return seqList;
-	}
-
-	public FilePage getActivePage() {
-		return currentPage;
-	}
 
 }
 

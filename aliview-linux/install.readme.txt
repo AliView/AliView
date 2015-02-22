@@ -6,7 +6,7 @@ download and run the installer:
 
 aliview.install.run
 
-(this is a executable archive that will copy files to /usr/home/bin/ and /usr/share/aliview/, 
+(this is a executable archive that will copy files to /usr/bin/ and /usr/share/aliview/, 
 and will also install a .desktop link to the start-menu on compatible systems)
 
 - after downloading you will likely need to change the execution rights of the install file:

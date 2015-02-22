@@ -55,7 +55,7 @@ import aliview.sequencelist.MemorySequenceAlignmentListModel;
 import aliview.sequencelist.AlignmentListModel;
 import aliview.sequencelist.FileSequenceLoadListener;
 import aliview.sequences.FastaFileSequence;
-import aliview.sequences.InMemoryBasicSequence;
+import aliview.sequences.InMemorySequence;
 import aliview.sequences.PhylipSequence;
 import aliview.sequences.Sequence;
 import aliview.sequences.SequenceUtils;
@@ -72,7 +72,6 @@ public class Alignment implements FileSequenceLoadListener {
 	private File alignmentFile;
 	private int PRIMER_MAX_DEGENERATE_SCORE = 1000;
 	private boolean isEditedAfterLastSave = false;
-	private FileFormat fileFormat;
 	private AlignmentMeta alignmentMeta;
 	private int readingFrame = 1;
 	private boolean editMode;
@@ -80,24 +79,20 @@ public class Alignment implements FileSequenceLoadListener {
 	private boolean isSelectable;
 
 	public Alignment(){
-		this(null, null, new MemorySequenceAlignmentListModel(), new AlignmentMeta());
+		this(null, new MemorySequenceAlignmentListModel(), new AlignmentMeta());
 	}
 
 	public Alignment(AlignmentListModel sequences) {
-		this(null, null, sequences, new AlignmentMeta());
+		this(null, sequences, new AlignmentMeta());
 	}
 	
-	public Alignment(File file, FileFormat fileFormat, AlignmentListModel sequences, AlignmentMeta aliMeta) {
+	public Alignment(File file, AlignmentListModel sequences, AlignmentMeta aliMeta) {
 		setAlignmentFile(file);
-		this.fileFormat = fileFormat;
 		this.sequences = sequences;
 		this.sequences.setAlignment(this);
 		//this.sequences.addAlignmentSelectionListener(this);
 		this.alignmentMeta = aliMeta;
 		setEditedAfterLastSave(false);
-		if(this.sequences instanceof FileSequenceAlignmentListModel){
-			((FileSequenceAlignmentListModel) sequences).addSequenceLoadLisetner(this);
-		}
 		fireAllSequencesAreNew();
 	}
 	
@@ -233,18 +228,19 @@ public class Alignment implements FileSequenceLoadListener {
 	    //  Clustal uses up to 60 residues per line
 		for(int pos = 0; pos < longSeq; pos += 60){
 			
-			int endPos = pos + 60;
+			int endPos = pos + 59; // end is inclusive
 			endPos = Math.min(endPos, longSeq);
 			
 			for(int n = 0; n < sequences.getSize(); n++){		
 				// Write name space and up to 60 residues
 				Sequence seq = sequences.get(n);
 				String paddedName = StringUtils.rightPad(seq.getName(), namePadSize);
-				byte[] bases = seq.getBasesBetween(pos,  endPos - 1);
+				byte[] bases = seq.getBasesBetween(pos,  endPos);
 
 				out.write(paddedName);
 				out.write(new String(bases));
 				out.write(LF);
+				out.flush();
 			}
 			
 			// add two blank lines
@@ -376,9 +372,9 @@ public class Alignment implements FileSequenceLoadListener {
 				
 				out.write(paddedName);
 				
-				byte[] bases = seq.getBasesBetween(0,  residuesPerLine - 1);
+				//byte[] bases = seq.;
 				
-				out.write(new String(bases));
+				seq.writeBasesBetween(0,  residuesPerLine - 1, out);
 					
 				out.write(LF);
 			}
@@ -402,10 +398,11 @@ public class Alignment implements FileSequenceLoadListener {
 //					
 //					out.write(paddedName);
 					
-					byte[] bases = seq.getBasesBetween(pos,  endPos - 1);
+					//byte[] bases = seq.getBasesBetween;
 					
-					out.write(new String(bases));
-						
+					// ((out.write(new String(bases));
+					seq.writeBasesBetween(pos,  endPos - 1, out);	
+					
 					out.write(LF);
 				}
 				
@@ -534,7 +531,7 @@ public class Alignment implements FileSequenceLoadListener {
 	
 	public void saveAlignmentAsFile(File outFile) throws IOException{	
 		// save as current format
-		saveAlignmentAsFile(outFile,this.fileFormat);	
+		saveAlignmentAsFile(outFile,getFileFormat());	
 	}
 
 	public void saveAlignmentAsFile(File outFile, FileFormat fileFormat) throws IOException{
@@ -688,9 +685,13 @@ public class Alignment implements FileSequenceLoadListener {
 	
 
 	public boolean mergeTwoSequences(Sequence seq1, Sequence seq2, boolean allowOverlap){
-		boolean wasMerged = sequences.mergeTwoSequences(seq1, seq2, allowOverlap);
-		
-		return wasMerged;
+		if(seq1 instanceof InMemorySequence && seq2 instanceof InMemorySequence){
+			boolean wasMerged = sequences.mergeTwoSequences((InMemorySequence)seq1, (InMemorySequence) seq2, allowOverlap);
+			return wasMerged;
+		}
+		else{
+			return false;
+		}
 	}
 
 
@@ -982,7 +983,7 @@ public class Alignment implements FileSequenceLoadListener {
 	public void addFasta(String clipboardSelection) {
 		try {
 			AlignmentListModel sequencesFromClipboard = seqFactory.createFastaSequences(new StringReader(clipboardSelection));
-			sequences.addAll(sequencesFromClipboard);
+			sequences.addAll(sequencesFromClipboard, true);
 		} catch (AlignmentImportException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1004,7 +1005,7 @@ public class Alignment implements FileSequenceLoadListener {
 			Arrays.fill(bases,(byte)'-');
 			
 			// TODO this is not working on file sequences 
-			Sequence newSeq = new InMemoryBasicSequence(seqName, bases);
+			Sequence newSeq = new InMemorySequence(seqName, bases);
 			
 			Point lastSel = sequences.getLastSelectedPos();
 			
@@ -1253,11 +1254,11 @@ public class Alignment implements FileSequenceLoadListener {
 
 
 	public void setAlignmentFormat(FileFormat fileFormat) {
-		this.fileFormat = fileFormat;
+		sequences.setFileFormat(fileFormat);
 	}
 
 	public FileFormat getFileFormat() {
-		return fileFormat;
+		return sequences.getFileFormat();
 	}
 
 	public int getLongestSequenceName() {
@@ -1699,9 +1700,9 @@ public class Alignment implements FileSequenceLoadListener {
 	}
 
 	public void saveFastaIndex() {
-		logger.info(this.fileFormat);
+		logger.info("this.fileFormat");
 		
-		if(this.fileFormat == FileFormat.FASTA && sequences instanceof FileSequenceAlignmentListModel){
+		if(getFileFormat() == FileFormat.FASTA && sequences instanceof FileSequenceAlignmentListModel){
 			FileSequenceAlignmentListModel model = (FileSequenceAlignmentListModel) getSequences();
 			
 			//String indexName = FileFormat.stripFileSuffixFromName(this.getAlignmentFile().getAbsolutePath());

@@ -15,7 +15,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import it.unimi.dsi.io.ByteBufferInpStream;
-import aliview.sequencelist.FileMMSequenceList;
 import aliview.sequences.FileSequence;
 import aliview.sequences.NexusFileSequence;
 import aliview.sequences.NexusSequence;

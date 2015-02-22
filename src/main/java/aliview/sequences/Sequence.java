@@ -45,6 +45,8 @@ public interface Sequence extends Comparable<Sequence>{
 	
 	public void writeBases(Writer out) throws IOException;
 	
+	public void writeBasesBetween(int start, int end, Writer out) throws IOException;
+	
 	public String getBasesAsString(); // used when exporting
 	
 	public int getUngapedLength();
@@ -79,8 +81,6 @@ public interface Sequence extends Comparable<Sequence>{
 	public void deleteSelectedBases();
 	
 	public void deleteBasesFromMask(boolean[] deleteMask);
-	
-	public void setBases(byte[] bases);
 	
 	public void clearBase(int n);
 	
@@ -183,5 +183,7 @@ public interface Sequence extends Comparable<Sequence>{
 	public void setAlignmentModel(AlignmentListModel alignmentModel);
 	
 	public AlignmentListModel getAlignmentModel();
+
+	
 
 }

@@ -7,6 +7,16 @@ public class PositionsToPointer {
 	ArrayList<PositionToPointer> posToPointerList = new ArrayList<PositionToPointer>();
 	private PositionToPointer cachedPosToPoint;
 
+	public PositionsToPointer getCopy(){
+		PositionsToPointer copy = new PositionsToPointer();
+		// Make copy of list and content
+		copy.posToPointerList = new ArrayList<PositionToPointer>();
+		for(PositionToPointer next: posToPointerList){
+			copy.posToPointerList.add(next.getCopy());
+		}
+		return copy;
+	}
+	
 	public void add(PositionToPointer posToPoint){
 		posToPointerList.add(posToPoint);
 	}

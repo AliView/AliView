@@ -2,17 +2,18 @@ package aliview.importer;
 
 
 import java.util.ArrayList;
-
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import it.unimi.dsi.io.ByteBufferInpStream;
-import aliview.sequencelist.FileMMSequenceList;
+import aliview.sequencelist.MemoryMappedSequencesFile;
 import aliview.sequences.FileSequence;
 import aliview.sequences.NexusFileSequence;
 import aliview.sequences.PhylipFileSequence;
 import aliview.sequences.PositionToPointer;
+import aliview.sequences.Sequence;
 import aliview.subprocesses.SubThreadProgressWindow;
 
 public class NexusFileIndexer implements FileIndexer{
@@ -20,10 +21,12 @@ public class NexusFileIndexer implements FileIndexer{
 	long estimateTotalSeqInFile = 0;
 	long fileSize = -1;
 
-	public ArrayList<FileSequence> findSequencesInFile(ByteBufferInpStream mappedBuff, long filePointerStart, int seqOffset, int nSeqsToRetrieve,
-			SubThreadProgressWindow progressWin, FileMMSequenceList fileMMSequenceList) throws AlignmentImportException {
+	public ArrayList<Sequence> findSequencesInFile(MemoryMappedSequencesFile sequencesFile, long filePointerStart, int seqOffset, int nSeqsToRetrieve,
+			SubThreadProgressWindow progressWin) throws AlignmentImportException {
 
-		ArrayList<FileSequence> allSeqs = new ArrayList<FileSequence>();
+		ByteBufferInpStream mappedBuff = sequencesFile.getMappedBuff();
+		
+		ArrayList<Sequence> allSeqs = new ArrayList<Sequence>();
 		try{
 			this.fileSize = mappedBuff.length();
 			int longestSequenceLength = 0;

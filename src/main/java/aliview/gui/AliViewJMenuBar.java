@@ -1765,6 +1765,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 
 	public void createDynamicLoadFilePages(final FileSequenceAlignmentListModel seqList, List<FilePage> pages) {
 		logger.info("beforemenu");
+		/*
 		if(mnFilePages == null){
 			mnFilePages = new JMenu("Load more sequences from file");
 			this.add(mnFilePages);
@@ -1790,6 +1791,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 				nextItem.setSelected(true);
 			}
 		}
+		*/
 	}
 
 	public void removeDynamicLoadFilePagesMenu(){

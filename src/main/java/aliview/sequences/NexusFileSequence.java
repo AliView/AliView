@@ -1,10 +1,10 @@
 package aliview.sequences;
 
-import aliview.sequencelist.FileMMSequenceList;
+import aliview.sequencelist.MemoryMappedSequencesFile;
 
 public class NexusFileSequence extends PositionsToPointerFileSequence {
 
-	public NexusFileSequence(FileMMSequenceList fileSeqList, int seqIndex, long startPointer) {
-		super(fileSeqList, seqIndex, startPointer);
+	public NexusFileSequence(MemoryMappedSequencesFile sequencesFile, long startPointer) {
+		super(sequencesFile, startPointer);
 	}	
 }

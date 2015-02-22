@@ -4,7 +4,7 @@ package aliview.sequences;
 
 
 
-public class ConvertedJEBLSequence extends InMemoryBasicSequence {
+public class ConvertedJEBLSequence extends InMemorySequence {
 
 
 	public ConvertedJEBLSequence(jebl.evolution.sequences.Sequence jeblSeq) {

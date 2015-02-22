@@ -1,13 +1,13 @@
 package aliview.sequences;
 
-import aliview.sequencelist.FileMMSequenceList;
+import aliview.sequencelist.MemoryMappedSequencesFile;
 
 public class FastaFileSequence extends FileSequence {
 	private int residuesPerLine;
 	private int charsPerLine;
 	
-	public FastaFileSequence(FileMMSequenceList fileSeqList, int seqIndex,long startPointer){
-		super(fileSeqList, seqIndex, startPointer);
+	public FastaFileSequence(MemoryMappedSequencesFile sequencesFile, long startPointer){
+		super(sequencesFile, startPointer);
 	}
 	
 	public String getName() {

@@ -47,6 +47,8 @@ import aliview.alignment.Alignment;
 import aliview.alignment.AlignmentMeta;
 import aliview.alignment.NucleotideHistogram;
 import aliview.importer.AlignmentImportException;
+import aliview.sequences.FileSequence;
+import aliview.sequences.BasicSequence;
 import aliview.sequences.InMemorySequence;
 import aliview.sequences.Sequence;
 import aliview.sequences.SequenceUtils;
@@ -76,6 +78,15 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 	}
 	
 	public AlignmentListModel(List<Sequence> seqs) {
+		for(Sequence seq: seqs){
+			seq.setAlignmentModel(this);
+		}
+		this.delegateSequences = seqs;
+		fireSequenceIntervalAdded(0, seqs.size() - 1);
+	}
+	
+	public AlignmentListModel(List<Sequence> seqs, FileFormat foundFormat) {
+		this.fileFormat = foundFormat;
 		for(Sequence seq: seqs){
 			seq.setAlignmentModel(this);
 		}
@@ -282,8 +293,8 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		fireSequenceIntervalAdded(index, index);
 	}
 	
-	public void addAll(AlignmentListModel otherSeqModel) {
-		addAll(otherSeqModel.getBackendSequencesCopy());
+	public void addAll(AlignmentListModel otherSeqModel, boolean setSelected) {
+		addAll(otherSeqModel.getBackendSequencesCopy(), setSelected);
 	}
 	
 	public void addAll(int index, AlignmentListModel otherSeqModel) {
@@ -294,13 +305,17 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		fireSequenceIntervalAdded(index, index + otherSeqModel.getBackendSequencesCopy().size());
 	}
 	
-	public void addAll(List<Sequence> moreSeqs) {
+	public void addAll(List<Sequence> moreSeqs, boolean setSelected) {
 		for(Sequence seq: moreSeqs){
 			seq.setAlignmentModel(this);
 		}
+		logger.info("added all moreSeqs.size()" +  moreSeqs.size());
 		delegateSequences.addAll(moreSeqs);
-		selectionModel.setSequenceSelection(moreSeqs);
-		fireSequenceIntervalAdded(this.size() - moreSeqs.size() -1, this.size() - 1);
+		if(setSelected){
+			selectionModel.setSequenceSelection(moreSeqs);
+		}
+		fireSequencesChangedAll();
+		//fireSequenceIntervalAdded(this.size() - moreSeqs.size(), this.size() - 1);
 	}
 	
 	
@@ -1029,35 +1044,38 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 
 	private void realignNucleotidesUseThisAASequenceAsTemplate(Sequence nucSeq, Sequence template) throws Exception {
 		
-		StringBuilder newSeq = new StringBuilder(nucSeq.getLength());
+		if(nucSeq instanceof InMemorySequence){
 		
-		int nextFindStartPos = 0;
-		for(int n = 0; n < template.getLength(); n++){
-			byte nextAAByte = template.getBaseAtPos(n);
-			AminoAcid aaTemplate = AminoAcid.getAminoAcidFromByte(nextAAByte);
-			
-						
-//			logger.info("aaTemplate.getCodeCharVal()" + aaTemplate.getCodeCharVal());
-			if(aaTemplate.getCodeCharVal() == AminoAcid.GAP.getCodeCharVal()){
-				newSeq.append((char)SequenceUtils.GAP_SYMBOL);
-				newSeq.append((char)SequenceUtils.GAP_SYMBOL);
-				newSeq.append((char)SequenceUtils.GAP_SYMBOL);
-			}else{
-	
-//				logger.info("search for " + aaTemplate.getCodeCharVal() + " in seq " + nucSeq.getName() + " from pos " + nextFindStartPos);
-				int posFound = nucSeq.find(aaTemplate.getCodeByteVal(), nextFindStartPos); 
-				if(posFound == -1){
-					logger.info("posnotfound");
-					throw new Exception("Alignments not matching-exception, when trying to align sequences");
+			StringBuilder newSeq = new StringBuilder(nucSeq.getLength());
+			int nextFindStartPos = 0;
+			for(int n = 0; n < template.getLength(); n++){
+				byte nextAAByte = template.getBaseAtPos(n);
+				AminoAcid aaTemplate = AminoAcid.getAminoAcidFromByte(nextAAByte);
+				
+							
+	//			logger.info("aaTemplate.getCodeCharVal()" + aaTemplate.getCodeCharVal());
+				if(aaTemplate.getCodeCharVal() == AminoAcid.GAP.getCodeCharVal()){
+					newSeq.append((char)SequenceUtils.GAP_SYMBOL);
+					newSeq.append((char)SequenceUtils.GAP_SYMBOL);
+					newSeq.append((char)SequenceUtils.GAP_SYMBOL);
+				}else{
+		
+	//				logger.info("search for " + aaTemplate.getCodeCharVal() + " in seq " + nucSeq.getName() + " from pos " + nextFindStartPos);
+					int posFound = nucSeq.find(aaTemplate.getCodeByteVal(), nextFindStartPos); 
+					if(posFound == -1){
+						logger.info("posnotfound");
+						throw new Exception("Alignments not matching-exception, when trying to align sequences");
+					}
+					byte[] nextNucs = nucSeq.getGapPaddedCodonInTranslatedPos(posFound);
+					newSeq.append(new String(nextNucs));
+					nextFindStartPos = posFound + 1;		
 				}
-				byte[] nextNucs = nucSeq.getGapPaddedCodonInTranslatedPos(posFound);
-				newSeq.append(new String(nextNucs));
-				nextFindStartPos = posFound + 1;		
 			}
+			logger.info("newSeq.length()" + newSeq.length());
+			
+			((InMemorySequence) nucSeq).setBases(newSeq.toString().getBytes());
+			fireSequencesChanged(nucSeq);
 		}
-		logger.info("newSeq.length()" + newSeq.length());
-		nucSeq.setBases(newSeq.toString().getBytes());
-		fireSequencesChanged(nucSeq);
 	}
 	/*
 	private void realignNucleotidesUseThisAASequenceAsTemplate(Sequence nucSeq, Sequence template) throws Exception {
@@ -1422,7 +1440,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 	
 	
 	
-	public boolean mergeTwoSequences(Sequence seq1, Sequence seq2, boolean allowOverlap){		
+	public boolean mergeTwoSequences(InMemorySequence seq1, InMemorySequence seq2, boolean allowOverlap){		
 		if(sequenceType == SequenceUtils.TYPE_NUCLEIC_ACID){
 			return mergeTwoNucleotideSequences(seq1, seq2, allowOverlap);
 		}
@@ -1432,7 +1450,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		
 	}
 	
-	public boolean mergeTwoAminoAcidSequences(Sequence seq1, Sequence seq2, boolean allowOverlap){
+	public boolean mergeTwoAminoAcidSequences(InMemorySequence seq1, InMemorySequence seq2, boolean allowOverlap){
 		boolean isMerged = false;
 		int nExactOverlap = SequenceUtils.countExactAminoAcidOverlap(seq1, seq2);
 		int nDifferentOverlap = SequenceUtils.countDifferentAminoAcidOverlap(seq1, seq2);
@@ -1504,7 +1522,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 }
 	
 
-	public boolean mergeTwoNucleotideSequences(Sequence seq1, Sequence seq2, boolean allowOverlap){
+	public boolean mergeTwoNucleotideSequences(InMemorySequence seq1, InMemorySequence seq2, boolean allowOverlap){
 			boolean isMerged = false;
 			int nExactOverlap = SequenceUtils.countExactNucleotideOverlap(seq1, seq2);
 			int nDifferentOverlap = SequenceUtils.countDifferentNucleotideOverlap(seq1, seq2);
@@ -1973,6 +1991,8 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 	}
 	
 	private void fireSequencesChanged(int minIndex, int maxIndex) {
+		// TODO this might be a bit ugly...
+		cachedLongestSequenceLength = -1;
 		Rectangle rect = new Rectangle(0,minIndex, this.getLongestSequenceLength(), maxIndex + 1);
 		fireSequencesChanged(rect);
 		

@@ -12,11 +12,12 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
 
 import it.unimi.dsi.io.ByteBufferInpStream;
-import aliview.sequencelist.FileMMSequenceList;
+import aliview.sequencelist.MemoryMappedSequencesFile;
 import aliview.sequences.FastaFileSequence;
 import aliview.sequences.FileSequence;
 import aliview.sequences.PhylipFileSequence;
 import aliview.sequences.PositionToPointer;
+import aliview.sequences.Sequence;
 import aliview.subprocesses.SubThreadProgressWindow;
 
 public class PhylipFileIndexer implements FileIndexer{
@@ -26,10 +27,12 @@ public class PhylipFileIndexer implements FileIndexer{
 	long fileSize = -1;
 	private MappedBuffReaderHelper readerHelper;
 
-	public ArrayList<FileSequence> findSequencesInFile(ByteBufferInpStream mappedBuff, long filePointerStart, int seqOffset, int nSeqsToRetrieve,
-			SubThreadProgressWindow progressWin, FileMMSequenceList fileMMSequenceList) throws AlignmentImportException {
+	public ArrayList<Sequence> findSequencesInFile(MemoryMappedSequencesFile sequencesFile, long filePointerStart, int seqOffset, int nSeqsToRetrieve,
+			SubThreadProgressWindow progressWin) throws AlignmentImportException {
 
-		ArrayList<FileSequence> allSeqs = new ArrayList<FileSequence>();
+		ByteBufferInpStream mappedBuff = sequencesFile.getMappedBuff();
+		
+		ArrayList<Sequence> allSeqs = new ArrayList<Sequence>();
 		try{
 			this.fileSize = mappedBuff.length();
 			int longestSequenceLength = 0;
@@ -133,11 +136,11 @@ public class PhylipFileIndexer implements FileIndexer{
 					// end of first line
 					long firstNewlinePointer = readerHelper.posOfNextNewline();
 
-					PhylipFileSequence seq = new PhylipFileSequence(fileMMSequenceList, seqOffset + n, nameStartPointer);
+					PhylipFileSequence seq = new PhylipFileSequence(sequencesFile, nameStartPointer);
 
 					String name = readerHelper.readString(nameStartPointer, seqStartPointer - 1);
 					name = name.trim();
-					seq.addName(name);
+					seq.setName(name);
 					int seqSeqmentLen = (int) (firstNewlinePointer - newlineLen - seqStartPointer + 1);	
 					seq.add(new PositionToPointer(seqPos,seqPos + seqSeqmentLen -1, seqStartPointer, firstNewlinePointer - newlineLen));
 
@@ -154,7 +157,8 @@ public class PhylipFileIndexer implements FileIndexer{
 					}
 				}
 
-				mappedBuff.position(allSeqs.get(allSeqs.size()-1).getEndPointer() + 1);
+				FileSequence lastPhylSeq = (FileSequence) allSeqs.get(allSeqs.size()-1);
+				mappedBuff.position(lastPhylSeq.getEndPointer() + 1);
 
 				// and now append the inteleaved sequences
 				while(true){
@@ -184,10 +188,9 @@ public class PhylipFileIndexer implements FileIndexer{
 						logger.info("done indexing");
 						break;
 					}else{
-						mappedBuff.position(allSeqs.get(allSeqs.size()-1).getEndPointer() +1);
-						//	logger.info("allSeqs.get(allSeqs.size()-1).getEndPointer()" + allSeqs.get(allSeqs.size()-1).getEndPointer());
+						FileSequence lastSeq = (FileSequence) allSeqs.get(allSeqs.size()-1);
+						mappedBuff.position(lastSeq.getEndPointer() + 1);
 					}
-					
 					
 					lineCount ++;
 					if(lineCount % 1000 == 0){
@@ -221,12 +224,12 @@ public class PhylipFileIndexer implements FileIndexer{
 					//							logger.info("spaces" + spaces);
 					//						}	
 
-					PhylipFileSequence seq = new PhylipFileSequence(fileMMSequenceList, seqOffset + n, nameStartPointer);
+					PhylipFileSequence seq = new PhylipFileSequence(sequencesFile, nameStartPointer);
 
 
 					String name = readerHelper.readString(nameStartPointer, seqStartPointer - 1);
 					name = name.trim();
-					seq.addName(name);
+					seq.setName(name);
 					int seqSeqmentLen = (int) (firstNewlinePointer - newlineLen - seqStartPointer + 1);	
 					seq.add(new PositionToPointer(seqPos,seqPos + seqSeqmentLen -1, seqStartPointer, firstNewlinePointer - newlineLen));
 
@@ -242,8 +245,9 @@ public class PhylipFileIndexer implements FileIndexer{
 						}
 					}
 				}
-
-				mappedBuff.position(allSeqs.get(allSeqs.size()-1).getEndPointer() + 1);
+				
+				FileSequence lastSeq = (FileSequence) allSeqs.get(allSeqs.size()-1);
+				mappedBuff.position(lastSeq.getEndPointer() + 1);
 
 				// and now append the inteleaved sequences
 				while(true){
@@ -273,8 +277,10 @@ public class PhylipFileIndexer implements FileIndexer{
 						logger.info("done indexing");
 						break;
 					}else{
-						mappedBuff.position(allSeqs.get(allSeqs.size()-1).getEndPointer() +1);
-						//	logger.info("allSeqs.get(allSeqs.size()-1).getEndPointer()" + allSeqs.get(allSeqs.size()-1).getEndPointer());
+						
+						FileSequence theLastSeq = (FileSequence) allSeqs.get(allSeqs.size()-1);
+						mappedBuff.position(theLastSeq.getEndPointer() + 1);
+						
 					}
 					
 					
@@ -317,11 +323,11 @@ public class PhylipFileIndexer implements FileIndexer{
 					// just calculate - don't read
 					sequentialEndPointer = seqStartPointer + seqSeqmentLen -1;
 
-					PhylipFileSequence seq = new PhylipFileSequence(fileMMSequenceList, seqOffset + n, nameStartPointer);
+					PhylipFileSequence seq = new PhylipFileSequence(sequencesFile, nameStartPointer);
 
 					String name = readerHelper.readString(nameStartPointer, seqStartPointer - 1);
 					name = name.trim();
-					seq.addName(name);
+					seq.setName(name);
 
 					seq.add(new PositionToPointer(seqPos,seqPos + seqSeqmentLen -1, seqStartPointer, sequentialEndPointer));
 
@@ -367,11 +373,11 @@ public class PhylipFileIndexer implements FileIndexer{
 					// just calculate - don't read
 					sequentialEndPointer = seqStartPointer + seqSeqmentLen -1;
 
-					PhylipFileSequence seq = new PhylipFileSequence(fileMMSequenceList, seqOffset + n, nameStartPointer);
+					PhylipFileSequence seq = new PhylipFileSequence(sequencesFile, nameStartPointer);
 
 					String name = readerHelper.readString(nameStartPointer, seqStartPointer - 1);
 					name = name.trim();
-					seq.addName(name);
+					seq.setName(name);
 
 					seq.add(new PositionToPointer(seqPos,seqPos + seqSeqmentLen -1, seqStartPointer, sequentialEndPointer));
 

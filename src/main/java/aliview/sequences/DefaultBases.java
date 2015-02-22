@@ -1,6 +1,8 @@
 package aliview.sequences;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -59,6 +61,11 @@ public class DefaultBases implements Bases {
 			e.printStackTrace();
 		}
 		return asString;
+	}
+	
+	public void writeBasesBetween(int start, int end, Writer out) throws IOException {
+		String outString = new String(toByteArray(start, end), TEXT_FILE_BYTE_ENCODING);
+		out.write(outString);
 	}
 
 	public void set(int n, byte newBase) {
@@ -136,8 +143,38 @@ public class DefaultBases implements Bases {
 		
 	}
 	
+	public void deleteAll(byte target) {
+		
+		// how many to delete so we can create a new array right size
+		int count = 0;
+		for(int n = 0; n < backend.length; n++){
+			if(backend[n] == target){
+				count ++;
+			}
+		}
+		
+		// copy all bytes not to delete into new array
+		if(count > 0){
+			byte[] newBackend = new byte[backend.length - count];
+			
+			int index = 0;
+			for(byte next : backend){
+				if(next != target){
+					newBackend[index] = next;
+					index ++;
+				}
+			}
+			backend = newBackend;
+		}
+	
+	}
+	
 	public void delete(int[] toDelete) {
-		// or translated
+		if(toDelete == null || toDelete.length == 0){
+			return;
+		}
+		
+		Arrays.sort(toDelete);
 		
 		// translate toDelete
 		int nOutOfBounds = 0;
@@ -152,10 +189,20 @@ public class DefaultBases implements Bases {
 
 		int newIndex = 0;
 		
+		int deleteCount = 0;
+		int nextToDelete = toDelete[deleteCount];
+		
 		for(int n = 0;n < backend.length ;n++){
 			
-			if(ArrayUtils.contains(toDelete, n)){
+			if(n == nextToDelete){
 				// dont copy this one
+				deleteCount ++;
+				if(deleteCount < toDelete.length){
+					nextToDelete = toDelete[deleteCount];
+				}else{
+					nextToDelete = -1;
+				}
+				
 			}
 			else{
 				newBases[newIndex] = backend[n];
@@ -193,8 +240,5 @@ public class DefaultBases implements Bases {
 	public void insertAt(int n, byte newByte) {
 		insertAt(n, new byte[]{newByte});
 	}
-		
-	
-
 
 }

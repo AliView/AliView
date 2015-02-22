@@ -14,6 +14,7 @@ import javax.swing.SwingUtilities;
 
 import org.apache.log4j.Logger;
 
+import aliview.AliViewWindow;
 import aliview.gui.AppIcons;
 
 
@@ -24,7 +25,7 @@ public class SubThreadProgressWindow{
 	private Thread subThread;
 	private JTextArea consoleTextArea;
 	private boolean subThreadInterruptedByUser = false;
-	private Dimension PREF_SIZE = new Dimension(300,200);
+//	private Dimension PREF_SIZE = new Dimension(300,200);
 	
 	
 	public SubThreadProgressWindow(){
@@ -34,7 +35,7 @@ public class SubThreadProgressWindow{
 	public void init(){
 		
 		frame = new JFrame();
-		frame.setPreferredSize(PREF_SIZE);
+//		frame.setPreferredSize(PREF_SIZE);
 		consoleTextArea = new JTextArea();
 		JScrollPane scrollPane = new JScrollPane(consoleTextArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		
@@ -53,6 +54,10 @@ public class SubThreadProgressWindow{
 		frame.setTitle("Working");
 		frame.setIconImage(AppIcons.getProgramIconImage());
 		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(SubThreadProgressWindow.class.getResource("/img/alignment_ico_128x128.png")));
+	}
+	
+	public void pack(){
+		frame.pack();
 	}
 	
 	public void show(){
@@ -82,28 +87,66 @@ public class SubThreadProgressWindow{
 			logger.info(parent.getX());
 			logger.info(parent.getWidth());
 			logger.info(frame.getWidth());
-			frame.setLocation(newX, newY);
+			setLocation(newX, newY);
 		}
 		else{
 			centerLocationToCenterOfScreen();
 		}
 	}	
 	
+	public void setBottomRightRelativeThisComponent(Component parent) {
+		// align to middle of parent window
+		if(parent != null){
+			int newX = parent.getX() + parent.getWidth() - frame.getPreferredSize().width - 50;
+			int newY = parent.getY() + parent.getHeight() - frame.getPreferredSize().height - 50;
+			logger.info(parent.getX());
+			logger.info(parent.getWidth());
+			logger.info(frame.getWidth());
+			setLocation(newX, newY);
+		}
+		else{
+			centerLocationToCenterOfScreen();
+		}
+	}
+	
+	public void setTopRightRelativeThisComponent(Component parent) {
+		// align to middle of parent window
+		if(parent != null){
+			int newX = parent.getX() + parent.getWidth() - frame.getPreferredSize().width - 20;
+			int newY = parent.getY() + 150;
+			logger.info(parent.getX());
+			logger.info(parent.getWidth());
+			logger.info(frame.getWidth());
+			setLocation(newX, newY);
+		}
+		else{
+			centerLocationToCenterOfScreen();
+		}
+	}
+	
 	public void centerLocationToCenterOfScreen() {
 		 Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
 		    int x = (int) ((dimension.getWidth() - frame.getPreferredSize().getWidth()) / 2);
 		    int y = (int) ((dimension.getHeight() - frame.getPreferredSize().getHeight()) / 2);
 		    logger.info(frame.getPreferredSize());
-		    frame.setLocation(x, y);
+		    setLocation(x, y);
 	}
 	
 	
+	private void setLocation(final int x, final int y) {
+		SwingUtilities.invokeLater(new Runnable() {
+		    public void run() {
+			   frame.setLocation(x, y);
+			}
+		});
+	}
+
 	public void upperLeftLocationOfThisComponent(Component parent){
 		// align to middle of parent window
 		if(parent != null){
 			int newX = parent.getX() + 100;
 			int newY = parent.getY() + 100;
-			frame.setLocation(newX, newY);
+			setLocation(newX, newY);
 		}
 	}	
 	
@@ -117,10 +160,20 @@ public class SubThreadProgressWindow{
 		  });
 	}
 	
-	public void setMessage(final String output){
+	public void setInitialMessage(final String output){
 		consoleTextArea.setText(output);
 		// Make it scroll to end
 		consoleTextArea.setCaretPosition(consoleTextArea.getDocument().getLength());
+	}
+	
+	public void setMessage(final String output){
+		SwingUtilities.invokeLater(new Runnable() {
+		    public void run() {
+			    consoleTextArea.setText(output);
+				// Make it scroll to end
+				consoleTextArea.setCaretPosition(consoleTextArea.getDocument().getLength());
+			    }
+		  });
 	}
 	
 	public void setOutput(final String output){
@@ -134,8 +187,12 @@ public class SubThreadProgressWindow{
 	}
 		
 
-	public void setTitle(String title) {
-		frame.setTitle(title);
+	public void setTitle(final String title) {
+		SwingUtilities.invokeLater(new Runnable() {		
+			public void run() {
+				frame.setTitle(title);		
+			}
+		});	
 	}
 
 	public void setAlwaysOnTop(boolean alwaysOnTop) {
@@ -152,10 +209,15 @@ public class SubThreadProgressWindow{
 		return frame;
 	}
 
-	public void setVisible(boolean b) {
-		// TODO Auto-generated method stub
-		
+	public void setVisible(final boolean b) {
+		SwingUtilities.invokeLater(new Runnable() {		
+			public void run() {
+				frame.setVisible(b);
+			}
+		});	
 	}
+
+	
 
 
 }

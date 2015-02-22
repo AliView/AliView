@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
@@ -28,51 +29,10 @@ public class FileSequenceAlignmentListModel extends AlignmentListModel{
 	private static final String LF = System.getProperty("line.separator");
 	private List<FileSequenceLoadListener> fileSeqLoadListeners = new ArrayList<FileSequenceLoadListener>();
 	
-	public FileSequenceAlignmentListModel(File aliFile, FileFormat foundFormat) throws IOException {
-		super(new FileMMSequenceList(aliFile, foundFormat));
-//		this.getSequences().addListDataListener(this);
-		this.setFileFormat(foundFormat);
-	}
-
-	@Override
-	public FileMMSequenceList getBackendSequencesCopy() {
-		return (FileMMSequenceList) super.getBackendSequencesCopy();
-	}
- 
-	@Override
-	// only for the ones in the cache
-	public int getLongestSequenceLength() {		
-		int maxLen = 0;
-		for(Sequence seq: this.getBackendSequencesCopy()){
-			int len = seq.getLength();
-			if(len > maxLen){		
-				maxLen = len;
-			}
-		}
-		return maxLen;
-	}
-/*
-	public void contentsChanged(ListDataEvent e) {
-		fireContentsChanged(this, 0, this.getSequences().size()-1);
-	}
-*/
-
-	public List<FilePage> getFilePages() {
-		return this.getBackendSequencesCopy().getFilePages();
-	}
-
-	public void loadMoreSequencesFromFile(FilePage page) {
-		this.getBackendSequencesCopy().loadMoreSequencesFromFile(page);
-	}
-
-	@Override
-	public boolean isBaseSelected(int x, int y) {
-		return super.isBaseSelected(x, y);
-	}
-
-	@Override
-	public void setSelectionAt(int xPos, int yPos, boolean clearFirst) {
-		super.setSelectionAt(xPos, yPos, clearFirst);
+	public FileSequenceAlignmentListModel(File alignmentFile, FileFormat foundFormat) throws IOException {
+		super(new CopyOnWriteArrayList<Sequence>(), foundFormat);
+		MemoryMappedSequencesFile sequencesFile = new MemoryMappedSequencesFile(alignmentFile, foundFormat);
+		sequencesFile.indexFileAndAddSequencesToAlignmentModel(this);	
 	}
 
 	public void writeSelectionAsFasta(Writer out) {
@@ -108,21 +68,13 @@ public class FileSequenceAlignmentListModel extends AlignmentListModel{
 		logger.info("Write done");
 	}
 
-	public byte getBaseAt(int x, int y){
-		return getBackendSequencesCopy().get(y).getBaseAtPos(x);
-	}
-
-	public int getLengthAt(int y) {
-		return getBackendSequencesCopy().get(y).getLength();
-	}
+	
 
 	public boolean isEditable(){
 		return false;
 	}
 	
-	public FilePage getActivePage(){
-		return getBackendSequencesCopy().getActivePage();
-	}
+	
 	
 	@Override
 	public AliHistogram getHistogram() {
@@ -152,27 +104,19 @@ public class FileSequenceAlignmentListModel extends AlignmentListModel{
 		return histogram;
 	}
 	
-	private void fireSequenceContentChanged(){
-		for(FileSequenceLoadListener listener: fileSeqLoadListeners){
-			listener.fileSequenceContentsChanged();
+	/*
+	public void addAll(List<Sequence> moreSeqs, boolean setSelected) {
+		for(Sequence seq: moreSeqs){
+			seq.setAlignmentModel(this);
+		}
+		logger.info("added all");
+		delegateSequences.addAll(moreSeqs);
+		if(setSelected){
+			//getSeleselectionModel.setSequenceSelection(moreSeqs);
 		}
 	}
-
-	public void addSequenceLoadLisetner(FileSequenceLoadListener listener) {
-		if(listener == null || fileSeqLoadListeners.contains(listener)){
-			return;
-		}
-		fileSeqLoadListeners.add(listener);
-	}
+	*/
 	
-	public void intervalAdded(ListDataEvent e) {
-		// TODO Auto-generated method stub
-	}
-
-
-	public void intervalRemoved(ListDataEvent e){
-		// TODO Auto-generated method stub
-	}
 	
 	// Skip padding if filesequences
 	public boolean rightPadWithGapUntilEqualLength(){

@@ -10,12 +10,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import aliview.NucleotideUtilities;
-import aliview.sequencelist.FileMMSequenceList;
 import aliview.sequences.FileSequence;
 
-public class IndexFileReader {
-	private static final Logger logger = Logger.getLogger(IndexFileReader.class);
-
+public class NotUsed_IndexFileReader {
+	private static final Logger logger = Logger.getLogger(NotUsed_IndexFileReader.class);
+/*
 	public static ArrayList<FileSequence> createSequences(File indexFile, FileMMSequenceList seqList) {
 		
 			long startTime = System.currentTimeMillis();
@@ -86,5 +85,5 @@ public class IndexFileReader {
 			return sequences;
 		}
 		
-
+*/
 }

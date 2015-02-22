@@ -113,6 +113,8 @@ public class AlignmentPane extends JPanel{
 	private int drawCounter = 0; // performance measure
 	private int DRAWCOUNT_LOF_INTERVAL = 1; // performance measure
 	private int fontCase = Settings.getFontCase().getIntValue();
+	private TranslationCharPixelsContainer charPixTranslationAndNucDefaultNoAALetter;
+	private TranslationCharPixelsContainer charPixTranslationAndNucSelectedNoAALetter;
 	
 	
 
@@ -287,6 +289,13 @@ public class AlignmentPane extends JPanel{
 		charPixTranslationAndNucSelected = TranslationCharPixelsContainer.createSelectedTranslationAndNucPixelsContainer(charFont, charMaxSizeToDraw,
 				charPixWidth, charPixHeight, colorSchemeNucleotide, getFontCase());
 
+		charPixTranslationAndNucDefaultNoAALetter = TranslationCharPixelsContainer.createDefaultNoAALetterTranslationAndNucPixelsContainer(charFont, charMaxSizeToDraw,
+				charPixWidth, charPixHeight, colorSchemeNucleotide, getFontCase());
+
+		charPixTranslationAndNucSelectedNoAALetter = TranslationCharPixelsContainer.createSelectedNoAALetterTranslationAndNucPixelsContainer(charFont, charMaxSizeToDraw,
+				charPixWidth, charPixHeight, colorSchemeNucleotide, getFontCase());
+		
+		
 		charPixTranslationAndNucLetter = TranslationCharPixelsContainer.createLetterTranslationAndNucPixelsContainer(charFont, charMaxSizeToDraw,
 				charPixWidth, charPixHeight, colorSchemeNucleotide, getFontCase());
 
@@ -1216,10 +1225,12 @@ public class AlignmentPane extends JPanel{
 		//AminoAcid acid =  aaTransSeq.getAminoAcidAtNucleotidePos(x);
 		TranslationCharPixelsContainer pixContainerToUse = charPixTranslationDefault;
 		TranslationCharPixelsContainer pixLetterContainerToUse = charPixTranslationLetter;
+		TranslationCharPixelsContainer pixLetterContainerToUseNoAALetter = charPixTranslationDefault;
 		
 		if(showTranslationAndNuc){
 			pixContainerToUse = charPixTranslationAndNucDefault;
 			pixLetterContainerToUse = charPixTranslationAndNucLetter;
+			pixLetterContainerToUseNoAALetter = charPixTranslationAndNucDefaultNoAALetter;
 		}
 
 		// adjust colors if selected and temp selection
@@ -1235,10 +1246,13 @@ public class AlignmentPane extends JPanel{
 			if(showTranslationAndNuc){
 				pixContainerToUse = charPixTranslationAndNucSelected;
 				pixLetterContainerToUse = charPixTranslationAndNucSelectedLetter;
+				pixLetterContainerToUseNoAALetter = charPixTranslationAndNucSelected;
 			}
 			else{
 				pixContainerToUse = charPixTranslationSelected;
 				pixLetterContainerToUse = charPixTranslationSelectedLetter;
+				pixLetterContainerToUseNoAALetter = charPixTranslationAndNucSelectedNoAALetter;
+				
 			}
 			
 			
@@ -1254,10 +1268,12 @@ public class AlignmentPane extends JPanel{
 				newPiece = pixLetterContainerToUse.getRGBArray(acid, residue);
 			}else{
 				if(showTranslationAndNuc){
+					//newPiece = pixLetterContainerToUse.getRGBArray(acid, residue);
 					newPiece = pixLetterContainerToUse.getRGBArray(acid, residue);
+					//newPiece = pixLetterContainerToUseNoAALetter.getRGBArray(acid, residue);
 				}else{
 					residue = ' ';
-					newPiece = pixContainerToUse.getRGBArray(acid, residue);
+					newPiece = pixLetterContainerToUseNoAALetter.getRGBArray(acid, residue);
 				}
 				
 				

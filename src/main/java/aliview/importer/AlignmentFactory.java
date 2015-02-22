@@ -81,10 +81,10 @@ public class AlignmentFactory {
 				MemoryUtils.logMem();
 				AlignmentMeta aliMeta = new AlignmentMeta(excludes, codonPositions, charsets, GeneticCode.DEFAULT);
 				if(sequences.getSequenceType() == SequenceUtils.TYPE_AMINO_ACID){
-					alignment = new Alignment(alignmentFile, sequences.getFileFormat(), sequences, aliMeta);
+					alignment = new Alignment(alignmentFile, sequences, aliMeta);
 				}
 				else{
-					alignment = new Alignment(alignmentFile, sequences.getFileFormat(), sequences, aliMeta);
+					alignment = new Alignment(alignmentFile, sequences, aliMeta);
 				}
 				MemoryUtils.logMem();
 				

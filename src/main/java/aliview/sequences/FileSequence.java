@@ -1,159 +1,84 @@
 package aliview.sequences;
 
-import java.awt.Point;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
-import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
-import org.bitbucket.kienerj.io.OptimizedRandomAccessFile;
+// import org.bitbucket.kienerj.io.OptimizedRandomAccessFile;
 
 import aliview.AminoAcid;
 import aliview.NucleotideUtilities;
 import aliview.sequencelist.AlignmentListModel;
-import aliview.sequencelist.FileMMSequenceList;
 import aliview.sequencelist.Interval;
+import aliview.sequencelist.MemoryMappedSequencesFile;
 
-public class FileSequence implements Sequence {
+public class FileSequence extends BasicSequence {
 	private static final Logger logger = Logger.getLogger(FileSequence.class);
-	private static final String TEXT_FILE_BYTE_ENCODING = "ASCII";
-	private OptimizedRandomAccessFile raf;
-	private long startPointer;
-	protected String name;
-	protected FileMMSequenceList fileSeqList;
-	private long sequenceAfterNameStartPointer;
-	private int seqIndex;
-	private long endPointer;
-	private SequenceSelectionModel selectionModel = new DefaultSequenceSelectionModel();
-	private int id;
-	private int seqWithoutWhitespaceLength;
-	private int lineCharLength;
-	private int lineAbsoluteLength;
-	private boolean translated;
-	private AlignmentListModel alignmentModel;
-
-	public FileSequence(OptimizedRandomAccessFile raf, long startPointer){
-		this.raf = raf;
-		this.startPointer = startPointer;
+	
+	public FileSequence(MemoryMappedSequencesFile sequencesFile, long startPointer) {
+		this(new FileSequenceBases(sequencesFile, startPointer));
 	}
-
-	public FileSequence(FileMMSequenceList fileSeqList, int seqIndex, long startPointer) {
-		this.fileSeqList = fileSeqList;
-		this.startPointer = startPointer;
-		this.seqIndex = seqIndex;
+	
+	public FileSequence(FileSequenceBases fileSequenceBases) {
+		super(fileSequenceBases);
 	}
 	
 	public FileSequence(FileSequence template) {
-		this.fileSeqList = template.fileSeqList;
-		this.startPointer = template.startPointer;
-		this.seqIndex = template.seqIndex;
-		this.fileSeqList = template.fileSeqList;
-		this.sequenceAfterNameStartPointer = template.sequenceAfterNameStartPointer;
-		this.endPointer = template.endPointer;
-		this.raf = template.raf;
-		this.name = template.name;
-		this.id = template.id;
+		super(template);
 	}
 	
-	public FileSequence(FileMMSequenceList seqList, int seqIndex, String name, int seqWithoutWhitespaceLength, long seqAfterNameStartPointer, long endPointer,
-			int lineCharLength, int lineAbsoluteLength) {
-		this.fileSeqList = seqList;
-		this.seqIndex = seqIndex;
+	/*
+	 * This is called when creating sequences from an .fai index file
+	 */
+	public FileSequence(MemoryMappedSequencesFile sequencesFile, int seqIndex, String name, int seqWithoutWhitespaceLength, long seqAfterNameStartPointer, long endPointer, int lineCharLength, int lineAbsoluteLength) {
+		this(new FileSequenceBases(sequencesFile, seqAfterNameStartPointer, endPointer, seqAfterNameStartPointer));
 		this.name = name;
-		this.seqWithoutWhitespaceLength = seqWithoutWhitespaceLength;
-		this.sequenceAfterNameStartPointer = seqAfterNameStartPointer;
-		this.endPointer = endPointer;
-		this.lineCharLength = lineCharLength;
-		this.lineAbsoluteLength = lineAbsoluteLength;
-		this.id = SequenceUtils.createID();
+		// These are not used currently
+		//this.seqWithoutWhitespaceLength = seqWithoutWhitespaceLength;
+		//this.sequenceAfterNameStartPointer = seqAfterNameStartPointer;
+		//this.lineCharLength = lineCharLength;
+		//this.lineAbsoluteLength = lineAbsoluteLength;
 	}
-
-	public Sequence getCopy() {
+	
+	public FileSequence getCopy() {
 		return new FileSequence(this);
 	}
 
-	public long getSequenceAfterNameStartPointer(){
-		return sequenceAfterNameStartPointer;
-	}
-
-	public long getStartPointer(){
-		return startPointer;
-	}
-
 	public long getEndPointer(){
-		return endPointer;
-	}
-
-	public void setEndPointer(long end) {
-		this.endPointer = end;		
-	}
-
-	public void setSequenceAfterNameStartPointer(long seqStartPointer) {
-		this.sequenceAfterNameStartPointer = seqStartPointer;		
-	}
-
-	public void addName(String name){
-		this.name = name;
-	}
-
-	public int getIndex() {
-		return seqIndex;
-	}
-
-	public int getLength(){
-		//logger.info(getSeqEndPointer());
-		//logger.info(getSeqStartPointer());
-        long len = (getEndPointer() - getStartPointer()) - (getSequenceAfterNameStartPointer() - getStartPointer()); // +1 because seq end pointer is inclusive 
-
-		return (int)len;
-	}
-
-	public String getName(){
-		return name;
+		return getFileSequenceBases().getEndPointer();
 	}
 	
-	public void setName(String name){
-		this.name = name;
+	public void setEndPointer(long pointer) {
+		getFileSequenceBases().setEndPointer(pointer);
 	}
-
-	public String toString(){
-		return getName();
+	
+	public void setSequenceAfterNameStartPointer(long pointer) {
+		getFileSequenceBases().setSequenceAfterNameStartPointer(pointer);
 	}
-
-	public String getSimpleName() {
-		return getName();
+	
+	public long getSequenceAfterNameStartPointer(){
+		return getFileSequenceBases().getSequenceAfterNameStartPointer();
 	}
+	
+	private FileSequenceBases getFileSequenceBases(){
+		return (FileSequenceBases) bases;
+	}
+	
 
 	public byte getBaseAtPos(int n) {
-		return (byte)getBaseAsIntAtPos(n);
+		return (byte) getBases().get(n);
 	}
 
 	public int getBaseAsIntAtPos(int n) {
-		return fileSeqList.readInFile(getSequenceAfterNameStartPointer() + n);
-	}
-
-	public int getBasesAt(int x, int i, byte[] bytes) {
-		return fileSeqList.readBytesInFile( (getSequenceAfterNameStartPointer() + x), i, bytes);
-	}
-
-	public byte[] getBasesAt(int x, int i) {
-		return null;
+		return getBases().get(n);
 	}
 
 	// TO DO this is not working if seq is to large
 	public byte[] getAllBasesAsByteArray(){
-		if(this.getLength() > 100 * 1000 * 1000){
-			return null;
-		}
-		byte[] allBases = new byte[this.getLength()];
-		for(int n = 0; n < allBases.length; n++){
-			allBases[n] = getBaseAtPos(n);
-		}
-		return allBases;
+		return getBases().toByteArray();
 	}
 
 	public void writeBases(OutputStream out) throws IOException{
@@ -177,82 +102,10 @@ public class FileSequence implements Sequence {
 			}
 		}	
 	}
-
-	public String getBasesAsString() {
-		byte[] allBases = getAllBasesAsByteArray();
-		return new String(allBases);
-	}
-
-	public int getUngapedLength() {
-		// TODO Auto-generated method stub
-		return -1;
-	}
-
-	public boolean isEmpty() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public int[] getSequenceAsBaseVals() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public int getUngapedPos(int position) {
-		// TODO Auto-generated method stub
-		return -1;
-	}
-
-	public String getBasesAtThesePosAsString(ArrayList<Integer> allPositions) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public void reverseComplement() {
-		// TODO Auto-generated method stub
-	}
-
-	public void complement() {
-		// TODO Auto-generated method stub
-	}
-
-	public void replaceBases(int startReplaceIndex, int stopReplaceIndex,
-			byte[] insertBases) {
-		// TODO Auto-generated method stub
-	}
-
-	public void replaceSelectedBasesWithGap() {
-		// TODO Auto-generated method stub
-	}
-
-	public void deleteSelectedBases() {
-		// TODO Auto-generated method stub
-	}
-
-	public void deleteBasesFromMask(boolean[] deleteMask) {
-		// TODO Auto-generated method stub
-	}
-
-	public void setBases(byte[] bases) {
-		// TODO Auto-generated method stub		
-	}
-
-	public void clearBase(int n) {
-		// TODO Auto-generated method stub
-	}
-
-
-	public void rightPadSequenceWithGaps(int diffLen) {
-		// TODO Auto-generated method stub
-	}
-
-	public void leftPadSequenceWithGaps(int diffLen) {
-		// TODO Auto-generated method stub
-	}
-
+	
 
 	public Interval find(Pattern pattern, int startPos) {
-
+		
 		Interval foundInterval = null;
 		// split into chunks length = 5MB
 		int buffSize = 5000*1000;
@@ -273,7 +126,7 @@ public class FileSequence implements Sequence {
 
 			if(wasFound){
 				int foundStart = matcher.start();
-				int foundEnd = matcher.end();
+				int foundEnd = matcher.end() - 1;
 				foundInterval = new Interval(foundStart+buffStart, foundEnd+buffStart);
 			}
 
@@ -283,96 +136,48 @@ public class FileSequence implements Sequence {
 		}
 		return foundInterval;
 	}
-
 	
-	public void setSelectionAt(int i){
-		selectionModel.setSelectionAt(i);
-	}
-	
-	public void clearSelectionAt(int i){
-		selectionModel.clearSelectionAt(i);
+
+	public void reverseComplement() {
+		// TODO Auto-generated method stub
 	}
 
-	public void setSelection(int startPos, int endPos, boolean clearFirst) {
-		selectionModel.setSelection(startPos, endPos, clearFirst);
+	public void complement() {
+		// TODO Auto-generated method stub
 	}
 
-	public boolean isBaseSelected(int position) {
-		return selectionModel.isSelected(position);
+	public void replaceBases(int startReplaceIndex, int stopReplaceIndex, byte[] insertBases) {
+		// TODO Auto-generated method stub
 	}
 
-	public void clearAllSelection() {
-		selectionModel.clearAll();
+	public void replaceSelectedBasesWithGap() {
+		// TODO Auto-generated method stub
 	}
 
-	public void selectAllBases() {
-		selectionModel.selectAll();
-	}
-	
-	public void invertSelection(){
-		selectionModel.invertSelection(getLength());
+	public void deleteSelectedBases() {
+		// TODO Auto-generated method stub
 	}
 
-	public boolean hasSelection() {
-		return selectionModel.hasSelection();
+	public void deleteBasesFromMask(boolean[] deleteMask) {
+		// TODO Auto-generated method stub
 	}
 
-	public int[] getSelectedPositions() {
-		return selectionModel.getSelectedPositions(0, this.getLength() - 1);
-	}
-
-	public String getSelectedBasesAsString(){
-		StringBuilder selection = new StringBuilder();
-		if(selectionModel.hasSelection()){
-			int[] selectedPos = getSelectedPositions();
-			for(int n = 0;n < selectedPos.length;n++){
-				selection.append((char)getBaseAtPos(selectedPos[n]));
-			}
-		}
-		return selection.toString();
+	public void clearBase(int n) {
+		// TODO Auto-generated method stub
 	}
 
 
-	public byte[] getSelectedBasesAsByte(){
-		byte[] bases = null;
-		try {
-			bases = getSelectedBasesAsString().getBytes(TEXT_FILE_BYTE_ENCODING);
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return bases;
+	public void rightPadSequenceWithGaps(int diffLen) {
+		// TODO Auto-generated method stub
 	}
 
-
-
-	/*
-	public String getBasesAsString(){
-		String baseString = "";
-		try {
-			baseString = new String(getBases(), TEXT_FILE_BYTE_ENCODING);
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return baseString;
+	public void leftPadSequenceWithGaps(int diffLen) {
+		// TODO Auto-generated method stub
 	}
-	 */
-
-	public int getFirstSelectedPosition() {
-		return selectionModel.getFirstSelectedPosition();
-	}
-
-	//
-	//  End Standard selection
-	//
-
-
 
 
 	public void setSelectionOffset(int selectionOffset) {
 		// TODO Auto-generated method stub
-
 	}
 
 	public void moveSelectedResiduesRightIfGapIsPresent() {
@@ -382,46 +187,16 @@ public class FileSequence implements Sequence {
 
 	public void moveSelectedResiduesLeftIfGapIsPresent() {
 		// TODO Auto-generated method stub
-
 	}
-
-
-	public boolean contains(char testChar) {
-		for(int n = 0; n < getLength(); n++){
-			int base = getBaseAsIntAtPos(n);
-			if((char)base == testChar){
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	public int countChar(char targetChar) {
-		int count = 0;
-		for(int n = 0; n < getLength(); n++){
-			int base = getBaseAsIntAtPos(n);
-			if((char)base == targetChar){
-				count++;
-			}
-		}
-		return count;
-	}
-
-	public long countSelectedPositions(int startIndex, int endIndex) {
-		return selectionModel.countSelectedPositions(startIndex, endIndex);
-	}
-
 	
 	public void moveSelectedResiduesRightIfGapOrEndIsPresent() {
 		// TODO Auto-generated method stub
-		
 	}
 
 	public boolean isGapOrEndRightOfSelection() {
 		// TODO Auto-generated method stub
 		return false;
 	}
-
 
 	public boolean isGapRightOfSelection() {
 		// TODO Auto-generated method stub
@@ -441,152 +216,43 @@ public class FileSequence implements Sequence {
 		// TODO Auto-generated method stub	
 	}
 
-	public byte[] getBasesBetween(int startIndexInclusive, int endIndexInclusive) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	public void replaceSelectedBasesWithChar(char newChar) {
 		// TODO Auto-generated method stub
 	}
 
-	public void realignNucleotidesUseThisAASequenceAsTemplate(
-			byte[] allBasesAsByteArray) {
+	public void realignNucleotidesUseThisAASequenceAsTemplate(byte[] allBasesAsByteArray) {
 		// TODO Auto-generated method stub
 	}
 
 	public void selectAllBasesUntilGap(int x) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public char getCharAtPos(int n) {
-		return (char) getBaseAsIntAtPos(n);
-	}
-
-	public void insertGapLeftOfSelectedBase() {
 		// TODO Auto-generated method stub	
-	}
-
-	public void insertGapRightOfSelectedBase() {
-		// TODO Auto-generated method stub	
-	}
-
-	public void deleteAllGaps() {
-		// TODO Auto-generated method stub	
-	}
-
-	public int getID() {
-		return id;
-	}
-
-	public int getPosOfSelectedIndex(int posInSeq) {
-		return selectionModel.countPositionsUntilSelectedCount(posInSeq);
-	}
-
-	public int compareTo(Sequence other) {
-		return getName().compareTo(other.getName());
-	}
-
-
-	public boolean isAllSelected() {
-		return selectionModel.isAllSelected();
 	}
 	
 	public int indexOf(char testChar) {
-		for(int n = 0; n < getLength(); n++){
-			int base = getBaseAsIntAtPos(n);
-			if((char)base == testChar){
-				return n;
-			}
-		}
+		logger.warn("This might take a long time");
+		return super.indexOf(testChar);
+	}
+		
+	public int countChar(char targetChar, int startpos, int endpos) {	
+		logger.warn("This might take a long time");
+		return super.countChar(targetChar, startpos, endpos);
+		
+	}
+	
+	public int getUngapedLength() {
+		logger.warn("this could take a lot of time and ruin memory");
 		return -1;
 	}
-		
-	
-	public int countChar(char targetChar, int startpos, int endpos) {
-		int count = 0;
-		
-		for(int n = startpos; n < getLength() && n < endpos; n++){
-			int base = getBaseAsIntAtPos(n);
-			if((char)base == targetChar){
-				count++;
-			}
-		}
 
-		return count;
+	public int[] getSequenceAsBaseVals() {
+		logger.warn("this could take a lot of time and ruin memory");
+		return super.getSequenceAsBaseVals();
 	}
 
-	public void selectionExtendRight() {
-		if(selectionModel.hasSelection()){
-			int lastSelectedPos = selectionModel.getLastSelectedPosition(getLength());
-			int seqEndPos = getLength() + 1;
-			selectionModel.setSelection(lastSelectedPos, seqEndPos, true);
-		}
-	}
-	
-	public void selectionExtendLeft() {
-		if(selectionModel.hasSelection()){
-			int firstSelectedPos = selectionModel.getFirstSelectedPosition();
-			selectionModel.setSelection(0, firstSelectedPos, true);
-		}
-	}
-	
-	public int getLastSelectedPosition() {
-		return selectionModel.getLastSelectedPosition(getLength());
+	public int getUngapedPos(int position) {
+		logger.warn("this could take a lot of time");
+		return super.getUngapedPos(position);
 	}
 
-	public void setTranslated(boolean b) {
-		this.translated = b;
-	}
-
-	public boolean isTranslated() {
-		return translated;
-	}
-
-	public AminoAcid getTranslatedAminoAcidAtNucleotidePos(int x) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public int getNonTranslatedLength() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	public void insertGapAt(int n) {
-		// TODO Auto-generated method stub	
-	}
-
-	public void setAlignmentModel(AlignmentListModel alignmentModel) {
-		this.alignmentModel = alignmentModel;
-	}
-
-	public AlignmentListModel getAlignmentModel() {
-		return this.alignmentModel;
-	}
-
-	public byte[] getGapPaddedCodonInTranslatedPos(int pos) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public int find(byte find, int nextFindStartPos) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	public boolean isEndRightOfSelection() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public AminoAcid getNoGapAminoAcidAtNucleotidePos(int target) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	
 
 }

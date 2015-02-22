@@ -18,8 +18,8 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
 
 import aliview.FileFormat;
-import aliview.sequencelist.FileMMSequenceList;
 import aliview.sequencelist.FileSequenceAlignmentListModel;
+import aliview.sequencelist.MemoryMappedSequencesFile;
 import aliview.sequences.FileSequence;
 import aliview.sequences.MSFFileSequence;
 import aliview.sequences.PositionToPointer;
@@ -41,11 +41,13 @@ public class MSFFileIndexer {
 	}
 
 
-	public ArrayList<FileSequence> findSequencesInFile(ByteBufferInpStream mappedBuff, long filePointerStart, int seqOffset, int nSeqsToRetrieve,
-			SubThreadProgressWindow progressWin, FileMMSequenceList fileMMSequenceList) throws AlignmentImportException {
+	public ArrayList<Sequence> findSequencesInFile(MemoryMappedSequencesFile sequencesFile, long filePointerStart, int seqOffset, int nSeqsToRetrieve,
+			SubThreadProgressWindow progressWin) throws AlignmentImportException {
 		long startTime = System.currentTimeMillis();
 		logger.info("inside MSF importer");
-		ArrayList<FileSequence> sequences = new ArrayList<FileSequence>();
+		ByteBufferInpStream mappedBuff = sequencesFile.getMappedBuff();
+		
+		ArrayList<Sequence> sequences = new ArrayList<Sequence>();
 		try{
 			long fileSize = mappedBuff.length();
 			int longestSequenceLength = 0;
@@ -98,11 +100,11 @@ public class MSFFileIndexer {
 						long seqStartPointer = readerHelper.posOfFirstNonWhiteCharAfterWhiteChar();
 						long seqEndPointer = readerHelper.posOfNextNewline() - newlineLen;
 
-						MSFFileSequence seq = new MSFFileSequence(fileMMSequenceList, seqOffset + seqCount, nameStartPointer);
+						MSFFileSequence seq = new MSFFileSequence(sequencesFile, nameStartPointer);
 
 						String name = readerHelper.readString(nameStartPointer, seqStartPointer - 1);
 						name = name.trim();
-						seq.addName(name);
+						seq.setName(name);
 
 	//					logger.info("name=" + name);
 

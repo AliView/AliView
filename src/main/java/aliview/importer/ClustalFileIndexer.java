@@ -18,8 +18,8 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
 
 import aliview.FileFormat;
-import aliview.sequencelist.FileMMSequenceList;
 import aliview.sequencelist.FileSequenceAlignmentListModel;
+import aliview.sequencelist.MemoryMappedSequencesFile;
 import aliview.sequences.ClustalFileSequence;
 import aliview.sequences.FileSequence;
 import aliview.sequences.PositionToPointer;
@@ -41,10 +41,13 @@ public class ClustalFileIndexer {
 	}
 
 
-	public ArrayList<FileSequence> findSequencesInFile(ByteBufferInpStream mappedBuff, long filePointerStart, int seqOffset, int nSeqsToRetrieve,
-			SubThreadProgressWindow progressWin, FileMMSequenceList fileMMSequenceList) throws AlignmentImportException {
+	public ArrayList<Sequence> findSequencesInFile(MemoryMappedSequencesFile sequencesFile, long filePointerStart, int seqOffset, int nSeqsToRetrieve,
+			SubThreadProgressWindow progressWin) throws AlignmentImportException {
 		long startTime = System.currentTimeMillis();
-		ArrayList<FileSequence> sequences = new ArrayList<FileSequence>();
+		
+		ByteBufferInpStream mappedBuff = sequencesFile.getMappedBuff();
+		
+		ArrayList<Sequence> sequences = new ArrayList<Sequence>();
 		try{
 			long fileSize = mappedBuff.length();
 			int longestSequenceLength = 0;
@@ -94,11 +97,11 @@ public class ClustalFileIndexer {
 						// in clustal there are optional numbers after whitespace before line end
 						long seqEndPointer = readerHelper.posOfNextWhitespaceOrLF() - 1;
 
-						ClustalFileSequence seq = new ClustalFileSequence(fileMMSequenceList, seqOffset + seqCount, nameStartPointer);
+						ClustalFileSequence seq = new ClustalFileSequence(sequencesFile, nameStartPointer);
 
 						String name = readerHelper.readString(nameStartPointer, seqStartPointer - 1);
 						name = name.trim();
-						seq.addName(name);
+						seq.setName(name);
 						int seqSeqmentLen = (int) (seqEndPointer - seqStartPointer + 1);	
 						seq.add(new PositionToPointer(seqPos,seqPos + seqSeqmentLen -1, seqStartPointer, seqEndPointer));
 

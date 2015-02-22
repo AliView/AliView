@@ -17,6 +17,11 @@ public class PositionToPointer {
 	public PositionToPointer(int seqPosition, long startPointer, long endPointer) {
 		this(seqPosition, seqPosition + (int)(endPointer - startPointer), startPointer, endPointer);
 	}
+	
+	public PositionToPointer getCopy() {
+		return new PositionToPointer(startPos, endPos, startPointer, endPointer);
+	}
+	
 
 	public long getPointer(int askedPos) {
 		long pointer = -1;

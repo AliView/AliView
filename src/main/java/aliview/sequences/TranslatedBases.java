@@ -150,14 +150,12 @@ public class TranslatedBases implements Bases{
 	}
 	
 	public void delete(int[] toDeletePos) {
-		// or translated
-		
+		// or translated	
 		// translate toDelete
 		
 		ArrayList<Integer> toDeleteNucleotidePos = new ArrayList<Integer>();
 		
-		for(int aaPos : toDeletePos){
-			
+		for(int aaPos : toDeletePos){		
 			CodonPos codon = getCodonPosInTranslatedPos(aaPos);
 			for(int n = codon.startPos; n <= codon.endPos; n++){
 				toDeleteNucleotidePos.add(new Integer(n));
@@ -170,8 +168,11 @@ public class TranslatedBases implements Bases{
 			logger.info("toDel" + toDel);
 		}
 		
-		delegate.delete(toDeleteArray);
-		
+		delegate.delete(toDeleteArray);	
+	}
+	
+	public void deleteAll(byte val) {
+		// TODO Auto-generated method stub	
 	}
 	
 	
@@ -481,6 +482,8 @@ public class TranslatedBases implements Bases{
 			}
 			return counter;
 		}
+
+		
 
 
 }

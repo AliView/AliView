@@ -1,5 +1,8 @@
 package aliview.sequences;
 
+import java.io.IOException;
+import java.io.Writer;
+
 import aliview.AminoAcid;
 
 public interface Bases {
@@ -16,7 +19,7 @@ public interface Bases {
 
 	public abstract byte[] toByteArray(int startIndexInclusive,
 			int endIndexInclusive);
-
+	
 	public abstract String toString();
 
 	public abstract void set(int n, byte newBase);
@@ -49,5 +52,9 @@ public interface Bases {
 	public abstract void moveBaseLeft(int n);
 
 	public abstract void moveBaseRight(int n);
+
+	public abstract void deleteAll(byte val);
+
+
 
 }

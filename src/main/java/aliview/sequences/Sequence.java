@@ -57,7 +57,9 @@ public interface Sequence extends Comparable<Sequence>{
 	
 	public byte[] getGapPaddedCodonInTranslatedPos(int pos);
 	
-	public AminoAcid getNoGapAminoAcidAtNucleotidePos(int target);
+	public AminoAcidAndPosition getNoGapAminoAcidAtNucleotidePos(int target);
+	
+	public boolean isCodonSecondPos(int x);
 	
 	// Undecided which version
 	public boolean isEmpty();
@@ -183,6 +185,8 @@ public interface Sequence extends Comparable<Sequence>{
 	public void setAlignmentModel(AlignmentListModel alignmentModel);
 	
 	public AlignmentListModel getAlignmentModel();
+
+	
 
 	
 

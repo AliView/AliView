@@ -87,6 +87,10 @@ public class BasicSequence implements Sequence, Comparable<Sequence> {
 	public byte[] getGapPaddedCodonInTranslatedPos(int pos) {
 		return getTranslatedBases().getGapPaddedCodonInTranslatedPos(pos);
 	}
+	
+	public boolean isCodonSecondPos(int pos) {
+		return getTranslatedBases().isCodonSecondPos(pos);
+	}
 
 	protected Bases getBases(){
 		if(isTranslated()){
@@ -114,7 +118,7 @@ public class BasicSequence implements Sequence, Comparable<Sequence> {
 		return getTranslatedBases().getAminoAcidAtNucleotidePos(x);
 	}
 	
-	public AminoAcid getNoGapAminoAcidAtNucleotidePos(int target){
+	public AminoAcidAndPosition getNoGapAminoAcidAtNucleotidePos(int target){
 		return getTranslatedBases().getNoGapAminoAcidAtNucleotidePos(target);
 	}
 

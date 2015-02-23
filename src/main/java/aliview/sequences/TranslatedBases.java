@@ -267,8 +267,13 @@ public class TranslatedBases implements Bases{
 			return cachedClosestTranslatedNucleotideStartPos;
 		}
 
+		/*
+		public AminoAcid getAAinNoGapTranslatedPos(int x) {
+			return getNoGapAminoAcidAtNucleotidePos(x * 3);
+		}
+		*/
 		
-		public AminoAcid getNoGapAminoAcidAtNucleotidePos(int target){
+		public AminoAcidAndPosition getNoGapAminoAcidAtNucleotidePos(int target){
 			int tripCount = 0;
 			byte[] triplet = new byte[3];
 			int seqLen = delegate.getLength();
@@ -301,7 +306,7 @@ public class TranslatedBases implements Bases{
 					byte base = delegate.get(n);
 					if(NucleotideUtilities.isGap(base) || getCodonPositions().isNonCoding(n)){			
 						if(n >= target && tripCount == 0){
-							return AminoAcid.GAP;
+							return new AminoAcidAndPosition(AminoAcid.GAP, startPos); 
 						}			
 					}else{
 						
@@ -315,16 +320,16 @@ public class TranslatedBases implements Bases{
 						if(tripCount == 3){				
 							if(n >= target){
 								AminoAcid aa = AminoAcid.getAminoAcidFromCodon(triplet, getGeneticCode());
-								return aa;
+								return new AminoAcidAndPosition(aa, startPos);
 							}
 							triplet = new byte[3];
 							tripCount = 0;
 						}			
 					}
 				}
-				return AminoAcid.X;
+				return new AminoAcidAndPosition(AminoAcid.X, startPos);
 			}else{
-				return AminoAcid.GAP;
+				return new AminoAcidAndPosition(AminoAcid.GAP, startPos);//AminoAcid.GAP;
 			}
 		}
 
@@ -377,10 +382,6 @@ public class TranslatedBases implements Bases{
 			}
 			int lastPos = getCodonPositions().getAminoAcidPosFromNucleotidePos(delegate.getLength() - 1);
 			return lastPos + 1;
-		}
-		
-		public AminoAcid getAAinNoGapTranslatedPos(int x) {
-			return getNoGapAminoAcidAtNucleotidePos(x * 3);
 		}
 		
 		public AminoAcid getAAinTranslatedPos(int x) {

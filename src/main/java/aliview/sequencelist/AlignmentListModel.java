@@ -314,8 +314,8 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		if(setSelected){
 			selectionModel.setSequenceSelection(moreSeqs);
 		}
-		fireSequencesChangedAll();
-		//fireSequenceIntervalAdded(this.size() - moreSeqs.size(), this.size() - 1);
+		//fireSequencesChangedAll();
+		fireSequenceIntervalAdded(this.size() - moreSeqs.size(), this.size() - 1);
 	}
 	
 	
@@ -1811,7 +1811,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 	}
 
 	public void expandSelectionDown() {
-		selectionModel.expandSelectionDown();
+		selectionModel.selectionExtendDown();
 	}
 	
 	public String getSelectionAsNucleotides() {

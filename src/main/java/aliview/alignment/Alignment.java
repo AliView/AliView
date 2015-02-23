@@ -542,6 +542,8 @@ public class Alignment implements FileSequenceLoadListener {
 			sequences.rightPadWithGapUntilEqualLength();
 			sequences.rightTrimSequencesRemoveGapsUntilEqualLength();
 		}
+		// store current translation (might be modofied below)
+		boolean wasTranslated = isTranslatedOnePos();
 		
 		BufferedWriter out = new BufferedWriter(new FileWriter(outFile));
 
@@ -551,6 +553,7 @@ public class Alignment implements FileSequenceLoadListener {
 		}
 		
 		if(fileFormat == FileFormat.FASTA){
+			setTranslationOnePos(false);
 			storeAlignmetAsFasta(out);
 			// save meta if exset it is set
 			if(this.alignmentMeta.isMetaOutputNeeded()){
@@ -560,6 +563,7 @@ public class Alignment implements FileSequenceLoadListener {
 		}else if(fileFormat == FileFormat.PHYLIP || fileFormat == FileFormat.PHYLIP_RELAXED ||
 				 fileFormat == FileFormat.PHYLIP_RELAXED_PADDED || fileFormat == FileFormat.PHYLIP_STRICT_SEQUENTIAL ||
 				 fileFormat == FileFormat.PHYLIP_RELAXED_PADDED_INTERLEAVED){
+			setTranslationOnePos(false);
 			storeAlignmetAsPhyFile(out, fileFormat);
 			// save meta if exset it is set
 			if(this.alignmentMeta.isMetaOutputNeeded()){
@@ -569,7 +573,6 @@ public class Alignment implements FileSequenceLoadListener {
 			
 		
 		}else if(fileFormat == FileFormat.PHYLIP_TRANSLATED_AMINO_ACID){
-			boolean wasTranslated = isTranslatedOnePos();
 			setTranslationOnePos(true);
 			storeAlignmetAsPhyFile(out, FileFormat.PHYLIP_RELAXED_PADDED);
 			// save meta if exset it is set
@@ -578,9 +581,7 @@ public class Alignment implements FileSequenceLoadListener {
 				BufferedWriter outMeta = new BufferedWriter(new FileWriter(new File(outFile.getAbsoluteFile() + ".meta")));
 			//	storeTranslatedMetaData(outMeta, translatedMeta);
 			}
-			setTranslationOnePos(wasTranslated);
-		}else if(fileFormat == FileFormat.FASTA_TRANSLATED_AMINO_ACID){
-			boolean wasTranslated = isTranslatedOnePos();
+		}else if(fileFormat == FileFormat.FASTA_TRANSLATED_AMINO_ACID){		
 			setTranslationOnePos(true);
 			storeAlignmetAsFasta(out);
 			// save meta if exset it is set
@@ -589,24 +590,28 @@ public class Alignment implements FileSequenceLoadListener {
 				BufferedWriter outMeta = new BufferedWriter(new FileWriter(new File(outFile.getAbsoluteFile() + ".meta")));
 				//storeTranslatedMetaData(outMeta, translatedMeta);
 			}
-			setTranslationOnePos(wasTranslated);
 		}else if(fileFormat == FileFormat.CLUSTAL){
+			setTranslationOnePos(false);
 			storeAlignmetAsClustal(out);
 		}else if(fileFormat == FileFormat.MSF){
+			setTranslationOnePos(false);
 			storeAlignmetAsMSF(out);
 		}else if(fileFormat == FileFormat.NEXUS){
+			setTranslationOnePos(false);
 			AliViewExtraNexusUtilities.exportAlignmentAsNexus(new BufferedWriter(new FileWriter(outFile)), this, false,nexusDatatype);
 		}else if(fileFormat == FileFormat.NEXUS_TRANSLATED_AMINO_ACID){
 			// make sure it is translated
-			boolean wasTranslated = isTranslatedOnePos();
 			setTranslationOnePos(true);
 			AliViewExtraNexusUtilities.exportAlignmentAsNexus(new BufferedWriter(new FileWriter(outFile)), this, false, AliViewExtraNexusUtilities.DATATYPE_PROTEIN);
-			setTranslationOnePos(false);
 		}else if(fileFormat == FileFormat.NEXUS_SIMPLE){
+			setTranslationOnePos(false);
 			AliViewExtraNexusUtilities.exportAlignmentAsNexus(new BufferedWriter(new FileWriter(outFile)), this, true, nexusDatatype);
 		}else if(fileFormat == FileFormat.NEXUS_CODONPOS_CHARSET){
+			setTranslationOnePos(false);
 			AliViewExtraNexusUtilities.exportAlignmentAsNexusCodonpos(new BufferedWriter(new FileWriter(outFile)), this, AliViewExtraNexusUtilities.DATATYPE_DNA);
-		}		
+		}
+		// revert translation
+		setTranslationOnePos(wasTranslated);
 	}
 
 	/*

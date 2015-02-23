@@ -2719,6 +2719,8 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 	public void selectAll(CharSet aCharSet) {
 		alignment.selectAll(aCharSet);
 	}
+	
+	/*
 
 	public void fileSequencesChanged(){
 		alignment.fileSequenceContentsChanged();
@@ -2738,6 +2740,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 			Settings.getHideFileSeqLimitedEditCapabilities().putBooleanValue(hideNextTimeSelected);
 		}
 	}
+	*/
 
 	private void fireEditModeChanged() {
 		aliViewMenuBar.editModeChanged();	
@@ -3958,9 +3961,11 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 	
 	public void contentsChanged(AlignmentDataEvent e) {
 		logger.info("contentsChanged");
+		/*
 		if(e.getSource() instanceof FileSequenceAlignmentListModel){
 			aliViewWindow.fileSequencesChanged();
 		}
+		*/
 		
 		Rectangle grown = new Rectangle(e.getBounds().x - 3, e.getBounds().y - 1, e.getBounds().width + 6, e.getBounds().height + 2);
 		Rectangle paneBounds = alignmentPane.matrixCoordToPaneCoord(grown);
@@ -3979,7 +3984,8 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		
 		Rectangle visiRect = sequenceJList.getVisibleRect();
 		Rectangle drawListBounds = new Rectangle(visiRect.x,paneBounds.y, visiRect.width, paneBounds.height);
-		sequenceJList.scrollRectToVisible(drawListBounds);
+//		sequenceJList.scrollRectToVisible(drawListBounds);
+		logger.info("drawListBounds" + drawListBounds);
 		sequenceJList.repaint(visiRect.x,paneBounds.y, visiRect.width, paneBounds.height);
 	}
 	

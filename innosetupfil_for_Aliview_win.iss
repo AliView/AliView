@@ -21,7 +21,7 @@ AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
-OutputDir="Z:\home\anders\maven\AliView\target\windows-latest\"
+OutputDir="target\windows-latest\"
 OutputBaseFilename={#MyAppName}-Setup
 Compression=lzma
 SolidCompression=yes
@@ -62,8 +62,8 @@ Root: HKCR; Subkey: "{#MyAppName}_msf"; ValueType: string; ValueName: ""; ValueD
 Root: HKCR; Subkey: "{#MyAppName}_msf\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#MyAppName}"" ""%1"""
 
 [Files]
-Source: "Z:\home\anders\maven\AliView\target\windows-latest\AliView.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "Z:\home\anders\maven\AliView\AliView.l4j.ini"; DestDir: "{app}";
+Source: "target\windows-latest\AliView.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "AliView.l4j.ini"; DestDir: "{app}";
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

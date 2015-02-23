@@ -115,6 +115,10 @@ public class AlignmentPane extends JPanel{
 	private int fontCase = Settings.getFontCase().getIntValue();
 	private TranslationCharPixelsContainer charPixTranslationAndNucDefaultNoAALetter;
 	private TranslationCharPixelsContainer charPixTranslationAndNucSelectedNoAALetter;
+	private TranslationCharPixelsContainer charPixTranslationAndNucDominantNuc;
+	private TranslationCharPixelsContainer charPixTranslationAndNucDominantNucNoAALetter;
+	private TranslationCharPixelsContainer charPixTranslationAndNucDominantNucSelected;
+	private TranslationCharPixelsContainer charPixTranslationAndNucDominantNucNoAALetterSelected;
 	
 	
 
@@ -283,27 +287,35 @@ public class AlignmentPane extends JPanel{
 		charPixTranslationSelectedLetter = TranslationCharPixelsContainer.createSelectedLetterTranslationPixelsContainer(charFont, charMaxSizeToDraw,
 				charPixWidth, charPixHeight, colorSchemeNucleotide, getFontCase());
 		
+		
+		
+		
+		
 		charPixTranslationAndNucDefault = TranslationCharPixelsContainer.createDefaultTranslationAndNucPixelsContainer(charFont, charMaxSizeToDraw,
+				charPixWidth, charPixHeight, colorSchemeNucleotide, getFontCase());
+		
+		charPixTranslationAndNucDefaultNoAALetter = TranslationCharPixelsContainer.createDefaultTranslationAndNucPixelsContainerNoAALetter(charFont, charMaxSizeToDraw,
 				charPixWidth, charPixHeight, colorSchemeNucleotide, getFontCase());
 
 		charPixTranslationAndNucSelected = TranslationCharPixelsContainer.createSelectedTranslationAndNucPixelsContainer(charFont, charMaxSizeToDraw,
 				charPixWidth, charPixHeight, colorSchemeNucleotide, getFontCase());
-
-		charPixTranslationAndNucDefaultNoAALetter = TranslationCharPixelsContainer.createDefaultNoAALetterTranslationAndNucPixelsContainer(charFont, charMaxSizeToDraw,
+		
+		charPixTranslationAndNucSelectedNoAALetter = TranslationCharPixelsContainer.createSelectedTranslationAndNucPixelsContainerNoAALetter(charFont, charMaxSizeToDraw,
 				charPixWidth, charPixHeight, colorSchemeNucleotide, getFontCase());
 
-		charPixTranslationAndNucSelectedNoAALetter = TranslationCharPixelsContainer.createSelectedNoAALetterTranslationAndNucPixelsContainer(charFont, charMaxSizeToDraw,
+		charPixTranslationAndNucDominantNuc = TranslationCharPixelsContainer.createDominantNucTranslationAndNucPixelsContainer(charFont, charMaxSizeToDraw,
+				charPixWidth, charPixHeight, colorSchemeNucleotide, getFontCase());
+		
+		charPixTranslationAndNucDominantNucNoAALetter = TranslationCharPixelsContainer.createDominantNucTranslationAndNucPixelsContainerNoAALetter(charFont, charMaxSizeToDraw,
+				charPixWidth, charPixHeight, colorSchemeNucleotide, getFontCase());
+
+		charPixTranslationAndNucDominantNucSelected = TranslationCharPixelsContainer.createSelectedDominantNucTranslationAndNucPixelsContainer(charFont, charMaxSizeToDraw,
+				charPixWidth, charPixHeight, colorSchemeNucleotide, getFontCase());
+		
+		charPixTranslationAndNucDominantNucNoAALetterSelected = TranslationCharPixelsContainer.createSelectedDominantNucTranslationAndNucPixelsContainerNoAALetter(charFont, charMaxSizeToDraw,
 				charPixWidth, charPixHeight, colorSchemeNucleotide, getFontCase());
 		
 		
-		charPixTranslationAndNucLetter = TranslationCharPixelsContainer.createLetterTranslationAndNucPixelsContainer(charFont, charMaxSizeToDraw,
-				charPixWidth, charPixHeight, colorSchemeNucleotide, getFontCase());
-
-		charPixTranslationAndNucSelectedLetter = TranslationCharPixelsContainer.createSelectedLetterTranslationAndNucPixelsContainer(charFont, charMaxSizeToDraw,
-				charPixWidth, charPixHeight, colorSchemeNucleotide, getFontCase());
-
-
-
 		charPixDefaultAA =  new AACharPixelsContainer();
 		if(colorSchemeAminoAcid.getALLCompundColors() != null){
 			CompoundCharPixelsContainer compContainer = CompoundCharPixelsContainer.createDefaultCompoundColorContainer(charFont, charMaxSizeToDraw,
@@ -712,7 +724,6 @@ public class AlignmentPane extends JPanel{
 			aaTransSeq = new AATranslator(alignment.getAlignmentMeta().getCodonPositions(), alignment.getGeneticCode());
 		}
 
-		
 		// test time to get all bases
 		boolean testloop = false;
 		if(testloop && charWidth >= 1){
@@ -861,8 +872,8 @@ public class AlignmentPane extends JPanel{
 					}
 					clipY ++;
 				}
-
 			}
+			
 
 			// Now draw the pixels onto the image
 			Image img = createImage(new MemoryImageSource(clipRGB.getScanWidth(), clipRGB.getHeight(), clipRGB.getBackend(), 0, clipRGB.getScanWidth()));
@@ -1006,7 +1017,12 @@ public class AlignmentPane extends JPanel{
 								}
 								else{
 									AminoAcid aminoAcid = alignment.getTranslatedAminoAcidAtNucleotidePos(x,y);
-									copyTranslatedNucleotidesPixels(clipRGB,residue,aminoAcid,x,y,(int)(clipX*charWidth*highDPIScaleFactor), (int)(clipY*charHeight*highDPIScaleFactor), aaTransSeq);
+									if(showTranslationAndNuc){
+										copyTranslatedNucleotidesPixelsShowTranslationAndNuc(clipRGB,residue,aminoAcid,x,y,(int)(clipX*charWidth*highDPIScaleFactor), (int)(clipY*charHeight*highDPIScaleFactor), aaTransSeq);
+									}else{
+										copyTranslatedNucleotidesPixels(clipRGB,residue,aminoAcid,x,y,(int)(clipX*charWidth*highDPIScaleFactor), (int)(clipY*charHeight*highDPIScaleFactor), aaTransSeq);
+									}
+									
 								}
 								
 							}else{
@@ -1213,8 +1229,9 @@ public class AlignmentPane extends JPanel{
 		}
 	}
 
+	
 
-	private void copyTranslatedNucleotidesPixels(RGBArray clipArray, byte residue, AminoAcid acid, int x, int y, int clipX, int clipY, AATranslator aaTransSeq){
+	private void copyTranslatedNucleotidesPixelsShowTranslationAndNuc(RGBArray clipArray, byte residue, AminoAcid acid, int x, int y, int clipX, int clipY, AATranslator aaTransSeq){
 
 		// A small hack
 		if(residue == 0){
@@ -1277,6 +1294,54 @@ public class AlignmentPane extends JPanel{
 				}
 				
 				
+			}
+		}
+
+		try {
+			ImageUtils.insertRGBArrayAt(clipX, clipY, newPiece, clipArray);
+		} catch (Exception e) {
+			logger.info("clipX" + clipX);
+			logger.info("clipY" + clipY);
+		}
+	}
+	
+	private void copyTranslatedNucleotidesPixels(RGBArray clipArray, byte residue, AminoAcid acid, int x, int y, int clipX, int clipY, AATranslator aaTransSeq){
+
+		// A small hack
+		if(residue == 0){
+			residue = ' ';
+		}
+
+		// set defaults
+		//AminoAcid acid =  aaTransSeq.getAminoAcidAtNucleotidePos(x);
+		TranslationCharPixelsContainer pixContainerToUse = charPixTranslationDefault;
+		TranslationCharPixelsContainer pixLetterContainerToUse = charPixTranslationLetter;
+		TranslationCharPixelsContainer pixLetterContainerToUseNoAALetter = charPixTranslationDefault;
+		
+
+		// adjust colors if selected and temp selection
+		// We have to calculate within this way - because rect.contains(Point) is always returning false on a 0-width or 0 height Rectangle
+		boolean isPointWithinSelectionRect = false;
+		if(alignment.getTempSelection() != null){
+			if(x <= alignment.getTempSelection().getMaxX() && x >= alignment.getTempSelection().getMinX() && y <= alignment.getTempSelection().getMaxY() && y >= alignment.getTempSelection().getMinY()){
+				isPointWithinSelectionRect = true;
+			}
+		}
+		if(alignment.isBaseSelected(x,y) || (alignment.getTempSelection() != null && isPointWithinSelectionRect)){		
+			pixContainerToUse = charPixTranslationSelected;
+			pixLetterContainerToUse = charPixTranslationSelectedLetter;			
+		}
+			
+		RGBArray newPiece;
+
+		if(! drawAminoAcidCode){	
+			newPiece = pixContainerToUse.getRGBArray(acid, residue);
+		}else{
+			if(aaTransSeq.isCodonSecondPos(x)){
+				newPiece = pixLetterContainerToUse.getRGBArray(acid, residue);
+			}else{
+				residue = ' ';
+				newPiece = pixLetterContainerToUseNoAALetter.getRGBArray(acid, residue);
 			}
 		}
 
@@ -1587,13 +1652,16 @@ public class AlignmentPane extends JPanel{
 
 	public void validateSize() {
 		// Set component preferred size
+	//	Dimension current = getSize();
 		Dimension prefSize = getCalculatedPreferredSize();
-		Rectangle prefRect = this.getVisibleRect();
+	//	Rectangle prefRect = this.getVisibleRect();
+		
+		//if(current.width != prefSize.width){
 		this.setPreferredSize(prefSize);
-		this.updateStatisticsLabel();
-		this.rulerIsDirty = true;
+		//this.updateStatisticsLabel();
+//		this.rulerIsDirty = true;
 		this.revalidate();
-		this.scrollRectToVisible(prefRect);
+//		this.scrollRectToVisible(prefRect);
 	}
 
 	@Override

@@ -74,6 +74,10 @@ public class FileSequenceAlignmentListModel extends AlignmentListModel{
 		return false;
 	}
 	
+	public void addMoreFileSequences(List<Sequence> moreSeqs, boolean setSelected) {
+		super.addAll(moreSeqs, setSelected);
+	}
+	
 	
 	
 	@Override

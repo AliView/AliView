@@ -138,7 +138,8 @@ public class AlignmentSelectionModel{
 			if(Utils.hasSameBounds(newRect, oldSelectRect)){	
 				// do nothing
 			}else{
-				fireSelectionChanged(newRect, false);
+				Rectangle both = Utils.addRects(oldSelectRect, newRect);
+				fireSelectionChanged(both, false);
 			}
 		}
 		else{
@@ -269,28 +270,18 @@ public class AlignmentSelectionModel{
 		return selection;
 	}
 	
-	public void expandSelectionDown() {
-		logger.info("expDown");
-		// start one above bottom
-		for(int n = sequences.size()-2; n >= 1; n--){
-			Sequence seq = sequences.get(n);
-			if(seq.hasSelection()){
-				logger.info("hasSel");
-				int[] selected = seq.getSelectedPositions();
-				for(int index: selected){
-					sequences.get(n+1).setSelection(index,index, true);
-				}
-			}
-		}
-	}
+	
+	
+	
 	
 	
 	public void selectBases(Sequence seq, Interval foundPos) {
 		seq.setSelection(foundPos.startPos, foundPos.endPos, false);
-		//seq.setSelection...
-		// select
-		//selectionModel.setSelection(foundStart+buffStart+1,foundEnd+buffStart -1,true);
+		fireSelectionChanged(seq, true);
 	}
+	
+	
+	
 	
 	
 
@@ -386,6 +377,27 @@ public class AlignmentSelectionModel{
 		Rectangle oldSelect = getSelectionBounds();
 		for(Sequence seq: sequences){
 			seq.selectionExtendLeft();
+		}
+		Rectangle newSelect = getSelectionBounds();
+		newSelect.add(oldSelect);
+		fireSelectionChanged(newSelect, false);
+	}
+	
+	public void selectionExtendDown() {
+		if(!hasSelection()){
+			return;
+		}
+		Rectangle oldSelect = getSelectionBounds();
+		
+		// start one above bottom
+		for(int n = sequences.size()-2; n >= 1; n--){
+			Sequence seq = sequences.get(n);
+			if(seq.hasSelection()){
+				int[] selected = seq.getSelectedPositions();
+				for(int index: selected){
+					sequences.get(n+1).setSelection(index,index, true);
+				}
+			}
 		}
 		Rectangle newSelect = getSelectionBounds();
 		newSelect.add(oldSelect);
@@ -666,7 +678,6 @@ public class AlignmentSelectionModel{
     protected void fireSelectionChanged(int index0, int index1, boolean isAdjusting)
     {
         Rectangle rect = new Rectangle(0, Math.min(index0, index1), sequences.getLongestSequenceLength(), Math.abs(index0 - index1));
-    	
         fireSelectionChanged(rect, isAdjusting);
     }
 

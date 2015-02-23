@@ -61,7 +61,7 @@ public class MemoryMappedSequencesFile{
 	private FileFormat fileFormat;
 	private File alignmentFile;
 	private ByteBufferInpStream mappedBuff;
-	private ReentrantLock mappedBuffLock = new ReentrantLock();
+	private final ReentrantLock mappedBuffLock = new ReentrantLock();
 //	private FileSequence lastCachedSeq;
 	private long fileSize = -1;
 //	ArrayList<ListDataListener> listeners = new ArrayList<ListDataListener>();
@@ -173,7 +173,7 @@ public class MemoryMappedSequencesFile{
 	}
 	
 	
-	private void indexFileAndAddSequencesToListInSubthread(final AlignmentListModel destinationModel, final FileFormat fileFormat){
+	private void indexFileAndAddSequencesToListInSubthread(final FileSequenceAlignmentListModel destinationModel, final FileFormat fileFormat){
 		
 		final SubThreadProgressWindow progressWin = new SubThreadProgressWindow();
 		progressWin.setAlwaysOnTop(true);
@@ -191,7 +191,9 @@ public class MemoryMappedSequencesFile{
 					public void run(){
 						try {
 							logger.info("Indexing Thread started");
-							int nMaxSeqsToRetrieveBeforeDestinationUpdate = 500;
+							int nMaxSeqsToRetrieveBeforeDestinationUpdateFirst = 500;
+							int nMaxSeqsToRetrieveBeforeDestinationUpdateAfterFirst = 5000;
+							int nMaxSeqsToRetrieveBeforeDestinationUpdate = nMaxSeqsToRetrieveBeforeDestinationUpdateFirst;
 							// These formats are possibly sequential and it is good to retrieve all seqs at once
 							if(fileFormat == FileFormat.PHYLIP || fileFormat == FileFormat.NEXUS || fileFormat == FileFormat.CLUSTAL){
 								nMaxSeqsToRetrieveBeforeDestinationUpdate = Integer.MAX_VALUE;
@@ -200,7 +202,7 @@ public class MemoryMappedSequencesFile{
 							FileSequence lastCachedSeq = null;
 							int indexOffset = 0;
 							while(hasMoreSequencesToIndex){
-									
+						
 								// The standard JAVA-MappedFileBuffer, but it is limited to 2GB files
 								// mappedBuff = new FileInputStream(aliFile).getChannel().map(FileChannel.MapMode.READ_ONLY, 0, aliFile.length()); 
 								// This is extended version - any size files
@@ -214,7 +216,6 @@ public class MemoryMappedSequencesFile{
 									progressWin.setTitle("Background indexing");
 									progressWin.setMessage("Indexing file: " + 0 + "/" + "number of sequences");
 								}
-								
 								
 								long startPointer = 0;
 								if(lastCachedSeq != null){
@@ -235,6 +236,8 @@ public class MemoryMappedSequencesFile{
 								if(Thread.interrupted()){
 									break;
 								}
+								
+								nMaxSeqsToRetrieveBeforeDestinationUpdate = nMaxSeqsToRetrieveBeforeDestinationUpdateAfterFirst;
 								
 //								// sleeep a while so file can be read by other thread
 //								try {
@@ -360,12 +363,12 @@ public class MemoryMappedSequencesFile{
 	}
 
 
-	private void addSequencesToDestination(final List<Sequence> moreSeqs, final AlignmentListModel destinationModel){
+	private void addSequencesToDestination(final List<Sequence> moreSeqs, final FileSequenceAlignmentListModel destinationModel){
 
 		logger.info("addSequencesToDestination");
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				destinationModel.addAll(moreSeqs, false);
+				destinationModel.addMoreFileSequences(moreSeqs, false);
 			}
 		});
 		
@@ -414,16 +417,45 @@ public class MemoryMappedSequencesFile{
 		return (byte) readInFile(pos);
 	}
 
+//	boolean firstTime = true;
 	public int readInFile(long pos) {
 		if(pos < 0){
 			return 0;
 		}
-		
 		mappedBuffLock.lock();
+		try{
 			mappedBuff.position(pos);
 			int val = mappedBuff.read();
+			return val;
+	}finally{
 		mappedBuffLock.unlock();
-		return val;
+	}
+		
+		
+//		if(firstTime){
+//			try {
+//				Thread.sleep(10000);
+//				mappedBuffLock.lock();
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			firstTime = false;
+//		}
+		
+		// ca 90-95ms
+		// ca 105-110ms
+		// ca 120-130ms
+	//	if(! mappedBuffLock.isHeldByCurrentThread()){
+//			mappedBuffLock.lock();
+//	//	}
+//			mappedBuff.position(pos);
+//			int val = mappedBuff.read();
+////		if(mappedBuffLock.hasQueuedThreads()){
+//				mappedBuffLock.unlock();
+////		}
+//	//	mappedBuffLock.unlock();
+//		return val;
 
 		
 	}
@@ -437,14 +469,14 @@ public class MemoryMappedSequencesFile{
 //			mappedBuff.position(pos);
 //			return mappedBuff.read(bytesToDraw,0,i);
 //		}
-		
 		mappedBuffLock.lock();
+		try{
 			mappedBuff.position(pos);
 			int val = mappedBuff.read(bytesToDraw,0,i);
-		mappedBuffLock.unlock();
-	return val;
-		
-		
+			return val;
+		}finally{
+			mappedBuffLock.unlock();
+		}
 	}
 
 	public long getFileSize(){	
@@ -456,11 +488,14 @@ public class MemoryMappedSequencesFile{
 //		}
 		
 		mappedBuffLock.lock();
-		if(fileSize == -1){
-			fileSize = mappedBuff.length();
+		try{
+			if(fileSize == -1){
+				fileSize = mappedBuff.length();
+			}
+			return fileSize;
+		}finally{
+			mappedBuffLock.unlock();
 		}
-		mappedBuffLock.unlock();
-		return fileSize;
 		
 	}
 

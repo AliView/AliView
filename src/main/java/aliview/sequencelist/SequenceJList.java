@@ -43,7 +43,7 @@ import utils.OSNativeUtils;
 import aliview.AliView;
 import aliview.AliViewWindow;
 import aliview.UndoControler;
-import aliview.gui.NotUsed_AlignmentPane_Orig;
+import aliview.pane.NotUsed_AlignmentPane_Orig;
 import aliview.sequences.Sequence;
 import aliview.sequences.SequenceSelectionModel;
 import aliview.settings.Settings;

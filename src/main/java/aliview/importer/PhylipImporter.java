@@ -15,7 +15,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
 
-import aliview.FileFormat;
 import aliview.sequences.PhylipSequence;
 import aliview.sequences.Sequence;
 
@@ -24,22 +23,16 @@ public class PhylipImporter {
 	
 	private Reader reader;
 	private int longestSequenceLength;
-	public static final int UNKNOWN = -1;
-	public static int LONG_NAME_INTERLEAVED = 0;
-	public static int SHORT_NAME_INTERLEAVED = 1;
-	public static int SHORT_NAME_SEQUENTIAL = 2;
-	public static int LONG_NAME_SEQUENTIAL = 3;
-	public static int LONG_NAME_SEQUENTIAL_ONELINE = 4;
-	public int formatType;
+	public FileFormat formatType;
 	
 	public static void main(String[] args) throws FileNotFoundException, AlignmentImportException {
 		File alignmentFile = new File("/home/anders/projekt/alignments/smalphylipSeqShortName.phy");
-		PhylipImporter importer = new PhylipImporter(new FileReader(alignmentFile), PhylipImporter.SHORT_NAME_INTERLEAVED);
+		PhylipImporter importer = new PhylipImporter(new FileReader(alignmentFile), FileFormat.PHYLIP_SHORT_NAME_INTERLEAVED);
 		importer.importSequences();
 	}
 	
 	
-	public PhylipImporter(Reader reader, int formatType) {
+	public PhylipImporter(Reader reader, FileFormat formatType) {
 		this.reader = reader;
 		this.formatType = formatType;
 	}
@@ -73,7 +66,7 @@ public class PhylipImporter {
 			
 			try{
 				
-				if(formatType == LONG_NAME_INTERLEAVED){
+				if(formatType == FileFormat.PHYLIP_RELAXED_PADDED_INTERLEAVED_AKA_LONG_NAME_INTERLEAVED){
 					
 					List<String> seqNames = new ArrayList<String>();
 					// since we already know sequence size then we can use ByteBuffer
@@ -149,7 +142,7 @@ public class PhylipImporter {
 					
 				}
 				
-				if(formatType == LONG_NAME_SEQUENTIAL){
+				if(formatType == FileFormat.PHYLIP_RELAXED_PADDED_AKA_LONG_NAME_SEQUENTIAL){
 					// try long name sequential
 					for(int n = 0; n <seqCount; n++){
 						String name = helper.getStringUntilNextSpaceOrTab();
@@ -163,13 +156,13 @@ public class PhylipImporter {
 							seqBuffer.append(line);
 						}
 						if(seqBuffer.length() != longestSequenceLength){
-							throw new AlignmentImportException("Did not match Phylip.LONG_NAME_SEQUENTIAL");
+							throw new AlignmentImportException("Did not match FileFormat.PHYLIP_RELAXED_PADDED_AKA_LONG_NAME_SEQUENTIAL");
 						}
 						sequences.add(new PhylipSequence(name, seqBuffer.toString()));
 					}
 				}
 				
-				if(formatType == SHORT_NAME_SEQUENTIAL){
+				if(formatType == FileFormat.PHYLIP_STRICT_SEQUENTIAL_AKA_SHORT_NAME_SEQUENTIAL){
 					// try long name sequential
 					for(int n = 0; n <seqCount; n++){
 						String name = helper.getStringFromNextPositions(10);
@@ -183,7 +176,7 @@ public class PhylipImporter {
 				}
 				
 				
-				if(formatType == SHORT_NAME_INTERLEAVED){
+				if(formatType == FileFormat.PHYLIP_SHORT_NAME_INTERLEAVED){
 					// try long name sequential
 					
 					// first read names lines
@@ -276,5 +269,11 @@ public class PhylipImporter {
 			}
 		}
 		return isValid;
+	}
+
+
+	public FileFormat getFileFormat() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -1,5 +1,7 @@
 package aliview.color;
 
+import java.awt.Color;
+
 public class ColorUtils {
 	
 	
@@ -10,6 +12,36 @@ public class ColorUtils {
                 ((b & 0xFF) << 0);
         return rgba;
     }
+	
+	public static int grayFromRGB(int rgb) {
+		int r = (rgb >> 16) & 0xFF;
+		int g = (rgb >> 8) & 0xFF;
+		int b = (rgb) & 0xFF;
+		
+		int gray = (r + g + b) / 3;
+		
+		return gray;
+	}
+	
+	public static int darkerRGB(int rgb) {
+		
+//		Color col = new Color(rgb);
+//		Color darker = col.darker().darker();
+//		return darker.getRGB();
+//		
+		int r = (rgb >> 16) & 0xFF;
+		int g = (rgb >> 8) & 0xFF;
+		int b = (rgb) & 0xFF;
+		
+		return new Color( (int)(r*0.7) ,(int)(g*0.7),(int)(b*0.7)).getRGB();
+		
+//		int darker =(int)(r * 0.7);
+//		darker = (darker << 8) + (int)(g * 0.7);
+//		darker = (darker << 8) + (int)(b * 0.7);
+//	
+//		return darker;
+	}
+	
 	
 	public static int addTranspGrey(int inVal, double transp){
 		

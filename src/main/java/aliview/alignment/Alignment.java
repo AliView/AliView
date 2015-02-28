@@ -35,10 +35,10 @@ import utils.nexus.NexusUtilities;
 import aliview.AliViewExtraNexusUtilities;
 import aliview.AminoAcid;
 import aliview.Base;
-import aliview.FileFormat;
 import aliview.GeneticCode;
 import aliview.NucleotideUtilities;
 import aliview.importer.AlignmentImportException;
+import aliview.importer.FileFormat;
 import aliview.importer.MSFFileIndexer;
 import aliview.importer.MSFImporter;
 import aliview.importer.SequencesFactory;
@@ -95,8 +95,6 @@ public class Alignment implements FileSequenceLoadListener {
 		setEditedAfterLastSave(false);
 		fireAllSequencesAreNew();
 	}
-	
-	
 	
 	public void setNewSequences(AlignmentListModel seqs){
 		this.sequences = seqs;			
@@ -356,7 +354,7 @@ public class Alignment implements FileSequenceLoadListener {
 
 		
 		// Interleaved
-		if(fileFormat == FileFormat.PHYLIP_RELAXED_PADDED_INTERLEAVED){
+		if(fileFormat == FileFormat.PHYLIP_RELAXED_PADDED_INTERLEAVED_AKA_LONG_NAME_INTERLEAVED){
 			int longSeq = sequences.getLongestSequenceLength();
 			int namePadSize = sequences.getLongestSequenceName() + 1;
 
@@ -417,23 +415,23 @@ public class Alignment implements FileSequenceLoadListener {
 			for(Sequence seq: sequences){
 				String seqName = seq.getName();
 				seqName = escapeSeqName(seqName);
-						
-				if(fileFormat == FileFormat.PHYLIP_RELAXED_PADDED){
-					int longSeqName = sequences.getLongestSequenceName();
-					seqName = StringUtils.rightPad(seqName , longSeqName + 1); // + one space
-				}
+
 				
 				if(fileFormat == FileFormat.PHYLIP_RELAXED){
 					int longSeqName = sequences.getLongestSequenceName();
 					seqName += ' '; // + one space
 				}
-				
-				if(fileFormat == FileFormat.PHYLIP_STRICT_SEQUENTIAL){
+				else if(fileFormat == FileFormat.PHYLIP_STRICT_SEQUENTIAL_AKA_SHORT_NAME_SEQUENTIAL){
 					// Make sure exact 10 positions
 					if(seqName.length() > 10){
 						seqName = StringUtils.substring(seqName, 0, 10);					
 					}
 					seqName = StringUtils.rightPad(seqName , 10); // 10 name no space
+				}
+				// default is FileFormat.PHYLIP_RELAXED_PADDED
+				else{
+					int longSeqName = sequences.getLongestSequenceName();
+					seqName = StringUtils.rightPad(seqName , longSeqName + 1); // + one space
 				}
 				
 				out.write(seqName); // no space after name that is added on name already (but not on strict)
@@ -531,11 +529,15 @@ public class Alignment implements FileSequenceLoadListener {
 	}
 	
 	public void saveAlignmentAsFile(File outFile) throws IOException{	
+		
 		// save as current format
 		saveAlignmentAsFile(outFile,getFileFormat());	
 	}
 
 	public void saveAlignmentAsFile(File outFile, FileFormat fileFormat) throws IOException{
+		
+		
+		logger.info("fileFormat" + fileFormat);
 		
 		// make sure they are equal length (if editable)
 		if(sequences.isEditable()){
@@ -561,8 +563,8 @@ public class Alignment implements FileSequenceLoadListener {
 				storeMetaData(outMeta);
 			}
 		}else if(fileFormat == FileFormat.PHYLIP || fileFormat == FileFormat.PHYLIP_RELAXED ||
-				 fileFormat == FileFormat.PHYLIP_RELAXED_PADDED || fileFormat == FileFormat.PHYLIP_STRICT_SEQUENTIAL ||
-				 fileFormat == FileFormat.PHYLIP_RELAXED_PADDED_INTERLEAVED){
+				 fileFormat == FileFormat.PHYLIP_RELAXED_PADDED_AKA_LONG_NAME_SEQUENTIAL || fileFormat == FileFormat.PHYLIP_STRICT_SEQUENTIAL_AKA_SHORT_NAME_SEQUENTIAL ||
+				 fileFormat == FileFormat.PHYLIP_RELAXED_PADDED_INTERLEAVED_AKA_LONG_NAME_INTERLEAVED){
 			setTranslationOnePos(false);
 			storeAlignmetAsPhyFile(out, fileFormat);
 			// save meta if exset it is set
@@ -574,7 +576,7 @@ public class Alignment implements FileSequenceLoadListener {
 		
 		}else if(fileFormat == FileFormat.PHYLIP_TRANSLATED_AMINO_ACID){
 			setTranslationOnePos(true);
-			storeAlignmetAsPhyFile(out, FileFormat.PHYLIP_RELAXED_PADDED);
+			storeAlignmetAsPhyFile(out, FileFormat.PHYLIP_RELAXED_PADDED_AKA_LONG_NAME_SEQUENTIAL);
 			// save meta if exset it is set
 			if(this.alignmentMeta.isMetaOutputNeeded()){
 				//AlignmentMeta translatedMeta = getTranslatedMeta();
@@ -714,8 +716,6 @@ public class Alignment implements FileSequenceLoadListener {
 		alignmentMeta.removeFromMask(deleteMask);
 //		sequencesChanged();
 	}
-
-
 
 	public ArrayList<Primer> findPrimerInSelection(){
 		ArrayList<Primer> allPrimers = new ArrayList<Primer>();
@@ -866,9 +866,7 @@ public class Alignment implements FileSequenceLoadListener {
 	}
 
 	/*
-	 * 
 	 * Find
-	 * 
 	 */
 	public FindObject findInNames(FindObject findObj) {
 		findObj = sequences.findInNames(findObj);
@@ -1688,20 +1686,14 @@ public class Alignment implements FileSequenceLoadListener {
 	public int countStopCodons() {
 		int totalCount = 0;
 		if(isNucleotideAlignment()){
-	//		logger.info("is nucleotide");
-			AATranslator aaTransSeq = new AATranslator(getAlignmentMeta().getCodonPositions(),getGeneticCode());
 			for(Sequence seq: sequences){
-				aaTransSeq.setSequence(seq);
-	//			logger.info("seq len" + seq.getLength());
-	//			logger.info(aaTransSeq.countStopCodon());
-				totalCount += aaTransSeq.countStopCodon();	
+				totalCount += seq.countStopCodon();	
 			}
 		}else{
 			for(Sequence seq: sequences){
 				totalCount += seq.countChar('*');	
 			}
 		}
-		
 		return totalCount;
 	}
 
@@ -1850,6 +1842,13 @@ public class Alignment implements FileSequenceLoadListener {
 
 	public void selectIndices(List<Integer> allFoundIndices) {
 		getSequences().getAlignmentSelectionModel().selectSequencesWithIndex(allFoundIndices);
+	}
+
+	public boolean isFileSequences() {
+		if(getSequences() instanceof FileSequenceAlignmentListModel){
+			return true;
+		}
+		return false;
 	}
 
 	

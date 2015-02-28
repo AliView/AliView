@@ -37,16 +37,16 @@ import utils.nexus.CodonPos;
 import utils.nexus.CodonPositions;
 import aliview.AliView;
 import aliview.AminoAcid;
-import aliview.FileFormat;
 import aliview.GeneticCode;
 import aliview.NucleotideUtilities;
 import aliview.alignment.AAHistogram;
-import aliview.alignment.AATranslator;
+import aliview.alignment.NotUsed_AATranslator;
 import aliview.alignment.AliHistogram;
 import aliview.alignment.Alignment;
 import aliview.alignment.AlignmentMeta;
 import aliview.alignment.NucleotideHistogram;
 import aliview.importer.AlignmentImportException;
+import aliview.importer.FileFormat;
 import aliview.sequences.FileSequence;
 import aliview.sequences.BasicSequence;
 import aliview.sequences.InMemorySequence;
@@ -62,13 +62,14 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 	protected FileFormat fileFormat;
 	protected int sequenceType = SequenceUtils.TYPE_UNKNOWN;
 	private int selectionOffset;
-	private int cachedLongestSequenceName;
-	private int cachedLongestSequenceLength = -1;
 	private AlignmentSelectionModel selectionModel = new AlignmentSelectionModel(this);
 	protected EventListenerList listenerList = new EventListenerList();
-	private DefaultListModel notUsed;
-	private AliHistogram cachedTranslatedHistogram;
-	private AliHistogram cachedHistogram;
+	// AliHistogram and other cached variables has to be volatile so no problems araise
+	// with the double lock synch strategy
+	// see: http://www.cs.umd.edu/~pugh/java/memoryModel/DoubleCheckedLocking.html
+	private volatile AliHistogram cachedHistogram;
+	private volatile int cachedLongestSequenceName;
+	private volatile int cachedLongestSequenceLength = -1;
 	private boolean isTranslated;
 	private Alignment alignment;
 	
@@ -241,6 +242,9 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 	}
 	
 	public Sequence get(int index) {
+		if(index >= delegateSequences.size()){
+			return null;
+		}
 		return delegateSequences.get(index);
 	}
 /*
@@ -328,20 +332,24 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		return delegateSequences;
 	}
 	
-	
-	// From previous SequenceList Interface
-	public int getLongestSequenceLength(){	
-		if(cachedLongestSequenceLength <0){
-			int maxLen = 0;
-			for(int n = 0; n < delegateSequences.size(); n++){
-				int len = delegateSequences.get(n).getLength();
-//				logger.info("len" + len);
-				if(len > maxLen){
-					maxLen = len;
+	public int getLongestSequenceLength(){
+		
+		if(cachedLongestSequenceLength <= 0){
+			// this is double locked to avoid synchronized block after the cached initialization of variacle
+			// cached variable has to be declared volatile above
+			// see: http://www.cs.umd.edu/~pugh/java/memoryModel/DoubleCheckedLocking.html and http://en.wikipedia.org/wiki/Double-checked_locking
+			synchronized(this){
+				if(cachedLongestSequenceLength <0){
+					int maxLen = 0;
+					for(int n = 0; n < delegateSequences.size(); n++){
+						int len = delegateSequences.get(n).getLength();
+						if(len > maxLen){
+							maxLen = len;
+						}
+					}
+					cachedLongestSequenceLength = maxLen;
 				}
 			}
-			cachedLongestSequenceLength = maxLen;
-	//		return maxLen;
 		}
 		return cachedLongestSequenceLength;
 	}
@@ -677,7 +685,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 	
 	
 	public FindObject findAndSelect(FindObject findObject) {
-		if(getSequenceType() == SequenceUtils.TYPE_AMINO_ACID){
+		if(isTranslated || getSequenceType() == SequenceUtils.TYPE_AMINO_ACID){
 			return findAndSelectInAASequences(findObject);
 		}
 		else{
@@ -1246,7 +1254,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 	}
 	
 	public String getConsensus() {
-		if(getSequenceType() == SequenceUtils.TYPE_AMINO_ACID){
+		if(isTranslated || getSequenceType() == SequenceUtils.TYPE_AMINO_ACID){
 			return getAminoAcidConsensus();
 		}
 		else{
@@ -1315,12 +1323,19 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 
 	public int getLongestSequenceName() {
 		long startTime = System.currentTimeMillis();
-		if(cachedLongestSequenceName <=0){
-			int maxlen = 0;
-			for(Sequence seq: delegateSequences){
-				maxlen = Math.max(maxlen, seq.getName().length());
+		if(cachedLongestSequenceName <= 0){
+			// this is double locked to avoid synchronized block after the cached initialization of variacle
+			// cached variable has to be declared volatile above
+			// see: http://www.cs.umd.edu/~pugh/java/memoryModel/DoubleCheckedLocking.html and http://en.wikipedia.org/wiki/Double-checked_locking
+			synchronized(this){
+				if(cachedLongestSequenceName <=0){
+					int maxlen = 0;
+					for(Sequence seq: delegateSequences){
+						maxlen = Math.max(maxlen, seq.getName().length());
+					}
+					cachedLongestSequenceName = maxlen;
+				}
 			}
-			cachedLongestSequenceName = maxlen;
 		}
 		long endTime = System.currentTimeMillis();
 		logger.info("getLongestSequenceName took " + (endTime - startTime) + " milliseconds");	
@@ -1372,7 +1387,14 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 	
 	public AliHistogram getHistogram(){
 		if(cachedHistogram == null){
-			cachedHistogram = this.createHistogram();	
+			// this is double locked to avoid synchronized block after the lazy initialization of Histogram object
+			// Histogram has to be declared volatile above
+			// see: http://www.cs.umd.edu/~pugh/java/memoryModel/DoubleCheckedLocking.html and http://en.wikipedia.org/wiki/Double-checked_locking
+			synchronized(this){
+				if(cachedHistogram == null){
+					cachedHistogram = createHistogram();	
+				}
+			}
 		}
 		return cachedHistogram;
 	}
@@ -1381,14 +1403,14 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 	private AliHistogram createHistogram(){
 		long startTime = System.currentTimeMillis();
 		AliHistogram histogram = null;
-		if(sequenceType == SequenceUtils.TYPE_AMINO_ACID){
+		if(sequenceType == SequenceUtils.TYPE_AMINO_ACID || isTranslated){
 			histogram = new AAHistogram(getLongestSequenceLength());
 		}else{
 			histogram = new NucleotideHistogram(getLongestSequenceLength());
 		}
 		
 		for(Sequence seq: delegateSequences){
-			if(sequenceType == SequenceUtils.TYPE_AMINO_ACID){
+			if(sequenceType == SequenceUtils.TYPE_AMINO_ACID || isTranslated){
 				histogram.addSequence(seq);
 			}else{
 				histogram.addSequence(seq);
@@ -1636,32 +1658,39 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		return dupeSequences;
 	}
 
-	public AliHistogram getTranslatedHistogram(AATranslator translator) {
+	/*
+	public AliHistogram getTranslatedHistogram() {
 		if(cachedTranslatedHistogram == null){
-			cachedTranslatedHistogram = createTranslatedHistogram(translator);
+			cachedTranslatedHistogram = createTranslatedHistogram();
 		}
 		return cachedTranslatedHistogram;
 	}
 	
 	
 	
-	private AliHistogram createTranslatedHistogram(AATranslator translator) {
+	private AliHistogram createTranslatedHistogram() {
 		long startTime = System.currentTimeMillis();
-		int transLength = translator.getMaximumTranslationLength();
-//		logger.info(transLength);
-		AAHistogram histogram = new AAHistogram(transLength);
+		
+		boolean wasTranslated = isTranslated;
+		setTranslation(true);
+		
+		AAHistogram histogram = new AAHistogram(getLongestSequenceLength());
 		
 		for(Sequence seq: delegateSequences){
-			translator.setSequence(seq);
-//			logger.info("seqtranslen" + translator.getTranslatedAminAcidSequenceLength());
-			for(int n = 0; n < transLength; n++){ // translator.getTranslatedAminAcidSequenceLength()
-				histogram.addAminoAcid(n,translator.getAAinTranslatedPos(n));
+			for(int n = 0; n < seq.getLength(); n++){ 
+				histogram.addAminoAcid(n,AminoAcid.getAminoAcidFromByte(seq.getBaseAtPos(n)));
 			}
 		}
+		
+		if(wasTranslated == false){
+			setTranslation(false);
+		}
+		
 		long endTime = System.currentTimeMillis();
 		logger.info("Create translated histogram took " + (endTime - startTime) + " milliseconds");
 		return histogram;
 	}
+	*/
 	
 	 public int size() {
 	    return delegateSequences.size();
@@ -2009,7 +2038,6 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		cachedLongestSequenceName = -1;
 		cachedLongestSequenceLength = -1;
 		cachedHistogram = null;
-		cachedTranslatedHistogram = null;
 		
 		
 		Object[] listeners = listenerList.getListenerList();

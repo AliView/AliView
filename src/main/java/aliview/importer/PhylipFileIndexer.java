@@ -26,6 +26,7 @@ public class PhylipFileIndexer implements FileIndexer{
 	long estimateTotalSeqInFile = 0;
 	long fileSize = -1;
 	private MappedBuffReaderHelper readerHelper;
+	public FileFormat formatType;
 
 	public ArrayList<Sequence> findSequencesInFile(MemoryMappedSequencesFile sequencesFile, long filePointerStart, int seqOffset, int nSeqsToRetrieve,
 			SubThreadProgressWindow progressWin) throws AlignmentImportException {
@@ -65,17 +66,17 @@ public class PhylipFileIndexer implements FileIndexer{
 
 
 			// determine file type
-			int importerType = PhylipImporter.UNKNOWN;	
+			FileFormat formatType = FileFormat.UNKNOWN;	
 
 			// Test PhylipImporter.LONG_NAME_SEQUENTIAL
-			if(importerType == PhylipImporter.UNKNOWN){
+			if(formatType == FileFormat.UNKNOWN){
 				try {
 					mappedBuff.position(firstNameStartPointer);
 					long seqStartPointer = readerHelper.posOfFirstNonWhiteCharAfterWhiteChar();
 					long seqEndPointerIfSequential = readerHelper.posAtNSequenceCharacters(seqStartPointer, longestSequenceLength);
 					if(readerHelper.isNextLF()){
 						// probably long name sequential
-						importerType = PhylipImporter.LONG_NAME_SEQUENTIAL;
+						formatType = FileFormat.PHYLIP_RELAXED_PADDED_AKA_LONG_NAME_SEQUENTIAL;
 						logger.info("probably long name sequential");
 					}
 				} catch (Exception e) {
@@ -85,12 +86,12 @@ public class PhylipFileIndexer implements FileIndexer{
 			}
 
 			// Test PhylipImporter.SHORT_NAME_SEQUENTIAL
-			if(importerType == PhylipImporter.UNKNOWN){
+			if(formatType == FileFormat.UNKNOWN){
 				try {
 					long seqEndPointerIfTenPosSequential = readerHelper.posAtNSequenceCharacters(firstNameStartPointer + 10, longestSequenceLength);
 					if(readerHelper.isNextLF()){
 						// probably long name sequential
-						importerType = PhylipImporter.SHORT_NAME_SEQUENTIAL;
+						formatType = FileFormat.PHYLIP_STRICT_SEQUENTIAL_AKA_SHORT_NAME_SEQUENTIAL;
 						logger.info("probably short name sequential");
 					}
 				} catch (Exception e) {
@@ -99,13 +100,13 @@ public class PhylipFileIndexer implements FileIndexer{
 				}
 			}
 
-			// finally try PhylipImporter.LONG_NAME_INTERLEAVED
-			if(importerType == PhylipImporter.UNKNOWN){		
+			// 
+			if(formatType == FileFormat.UNKNOWN){		
 				// if only one continous gap --> long interleaved
 				try {
 					mappedBuff.position(firstNameStartPointer);
 					if(readerHelper.hasLineOnlyOneContinousSpace()){
-						importerType = PhylipImporter.LONG_NAME_INTERLEAVED;
+						formatType = FileFormat.PHYLIP_RELAXED_PADDED_INTERLEAVED_AKA_LONG_NAME_INTERLEAVED;
 					}
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -113,16 +114,16 @@ public class PhylipFileIndexer implements FileIndexer{
 				}
 			}
 
-			// finally try PhylipImporter.LONG_NAME_INTERLEAVED
-			if(importerType == PhylipImporter.UNKNOWN){
-				importerType = PhylipImporter.SHORT_NAME_INTERLEAVED;
+			// finally set to PHYLIP_SHORT_NAME_INTERLEAVED.
+			if(formatType == FileFormat.UNKNOWN){
+				formatType = FileFormat.PHYLIP_SHORT_NAME_INTERLEAVED;
 				logger.info("probably short name interleaved");
 			}
 
 
 			
 			// load depending on file type
-			if(importerType == PhylipImporter.LONG_NAME_INTERLEAVED){
+			if(formatType == FileFormat.PHYLIP_RELAXED_PADDED_INTERLEAVED_AKA_LONG_NAME_INTERLEAVED){
 
 				long nameStartPointer = firstNameStartPointer;
 				readerHelper.setPosition(nameStartPointer);
@@ -204,7 +205,7 @@ public class PhylipFileIndexer implements FileIndexer{
 			}
 
 			// load depending on file type
-			if(importerType == PhylipImporter.SHORT_NAME_INTERLEAVED){
+			if(formatType == FileFormat.PHYLIP_SHORT_NAME_INTERLEAVED){
 
 				long nameStartPointer = firstNameStartPointer;
 				readerHelper.setPosition(nameStartPointer);
@@ -296,7 +297,7 @@ public class PhylipFileIndexer implements FileIndexer{
 			}
 
 			// load depending on file type
-			if(importerType == PhylipImporter.LONG_NAME_SEQUENTIAL){
+			if(formatType == FileFormat.PHYLIP_RELAXED_PADDED_AKA_LONG_NAME_SEQUENTIAL){
 
 				logger.info("PhylipImporter.LONG_NAME_SEQUENTIAL");
 
@@ -346,7 +347,7 @@ public class PhylipFileIndexer implements FileIndexer{
 			}
 
 			// load depending on file type
-			if(importerType == PhylipImporter.SHORT_NAME_SEQUENTIAL){
+			if(formatType == FileFormat.PHYLIP_STRICT_SEQUENTIAL_AKA_SHORT_NAME_SEQUENTIAL){
 
 				logger.info("PhylipImporter.SHORT_NAME_SEQUENTIAL");
 

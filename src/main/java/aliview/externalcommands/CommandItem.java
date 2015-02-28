@@ -19,8 +19,8 @@ import javax.swing.JTextField;
 import org.apache.commons.lang.StringUtils;
 
 import aliview.AliViewWindow;
-import aliview.FileFormat;
 import aliview.aligner.MuscleWrapper;
+import aliview.importer.FileFormat;
 
 public class CommandItem{
 	private static final String LF = System.getProperty("line.separator");

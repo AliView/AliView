@@ -16,7 +16,7 @@ import aliview.AliView;
 import aliview.AminoAcid;
 import aliview.GeneticCode;
 import aliview.NucleotideUtilities;
-import aliview.alignment.AATranslator;
+import aliview.alignment.NotUsed_AATranslator;
 import aliview.sequencelist.AlignmentListModel;
 import aliview.utils.ArrayUtilities;
 

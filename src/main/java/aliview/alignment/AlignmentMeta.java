@@ -24,7 +24,6 @@ public class AlignmentMeta {
 	}
 
 	public AlignmentMeta(GeneticCode genCode){
-		//this(new Excludes(alignmentLength), new CodonPositions(alignmentLength), new ArrayList<CharSet>());
 		this(new Excludes(), new CodonPositions(), new ArrayList<CharSet>(), genCode);
 	}
 
@@ -75,7 +74,6 @@ public class AlignmentMeta {
 		}
 		return count;
 	}
-
 
 	public void setReadingFrame(int readingFrame) {
 		this.codonPositions.setReadingFrame(readingFrame);

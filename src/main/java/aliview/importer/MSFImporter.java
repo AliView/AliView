@@ -15,7 +15,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
 
-import aliview.FileFormat;
 import aliview.MemoryUtils;
 import aliview.sequences.MSFSequence;
 import aliview.sequences.PhylipSequence;

@@ -17,7 +17,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
 
-import aliview.FileFormat;
 import aliview.sequencelist.FileSequenceAlignmentListModel;
 import aliview.sequencelist.MemoryMappedSequencesFile;
 import aliview.sequences.ClustalFileSequence;

@@ -15,7 +15,6 @@ import jebl.evolution.sequences.SequenceType;
 import org.apache.log4j.Logger;
 
 import aliview.AliView;
-import aliview.FileFormat;
 import aliview.MemoryUtils;
 import aliview.sequencelist.FileSequenceAlignmentListModel;
 import aliview.sequencelist.MemorySequenceAlignmentListModel;
@@ -91,7 +90,7 @@ public class SequencesFactory {
 			logger.info("memorySequence");
 			
 			// check file-format
-			FileFormat foundFormat = FileImportUtils.isFileOfAlignmentFormat(alignmentFile);
+			FileFormat foundFormat = FileFormat.isFileOfAlignmentFormat(alignmentFile);
 			
 			if(foundFormat == FileFormat.FASTA){
 				
@@ -147,7 +146,7 @@ public class SequencesFactory {
 				
 				try {
 						// First try phylip sequencial long names
-						PhylipImporter phylipImporter = new PhylipImporter(new FileReader(alignmentFile), PhylipImporter.LONG_NAME_SEQUENTIAL);
+						PhylipImporter phylipImporter = new PhylipImporter(new FileReader(alignmentFile), FileFormat.PHYLIP_RELAXED_PADDED_AKA_LONG_NAME_SEQUENTIAL);
 						// this method will throw error if problem importing as this format and then we can try with other versions of phylip
 						List<Sequence> sequences = phylipImporter.importSequences();
 						model = new MemorySequenceAlignmentListModel();
@@ -165,7 +164,7 @@ public class SequencesFactory {
 					try {
 						logger.info("try LONG_NAME_INTERLEAVED");
 						// Then try phylip sequencial short names
-						PhylipImporter phylipImporter = new PhylipImporter(new FileReader(alignmentFile), PhylipImporter.LONG_NAME_INTERLEAVED);
+						PhylipImporter phylipImporter = new PhylipImporter(new FileReader(alignmentFile), FileFormat.PHYLIP_RELAXED_PADDED_INTERLEAVED_AKA_LONG_NAME_INTERLEAVED);
 						// this method will throw error if problem importing as this format and then we can try with other versions of phylip
 						List<Sequence> sequences = phylipImporter.importSequences();
 						model = new MemorySequenceAlignmentListModel();
@@ -184,12 +183,12 @@ public class SequencesFactory {
 					try {
 						logger.info("try short name sequential");
 						// Then try phylip sequencial short names
-						PhylipImporter phylipImporter = new PhylipImporter(new FileReader(alignmentFile), PhylipImporter.SHORT_NAME_SEQUENTIAL);
+						PhylipImporter phylipImporter = new PhylipImporter(new FileReader(alignmentFile), FileFormat.PHYLIP_STRICT_SEQUENTIAL_AKA_SHORT_NAME_SEQUENTIAL);
 						// this method will throw error if problem importing as this format and then we can try with other versions of phylip
 						List<Sequence> sequences = phylipImporter.importSequences();
 						model = new MemorySequenceAlignmentListModel();
 						model.setSequences(sequences);
-						model.setFileFormat(FileFormat.PHYLIP);	
+						model.setFileFormat(phylipImporter.getFileFormat());	
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						importErrorMessage += "Tried import as Phylip but: " + e.getMessage() + LF;
@@ -203,7 +202,7 @@ public class SequencesFactory {
 					try {
 						logger.info("try short name interleaved");
 						// Then try phylip sequencial short names
-						PhylipImporter phylipImporter = new PhylipImporter(new FileReader(alignmentFile), PhylipImporter.SHORT_NAME_INTERLEAVED);
+						PhylipImporter phylipImporter = new PhylipImporter(new FileReader(alignmentFile), FileFormat.PHYLIP_SHORT_NAME_INTERLEAVED);
 						// this method will throw error if problem importing as this format and then we can try with other versions of phylip
 						List<Sequence> sequences = phylipImporter.importSequences();
 						model = new MemorySequenceAlignmentListModel();
@@ -273,7 +272,7 @@ public class SequencesFactory {
 		//
 		if(!memorySequences){
 		
-				FileFormat foundFormat = FileImportUtils.isFileOfAlignmentFormat(alignmentFile);
+				FileFormat foundFormat = FileFormat.isFileOfAlignmentFormat(alignmentFile);
 				
 				if(foundFormat == FileFormat.FASTA || foundFormat == FileFormat.PHYLIP || 
 						foundFormat == FileFormat.NEXUS || foundFormat == FileFormat.CLUSTAL ||

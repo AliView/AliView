@@ -133,26 +133,27 @@ import aliview.genotype2phenotype.Genotype2Phenotype;
 import aliview.gui.AliToolBar;
 import aliview.gui.AliViewJMenuBar;
 import aliview.gui.AliViewJMenuBarFactory;
-import aliview.gui.AlignmentPane;
-import aliview.gui.NotUsed_AlignmentPane_Orig;
 import aliview.gui.AlignmentPopupMenu;
 import aliview.gui.AppIcons;
 import aliview.gui.GlassPaneKeyListener;
 import aliview.gui.GlassPaneMouseListener;
-import aliview.gui.InvalidAlignmentPositionException;
 import aliview.gui.MessageLogFrame;
 import aliview.gui.SearchPanel;
 import aliview.gui.StatusPanel;
 import aliview.gui.TranslationToolPanel;
 import aliview.importer.AlignmentFactory;
 import aliview.importer.AlignmentImportException;
+import aliview.importer.FileFormat;
 import aliview.importer.FileImportUtils;
 import aliview.importer.SequencesFactory;
 import aliview.messenges.Messenger;
 import aliview.messenges.TextEditDialog;
 import aliview.old.ExternalCmdFrame;
 import aliview.old.MyScrollPane;
+import aliview.pane.AlignmentPane;
 import aliview.pane.CharPixels;
+import aliview.pane.InvalidAlignmentPositionException;
+import aliview.pane.NotUsed_AlignmentPane_Orig;
 import aliview.primer.Primer;
 import aliview.primer.PrimerResultsFrame;
 import aliview.sequencelist.AlignmentDataEvent;
@@ -1213,27 +1214,27 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 	public void saveAlignmentAsFile(){
 
 		// Get dir for saving
-		String suggestedDir = alignment.getAlignmentFile().getParent();
+		String saveDir = alignment.getAlignmentFile().getParent();
 
 		// and filename
-		String suggestedFileName = alignment.getFileName();
+		String saveFileName = alignment.getFileName();
 
 		// make sure there is a file name
-		if(suggestedFileName == null || suggestedFileName.length() < 1){
+		if(saveFileName == null || saveFileName.length() < 1){
 			Messenger.showOKOnlyMessage(Messenger.SAVE_NOT_POSSIBLE_TRY_SAVE_AS, aliViewWindow);
 			return;
 		}
 
-		File suggestedFile = new File(suggestedDir, suggestedFileName);
+		File saveFile = new File(saveDir, saveFileName);
 
 		try {
 
-			alignment.saveAlignmentAsFile(suggestedFile, alignment.getFileFormat());
+			alignment.saveAlignmentAsFile(saveFile, alignment.getFileFormat());
 			// many of this below should not be necessary 
-			alignment.setAlignmentFile(suggestedFile);
+			alignment.setAlignmentFile(saveFile);
 			alignment.setAlignmentFormat(alignment.getFileFormat());
 			aliViewWindow.updateWindowTitle();
-			Settings.putSaveAlignmentDirectory(suggestedFile.getAbsoluteFile().getParent());
+			Settings.putSaveAlignmentDirectory(saveFile.getAbsoluteFile().getParent());
 			hasUnsavedUndoableEdits = false;
 			this.updateWindowTitle();
 		} catch (IOException e) {
@@ -1958,7 +1959,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		String clipData = getClipboard();
 
 		// check if fasta 
-		if(clipData != null && FileImportUtils.isThisFasta(clipData)){
+		if(clipData != null && FileFormat.isThisFasta(clipData)){
 			try {
 				AlignmentListModel sequences = seqFactory.createFastaSequences(new StringReader(clipData));
 
@@ -2083,7 +2084,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 	}
 
 	public void toggleDrawAminoAcidCode() {
-		alignmentPane.setDrawAminoAcidCode(! alignmentPane.getDrawAminoAcidCode());
+		alignmentPane.setDrawAminoAcidCode(! alignmentPane.isDrawAminoAcidCode());
 		requestPaneAndRulerRepaint();
 
 	}
@@ -2392,11 +2393,11 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		String clipboardSelection = getClipboard();
 
 		if(clipboardSelection != null &&
-				((FileImportUtils.isThisFasta(clipboardSelection)) || FileImportUtils.isThisSequenceFile(clipboardSelection))){
+				((FileFormat.isThisFasta(clipboardSelection)) || FileFormat.isThisSequenceFile(clipboardSelection))){
 
 			try {
 				File clipFile = null;
-				if(!FileImportUtils.isThisSequenceFile(clipboardSelection)){
+				if(!FileFormat.isThisSequenceFile(clipboardSelection)){
 					clipFile = File.createTempFile("aliview-tmp-clipboard-alignment", ".sequences");
 					FileUtils.writeStringToFile(clipFile, clipboardSelection);
 				}else{
@@ -3986,7 +3987,8 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		Rectangle drawListBounds = new Rectangle(visiRect.x,paneBounds.y, visiRect.width, paneBounds.height);
 //		sequenceJList.scrollRectToVisible(drawListBounds);
 		logger.info("drawListBounds" + drawListBounds);
-		sequenceJList.repaint(visiRect.x,paneBounds.y, visiRect.width, paneBounds.height);
+//		sequenceJList.repaint(visiRect.x,paneBounds.y, visiRect.width, paneBounds.height);
+		sequenceJList.repaint(drawListBounds);
 	}
 	
 	//

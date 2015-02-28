@@ -14,10 +14,10 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import aliview.AliView;
-import aliview.FileFormat;
 import aliview.alignment.AAHistogram;
 import aliview.alignment.AliHistogram;
 import aliview.alignment.NucleotideHistogram;
+import aliview.importer.FileFormat;
 import aliview.messenges.Messenger;
 import aliview.sequences.FileSequence;
 import aliview.sequences.Sequence;

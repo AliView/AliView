@@ -10,8 +10,6 @@ import java.util.Arrays;
 
 import org.apache.log4j.Logger;
 
-import aliview.gui.AlignmentPane;
-
 
 public class CharPixelsBothNucAndAA extends CharPixels{
 	private static final Logger logger = Logger.getLogger(CharPixelsBothNucAndAA.class);

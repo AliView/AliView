@@ -36,7 +36,6 @@ import utils.OSNativeUtils;
 import utils.nexus.CharSet;
 import aliview.AliView;
 import aliview.AliViewWindow;
-import aliview.FileFormat;
 import aliview.GeneticCode;
 import aliview.alignment.Alignment;
 import aliview.alignment.AlignmentEvent;
@@ -44,6 +43,7 @@ import aliview.alignment.AlignmentListener;
 import aliview.color.ColorScheme;
 import aliview.color.ColorSchemeFactory;
 import aliview.externalcommands.CommandItem;
+import aliview.importer.FileFormat;
 import aliview.pane.CharPixels;
 import aliview.sequencelist.AlignmentDataEvent;
 import aliview.sequencelist.AlignmentDataListener;
@@ -212,7 +212,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 		JMenuItem mntmSaveAlignmentAsPhylipRelaxedPadded = new JMenuItem("Save as Phylip (full names & padded)");
 		mntmSaveAlignmentAsPhylipRelaxedPadded.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				aliViewWindow.saveAlignmentAsFileViaChooser(FileFormat.PHYLIP_RELAXED_PADDED, false);
+				aliViewWindow.saveAlignmentAsFileViaChooser(FileFormat.PHYLIP_RELAXED_PADDED_AKA_LONG_NAME_SEQUENTIAL, false);
 			}
 
 		});
@@ -227,7 +227,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 		JMenuItem mntmSaveAlignmentAsPhylipRelaxedPaddedInterleaved = new JMenuItem("Save as Phylip (full names, padded & interleaved)");
 		mntmSaveAlignmentAsPhylipRelaxedPaddedInterleaved.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				aliViewWindow.saveAlignmentAsFileViaChooser(FileFormat.PHYLIP_RELAXED_PADDED_INTERLEAVED, false);
+				aliViewWindow.saveAlignmentAsFileViaChooser(FileFormat.PHYLIP_RELAXED_PADDED_INTERLEAVED_AKA_LONG_NAME_INTERLEAVED, false);
 			}
 
 		});
@@ -248,7 +248,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 		JMenuItem mntmSaveAlignmentAsPhylipStrictSequential = new JMenuItem("Save as Phylip (strict 10 char names)");
 		mntmSaveAlignmentAsPhylipStrictSequential.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				aliViewWindow.saveAlignmentAsFileViaChooser(FileFormat.PHYLIP_STRICT_SEQUENTIAL, false);
+				aliViewWindow.saveAlignmentAsFileViaChooser(FileFormat.PHYLIP_STRICT_SEQUENTIAL_AKA_SHORT_NAME_SEQUENTIAL, false);
 			}
 
 		});

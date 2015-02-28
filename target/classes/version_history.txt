@@ -1,13 +1,16 @@
 Version history
 
-1.18-beata3-still-unstable
+1.18-beata4-still-unstable
 
 - Big rewrite of code handling selection. Improvements and more standardized mouse selection of sequences (compared to other software)
-- Added "Show both aminoacid and nucleotide sequence" when translating nucleotide sequences to aminoacids
+- Fixed bug when saving alignment in Phylip format with "Save" command, padding was lost.
+- Added "Show both aminoacid and nucleotide sequence" when translating nucleotide sequences to amino acids
 - Added "slow" double click on name as a trigger for renaming a sequence
 - Mouse wheel zoom in and zoom out is also working when mouse pointer is on sequence list
+- Dropping an alignment file can now be done anywhere on the alignment program
 - Quicker scroll when dragging sequences outside visible part of list
 - Big rewrite of code handling large files (> 1GB)
+- Improved multithreading in some sections of program makes it even more responsive.
 
 1.17.1
 

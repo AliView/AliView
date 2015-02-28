@@ -11,7 +11,7 @@ import java.util.ListIterator;
 
 import org.bitbucket.kienerj.io.OptimizedRandomAccessFile;
 
-import aliview.FileFormat;
+import aliview.importer.FileFormat;
 import aliview.sequences.FileSequence;
 import aliview.sequences.Sequence;
 

@@ -60,6 +60,11 @@ public interface Sequence extends Comparable<Sequence>{
 	public AminoAcidAndPosition getNoGapAminoAcidAtNucleotidePos(int target);
 	
 	public boolean isCodonSecondPos(int x);
+
+	public int countStopCodon();
+	
+	
+	
 	
 	// Undecided which version
 	public boolean isEmpty();
@@ -185,9 +190,5 @@ public interface Sequence extends Comparable<Sequence>{
 	public void setAlignmentModel(AlignmentListModel alignmentModel);
 	
 	public AlignmentListModel getAlignmentModel();
-
-	
-
-	
 
 }

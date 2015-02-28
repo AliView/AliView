@@ -14,6 +14,8 @@ import org.apache.log4j.Logger;
 import aliview.alignment.Alignment;
 import aliview.alignment.AlignmentEvent;
 import aliview.alignment.AlignmentListener;
+import aliview.pane.AlignmentPane;
+import aliview.pane.InvalidAlignmentPositionException;
 import aliview.sequencelist.AlignmentDataEvent;
 import aliview.sequencelist.AlignmentDataListener;
 import aliview.sequencelist.AlignmentSelectionEvent;

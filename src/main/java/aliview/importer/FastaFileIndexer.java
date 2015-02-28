@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import org.apache.log4j.Logger;
 
 import it.unimi.dsi.io.ByteBufferInpStream;
-import aliview.FileFormat;
 import aliview.sequencelist.MemoryMappedSequencesFile;
 import aliview.sequences.FastaFileSequence;
 import aliview.sequences.FileSequence;

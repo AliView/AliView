@@ -312,7 +312,10 @@ public class AliView implements ApplicationListener{
 				//	alignmentFile = new File("/home/anders/projekt/alignments/sandies/euArc165F_F1.fasta");
 				//	alignmentFile = new File("/home/anders/projekt/alignments/Woodsia_chloroplast_min4_20131109_v2.excluded.nexus");
 
-							alignmentFile = new File("/home/anders/projekt/alignments/Woodsia_chloroplast_min1_20131029.nexus");
+				//alignmentFile = new File("/home/anders/projekt/alignments/Woodsia_chloroplast_min1_20131029.nexus");
+							
+				alignmentFile = new File("/home/anders/projekt/alignments/sandies/Grp4+_GBank+208_trim3.phy");
+							
 				//	alignmentFile = new File("/vol2/big_data/test.nexus");
 
 				//			  alignmentFile = new File("/vol2/johns_454/SSURef_108_full_align_tax_silva_trunc.fasta");

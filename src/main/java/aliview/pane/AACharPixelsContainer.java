@@ -11,7 +11,6 @@ import aliview.AminoAcid;
 import aliview.NucleotideUtilities;
 import aliview.alignment.Alignment;
 import aliview.color.ColorScheme;
-import aliview.gui.AlignmentPane;
 import aliview.sequencelist.AlignmentListModel;
 
 

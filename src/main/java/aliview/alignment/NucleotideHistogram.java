@@ -11,8 +11,8 @@ public class NucleotideHistogram extends AliHistogram{
 	}
 	
 	public void addSequence(Sequence seq){	
-		for(int n = 0; n < seq.getLength(); n++){
-			hist[n][NucleotideUtilities.baseValFromBase(seq.getBaseAtPos(n))] ++;	
+		for(int pos = 0; pos < seq.getLength(); pos++){
+			hist[pos][NucleotideUtilities.baseValFromBase(seq.getBaseAtPos(pos))] ++;	
 		}
 	}
 	

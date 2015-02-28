@@ -28,6 +28,8 @@ public class BasicSequence implements Sequence, Comparable<Sequence> {
 	// TODO what is this selection offset?
 	public int selectionOffset = 0;
 	protected Bases bases;
+	// TranslatedBases has to be volatile so no problems araise with the double lock in the lazy creation below
+	// see: http://www.cs.umd.edu/~pugh/java/memoryModel/DoubleCheckedLocking.html
 	protected TranslatedBases translatedBases;
 	protected SequenceSelectionModel selectionModel;
 	private AlignmentListModel alignmentModel;
@@ -104,14 +106,26 @@ public class BasicSequence implements Sequence, Comparable<Sequence> {
 	}
 
 	private TranslatedBases getTranslatedBases(){
+		
 		if(translatedBases == null){
-			translatedBases = new TranslatedBases(this.bases, this);
+			// this is double locked to avoid synchronized block after the lazy initialization of TranslatedBases object
+			// TranslatedBases has to be declared volatile above
+			// see: http://www.cs.umd.edu/~pugh/java/memoryModel/DoubleCheckedLocking.html and http://en.wikipedia.org/wiki/Double-checked_locking
+			synchronized(this){
+				if(translatedBases == null){
+					translatedBases = new TranslatedBases(this.bases, this);
+				}
+			}
 		}
 		return translatedBases;
 	}
 
 	public SequenceSelectionModel createNewSelectionModel(){
 		return new DefaultSequenceSelectionModel();
+	}
+	
+	public int countStopCodon(){
+		return getTranslatedBases().countStopCodon();
 	}
 
 	public AminoAcid getTranslatedAminoAcidAtNucleotidePos(int x) {
@@ -174,12 +188,16 @@ public class BasicSequence implements Sequence, Comparable<Sequence> {
 	}
 
 	public void writeBases(OutputStream out) throws IOException{
-		out.write(getBases().toByteArray());
+		int length = getBases().getLength();
+		for(int n = 0; n < length; n++){
+			out.write(getBases().get(n));
+		}	
 	}
 
 	public void writeBases(Writer out) throws IOException{
-		for(byte next: getBases().toByteArray()){
-			out.write( (char) next);
+		int length = getBases().getLength();
+		for(int n = 0; n < length; n++){
+			out.write(getBases().get(n));
 		}
 	}
 	

@@ -13,7 +13,7 @@ import org.apache.log4j.Logger;
 
 import aliview.AliViewWindow;
 import aliview.alignment.Alignment;
-import aliview.gui.AlignmentPane;
+import aliview.pane.AlignmentPane;
 
 public class NotUsed_AlignmentDataAndSelectionListener implements AlignmentSelectionListener, AlignmentDataListener{
 
@@ -52,7 +52,7 @@ public class NotUsed_AlignmentDataAndSelectionListener implements AlignmentSelec
 	public void contentsChanged(AlignmentDataEvent e) {
 		logger.info("contentsChanged");
 		if(e.getSource() instanceof FileSequenceAlignmentListModel){
-			aliViewWindow.fileSequencesChanged();
+		//	aliViewWindow.fileSequencesChanged();
 		}
 		
 		Rectangle grown = new Rectangle(e.getBounds().x - 3, e.getBounds().y - 1, e.getBounds().width + 6, e.getBounds().height + 2);

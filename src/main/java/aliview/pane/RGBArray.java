@@ -24,4 +24,10 @@ public class RGBArray {
 		return backend;
 	}
 	
+	public int getLength() {
+		return backend.length;
+	}
+	
+	
+	
 }

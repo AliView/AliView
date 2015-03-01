@@ -9,16 +9,21 @@ import aliview.sequences.Sequence;
 
 public class SequencePainterAminoAcidTranslatedIgnoreGap extends SequencePainter {
 
-	private static final Logger logger = Logger.getLogger(SequencePainterAminoAcidTranslatedIgnoreGap.class);
-
-	public SequencePainterAminoAcidTranslatedIgnoreGap(Sequence seq, int seqYPos, int clipPosY,
-			int xMinSeqPos, int xMaxSeqPos, double step, double charWidth,
-			double charHeight, double highDPIScaleFactor, RGBArray clipRGB,
-			AlignmentPane aliPane, Alignment alignment) {
-		super(seq, seqYPos, clipPosY, xMinSeqPos, xMaxSeqPos, step, charWidth,
+	public SequencePainterAminoAcidTranslatedIgnoreGap(Sequence seq,
+			int seqYPos, int clipPosY, int xMinSeqPos, int xMaxSeqPos,
+			double seqPerPix, double charWidth, double charHeight,
+			double highDPIScaleFactor, RGBArray clipRGB, AlignmentPane aliPane,
+			Alignment alignment) {
+		super(seq, seqYPos, clipPosY, xMinSeqPos, xMaxSeqPos, seqPerPix, charWidth,
 				charHeight, highDPIScaleFactor, clipRGB, aliPane, alignment);
 		// TODO Auto-generated constructor stub
 	}
+
+
+
+	private static final Logger logger = Logger.getLogger(SequencePainterAminoAcidTranslatedIgnoreGap.class);
+
+	
 
 	@Override
 	protected void copyPixels(Sequence seq, RGBArray clipRGB, int seqXPos, int seqYPos, int pixelPosX, int pixelPosY, AlignmentPane aliPane, Alignment alignment) {

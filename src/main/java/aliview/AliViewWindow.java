@@ -3120,6 +3120,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 						}else{
 							selectionSize = alignmentPane.selectWithin(selectRect);
 						}
+						logger.info(alignment.getSelectionAsMinRect());
 					} 
 					alignment.clearTempSelection();
 				}
@@ -3961,15 +3962,30 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 	}
 	
 	public void contentsChanged(AlignmentDataEvent e) {
-		logger.info("contentsChanged");
-		/*
-		if(e.getSource() instanceof FileSequenceAlignmentListModel){
-			aliViewWindow.fileSequencesChanged();
-		}
-		*/
+		logger.info("selectionChanged");
+		requestRepaintRect(e.getBounds());
+	}
+	
+	//
+	// AlignmentSelectionListener
+	//
+	public void selectionChanged(AlignmentSelectionEvent e) {
+		logger.info("selectionChanged");
+		requestRepaintRect(e.getBounds());
+	}
+	
+	public void requestRepaintRect(Rectangle rect) {
 		
-		Rectangle grown = new Rectangle(e.getBounds().x - 3, e.getBounds().y - 1, e.getBounds().width + 6, e.getBounds().height + 2);
-		Rectangle paneBounds = alignmentPane.matrixCoordToPaneCoord(grown);
+		int dx =(int) (alignmentPane.getCharWidth() * 3);
+		int dy =(int) (alignmentPane.getCharHeight() * 1);
+		// if small chars, redraw at least a few pix
+		if(dx < 3 || dy < 1){
+			dx = 6;
+			dy = 2;
+		}
+		
+		Rectangle paneBounds = alignmentPane.matrixCoordToPaneCoord(rect);
+		Rectangle grown = new Rectangle(paneBounds.x - dx, paneBounds.y - dy, paneBounds.getBounds().width + 2*dx, paneBounds.getBounds().height + 2*dy);
 		
 		alignmentPane.validateSize();
 		alignmentPane.validateSequenceOrder();
@@ -3978,36 +3994,21 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		//aliList.paintImmediately(aliList.getVisibleRect());
 		//alignmentPane.scrollRectToVisible(paneBounds);
 		//logger.info("paneBounds" + paneBounds);
-		alignmentPane.repaint(paneBounds);
+		alignmentPane.repaint(grown);
 		
 		//alignmentPane.repaint();
 		//aliList.repaint();
 		
 		Rectangle visiRect = sequenceJList.getVisibleRect();
-		Rectangle drawListBounds = new Rectangle(visiRect.x,paneBounds.y, visiRect.width, paneBounds.height);
+		Rectangle drawListBounds = new Rectangle(visiRect.x,grown.y, visiRect.width, grown.height);
 //		sequenceJList.scrollRectToVisible(drawListBounds);
 		logger.info("drawListBounds" + drawListBounds);
 //		sequenceJList.repaint(visiRect.x,paneBounds.y, visiRect.width, paneBounds.height);
 		sequenceJList.repaint(drawListBounds);
 	}
+
 	
-	//
-	// AlignmentSelectionListener
-	//
-	public void selectionChanged(AlignmentSelectionEvent e) {
-		logger.info("selectionChanged");
-		//alignmentPane.paintImmediately(0, 0, alignmentPane.getWidth(), alignmentPane.getHeight());
-		Rectangle grown = new Rectangle(e.getBounds().x-3, e.getBounds().y-1, e.getBounds().width + 6, e.getBounds().height + 2);
-		Rectangle paneBounds = alignmentPane.matrixCoordToPaneCoord(grown);
-
-		alignmentPane.repaint(paneBounds);
-		
-		Rectangle visiRect = sequenceJList.getVisibleRect();
-		Rectangle drawListBounds = new Rectangle(visiRect.x,paneBounds.y, visiRect.width, paneBounds.height);
-		logger.info("drawListBounds" + drawListBounds);
-		sequenceJList.repaint(drawListBounds);
-	}
-
+	
 
 
 	public int print(Graphics graphics, PageFormat pageFormat, int pageIndex)throws PrinterException{

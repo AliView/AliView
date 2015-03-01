@@ -682,8 +682,6 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		return delegateSequences.indexOf(seq);
 	}
 
-	
-	
 	public FindObject findAndSelect(FindObject findObject) {
 		if(isTranslated || getSequenceType() == SequenceUtils.TYPE_AMINO_ACID){
 			return findAndSelectInAASequences(findObject);

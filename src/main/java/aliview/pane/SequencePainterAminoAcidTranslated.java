@@ -9,12 +9,12 @@ import aliview.sequences.Sequence;
 public class SequencePainterAminoAcidTranslated extends SequencePainter {
 
 	private static final Logger logger = Logger.getLogger(SequencePainterAminoAcidTranslated.class);
-
-	public SequencePainterAminoAcidTranslated(Sequence seq, int seqYPos, int clipPosY,
-			int xMinSeqPos, int xMaxSeqPos, double step, double charWidth,
-			double charHeight, double highDPIScaleFactor, RGBArray clipRGB,
-			AlignmentPane aliPane, Alignment alignment) {
-		super(seq, seqYPos, clipPosY, xMinSeqPos, xMaxSeqPos, step, charWidth,
+	
+	public SequencePainterAminoAcidTranslated(Sequence seq, int seqYPos,
+			int clipPosY, int xMinSeqPos, int xMaxSeqPos, double seqPerPix,
+			double charWidth, double charHeight, double highDPIScaleFactor,
+			RGBArray clipRGB, AlignmentPane aliPane, Alignment alignment) {
+		super(seq, seqYPos, clipPosY, xMinSeqPos, xMaxSeqPos, seqPerPix, charWidth,
 				charHeight, highDPIScaleFactor, clipRGB, aliPane, alignment);
 		// TODO Auto-generated constructor stub
 	}

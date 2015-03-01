@@ -8,6 +8,8 @@ import java.util.Arrays;
 
 import org.apache.log4j.Logger;
 
+import aliview.color.ColorUtils;
+
 
 public class ImageUtils {
 	private static final Logger logger = Logger.getLogger(ImageUtils.class);
@@ -65,6 +67,15 @@ public class ImageUtils {
 
 		    // Return the buffered image
 		    return bimage;
+		}
+
+		public static void darkerRGBArrayColumn(RGBArray clipRGB, int colPos) {
+			
+			for(int posInArray = colPos; posInArray < clipRGB.getLength(); posInArray += clipRGB.getScanWidth()){		
+				int colVal = clipRGB.getBackend()[posInArray];
+				clipRGB.getBackend()[posInArray] = ColorUtils.darkerRGB(colVal);
+			}	
+			
 		}
 
 }

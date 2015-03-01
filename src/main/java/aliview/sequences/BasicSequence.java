@@ -475,9 +475,8 @@ public class BasicSequence implements Sequence, Comparable<Sequence> {
 	}
 
 	public void setSelection(int startIndex, int endIndex, boolean clearFirst){
-		if(!rangeCheck(startIndex) || !rangeCheck(endIndex)){
-			return;
-		}
+		startIndex = Math.max(0, startIndex);
+		endIndex = Math.min(this.getLength() - 1, endIndex);
 		selectionModel.setSelection(startIndex, endIndex, clearFirst);
 	}
 

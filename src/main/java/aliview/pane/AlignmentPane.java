@@ -106,6 +106,7 @@ public class AlignmentPane extends JPanel{
 	TranslationCharPixelsContainer charPixTranslationAndNucDominantNucNoAALetter;
 	TranslationCharPixelsContainer charPixTranslationAndNucDominantNucSelected;
 	TranslationCharPixelsContainer charPixTranslationAndNucDominantNucNoAALetterSelected;
+	private double smallCharsSizeNumber = 0;
 
 
 
@@ -184,7 +185,14 @@ public class AlignmentPane extends JPanel{
 				preferredHeight = (int)(preferredWidth*CHAR_HEIGHT_RATIO);// 1.2 * charWidth;
 			}
 			else{
-				preferredWidth = 0.85 * charWidth;
+
+				if(charWidth == 1){
+					smallCharsSizeNumber = 1;
+				}else{
+					smallCharsSizeNumber ++;
+				}
+
+				preferredWidth = Math.pow(0.85, smallCharsSizeNumber);
 				preferredHeight = preferredWidth;
 			}
 
@@ -217,11 +225,14 @@ public class AlignmentPane extends JPanel{
 			}
 			charHeight = (int)(charWidth*CHAR_HEIGHT_RATIO);
 		}else{
-			charWidth = charWidth * 1.2; // +1
-
-			if(charWidth > 1  && charWidth <2){
+			smallCharsSizeNumber --;
+			if(smallCharsSizeNumber <= 0){
 				charWidth = 1;
 			}
+			else{
+				charWidth = Math.pow(0.85, smallCharsSizeNumber);
+			}
+
 			charHeight = charWidth; // +1	
 		}
 		if(charWidth > MAX_CHAR_SIZE){
@@ -565,7 +576,7 @@ public class AlignmentPane extends JPanel{
 		// What part of alignment matrix is in view (what part of matrix is in graphical view)
 		Rectangle clip = g2d.getClipBounds();
 
-		
+
 		Rectangle matrixClip = paneCoordToMatrixCoord(clip);
 
 		//		 logger.info(matrixClip);
@@ -635,8 +646,8 @@ public class AlignmentPane extends JPanel{
 		// HERE FILL RGB-ARRAY DRAW...
 		//		fillRGBArrayAndPaint(xMin, xMax, yMin, yMax, clipRGB, clip, g2d);
 		fillRGBArrayAndPaintMultithreaded(xMin, xMax, yMin, yMax, clipRGB, clip, g2d);
-		
-		
+
+
 
 		if(drawCounter % DRAWCOUNT_LOF_INTERVAL == 0){
 			endTime = System.currentTimeMillis();
@@ -660,7 +671,7 @@ public class AlignmentPane extends JPanel{
 
 		logger.info("Runtime.getRuntime().availableProcessors()" + Runtime.getRuntime().availableProcessors());
 		int nThreads = 1;
-		
+
 		// Only one thread if filesequences - more threads make reading file slower
 		if(alignment.isFileSequences()){
 			nThreads = 1;
@@ -672,8 +683,8 @@ public class AlignmentPane extends JPanel{
 				nThreads = 3;
 			}
 		}
-		
-		
+
+
 
 
 		// small chars have their own loop here
@@ -691,43 +702,38 @@ public class AlignmentPane extends JPanel{
 
 				if(ySeq <= yMax && ySeq >= 0){
 
-					double xMinimum = clip.x;
-					double xMaximum = clip.getMaxX();
-					double xSeqMin =  (int)((double)xMinimum * seqPerPixX);
-					double xSeqMax =  (int)((double)xMaximum * seqPerPixX);
 					int seqYPos = ySeq;
 					Sequence seq = alignment.getSequences().get(seqYPos);
-					double step = seqPerPixX;
-					int xPosStart = (int) xSeqMin;
-					int xPosEnd = (int) xSeqMax;
+					int xPosStart =  clip.x;
+					int xPosEnd =  (int) clip.getMaxX();	
 
 					if(isNucleotideAlignment){
 						if(isShowTranslationOnePos()){							
-							SequencePainter seqPainter = new SequencePainterAminoAcid(seq, seqYPos, clipYPos, xPosStart, xPosEnd, step, 1, 1, highDPIScaleFactor, clipRGB, this, alignment);	
+							SequencePainter seqPainter = new SequencePainterAminoAcid(seq, seqYPos, clipYPos, xPosStart, xPosEnd, seqPerPixX, 1, 1, highDPIScaleFactor, clipRGB, this, alignment);	
 							executor.execute(seqPainter);
 
 						}else if(showTranslation && !isShowTranslationOnePos() && ignoreGapInTranslation){
-							SequencePainter seqPainter = new SequencePainterAminoAcidTranslatedIgnoreGap(seq, seqYPos, clipYPos, xPosStart, xPosEnd, step, 1, 1, highDPIScaleFactor, clipRGB, this, alignment);	
+							SequencePainter seqPainter = new SequencePainterAminoAcidTranslatedIgnoreGap(seq, seqYPos, clipYPos, xPosStart, xPosEnd, seqPerPixX, 1, 1, highDPIScaleFactor, clipRGB, this, alignment);	
 							executor.execute(seqPainter);
 
 						}else if(showTranslation){
 							if(showTranslationAndNuc){
-								SequencePainter seqPainter = new SequencePainterNucleotideTranslatedShowNucAndAcid(seq, seqYPos, clipYPos, xPosStart, xPosEnd, step, 1, 1, highDPIScaleFactor, clipRGB, this, alignment);	
+								SequencePainter seqPainter = new SequencePainterNucleotideTranslatedShowNucAndAcid(seq, seqYPos, clipYPos, xPosStart, xPosEnd, seqPerPixX, 1, 1, highDPIScaleFactor, clipRGB, this, alignment);	
 								executor.execute(seqPainter);
 
 							}else{
-								SequencePainter seqPainter = new SequencePainterAminoAcidTranslated(seq, seqYPos, clipYPos, xPosStart, xPosEnd, step, 1, 1, highDPIScaleFactor, clipRGB, this, alignment);	
+								SequencePainter seqPainter = new SequencePainterAminoAcidTranslated(seq, seqYPos, clipYPos, xPosStart, xPosEnd, seqPerPixX, 1, 1, highDPIScaleFactor, clipRGB, this, alignment);	
 								executor.execute(seqPainter);
 							}
 
 						}else{
-							SequencePainter seqPainter = new SequencePainterNucleotide(seq, seqYPos, clipYPos, xPosStart, xPosEnd, step, 1, 1, highDPIScaleFactor, clipRGB, this, alignment);	
+							SequencePainter seqPainter = new SequencePainterNucleotide(seq, seqYPos, clipYPos, xPosStart, xPosEnd, seqPerPixX, 1, 1, highDPIScaleFactor, clipRGB, this, alignment);	
 							executor.execute(seqPainter);
 						}
 					}
 					// Draw as AminoAcids
 					else{
-						SequencePainter seqPainter = new SequencePainterAminoAcid(seq, seqYPos, clipYPos, xPosStart, xPosEnd, step, 1, 1, highDPIScaleFactor, clipRGB, this, alignment);	
+						SequencePainter seqPainter = new SequencePainterAminoAcid(seq, seqYPos, clipYPos, xPosStart, xPosEnd, seqPerPixX, 1, 1, highDPIScaleFactor, clipRGB, this, alignment);	
 						executor.execute(seqPainter);
 					}
 
@@ -767,38 +773,38 @@ public class AlignmentPane extends JPanel{
 
 				int seqYPos = y;
 				Sequence seq = alignment.getSequences().get(seqYPos);
-				int step = 1;
+				int normalCharSeqPerPix = 1;
 				int xPosStart = xMin;
 				int xPosEnd = xMax;
 
 
 				if(isNucleotideAlignment){
 					if(isShowTranslationOnePos()){							
-						SequencePainter seqPainter = new SequencePainterAminoAcid(seq, seqYPos, clipYPos, xPosStart, xPosEnd, step, charWidth, charHeight, highDPIScaleFactor, clipRGB, this, alignment);	
+						SequencePainter seqPainter = new SequencePainterAminoAcid(seq, seqYPos, clipYPos, xPosStart, xPosEnd, normalCharSeqPerPix, charWidth, charHeight, highDPIScaleFactor, clipRGB, this, alignment);	
 						executor.execute(seqPainter);
 
 					}else if(showTranslation && !isShowTranslationOnePos() && ignoreGapInTranslation){
-						SequencePainter seqPainter = new SequencePainterAminoAcidTranslatedIgnoreGap(seq, seqYPos, clipYPos, xPosStart, xPosEnd, step, charWidth, charHeight, highDPIScaleFactor, clipRGB, this, alignment);	
+						SequencePainter seqPainter = new SequencePainterAminoAcidTranslatedIgnoreGap(seq, seqYPos, clipYPos, xPosStart, xPosEnd, normalCharSeqPerPix, charWidth, charHeight, highDPIScaleFactor, clipRGB, this, alignment);	
 						executor.execute(seqPainter);
 
 					}else if(showTranslation){
 						if(showTranslationAndNuc){
-							SequencePainter seqPainter = new SequencePainterNucleotideTranslatedShowNucAndAcid(seq, seqYPos, clipYPos, xPosStart, xPosEnd, step, charWidth, charHeight, highDPIScaleFactor, clipRGB, this, alignment);	
+							SequencePainter seqPainter = new SequencePainterNucleotideTranslatedShowNucAndAcid(seq, seqYPos, clipYPos, xPosStart, xPosEnd, normalCharSeqPerPix, charWidth, charHeight, highDPIScaleFactor, clipRGB, this, alignment);	
 							executor.execute(seqPainter);
 
 						}else{
-							SequencePainter seqPainter = new SequencePainterAminoAcidTranslated(seq, seqYPos, clipYPos, xPosStart, xPosEnd, step, charWidth, charHeight, highDPIScaleFactor, clipRGB, this, alignment);	
+							SequencePainter seqPainter = new SequencePainterAminoAcidTranslated(seq, seqYPos, clipYPos, xPosStart, xPosEnd, normalCharSeqPerPix, charWidth, charHeight, highDPIScaleFactor, clipRGB, this, alignment);	
 							executor.execute(seqPainter);
 						}
 
 					}else{
-						SequencePainter seqPainter = new SequencePainterNucleotide(seq, seqYPos, clipYPos, xPosStart, xPosEnd, step, charWidth, charHeight, highDPIScaleFactor, clipRGB, this, alignment);	
+						SequencePainter seqPainter = new SequencePainterNucleotide(seq, seqYPos, clipYPos, xPosStart, xPosEnd, normalCharSeqPerPix, charWidth, charHeight, highDPIScaleFactor, clipRGB, this, alignment);	
 						executor.execute(seqPainter);
 					}
 				}
 				// Draw as AminoAcids
 				else{
-					SequencePainter seqPainter = new SequencePainterAminoAcid(seq, seqYPos, clipYPos, xPosStart, xPosEnd, step, charWidth, charHeight, highDPIScaleFactor, clipRGB, this, alignment);	
+					SequencePainter seqPainter = new SequencePainterAminoAcid(seq, seqYPos, clipYPos, xPosStart, xPosEnd, normalCharSeqPerPix, charWidth, charHeight, highDPIScaleFactor, clipRGB, this, alignment);	
 					executor.execute(seqPainter);
 				}
 
@@ -814,13 +820,31 @@ public class AlignmentPane extends JPanel{
 			}
 		}
 
-
-		//          // Excludes by manipulating pixelColor		
-		//			for(int n = 0; n <clipRGB.getBackend().length; n++){	
-		//				clipRGB.
-		//				clipRGB.getBackend()[n] = ColorUtils.darkerRGB(clipRGB.getBackend()[n]);
-		//			}
-
+//
+//		// Draw Excludes by manipulating pixelColor			
+//		if(! isShowTranslationOnePos()){
+//			// Two versions depending on if it is small chars or not
+//			if(charWidth < 1){
+//				for(int x = clip.x; x < clip.getMaxX() ; x++){
+//					int xPos =(int)((double)x * (1/(double)charWidth));
+//					if(alignment.isExcluded(xPos) == true){	
+//						logger.info("is excl");
+//						ImageUtils.darkerRGBArrayColumn(clipRGB, x);
+//					}
+//				}
+//			}else{
+//				for(int x = xMin; x < xMax ; x++){
+//					if(alignment.isExcluded(x) == true){
+//
+//						for(int col = x; col < charWidth; col++){
+//							logger.info("is excl");
+//							ImageUtils.darkerRGBArrayColumn(clipRGB, col);
+//						}
+//
+//					}
+//				}
+//			}
+//		}
 
 
 		// Now draw the pixels onto the image
@@ -857,7 +881,7 @@ public class AlignmentPane extends JPanel{
 			}
 		}
 
-
+		
 		// Draw excludes	
 		if(! isShowTranslationOnePos()){
 
@@ -883,6 +907,8 @@ public class AlignmentPane extends JPanel{
 				}
 			}
 		}
+		 
+
 	}
 
 
@@ -1316,10 +1342,10 @@ public class AlignmentPane extends JPanel{
 
 		// TODO maybe problem when calculating a 0-width rect - then it will give eg. xmin=34 xmax=35
 
-		//		logger.info("rect.getMinX()" + rect.getMinX());
-		//		logger.info("rect.getMaxX()" + rect.getMaxX());
-		//		logger.info("rect.getMinX()/charWidth" + rect.getMinX()/charWidth);
-		//		
+//				logger.info("rect.getMinX()" + rect.getMinX());
+//				logger.info("rect.getMaxX()" + rect.getMaxX());
+//				logger.info("rect.getMinX()/charWidth" + rect.getMinX()/charWidth);
+				
 		int matrixMinX = (int) Math.floor(rect.getMinX()/charWidth); // always round down
 		int matrixMaxX = (int) Math.floor(rect.getMaxX()/charWidth); // always round up
 		int matrixMinY = (int) Math.floor(rect.getMinY()/charHeight); // always round down
@@ -1330,13 +1356,14 @@ public class AlignmentPane extends JPanel{
 		matrixMaxX = Math.max(0, matrixMaxX);
 		matrixMinY = Math.max(0, matrixMinY);
 		matrixMaxY = Math.max(0, matrixMaxY);
-
-		//		logger.info("matrixMinX" + matrixMinX);
-		//		logger.info("matrixMaxX" + matrixMaxX);
-		////	logger.info(getMatrixTopOffset());
-		//		
+//
+//				logger.info("matrixMinX" + matrixMinX);
+//				logger.info("matrixMaxX" + matrixMaxX);
+	//	     	logger.info(getMatrixTopOffset());
+				
 
 		Rectangle converted = new Rectangle(matrixMinX, matrixMinY, matrixMaxX - matrixMinX, matrixMaxY - matrixMinY); 
+//		logger.info("converted" + converted);
 		return converted;
 	}
 
@@ -2280,7 +2307,7 @@ public class AlignmentPane extends JPanel{
 	public boolean isHighlightDiffTrace() {
 		return highlightDiffTrace;
 	}
-	
+
 	private void fillRGBArrayAndPaint(int xMin, int xMax, int yMin, int yMax, RGBArray clipRGB, Rectangle clip, Graphics2D g2d){
 		// these vals are not going to change so get it only once
 		boolean isNucleotideAlignment = alignment.isNucleotideAlignment();
@@ -2716,7 +2743,7 @@ public class AlignmentPane extends JPanel{
 			}
 		}
 	}
-	
+
 
 }
 

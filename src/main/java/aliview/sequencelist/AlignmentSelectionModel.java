@@ -116,6 +116,8 @@ public class AlignmentSelectionModel{
 	private void changeSelection(int x1, int y1, int x2, int y2, boolean clearFirst){
 		
 		Rectangle newRect = new Rectangle(Math.min(x1, x2), Math.min(y1, y2), Math.abs(x1-x2), Math.abs(y1-y2));
+		
+		logger.info("newRect" + newRect);
 
 		// Get current selection so we can fire a correct bounding box
 		Rectangle oldSelectRect = getSelectionBounds();
@@ -346,7 +348,7 @@ public class AlignmentSelectionModel{
 			}
 		}
 		long endTime = System.currentTimeMillis();
-		logger.info("hasSelection " + (endTime - startTime) + " milliseconds");
+		logger.info("hasSelection false " + (endTime - startTime) + " milliseconds");
 		return false;
 	}
 	
@@ -693,7 +695,7 @@ public class AlignmentSelectionModel{
   */  	
     	
     private void fireSelectionChanged(Rectangle rect, boolean isAdjusting) {
-    	logger.info("fire Selection changed");
+    	logger.info("fire Selection changed + rect" + rect);
     	 Object[] listeners = listenerList.getListenerList();
     	 AlignmentSelectionEvent e = null;
     	 

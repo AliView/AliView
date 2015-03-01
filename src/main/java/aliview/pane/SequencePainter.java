@@ -17,7 +17,7 @@ public abstract class SequencePainter implements Runnable{
 	private int clipPosY;
 	private int xMinSeqPos;
 	private int xMaxSeqPos;
-	private double step;
+	private double seqPerPix;
 	private double charWidth;
 	private double charHeight;
 	private double highDPIScaleFactor;
@@ -27,7 +27,7 @@ public abstract class SequencePainter implements Runnable{
 	
 	
 	public SequencePainter(Sequence seq, int seqYPos, int clipPosY, int xMinSeqPos,
-			int xMaxSeqPos, double step, double charWidth, double charHeight,
+			int xMaxSeqPos, double seqPerPix, double charWidth, double charHeight,
 			double highDPIScaleFactor, RGBArray clipRGB, AlignmentPane aliPane, Alignment alignment) {
 		super();
 		this.seq = seq;
@@ -35,7 +35,7 @@ public abstract class SequencePainter implements Runnable{
 		this.clipPosY = clipPosY;
 		this.xMinSeqPos = xMinSeqPos;
 		this.xMaxSeqPos = xMaxSeqPos;
-		this.step = step;
+		this.seqPerPix = seqPerPix;
 		this.charWidth = charWidth;
 		this.charHeight = charHeight;
 		this.highDPIScaleFactor = highDPIScaleFactor;
@@ -45,19 +45,18 @@ public abstract class SequencePainter implements Runnable{
 	}
 
 	public void run() {
-		drawSequence(seq, seqYPos, clipPosY, xMinSeqPos, xMaxSeqPos, step, charWidth, charHeight, highDPIScaleFactor, clipRGB, aliPane, alignment);
+		drawSequence(seq, seqYPos, clipPosY, xMinSeqPos, xMaxSeqPos, seqPerPix, charWidth, charHeight, highDPIScaleFactor, clipRGB, aliPane, alignment);
 	}
 	
-	public void drawSequence(Sequence seq, int seqYPos, int clipPosY, int xMinSeqPos, int xMaxSeqPos, double step, double charWidth, double charHeight, double highDPIScaleFactor,
+	public void drawSequence(Sequence seq, int seqYPos, int clipPosY, int xMin, int xMax, double seqPerPix, double charWidth, double charHeight, double highDPIScaleFactor,
 			                  RGBArray clipRGB, AlignmentPane aliPane, Alignment alignment){
 		
 		// Make sure not outside length of seq
-		xMaxSeqPos = Math.min(seq.getLength(), xMaxSeqPos);
-		
+		int seqLength = seq.getLength();
 		int clipPosX = 0;
-		for(double x = xMinSeqPos; x < xMaxSeqPos && x >=0 ; x += step){
-			int seqXPos =(int) x;
-			if(seqXPos >=0 && seqXPos < xMaxSeqPos){		
+		for(int x = xMin; x < xMax && x >=0 ; x ++){
+			int seqXPos = (int)((double)x * seqPerPix);
+			if(seqXPos >=0 && seqXPos < seqLength){
 				int pixelPosX = (int)(clipPosX*charWidth*highDPIScaleFactor);
 				int pixelPosY = (int)(clipPosY*charHeight*highDPIScaleFactor);
 				

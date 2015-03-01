@@ -912,376 +912,6 @@ public class AlignmentPane extends JPanel{
 	}
 
 
-	private void copyTranslatedNucleotidesPixelsSkipGap(RGBArray clipArray, byte residue, AminoAcid acid, int x, int y, int clipX, int clipY, int acidStartPos){
-
-		// A small hack
-		if(residue == 0){
-			residue = ' ';
-		}
-
-		// // set defaults
-		// AminoAcid acid = aaTransSeq.getNoGapAminoAcidAtNucleotidePos(x);
-		// int acidStartPos = aaTransSeq.getCachedClosestStartPos();
-
-		TranslationCharPixelsContainer pixContainerToUse = charPixTranslationDefault;
-		TranslationCharPixelsContainer pixLetterContainerToUse = charPixTranslationLetter;
-
-		// adjust colors if selected and temp selection
-		// We have to calculate within this way - because rect.contains(Point) is always returning false on a 0-width or 0 height Rectangle
-		boolean isPointWithinSelectionRect = false;
-		if(alignment.getTempSelection() != null){
-			if(x <= alignment.getTempSelection().getMaxX() && x >= alignment.getTempSelection().getMinX() && y <= alignment.getTempSelection().getMaxY() && y >= alignment.getTempSelection().getMinY()){
-				isPointWithinSelectionRect = true;
-			}
-		}
-		if(alignment.isBaseSelected(x,y) || (alignment.getTempSelection() != null && isPointWithinSelectionRect)){
-			pixContainerToUse = charPixTranslationSelected;
-			pixLetterContainerToUse = charPixTranslationSelectedLetter;
-		}
-
-		RGBArray newPiece;
-
-		if(! drawAminoAcidCode){	
-			newPiece = pixContainerToUse.getRGBArray(acid, residue);
-		}else{
-			if(x == acidStartPos + 1){ // this line is changed
-				newPiece = pixLetterContainerToUse.getRGBArray(acid, residue);
-			}else{
-				residue = ' ';		
-				newPiece = pixContainerToUse.getRGBArray(acid, residue);
-			}
-		}
-
-		try {
-			ImageUtils.insertRGBArrayAt(clipX, clipY, newPiece, clipArray);
-		} catch (Exception e) {
-			logger.info("x" + x);
-			logger.info("y" + y);
-			logger.info("clipX" + clipX);
-			logger.info("clipY" + clipY);
-		}
-	}
-
-
-
-	private void copyTranslatedNucleotidesPixelsShowTranslationAndNuc(RGBArray clipArray, byte residue, AminoAcid acid, int x, int y, int clipX, int clipY, Sequence seq){
-
-		// A small hack
-		if(residue == 0){
-			residue = ' ';
-		}
-
-		// adjust colors if selected and temp selection
-		// We have to calculate within this way - because rect.contains(Point) is always returning false on a 0-width or 0 height Rectangle
-		boolean isPointWithinSelectionRect = false;
-		if(alignment.getTempSelection() != null){
-			if(x <= alignment.getTempSelection().getMaxX() && x >= alignment.getTempSelection().getMinX() && y <= alignment.getTempSelection().getMaxY() && y >= alignment.getTempSelection().getMinY()){
-				isPointWithinSelectionRect = true;
-			}
-		}
-		boolean isSelected = false;
-		if(alignment.isBaseSelected(x,y) || (alignment.getTempSelection() != null && isPointWithinSelectionRect)){
-			isSelected = true;
-		}
-
-		boolean isSecondPos = false;
-		if(seq.isCodonSecondPos(x)){
-			isSecondPos = true;
-		}
-
-		TranslationCharPixelsContainer pixContainerToUse = charPixTranslationAndNucDefault;
-		if(! drawAminoAcidCode){
-			if(isSecondPos){
-				if(isSelected){
-					pixContainerToUse = charPixTranslationAndNucSelected;
-				}else{
-					pixContainerToUse = charPixTranslationAndNucDefault;
-				}
-			}else{
-				if(isSelected){
-					pixContainerToUse = charPixTranslationAndNucSelectedNoAALetter;
-				}else{
-					pixContainerToUse = charPixTranslationAndNucDefaultNoAALetter;
-				}	
-			}
-		}else{
-			if(isSecondPos){
-				if(isSelected){
-					pixContainerToUse = charPixTranslationAndNucDominantNucSelected;
-				}else{
-					pixContainerToUse = charPixTranslationAndNucDominantNuc;
-				}
-			}else{
-				if(isSelected){
-					pixContainerToUse = charPixTranslationAndNucDominantNucNoAALetterSelected;
-				}else{
-					pixContainerToUse = charPixTranslationAndNucDominantNucNoAALetter;
-				}	
-			}
-		}
-
-		RGBArray newPiece = pixContainerToUse.getRGBArray(acid, residue);
-
-
-		try {
-			ImageUtils.insertRGBArrayAt(clipX, clipY, newPiece, clipArray);
-		} catch (Exception e) {
-			logger.info("clipX" + clipX);
-			logger.info("clipY" + clipY);
-		}
-	}
-
-	private void copyTranslatedNucleotidesPixels(RGBArray clipArray, byte residue, AminoAcid acid, int x, int y, int clipX, int clipY, Sequence seq){
-
-		// A small hack
-		if(residue == 0){
-			residue = ' ';
-		}
-
-		// set defaults
-		//AminoAcid acid =  aaTransSeq.getAminoAcidAtNucleotidePos(x);
-		TranslationCharPixelsContainer pixContainerToUse = charPixTranslationDefault;
-		TranslationCharPixelsContainer pixLetterContainerToUse = charPixTranslationLetter;
-		TranslationCharPixelsContainer pixLetterContainerToUseNoAALetter = charPixTranslationDefault;
-
-
-		// adjust colors if selected and temp selection
-		// We have to calculate within this way - because rect.contains(Point) is always returning false on a 0-width or 0 height Rectangle
-		boolean isPointWithinSelectionRect = false;
-		if(alignment.getTempSelection() != null){
-			if(x <= alignment.getTempSelection().getMaxX() && x >= alignment.getTempSelection().getMinX() && y <= alignment.getTempSelection().getMaxY() && y >= alignment.getTempSelection().getMinY()){
-				isPointWithinSelectionRect = true;
-			}
-		}
-		if(alignment.isBaseSelected(x,y) || (alignment.getTempSelection() != null && isPointWithinSelectionRect)){		
-			pixContainerToUse = charPixTranslationSelected;
-			pixLetterContainerToUse = charPixTranslationSelectedLetter;			
-		}
-
-		RGBArray newPiece;
-
-		if(! drawAminoAcidCode){	
-			newPiece = pixContainerToUse.getRGBArray(acid, residue);
-		}else{
-			if(seq.isCodonSecondPos(x)){
-				newPiece = pixLetterContainerToUse.getRGBArray(acid, residue);
-			}else{
-				residue = ' ';
-				newPiece = pixLetterContainerToUseNoAALetter.getRGBArray(acid, residue);
-			}
-		}
-
-		try {
-			ImageUtils.insertRGBArrayAt(clipX, clipY, newPiece, clipArray);
-		} catch (Exception e) {
-			logger.info("clipX" + clipX);
-			logger.info("clipY" + clipY);
-		}
-	}
-
-	private void copyAminoAcidPixels(RGBArray clipArray, byte residue, int x, int y, int clipX, int clipY){
-
-		// A small hack
-		if(residue == 0){
-			residue = ' ';
-		}
-
-		// set defaults
-		AACharPixelsContainer pixContainerToUse = charPixDefaultAA;
-		byteToDraw = residue;
-		AminoAcid acid = AminoAcid.getAminoAcidFromByte(residue);
-
-		// adjustment if only diff to be shown
-		if(highlightDiffTrace){ // TODO CHANGE THIS SO IT IS WORKING EVEN IF TRACING SEQUENCE IS SHORTER THAN OTHER
-			if(y != differenceTraceSequencePosition && acid == AminoAcid.getAminoAcidFromByte(alignment.getBaseAt(x,differenceTraceSequencePosition))){
-				byteToDraw = '.';
-				pixContainerToUse = charPixDefaultAA;
-			}
-		}
-
-		// adjustment if non-cons to be highlighted
-		if(highlightNonCons){
-			if(acid == AminoAcid.GAP){
-				// no color on gap even if they are in maj.cons
-			}
-			else if(alignment.getHistogram().isMajorityRuleConsensus(x,acid.intVal)){
-				pixContainerToUse = charPixConsensusAA;
-			}
-		}
-		if(highlightCons){
-			if(acid == AminoAcid.GAP){
-				// no color on gap even if they are in maj.cons
-			}
-			else if(! alignment.getHistogram().isMajorityRuleConsensus(x,acid.intVal)){
-				pixContainerToUse = charPixConsensusAA;
-			}
-		}
-
-		// adjust colors if selected and temp selection
-		// We have to calculate within this way - because rect.contains(Point) is always returning false on a 0-width or 0 height Rectangle
-		boolean isPointWithinSelectionRect = false;
-		if(alignment.getTempSelection() != null){
-			if(x <= alignment.getTempSelection().getMaxX() && x >= alignment.getTempSelection().getMinX() && y <= alignment.getTempSelection().getMaxY() && y >= alignment.getTempSelection().getMinY()){
-				isPointWithinSelectionRect = true;
-			}
-		}
-		if(alignment.isBaseSelected(x,y) || (alignment.getTempSelection() != null && isPointWithinSelectionRect)){
-			pixContainerToUse = charPixSelectedAA;
-		}
-
-		RGBArray newPiece = pixContainerToUse.getRGBArray(byteToDraw, x, alignment);
-
-		try {
-			ImageUtils.insertRGBArrayAt(clipX, clipY, newPiece, clipArray);
-		} catch (Exception e) {
-			logger.info("clipX" + clipX);
-			logger.info("clipY" + clipY);
-		}
-	}
-
-	private void copyNucleotidePixelsTimeTest(RGBArray clipArray, byte residue, int x, int y, int clipX, int clipY){
-		// A small hack
-		if(residue == 0){
-			residue = ' ';
-		}
-
-		// set defaults
-		CharPixelsContainer pixContainerToUse = charPixDefaultNuc;
-		byteToDraw = residue;
-		//		int baseVal = NucleotideUtilities.baseValFromBase(residue);
-
-		int baseVal = NucleotideUtilities.baseValFromBaseOtherVer(residue);
-
-		//int baseVal = 1;
-
-
-		// adjustment if only diff to be shown
-		if(highlightDiffTrace){ // TODO CHANGE THIS SO IT IS WORKING EVEN IF TRACING SEQUENCE IS SHORTER THAN OTHER
-			if(y != differenceTraceSequencePosition){
-				if(baseVal == NucleotideUtilities.baseValFromBase(alignment.getBaseAt(x,differenceTraceSequencePosition))){
-					byteToDraw = '.';
-					pixContainerToUse = charPixDefaultNuc;
-				}
-			}
-		}
-
-		// adjustment if non-cons to be highlighted
-		if(highlightNonCons){
-			NucleotideHistogram nucHistogram = (NucleotideHistogram) alignment.getHistogram();
-			if(baseVal == NucleotideUtilities.GAP){
-				// no color on gap even if they are in maj.cons
-			}
-			else if(nucHistogram.isMajorityRuleConsensus(x,baseVal)){
-				pixContainerToUse = charPixConsensusNuc;
-			}
-		}
-		if(highlightCons){
-			NucleotideHistogram nucHistogram = (NucleotideHistogram) alignment.getHistogram();
-			if(baseVal == NucleotideUtilities.GAP){
-				// no color on gap even if they are in maj.cons
-			}
-			else if(! nucHistogram.isMajorityRuleConsensus(x,baseVal)){
-				pixContainerToUse = charPixConsensusNuc;
-			}
-		}
-
-		// adjust colors if selected and temp selection
-		// We have to calculate within this way - because rect.contains(Point) is always returning false on a 0-width or 0 height Rectangle
-		boolean isPointWithinSelectionRect = false;
-		if(alignment.getTempSelection() != null){
-			if(x <= alignment.getTempSelection().getMaxX() && x >= alignment.getTempSelection().getMinX() && y <= alignment.getTempSelection().getMaxY() && y >= alignment.getTempSelection().getMinY()){
-				isPointWithinSelectionRect = true;
-			}
-		}
-		//				if(alignment.isBaseSelected(x,y) || (tempSelectionRect != null && isPointWithinSelectionRect)){
-		//					pixContainerToUse = charPixSelectedNuc;
-		//				}
-
-		//				RGBArray newPiece = pixContainerToUse.getRGBArray(byteToDraw);
-
-		try {
-			//					ImageUtils.insertRGBArrayAt(clipX, clipY, newPiece, clipArray);
-		} catch (Exception e) {
-			logger.info("x" + x);
-			logger.info("y" + y);
-			logger.info("clipX" + clipX);
-			logger.info("clipY" + clipY);
-		}
-
-	}
-
-
-
-	private void copyNucleotidePixels(RGBArray clipArray, byte residue, int x, int y, int clipX, int clipY){
-
-		// A small hack
-		if(residue == 0){
-			residue = ' ';
-		}
-
-		// set defaults
-		CharPixelsContainer pixContainerToUse = charPixDefaultNuc;
-		byteToDraw = residue;
-		int baseVal = NucleotideUtilities.baseValFromBase(residue);
-
-
-		// adjustment if only diff to be shown
-		if(highlightDiffTrace){ // TODO CHANGE THIS SO IT IS WORKING EVEN IF TRACING SEQUENCE IS SHORTER THAN OTHER
-			if(y != differenceTraceSequencePosition){
-				if(baseVal == NucleotideUtilities.baseValFromBase(alignment.getBaseAt(x,differenceTraceSequencePosition))){
-					byteToDraw = '.';
-					pixContainerToUse = charPixDefaultNuc;
-				}
-			}
-		}
-
-		// adjustment if non-cons to be highlighted
-		if(highlightNonCons){
-			NucleotideHistogram nucHistogram = (NucleotideHistogram) alignment.getHistogram();
-			if(baseVal == NucleotideUtilities.GAP){
-				// no color on gap even if they are in maj.cons
-			}
-			else if(nucHistogram.isMajorityRuleConsensus(x,baseVal)){
-				pixContainerToUse = charPixConsensusNuc;
-			}
-		}
-		if(highlightCons){
-			NucleotideHistogram nucHistogram = (NucleotideHistogram) alignment.getHistogram();
-			if(baseVal == NucleotideUtilities.GAP){
-				// no color on gap even if they are in maj.cons
-			}
-			else if(! nucHistogram.isMajorityRuleConsensus(x,baseVal)){
-				pixContainerToUse = charPixConsensusNuc;
-			}
-		}
-
-		// adjust colors if selected and temp selection
-		// We have to calculate within this way - because rect.contains(Point) is always returning false on a 0-width or 0 height Rectangle
-		boolean isPointWithinSelectionRect = false;
-		if(alignment.getTempSelection() != null){
-			if(x <= alignment.getTempSelection().getMaxX() && x >= alignment.getTempSelection().getMinX() && y <= alignment.getTempSelection().getMaxY() && y >= alignment.getTempSelection().getMinY()){
-				isPointWithinSelectionRect = true;
-			}
-		}
-		if(alignment.isBaseSelected(x,y) || (alignment.getTempSelection() != null && isPointWithinSelectionRect)){
-			pixContainerToUse = charPixSelectedNuc;
-		}
-
-		RGBArray newPiece = pixContainerToUse.getRGBArray(byteToDraw);
-
-		try {
-			ImageUtils.insertRGBArrayAt(clipX, clipY, newPiece, clipArray);
-		} catch (Exception e) {
-			logger.info("x" + x);
-			logger.info("y" + y);
-			logger.info("clipX" + clipX);
-			logger.info("clipY" + clipY);
-			//break;
-		}
-
-	}
-
-
 	public Alignment getAlignment() {
 		return alignment;
 	}
@@ -2308,6 +1938,9 @@ public class AlignmentPane extends JPanel{
 		return highlightDiffTrace;
 	}
 
+	
+	/*
+	
 	private void fillRGBArrayAndPaint(int xMin, int xMax, int yMin, int yMax, RGBArray clipRGB, Rectangle clip, Graphics2D g2d){
 		// these vals are not going to change so get it only once
 		boolean isNucleotideAlignment = alignment.isNucleotideAlignment();
@@ -2743,7 +2376,376 @@ public class AlignmentPane extends JPanel{
 			}
 		}
 	}
+	
+		private void copyTranslatedNucleotidesPixelsSkipGap(RGBArray clipArray, byte residue, AminoAcid acid, int x, int y, int clipX, int clipY, int acidStartPos){
+
+		// A small hack
+		if(residue == 0){
+			residue = ' ';
+		}
+
+		// // set defaults
+		// AminoAcid acid = aaTransSeq.getNoGapAminoAcidAtNucleotidePos(x);
+		// int acidStartPos = aaTransSeq.getCachedClosestStartPos();
+
+		TranslationCharPixelsContainer pixContainerToUse = charPixTranslationDefault;
+		TranslationCharPixelsContainer pixLetterContainerToUse = charPixTranslationLetter;
+
+		// adjust colors if selected and temp selection
+		// We have to calculate within this way - because rect.contains(Point) is always returning false on a 0-width or 0 height Rectangle
+		boolean isPointWithinSelectionRect = false;
+		if(alignment.getTempSelection() != null){
+			if(x <= alignment.getTempSelection().getMaxX() && x >= alignment.getTempSelection().getMinX() && y <= alignment.getTempSelection().getMaxY() && y >= alignment.getTempSelection().getMinY()){
+				isPointWithinSelectionRect = true;
+			}
+		}
+		if(alignment.isBaseSelected(x,y) || (alignment.getTempSelection() != null && isPointWithinSelectionRect)){
+			pixContainerToUse = charPixTranslationSelected;
+			pixLetterContainerToUse = charPixTranslationSelectedLetter;
+		}
+
+		RGBArray newPiece;
+
+		if(! drawAminoAcidCode){	
+			newPiece = pixContainerToUse.getRGBArray(acid, residue);
+		}else{
+			if(x == acidStartPos + 1){ // this line is changed
+				newPiece = pixLetterContainerToUse.getRGBArray(acid, residue);
+			}else{
+				residue = ' ';		
+				newPiece = pixContainerToUse.getRGBArray(acid, residue);
+			}
+		}
+
+		try {
+			ImageUtils.insertRGBArrayAt(clipX, clipY, newPiece, clipArray);
+		} catch (Exception e) {
+			logger.info("x" + x);
+			logger.info("y" + y);
+			logger.info("clipX" + clipX);
+			logger.info("clipY" + clipY);
+		}
+	}
 
 
+
+	private void copyTranslatedNucleotidesPixelsShowTranslationAndNuc(RGBArray clipArray, byte residue, AminoAcid acid, int x, int y, int clipX, int clipY, Sequence seq){
+
+		// A small hack
+		if(residue == 0){
+			residue = ' ';
+		}
+
+		// adjust colors if selected and temp selection
+		// We have to calculate within this way - because rect.contains(Point) is always returning false on a 0-width or 0 height Rectangle
+		boolean isPointWithinSelectionRect = false;
+		if(alignment.getTempSelection() != null){
+			if(x <= alignment.getTempSelection().getMaxX() && x >= alignment.getTempSelection().getMinX() && y <= alignment.getTempSelection().getMaxY() && y >= alignment.getTempSelection().getMinY()){
+				isPointWithinSelectionRect = true;
+			}
+		}
+		boolean isSelected = false;
+		if(alignment.isBaseSelected(x,y) || (alignment.getTempSelection() != null && isPointWithinSelectionRect)){
+			isSelected = true;
+		}
+
+		boolean isSecondPos = false;
+		if(seq.isCodonSecondPos(x)){
+			isSecondPos = true;
+		}
+
+		TranslationCharPixelsContainer pixContainerToUse = charPixTranslationAndNucDefault;
+		if(! drawAminoAcidCode){
+			if(isSecondPos){
+				if(isSelected){
+					pixContainerToUse = charPixTranslationAndNucSelected;
+				}else{
+					pixContainerToUse = charPixTranslationAndNucDefault;
+				}
+			}else{
+				if(isSelected){
+					pixContainerToUse = charPixTranslationAndNucSelectedNoAALetter;
+				}else{
+					pixContainerToUse = charPixTranslationAndNucDefaultNoAALetter;
+				}	
+			}
+		}else{
+			if(isSecondPos){
+				if(isSelected){
+					pixContainerToUse = charPixTranslationAndNucDominantNucSelected;
+				}else{
+					pixContainerToUse = charPixTranslationAndNucDominantNuc;
+				}
+			}else{
+				if(isSelected){
+					pixContainerToUse = charPixTranslationAndNucDominantNucNoAALetterSelected;
+				}else{
+					pixContainerToUse = charPixTranslationAndNucDominantNucNoAALetter;
+				}	
+			}
+		}
+
+		RGBArray newPiece = pixContainerToUse.getRGBArray(acid, residue);
+
+
+		try {
+			ImageUtils.insertRGBArrayAt(clipX, clipY, newPiece, clipArray);
+		} catch (Exception e) {
+			logger.info("clipX" + clipX);
+			logger.info("clipY" + clipY);
+		}
+	}
+
+	private void copyTranslatedNucleotidesPixels(RGBArray clipArray, byte residue, AminoAcid acid, int x, int y, int clipX, int clipY, Sequence seq){
+
+		// A small hack
+		if(residue == 0){
+			residue = ' ';
+		}
+
+		// set defaults
+		//AminoAcid acid =  aaTransSeq.getAminoAcidAtNucleotidePos(x);
+		TranslationCharPixelsContainer pixContainerToUse = charPixTranslationDefault;
+		TranslationCharPixelsContainer pixLetterContainerToUse = charPixTranslationLetter;
+		TranslationCharPixelsContainer pixLetterContainerToUseNoAALetter = charPixTranslationDefault;
+
+
+		// adjust colors if selected and temp selection
+		// We have to calculate within this way - because rect.contains(Point) is always returning false on a 0-width or 0 height Rectangle
+		boolean isPointWithinSelectionRect = false;
+		if(alignment.getTempSelection() != null){
+			if(x <= alignment.getTempSelection().getMaxX() && x >= alignment.getTempSelection().getMinX() && y <= alignment.getTempSelection().getMaxY() && y >= alignment.getTempSelection().getMinY()){
+				isPointWithinSelectionRect = true;
+			}
+		}
+		if(alignment.isBaseSelected(x,y) || (alignment.getTempSelection() != null && isPointWithinSelectionRect)){		
+			pixContainerToUse = charPixTranslationSelected;
+			pixLetterContainerToUse = charPixTranslationSelectedLetter;			
+		}
+
+		RGBArray newPiece;
+
+		if(! drawAminoAcidCode){	
+			newPiece = pixContainerToUse.getRGBArray(acid, residue);
+		}else{
+			if(seq.isCodonSecondPos(x)){
+				newPiece = pixLetterContainerToUse.getRGBArray(acid, residue);
+			}else{
+				residue = ' ';
+				newPiece = pixLetterContainerToUseNoAALetter.getRGBArray(acid, residue);
+			}
+		}
+
+		try {
+			ImageUtils.insertRGBArrayAt(clipX, clipY, newPiece, clipArray);
+		} catch (Exception e) {
+			logger.info("clipX" + clipX);
+			logger.info("clipY" + clipY);
+		}
+	}
+
+	private void copyAminoAcidPixels(RGBArray clipArray, byte residue, int x, int y, int clipX, int clipY){
+
+		// A small hack
+		if(residue == 0){
+			residue = ' ';
+		}
+
+		// set defaults
+		AACharPixelsContainer pixContainerToUse = charPixDefaultAA;
+		byteToDraw = residue;
+		AminoAcid acid = AminoAcid.getAminoAcidFromByte(residue);
+
+		// adjustment if only diff to be shown
+		if(highlightDiffTrace){ // TODO CHANGE THIS SO IT IS WORKING EVEN IF TRACING SEQUENCE IS SHORTER THAN OTHER
+			if(y != differenceTraceSequencePosition && acid == AminoAcid.getAminoAcidFromByte(alignment.getBaseAt(x,differenceTraceSequencePosition))){
+				byteToDraw = '.';
+				pixContainerToUse = charPixDefaultAA;
+			}
+		}
+
+		// adjustment if non-cons to be highlighted
+		if(highlightNonCons){
+			if(acid == AminoAcid.GAP){
+				// no color on gap even if they are in maj.cons
+			}
+			else if(alignment.getHistogram().isMajorityRuleConsensus(x,acid.intVal)){
+				pixContainerToUse = charPixConsensusAA;
+			}
+		}
+		if(highlightCons){
+			if(acid == AminoAcid.GAP){
+				// no color on gap even if they are in maj.cons
+			}
+			else if(! alignment.getHistogram().isMajorityRuleConsensus(x,acid.intVal)){
+				pixContainerToUse = charPixConsensusAA;
+			}
+		}
+
+		// adjust colors if selected and temp selection
+		// We have to calculate within this way - because rect.contains(Point) is always returning false on a 0-width or 0 height Rectangle
+		boolean isPointWithinSelectionRect = false;
+		if(alignment.getTempSelection() != null){
+			if(x <= alignment.getTempSelection().getMaxX() && x >= alignment.getTempSelection().getMinX() && y <= alignment.getTempSelection().getMaxY() && y >= alignment.getTempSelection().getMinY()){
+				isPointWithinSelectionRect = true;
+			}
+		}
+		if(alignment.isBaseSelected(x,y) || (alignment.getTempSelection() != null && isPointWithinSelectionRect)){
+			pixContainerToUse = charPixSelectedAA;
+		}
+
+		RGBArray newPiece = pixContainerToUse.getRGBArray(byteToDraw, x, alignment);
+
+		try {
+			ImageUtils.insertRGBArrayAt(clipX, clipY, newPiece, clipArray);
+		} catch (Exception e) {
+			logger.info("clipX" + clipX);
+			logger.info("clipY" + clipY);
+		}
+	}
+
+	private void copyNucleotidePixelsTimeTest(RGBArray clipArray, byte residue, int x, int y, int clipX, int clipY){
+		// A small hack
+		if(residue == 0){
+			residue = ' ';
+		}
+
+		// set defaults
+		CharPixelsContainer pixContainerToUse = charPixDefaultNuc;
+		byteToDraw = residue;
+		//		int baseVal = NucleotideUtilities.baseValFromBase(residue);
+
+		int baseVal = NucleotideUtilities.baseValFromBaseOtherVer(residue);
+
+		//int baseVal = 1;
+
+
+		// adjustment if only diff to be shown
+		if(highlightDiffTrace){ // TODO CHANGE THIS SO IT IS WORKING EVEN IF TRACING SEQUENCE IS SHORTER THAN OTHER
+			if(y != differenceTraceSequencePosition){
+				if(baseVal == NucleotideUtilities.baseValFromBase(alignment.getBaseAt(x,differenceTraceSequencePosition))){
+					byteToDraw = '.';
+					pixContainerToUse = charPixDefaultNuc;
+				}
+			}
+		}
+
+		// adjustment if non-cons to be highlighted
+		if(highlightNonCons){
+			NucleotideHistogram nucHistogram = (NucleotideHistogram) alignment.getHistogram();
+			if(baseVal == NucleotideUtilities.GAP){
+				// no color on gap even if they are in maj.cons
+			}
+			else if(nucHistogram.isMajorityRuleConsensus(x,baseVal)){
+				pixContainerToUse = charPixConsensusNuc;
+			}
+		}
+		if(highlightCons){
+			NucleotideHistogram nucHistogram = (NucleotideHistogram) alignment.getHistogram();
+			if(baseVal == NucleotideUtilities.GAP){
+				// no color on gap even if they are in maj.cons
+			}
+			else if(! nucHistogram.isMajorityRuleConsensus(x,baseVal)){
+				pixContainerToUse = charPixConsensusNuc;
+			}
+		}
+
+		// adjust colors if selected and temp selection
+		// We have to calculate within this way - because rect.contains(Point) is always returning false on a 0-width or 0 height Rectangle
+		boolean isPointWithinSelectionRect = false;
+		if(alignment.getTempSelection() != null){
+			if(x <= alignment.getTempSelection().getMaxX() && x >= alignment.getTempSelection().getMinX() && y <= alignment.getTempSelection().getMaxY() && y >= alignment.getTempSelection().getMinY()){
+				isPointWithinSelectionRect = true;
+			}
+		}
+		//				if(alignment.isBaseSelected(x,y) || (tempSelectionRect != null && isPointWithinSelectionRect)){
+		//					pixContainerToUse = charPixSelectedNuc;
+		//				}
+
+		//				RGBArray newPiece = pixContainerToUse.getRGBArray(byteToDraw);
+
+		try {
+			//					ImageUtils.insertRGBArrayAt(clipX, clipY, newPiece, clipArray);
+		} catch (Exception e) {
+			logger.info("x" + x);
+			logger.info("y" + y);
+			logger.info("clipX" + clipX);
+			logger.info("clipY" + clipY);
+		}
+
+	}
+
+
+
+	private void copyNucleotidePixels(RGBArray clipArray, byte residue, int x, int y, int clipX, int clipY){
+
+		// A small hack
+		if(residue == 0){
+			residue = ' ';
+		}
+
+		// set defaults
+		CharPixelsContainer pixContainerToUse = charPixDefaultNuc;
+		byteToDraw = residue;
+		int baseVal = NucleotideUtilities.baseValFromBase(residue);
+
+
+		// adjustment if only diff to be shown
+		if(highlightDiffTrace){ // TODO CHANGE THIS SO IT IS WORKING EVEN IF TRACING SEQUENCE IS SHORTER THAN OTHER
+			if(y != differenceTraceSequencePosition){
+				if(baseVal == NucleotideUtilities.baseValFromBase(alignment.getBaseAt(x,differenceTraceSequencePosition))){
+					byteToDraw = '.';
+					pixContainerToUse = charPixDefaultNuc;
+				}
+			}
+		}
+
+		// adjustment if non-cons to be highlighted
+		if(highlightNonCons){
+			NucleotideHistogram nucHistogram = (NucleotideHistogram) alignment.getHistogram();
+			if(baseVal == NucleotideUtilities.GAP){
+				// no color on gap even if they are in maj.cons
+			}
+			else if(nucHistogram.isMajorityRuleConsensus(x,baseVal)){
+				pixContainerToUse = charPixConsensusNuc;
+			}
+		}
+		if(highlightCons){
+			NucleotideHistogram nucHistogram = (NucleotideHistogram) alignment.getHistogram();
+			if(baseVal == NucleotideUtilities.GAP){
+				// no color on gap even if they are in maj.cons
+			}
+			else if(! nucHistogram.isMajorityRuleConsensus(x,baseVal)){
+				pixContainerToUse = charPixConsensusNuc;
+			}
+		}
+
+		// adjust colors if selected and temp selection
+		// We have to calculate within this way - because rect.contains(Point) is always returning false on a 0-width or 0 height Rectangle
+		boolean isPointWithinSelectionRect = false;
+		if(alignment.getTempSelection() != null){
+			if(x <= alignment.getTempSelection().getMaxX() && x >= alignment.getTempSelection().getMinX() && y <= alignment.getTempSelection().getMaxY() && y >= alignment.getTempSelection().getMinY()){
+				isPointWithinSelectionRect = true;
+			}
+		}
+		if(alignment.isBaseSelected(x,y) || (alignment.getTempSelection() != null && isPointWithinSelectionRect)){
+			pixContainerToUse = charPixSelectedNuc;
+		}
+
+		RGBArray newPiece = pixContainerToUse.getRGBArray(byteToDraw);
+
+		try {
+			ImageUtils.insertRGBArrayAt(clipX, clipY, newPiece, clipArray);
+		} catch (Exception e) {
+			logger.info("x" + x);
+			logger.info("y" + y);
+			logger.info("clipX" + clipX);
+			logger.info("clipY" + clipY);
+			//break;
+		}
+
+	}
+	
+	*/
 }
 

@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 
-import com.sun.org.apache.bcel.internal.generic.BALOAD;
-
 
 public class NexusRangePositionsArray {
 	private static final Logger logger = Logger.getLogger(NexusRangePositionsArray.class);

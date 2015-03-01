@@ -3,8 +3,6 @@ package utils.nexus;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 
-import com.sun.org.apache.bcel.internal.generic.BALOAD;
-
 
 public class PositionsArray {
 	private static final Logger logger = Logger.getLogger(PositionsArray.class);

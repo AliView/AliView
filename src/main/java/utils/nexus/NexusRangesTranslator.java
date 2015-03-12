@@ -1,12 +1,7 @@
 package utils.nexus;
 
 import java.util.ArrayList;
-
-import org.apache.commons.lang.math.IntRange;
-import org.apache.commons.lang.math.Range;
 import org.apache.log4j.Logger;
-
-import utils.RangeUtils;
 
 public class NexusRangesTranslator {
 		
@@ -19,7 +14,7 @@ public class NexusRangesTranslator {
 	
 	public Ranges convertToCodonRanges(){
 		Ranges allRanges = new Ranges();
-		allRanges.add(CodonRange.newDefaultRange());
+		allRanges.addRange(CodonRange.newDefaultRange());
 
 		int min = getMinPos() - 1; // minus one because nexus index starts at 1
 		int max = getMaxPos() - 1; // minus one because nexus index starts at 1
@@ -54,7 +49,60 @@ public class NexusRangesTranslator {
 					
 					
 					codonRange = new CodonRange(n, max, startVal);
-					allRanges.add(codonRange);
+					allRanges.addRange(codonRange);
+					
+					startValOffset = startVal - target;
+					if(startValOffset < 0){
+						startValOffset = startValOffset + 3;
+					}
+
+				}
+			}
+			
+			
+		}
+		allRanges.debug();
+		return allRanges;
+	}
+	
+	public Ranges convertToCharsetRanges(){
+		Ranges allRanges = new Ranges();
+		allRanges.addRange(CodonRange.newDefaultRange());
+
+		int min = getMinPos() - 1; // minus one because nexus index starts at 1
+		int max = getMaxPos() - 1; // minus one because nexus index starts at 1
+		int startVal = getPosVal(min -1);
+		
+		CodonRange codonRange = new CodonRange(min - 1, max - 1, startVal);
+//		logger.info("codonRange" + codonRange);
+		
+		int defaultStartVal = 1;
+		int startValOffset = startVal - defaultStartVal; // one is default startVal
+		
+		for(int n = min; n <= max; n++){ // minus one because Nexus 
+				
+			int target = (n % 3) + 1;
+			
+			int targetModifiedWithStartValOffset = target + startValOffset;
+			if(targetModifiedWithStartValOffset > 3){
+				targetModifiedWithStartValOffset = targetModifiedWithStartValOffset - 3;
+			}
+			
+//			logger.info("n=" + n + " startVal=" + startVal + " target=" + target + "getPosVal(n)=" + getPosVal(n));
+			
+			startVal = getPosVal(n);
+			if(startVal != targetModifiedWithStartValOffset){
+				
+
+				if(startVal == 0 && codonRange.startVal == 0){
+					// do nothing - same as before
+				}
+				else{
+					codonRange.end = n - 1; // la
+					
+					
+					codonRange = new CodonRange(n, max, startVal);
+					allRanges.addRange(codonRange);
 					
 					startValOffset = startVal - target;
 					if(startValOffset < 0){

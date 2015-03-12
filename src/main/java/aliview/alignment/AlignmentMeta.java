@@ -2,6 +2,7 @@ package aliview.alignment;
 
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 
@@ -36,7 +37,7 @@ public class AlignmentMeta {
 
 	public boolean isMetaOutputNeeded(){
 		boolean isMetaNeeded = false;
-		if(excludes.isAnythingExcluded()){
+		if(excludes.containsAnyPosition()){
 			isMetaNeeded = true;
 		}
 		if(codonPositions.isAnythingButDefault()){
@@ -60,9 +61,9 @@ public class AlignmentMeta {
 		return this.codonPositions.isFullCodonStartingAt(x);
 	}
 
-	public void reverse() {
-		this.getExcludes().reverse();
-		this.getCodonPositions().reverse();
+	public void reverse(int length) {
+		this.getExcludes().reverse(length);
+		this.getCodonPositions().reverse(length);
 	}
 
 	public int countIncludedPositionsBefore(int minimumInteger) {
@@ -100,15 +101,23 @@ public class AlignmentMeta {
 
 	public ArrayList<Integer> getAllCodonPositions(int wanted, boolean removeExcluded, int startPos, int endPosInclusive) {
 		ArrayList<Integer> positions = codonPositions.getAllPositions(wanted, startPos, endPosInclusive);
+		
+		// delete positions from list if they are excluded
 		if(removeExcluded){
-			excludes.removeExcludedPositionsFromList(positions);
+			Iterator<Integer> iter = positions.iterator();
+			while(iter.hasNext()){
+				Integer pos = iter.next();
+				if(isExcluded(pos.intValue())){
+					iter.remove();
+				}	
+			}
 		}
 
 		return positions;
 	}
 
 
-	public void removeFromMask(boolean[] deleteMask) {
+	public void deleteFromMask(boolean[] deleteMask) {
 		// Null check
 		if(deleteMask == null || deleteMask.length == 0){
 			return;
@@ -117,17 +126,17 @@ public class AlignmentMeta {
 		// remove reverse
 		for(int n = deleteMask.length - 1; n>= 0; n--){
 			if(deleteMask[n] == true){
-				removePosition(n);
+				deletePosition(n);
 			}		
 		}
 	}
 	
-	public void removePosition(int n) {	
-		excludes.removePosition(n);
+	public void deletePosition(int n) {	
+		excludes.deletePosition(n);
 		if(codonPositions.size() != 0){
 			codonPositions.removePosition(n);
 			for(CharSet charset: charsets){
-				charset.removePosition(n); 
+				charset.deletePosition(n); 
 			}
 		}
 	}
@@ -147,11 +156,15 @@ public class AlignmentMeta {
 		}
 	}
 	
-	public void excludesRemovePositions(int start, int end) {
-		for(int n = start; n <= end; n++){
-			this.excludes.set(n, false);
-		}
+	public void excludeRange(int start, int stop) {
+		this.excludes.addRange(start, stop);
 	}
+	
+	public void removeExcludeRange(int start, int stop) {
+		this.excludes.clearRange(start, stop);
+		
+	}
+	
 	
 	public boolean excludesIntersectsPositions(int start, int end) {
 		for(int n = start; n <= end; n++){

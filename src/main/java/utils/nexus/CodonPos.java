@@ -29,9 +29,7 @@ public class CodonPos {
 			return isCoding;
 		}
 
-		public void setIsCoding(boolean b) {
+		public void setIsCoding(boolean b){
 			isCoding = b;
 		}
 }
-
-

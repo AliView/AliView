@@ -514,39 +514,24 @@ public class BasicSequence implements Sequence, Comparable<Sequence> {
 
 
 	public void rightPadSequenceWithGaps(int finalLength) {
-		
-//		logger.info("finalLength" + finalLength);
-//		logger.info("getBases().getLength()" + getBases().getLength());
-		
+
 		int addCount = finalLength - getBases().getLength();
 		if(addCount > 0){
 			byte[] additional = new byte[addCount];
 			Arrays.fill(additional, SequenceUtils.GAP_SYMBOL);
 			getBases().append(additional);
-		}
-		
-		
-//		while(getBases().getLength() < finalLength){
-//			logger.info("append");
-//			getBases().append(new byte[]{SequenceUtils.GAP_SYMBOL});
-//		}
-//		logger.info("after getBases().getLength()" + getBases().getLength());
-		
+		}	
 	}
 
-	public void leftPadSequenceWithGaps(int amount) {
-
-		if(amount > 0){
-
-			byte[] padding = new byte[amount];
-			
-			Arrays.fill(padding, SequenceUtils.GAP_SYMBOL);
-			
-			getBases().insertAt(0,padding);
-
-			selectionModel.leftPad(amount);
-
-		}	
+	public void leftPadSequenceWithGaps(int finalLength) {
+		
+		int addCount = finalLength - getBases().getLength();
+		if(addCount > 0){
+			byte[] additional = new byte[addCount];
+			Arrays.fill(additional, SequenceUtils.GAP_SYMBOL);
+			getBases().insertAt(0,additional);
+		}
+		
 
 	}
 

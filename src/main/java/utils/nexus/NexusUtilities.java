@@ -58,12 +58,12 @@ public class NexusUtilities {
 			}
 			ArrayList<NexusRange> allRanges = parseNexusRanges(excludeString, 0);
 			for(NexusRange range: allRanges){
-				excludes.addRange(range);
+				excludes.addNexusRange(range);
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new NexusAlignmentImportException("Could not parse NEXUS CHARSET Block");
+			throw new NexusAlignmentImportException("Could not parse NEXUS EXSET Block");
 		}
 		return true;
 	}
@@ -118,23 +118,18 @@ public class NexusUtilities {
 			String pos1 = StringUtils.substringBetween(codonPositionsBlock, "1:",",");
 			if(pos1 != null){	
 				ArrayList<NexusRange> allRanges = parseNexusRanges(pos1, 1);
-//				logger.info("allRangesSize" + allRanges.size());
-				codonPositions.addNexusRanges(allRanges);
 				nexusRangesTranslator.addNexusRanges(allRanges);
 			}
 
 			String pos2 = StringUtils.substringBetween(codonPositionsBlock, "2:",",");
 			if(pos2 != null){	
 				ArrayList<NexusRange> allRanges = parseNexusRanges(pos2, 2);
-//				logger.info("allRangesSize" + allRanges.size());
-				codonPositions.addNexusRanges(allRanges);
 				nexusRangesTranslator.addNexusRanges(allRanges);
 			}
 
 			String pos3 = StringUtils.substringBetween(codonPositionsBlock, "3:",",");
 			if(pos3 != null){	
 				ArrayList<NexusRange> allRanges = parseNexusRanges(pos3, 3);
-				codonPositions.addNexusRanges(allRanges);
 				nexusRangesTranslator.addNexusRanges(allRanges);
 			}
 			
@@ -145,7 +140,7 @@ public class NexusUtilities {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new NexusAlignmentImportException("Could not parse NEXUS CHARSET Block");
+			throw new NexusAlignmentImportException("Could not parse NEXUS CODONS Block");
 		}
 
 //		logger.info(codonPositions.debug());
@@ -159,10 +154,10 @@ public class NexusUtilities {
 		for(NexusRange range: ranges){
 
 			if(range.getMinimumInt() == range.getMaximumInt()){
-				rangeBlock += " " + (range.getMinimumInt() + 1); // Add one because internally we work with array posiiton 0, but in charset first pos is 1 
+				rangeBlock += " " + range.getMinimumInt(); 
 			}
 			else{
-				rangeBlock += " " + (range.getMinimumInt() + 1) + "-" + (range.getMaximumInt() + 1); // Add one because internally we work with array posiiton 0, but in exset spec first pos is 1 
+				rangeBlock += " " + range.getMinimumInt() + "-" + range.getMaximumInt();
 				if(range.getSteps() != 1){
 					rangeBlock += "\\" + range.getSteps(); 
 				}
@@ -181,7 +176,7 @@ public class NexusUtilities {
 		StringBuffer charsetBlock = new StringBuffer();
 
 		for(CharSet aSet: charsets){
-			charsetBlock.append("charset " + aSet.getName() + "=" + getNexusRangesAsBlock(aSet.getCharSetAsNexusRanges()) + ";" + LF);
+			charsetBlock.append("charset " + aSet.getName() + "=" + getNexusRangesAsBlock(aSet.getAsContinousNexusRanges()) + ";" + LF);
 		}
 
 		return charsetBlock.toString();
@@ -229,7 +224,8 @@ public class NexusUtilities {
 						String name = parts[0].replace("CHARSET", ""); // /i (insensitive
 						name = name.trim();
 						String ranges = parts[1].trim();
-						CharSet charSet = new CharSet(name, alignmentWidth);
+						logger.info("ranges" + ranges);
+						CharSet charSet = new CharSet(name);
 
 						ArrayList<NexusRange> allRanges = parseNexusRanges(ranges, 0);
 
@@ -245,10 +241,10 @@ public class NexusUtilities {
 								areAllContinous = false;
 							}
 						}
-						if(allRanges.size() > 0 && areAllContinous){
-							charSet.addRanges(allRanges);
-							allSets.add(charSet);
-						}
+					//	if(allRanges.size() > 0 && areAllContinous){
+						charSet.addNexusRanges(allRanges);
+						allSets.add(charSet);
+					//	}
 
 						//charSet.debug();
 					}
@@ -324,7 +320,7 @@ public class NexusUtilities {
 
 	public static final String getExcludesAsNexusBlock(Excludes excludes) {
 
-		ArrayList<NexusRange> allRanges = excludes.getExcludedAsNexusRanges();
+		ArrayList<NexusRange> allRanges = excludes.getAsContinousNexusRanges();
 		String exsetBlock =  "BEGIN ASSUMPTIONS;" + LF;
 		exsetBlock += "EXSET * UNTITLED  = "; 
 
@@ -356,19 +352,19 @@ public class NexusUtilities {
 			posN += " " + (range.getMinimumInteger() + 1) + "-" + (range.getMaximumInteger() + 1) + "";
 		}
 
-		allPos = codonPositions.getAllCodingPositionsAsRanges(1, startPos, endPos);
+		allPos = codonPositions.getAllCodingPositionsAsIntRanges(1, startPos, endPos);
 		RangeUtils.sortIntRangeList(allPos);
 		for(IntRange range: allPos){
 			pos1 += " " + (range.getMinimumInteger() + 1) + "-" + (range.getMaximumInteger() + 1) + "\\3";
 		}
 
-		allPos = codonPositions.getAllCodingPositionsAsRanges(2, startPos, endPos);
+		allPos = codonPositions.getAllCodingPositionsAsIntRanges(2, startPos, endPos);
 		RangeUtils.sortIntRangeList(allPos);
 		for(IntRange range: allPos){
 			pos2 += " " + (range.getMinimumInteger() + 1) + "-" + (range.getMaximumInteger() + 1) + "\\3";
 		}
 
-		allPos = codonPositions.getAllCodingPositionsAsRanges(3, startPos, endPos);
+		allPos = codonPositions.getAllCodingPositionsAsIntRanges(3, startPos, endPos);
 		RangeUtils.sortIntRangeList(allPos);
 		for(IntRange range: allPos){
 			pos3 += " " + (range.getMinimumInteger() + 1) + "-" + (range.getMaximumInteger() + 1) + "\\3";
@@ -420,19 +416,19 @@ public class NexusUtilities {
 			posN += " " + (range.getMinimumInteger() + 1) + "-" + (range.getMaximumInteger() + 1) + "";
 		}
 
-		allPos = codonPositions.getAllCodingPositionsAsRanges(1, startPos, endPos);
+		allPos = codonPositions.getAllCodingPositionsAsIntRanges(1, startPos, endPos);
 		RangeUtils.sortIntRangeList(allPos);
 		for(IntRange range: allPos){
 			pos1 += " " + (range.getMinimumInteger() + 1) + "-" + (range.getMaximumInteger() + 1) + "\\3";
 		}
 
-		allPos = codonPositions.getAllCodingPositionsAsRanges(2, startPos, endPos);
+		allPos = codonPositions.getAllCodingPositionsAsIntRanges(2, startPos, endPos);
 		RangeUtils.sortIntRangeList(allPos);
 		for(IntRange range: allPos){
 			pos2 += " " + (range.getMinimumInteger() + 1) + "-" + (range.getMaximumInteger() + 1) + "\\3";
 		}
 
-		allPos = codonPositions.getAllCodingPositionsAsRanges(3, startPos, endPos);
+		allPos = codonPositions.getAllCodingPositionsAsIntRanges(3, startPos, endPos);
 		RangeUtils.sortIntRangeList(allPos);
 		for(IntRange range: allPos){
 			pos3 += " " + (range.getMinimumInteger() + 1) + "-" + (range.getMaximumInteger() + 1) + "\\3";

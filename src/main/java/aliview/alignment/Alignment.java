@@ -152,16 +152,21 @@ public class Alignment implements FileSequenceLoadListener {
 		return sequences.getLengthAt(y);
 	}
 
-	public int getMaxX() {
-		return sequences.getLongestSequenceLength();
-	}
 	
 	// TODO this is the only place where sequences are checked for modification when they are "outside"
 	public AlignmentListModel getSequences() {
 		return sequences;
 	}
 
+	public int getMaxX() {
+		return sequences.getLongestSequenceLength();
+	}
+	
 	public int getMaximumSequenceLength() {
+		return getMaxX();
+	}
+	
+	public int getLongestSequenceLength() {
 		return getMaxX();
 	}
 
@@ -652,29 +657,33 @@ public class Alignment implements FileSequenceLoadListener {
 	// has x offset in alignment
 	private AlignmentMeta getTranslatedMeta(){	
 		ArrayList<CharSet> charsetsTrans = new ArrayList<CharSet>();
-		Excludes excludesTrans = new Excludes(alignmentMeta.getCodonPositions().getAminoAcidPosFromNucleotidePos(sequences.getLongestSequenceLength()));
+		Excludes excludesTrans = new Excludes();
 		AlignmentMeta metaTrans = new AlignmentMeta(excludesTrans,null,charsetsTrans,alignmentMeta.getGeneticCode());
 		
+		// This is the translation of the Charsets
 		for(CharSet charset: alignmentMeta.getCharsets()){
-			ArrayList<NexusRange> nexusRanges = charset.getCharSetAsNexusRanges();
+			ArrayList<NexusRange> nexusRanges = charset.getAsContinousNexusRanges();
 			if(nexusRanges != null){
 				logger.info("rangesSize" + nexusRanges.size());
-				CharSet translatedSet = new CharSet(charset.getName(),alignmentMeta.getCodonPositions().getAminoAcidPosFromNucleotidePos(sequences.getLongestSequenceLength()));
+				
+				CharSet translatedSet = new CharSet(charset.getName());
 				for(NexusRange range: nexusRanges){	
 					NexusRange translatedRange = new NexusRange(alignmentMeta.getCodonPositions().getAminoAcidPosFromNucleotidePos(range.getMinimumInt()) + 1, // +1 för Nexus ranges börjar på 1
 							                                         alignmentMeta.getCodonPositions().getAminoAcidPosFromNucleotidePos(range.getMaximumInt()) + 1, // +1 för Nexus ranges börjar på 1
 							                                           range.getPositionVal(), range.getSteps()); 
 					logger.info(translatedRange);
-					translatedSet.addRange(translatedRange);
+					translatedSet.addNexusRange(translatedRange);
 				}
 				charsetsTrans.add(translatedSet);
 			}
 		}
-		for(NexusRange range: alignmentMeta.getExcludes().getExcludedAsNexusRanges()){
+		
+		// This is the translaiton of the excludes
+		for(NexusRange range: alignmentMeta.getExcludes().getAsContinousNexusRanges()){
 			NexusRange translatedRange = new NexusRange(alignmentMeta.getCodonPositions().getAminoAcidPosFromNucleotidePos(range.getMinimumInt()),
 					                                         alignmentMeta.getCodonPositions().getAminoAcidPosFromNucleotidePos(range.getMaximumInt()),
 					                                         range.getPositionVal(), range.getSteps());
-			excludesTrans.addRange(translatedRange);
+			excludesTrans.addNexusRange(translatedRange);
 		}
 		return metaTrans;
 	}
@@ -705,7 +714,7 @@ public class Alignment implements FileSequenceLoadListener {
 
 	public void deleteAllExsetBases(){	
 		// first create a deletemask
-		boolean[] deleteMask = new boolean[this.alignmentMeta.getExcludes().getLength()];
+		boolean[] deleteMask = new boolean[this.alignmentMeta.getExcludes().getMaximumEndPos()];
 		for(int n = 0; n < deleteMask.length; n++){
 			if(this.alignmentMeta.isExcluded(n)){
 				deleteMask[n] = true;
@@ -713,7 +722,7 @@ public class Alignment implements FileSequenceLoadListener {
 		}
 		sequences.deleteBasesInAllSequencesFromMask(deleteMask);
 		//and finally remove in AlignmentMeta(excludes, codonpos & charset)
-		alignmentMeta.removeFromMask(deleteMask);
+		alignmentMeta.deleteFromMask(deleteMask);
 //		sequencesChanged();
 	}
 
@@ -858,7 +867,7 @@ public class Alignment implements FileSequenceLoadListener {
 
 	public void reverseComplementAlignment(){
 		sequences.reverseComplement();
-		alignmentMeta.reverse();
+		alignmentMeta.reverse(getMaximumSequenceLength());
 	}
 	
 	public void reverseComplementFullySelectedSequences(){
@@ -943,7 +952,7 @@ public class Alignment implements FileSequenceLoadListener {
 			sequences.deleteBasesInAllSequencesFromMask(deleteMask);
 			//and finally remove in AlignmentMeta(excludes, codonpos & charset)
 			//logger.info(alignmentMeta.getCodonPositions().getLength());
-			alignmentMeta.removeFromMask(deleteMask);
+			alignmentMeta.deleteFromMask(deleteMask);
 			//logger.info(alignmentMeta.getCodonPositions().getLength());
 
 		}
@@ -957,7 +966,7 @@ public class Alignment implements FileSequenceLoadListener {
 		return sequences.getConsensus();
 	}
 
-	public void removeVerticalGaps(){
+	public void deleteVerticalGaps(){
 		String cons = getConsensus();
 		
 		logger.info("done cons" + cons);
@@ -979,7 +988,7 @@ public class Alignment implements FileSequenceLoadListener {
 			sequences.deleteBasesInAllSequencesFromMask(deleteMask);
 
 			//and finally remove in AlignmentMeta(excludes, codonpos & charset)
-			alignmentMeta.removeFromMask(deleteMask);
+			alignmentMeta.deleteFromMask(deleteMask);
 		}
 
 	}
@@ -1170,6 +1179,7 @@ public class Alignment implements FileSequenceLoadListener {
 		boolean containsExcludedAlready = getAlignmentMeta().excludesIntersectsPositions(selection.x, selection.x + selection.width);
 		
 		logger.info("containsExcludedAlready" + containsExcludedAlready);
+		
 		if(containsExcludedAlready){
 			removeSelectionFromExcludes();
 		}else{
@@ -1186,7 +1196,9 @@ public class Alignment implements FileSequenceLoadListener {
 			selection = getAlignmentMeta().reTranslatePositions(selection);
 		}
 			
-		getAlignmentMeta().excludePositions(selection.x, selection.x + selection.width);	
+		getAlignmentMeta().excludeRange(selection.x, selection.x + selection.width);	
+		
+	//	getAlignmentMeta().excludePositions(selection.x, selection.x + selection.width);	
 			
 		//fireAlignmentMetaOnlyChanged();
 		
@@ -1199,7 +1211,9 @@ public class Alignment implements FileSequenceLoadListener {
 			selection = getAlignmentMeta().reTranslatePositions(selection);
 		}
 			
-		getAlignmentMeta().excludesRemovePositions(selection.x, selection.x + selection.width);	
+		getAlignmentMeta().removeExcludeRange(selection.x, selection.x + selection.width);	
+		
+		//getAlignmentMeta().excludesRemovePositions(selection.x, selection.x + selection.width);	
 	}
 
 	public void setSelectionAsCoding(int startOffset) {
@@ -1346,7 +1360,7 @@ public class Alignment implements FileSequenceLoadListener {
 					int sequenceMissingCount = 0;
 					for(int n = 0; n <consensusVal.length; n++){
 						
-						if(charSet.isPositionIncluded(n)){
+						if(charSet.contains(n)){
 							
 							int baseVal = NucleotideUtilities.baseValFromBase(seq.getBaseAtPos(n));
 							// Create consensus by bitwise OR of the bases in the same column
@@ -1371,7 +1385,7 @@ public class Alignment implements FileSequenceLoadListener {
 				int invaribleCount = 0;
 				int varibleCount = 0;
 				for(int n = 0; n < consensusVal.length; n++){
-					if(charSet.isPositionIncluded(n)){
+					if(charSet.contains(n)){
 						consensusBuilder.append(NucleotideUtilities.charFromBaseVal(consensusVal[n]));
 						if(consensusVal[n] == NucleotideUtilities.A || consensusVal[n] == NucleotideUtilities.C || consensusVal[n] == NucleotideUtilities.G || consensusVal[n] == NucleotideUtilities.T){
 							invaribleCount ++;

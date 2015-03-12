@@ -12,46 +12,38 @@ import utils.RangeUtils;
 
 public class CodonPositions{
 	private static final Logger logger = Logger.getLogger(CodonPositions.class);
-	private NexusRangePositionsArray positionsArray;
+	private CodonRanges codonRanges;
 	private int readingFrame;
-	private TranslatedAminoAcidPositions translatedAminoAcidPos;	
-	private BitSet notused;
-	private ArrayList<NexusRange> nexusRanges = new ArrayList<NexusRange>();
+	private TranslatedAminoAcidPositions translatedAminoAcidPos;
 	
 	public CodonPositions(){
-		this(new NexusRangePositionsArray(), 1);
+		this(new CodonRanges(), 1);
 	}
 	
 	public int size() {
-		return positionsArray.size();
+		return codonRanges.size();
 	}
 
-	private CodonPositions(NexusRangePositionsArray positionsArray, int readingFrame) {
-		this.setPositionsArray(positionsArray);
+	private CodonPositions(CodonRanges positionsArray, int readingFrame) {
+		this.setCodonRandes(positionsArray);
 		this.readingFrame = readingFrame;	
 	}
 
 	public boolean isNonCoding(int pos){
-		return positionsArray.getPos(pos) == 0;
+		return codonRanges.getPosVal(pos) == 0;
 	}
 	
 	public boolean isCoding(int pos) {
-		return positionsArray.getPos(pos) != 0;
+		return codonRanges.getPosVal(pos) != 0;
 	}
 
 	
 	private TranslatedAminoAcidPositions getTranslatedAminoAcidPositions() {
 		if(translatedAminoAcidPos == null){
-			translatedAminoAcidPos = new TranslatedAminoAcidPositions(this.positionsArray, this.readingFrame);	
+			translatedAminoAcidPos = new TranslatedAminoAcidPositions(this.codonRanges, this.readingFrame);	
 		}
 		return translatedAminoAcidPos;
 	}
-	
-	/*
-	public int getTranslatedAminAcidLength(int nucleotideLength){
-		return getTranslatedAminAcidLength(nucleotideLength);
-	}
-	*/
 	
 	public int getAminoAcidPosFromNucleotidePos(int pos){
 		TranslatedAminoAcidPositions aaPositions = getTranslatedAminoAcidPositions();
@@ -70,24 +62,23 @@ public class CodonPositions{
 		boolean isFullCodon = false;
 
 			if(getReadingFrame() == 1){
-				if(getPositionsArray().get(x) == 1 && getPositionsArray().get(x+1) == 2 && getPositionsArray().get(x+2) == 3){
+				if(getCodonRanges().getPosVal(x) == 1 && getCodonRanges().getPosVal(x+1) == 2 && getCodonRanges().getPosVal(x+2) == 3){
 					isFullCodon = true;
 				}
 			}
 			
 			if(getReadingFrame() == 2){
-				if(getPositionsArray().get(x) == 2 && getPositionsArray().get(x+1) == 3 && getPositionsArray().get(x+2) == 1){
+				if(getCodonRanges().getPosVal(x) == 2 && getCodonRanges().getPosVal(x+1) == 3 && getCodonRanges().getPosVal(x+2) == 1){
 					isFullCodon = true;
 				}
 			}
 			
 			if(getReadingFrame() == 3){
-				if(getPositionsArray().get(x) == 3 && getPositionsArray().get(x+1) == 1 && getPositionsArray().get(x+2) == 2){
+				if(getCodonRanges().getPosVal(x) == 3 && getCodonRanges().getPosVal(x+1) == 1 && getCodonRanges().getPosVal(x+2) == 2){
 					isFullCodon = true;
 				}
 			}	
-
-//		logger.info("isFull" + isFullCodon);
+			
 		return isFullCodon;
 	}
 	
@@ -104,14 +95,6 @@ public class CodonPositions{
 		}
 	}
 	
-
-//	public ArrayList<IntRange> getAllNonCodingPositionsAsRanges(int wanted) {
-//		return getAllNonCodingPositionsAsRanges(wanted, 0, getPositionsArray().getLength());
-//	}
-	
-//	public ArrayList<IntRange> getAllCodingPositionsAsRanges(int wanted) {
-//		return getAllNonCodingPositionsAsRanges(wanted, 0, getPositionsArray().getLength());
-//	}
 	
 	public ArrayList<IntRange> getAllNonCodingPositionsAsRanges(int wanted, int startPos, int endPos) {
 		ArrayList<IntRange> allRanges = new ArrayList<IntRange>();
@@ -126,7 +109,7 @@ public class CodonPositions{
 //		logger.info("arrayLen"+getPositionsArray().getLength());
 		
 			for(int n = startPos; n < endPos; n++){
-				if(getPositionsArray().get(n) == wanted){
+				if(getCodonRanges().getPosVal(n) == wanted){
 					if(firstPos == -1){
 						firstPos = n;
 					}
@@ -150,7 +133,7 @@ public class CodonPositions{
 	}
 	
 	
-	public ArrayList<IntRange> getAllCodingPositionsAsRanges(int wanted, int startPos, int endPos) {
+	public ArrayList<IntRange> getAllCodingPositionsAsIntRanges(int wanted, int startPos, int endPos) {
 		ArrayList<IntRange> allRanges = new ArrayList<IntRange>();
 		int lastPos = -1;
 		int firstPos = -1;
@@ -160,8 +143,8 @@ public class CodonPositions{
 		// loop all position three times, start in position 0 (offset) and after that start in pos 1 and pos 2
 		
 		for(int offset = 0; offset <= 2; offset++){
-			for(int n = startPos + offset; n <= endPos; n = n +3){
-				if(getPositionsArray().get(n) == wanted){
+			for(int n = startPos + offset; n < endPos; n = n +3){
+				if(getCodonRanges().getPosVal(n) == wanted){
 					if(firstPos == -1){
 						firstPos = n;
 					}
@@ -206,7 +189,7 @@ public class CodonPositions{
 	public ArrayList<Integer> getAllPositions(int wantedCodonPosInteger, int startPos, int endPosInclusive) {
 		ArrayList<Integer> allPos = new ArrayList<Integer>();
 		for(int n = startPos; n <= endPosInclusive; n++){
-			if(getPositionsArray().get(n) == wantedCodonPosInteger){
+			if(getCodonRanges().getPosVal(n) == wantedCodonPosInteger){
 				allPos.add(new Integer(n));
 			}	
 		}
@@ -214,123 +197,52 @@ public class CodonPositions{
 	}
 
 	public void addRange(CodonRange range){
-		positionsArray.addRange(range);
+		codonRanges.addRange(range);
 	}
 	
 	public void addRange(int start, int end, int firstVal) {
-		positionsArray.addRange(new CodonRange(start, end, firstVal));
+		codonRanges.addRange(new CodonRange(start, end, firstVal));
 	}
-	
-	/*
-	public void setPosition(int pos, int val) {
-		if(pos >= 0){
-			getPositionsArray().set(pos, val);
-			positionsUpdated();
-		}
-	}
-	*/
-	
-//	public void resize(int len) {
-//		logger.info("len" + len);
-//		logger.info(this.getPositionsArray().getLength());
-//		logger.info("this.getTranslatedAminAcidLength()" + this.getTranslatedAminAcidLength());
-//		this.getPositionsArray().resize(len);
-//		positionsUpdated();
-//		logger.info(this.getPositionsArray().getLength());
-//		logger.info("this.getTranslatedAminAcidLength()" + this.getTranslatedAminAcidLength());
-//	}
 	
 	public void positionsUpdated() {
 		translatedAminoAcidPos = null;
 	}
 
-//	public String debug() {
-//		StringBuilder sb = new StringBuilder(getPositionsArray().getLength());
-//		for(int n = 0; n < getPositionsArray().getLength(); n++){
-//			sb.append(positionsArray.getPos(n));
-//		}
-//		return sb.toString();
-//	}
-
-	public void reverse() {
-		positionsArray.reverse();
+	public void reverse(int length) {
+		codonRanges.reverse(length);
 		positionsUpdated();
 	}
 	
 	public CodonPositions getCopy(){
-		return new CodonPositions(this.positionsArray.getCopy(), this.readingFrame);		
+		return new CodonPositions(this.codonRanges.getCopy(), this.readingFrame);		
 	}
 
-	public NexusRangePositionsArray getPositionsArray() {
-		return positionsArray;
+	public CodonRanges getCodonRanges() {
+		return codonRanges;
 	}
 
-	public void setPositionsArray(NexusRangePositionsArray positionsArray) {
-		this.positionsArray = positionsArray;
+	public void setCodonRandes(CodonRanges codonRanges) {
+		this.codonRanges = codonRanges;
 		positionsUpdated();
 	}
 
 	public int getPosAt(int x){
-		return this.positionsArray.getPos(x);
+		return this.codonRanges.getPosVal(x);
 	}
-	
-//	public CodonPositions copyCodonPositionsWithExcludedRemoved(Excludes exset){
-//
-//		CodonPositions codonPosWithout = new CodonPositions(this.getPositionsArray().getLength() - exset.countExcludedSites());
-//		
-//		int posInNew = 0;
-//		for(int n = 0; n < this.getPositionsArray().getLength(); n++){		
-//			if(! exset.isExcluded(n)){
-//				codonPosWithout.setPosition(posInNew, this.getPositionsArray().get(n));
-//				posInNew ++;
-//			}	
-//		}
-//		
-//		codonPosWithout.positionsUpdated();
-//		
-//		return codonPosWithout;
-//	}
-	
-//	public int getLength() {
-//		if(positionsArray != null){
-//			return positionsArray.getLength();
-//		}else{
-//			return 0;
-//		}
-//	}
-
-	/*
-	public void append(CodonPositions secondCodonPos) {
-		positionsArray.append(getPositionsArray());
-		positionsUpdated();
-	}
-	*/
 
 	public void removePosition(int n) {
-		this.positionsArray.remove(n);
+		this.codonRanges.removePosition(n);
 		positionsUpdated();
 	}
 	
 	public void insertPosition(int n) {
-		this.positionsArray.insert(n);
+		this.codonRanges.insert(n);
 		positionsUpdated();
 	}
 
 	public boolean isAnythingButDefault() {
-		return positionsArray.isAnythingButDefault();
+		return codonRanges.isAnythingButDefault();
 	}
-
-	//
-	// parse nexus indata
-	//
-	
-	public void addNexusRanges(ArrayList<NexusRange> allRanges) {
-		nexusRanges.addAll(allRanges);
-	}
-	
-	//
-	// end parse nexus data
-	//
 
 	public int[] translatePositions(int[] selection) {
 		if(selection == null){
@@ -376,7 +288,7 @@ public class CodonPositions{
 	}
 
 	public void addRanges(Ranges allRanges) {
-		positionsArray.setBackend(allRanges);
+		codonRanges.setBackend(allRanges);
 		positionsUpdated();
 	}
 

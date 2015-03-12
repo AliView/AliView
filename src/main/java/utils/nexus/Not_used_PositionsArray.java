@@ -4,26 +4,17 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 
 
-public class PositionsArray {
-	private static final Logger logger = Logger.getLogger(PositionsArray.class);
+public class Not_used_PositionsArray {
+/*
+	private static final Logger logger = Logger.getLogger(Not_used_PositionsArray.class);
 	private int [] backend;
 
 
-	public PositionsArray() {
-	}
-	
-	private PositionsArray(int[] backend) {
+
+	private Not_used_PositionsArray(int[] backend) {
 		this.backend = backend;
 	}
-/*
-	public int getLength() {
-		if(backend != null){
-			return backend.length;
-		}else{
-			return 0;
-		}
-	}
-*/
+
 	
 	public int size() {
 		if(backend != null){
@@ -204,6 +195,6 @@ public class PositionsArray {
 		}
 	}
 
-	
+	*/
 
 }

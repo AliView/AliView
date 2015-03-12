@@ -7,11 +7,11 @@ import org.apache.log4j.Logger;
 
 public class TranslatedAminoAcidPositions {
 	private static final Logger logger = Logger.getLogger(TranslatedAminoAcidPositions.class);
-	private NexusRangePositionsArray positionsArray;
+	private CodonRanges codonRanges;
 	private int readingFrame = 1;
 	
-	public TranslatedAminoAcidPositions(NexusRangePositionsArray positionsArray, int readingFrame) {
-		this.positionsArray = positionsArray;
+	public TranslatedAminoAcidPositions(CodonRanges positionsArray, int readingFrame) {
+		this.codonRanges = positionsArray;
 		this.readingFrame = readingFrame;
 	}
 
@@ -48,19 +48,19 @@ public class TranslatedAminoAcidPositions {
 
 			
 			if(getReadingFrame() == 1){
-				if(getPositionsArray().get(x) == 1 && getPositionsArray().get(x+1) == 2 && getPositionsArray().get(x+2) == 3){
+				if(getPositionsArray().getPosVal(x) == 1 && getPositionsArray().getPosVal(x+1) == 2 && getPositionsArray().getPosVal(x+2) == 3){
 					isFullCodon = true;
 				}
 			}
 			
 			if(getReadingFrame() == 2){
-				if(getPositionsArray().get(x) == 2 && getPositionsArray().get(x+1) == 3 && getPositionsArray().get(x+2) == 1){
+				if(getPositionsArray().getPosVal(x) == 2 && getPositionsArray().getPosVal(x+1) == 3 && getPositionsArray().getPosVal(x+2) == 1){
 					isFullCodon = true;
 				}
 			}
 			
 			if(getReadingFrame() == 3){
-				if(getPositionsArray().get(x) == 3 && getPositionsArray().get(x+1) == 1 && getPositionsArray().get(x+2) == 2){
+				if(getPositionsArray().getPosVal(x) == 3 && getPositionsArray().getPosVal(x+1) == 1 && getPositionsArray().getPosVal(x+2) == 2){
 					isFullCodon = true;
 				}
 			}	
@@ -72,8 +72,8 @@ public class TranslatedAminoAcidPositions {
 		return readingFrame;
 	}
 
-	private NexusRangePositionsArray getPositionsArray() {
-		return positionsArray;
+	private CodonRanges getPositionsArray() {
+		return codonRanges;
 	}
 	
 	public CodonPos getCodonAtNucleotidePos(int pos) {
@@ -92,6 +92,5 @@ public class TranslatedAminoAcidPositions {
 		 CodonPos codpos = getCodonAtNucleotidePos(nucPos);
 		// logger.info("codpos.start" + codpos.startPos + " codpos.end" + codpos.endPos + " codPos.isorf" + codpos.isOrfan());
 		 return getCodonAtNucleotidePos(nucPos);
-	 }
-	 
+	 } 
 }

@@ -712,7 +712,9 @@ public class AlignmentSelectionModel{
         // delegateLSM.fireValueChanged(rect.y, rect.y + rect.height, isAdjusting);
          
          
-         logger.info("Time from last endTim " + (System.currentTimeMillis() - AliView.getActiveWindow().getLastPaneEndTime()) + " milliseconds");
+        if(AliView.getActiveWindow() != null){
+        	logger.info("Time from last endTim " + (System.currentTimeMillis() - AliView.getActiveWindow().getLastPaneEndTime()) + " milliseconds");
+        }
 		
 	}
 

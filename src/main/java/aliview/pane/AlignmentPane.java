@@ -1184,7 +1184,13 @@ public class AlignmentPane extends JPanel{
 		Rectangle rect = new Rectangle(ulPanePos, this.getVisibleRect().getSize());
 		rect.grow(-10, -10);
 		logger.info("ulPanePos" + ulPanePos);
+		logger.info("currentVisibleRect " + this.getVisibleRect());
 		logger.info("Scroll to rect" + rect);
+		
+		// TODO Maye make this better working
+		// As a workaround first setLocation(0,0)
+		// then scrollRectToVisible is working OK
+		this.setLocation(0,0);
 		this.scrollRectToVisible(rect);
 		logger.info("after this.getVisibleRect()" + this.getVisibleRect());
 	}

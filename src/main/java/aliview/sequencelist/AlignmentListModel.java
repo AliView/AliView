@@ -809,12 +809,19 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 	public List<Sequence> insertGapRightOfSelectedBase(boolean undoable) {
 		List<Sequence> editedSequences = new ArrayList<Sequence>();
 		List<Sequence> selectedSeqs = selectionModel.getSelectedSequences(); 
+		Rectangle selectionBounds = selectionModel.getSelectionBounds();
 		for(Sequence seq: selectedSeqs){
 			if(undoable){
 				editedSequences.add(seq.getCopy());
 			}
 			seq.insertGapRightOfSelectedBase();
 		}
+		
+		if(selectedSeqs.size() == delegateSequences.size()){
+			int posToAdd = (int) (selectionBounds.getBounds().getMaxX() + 1);
+			getAlignmentMeta().insertPosition(posToAdd);
+		}
+		
 		if(selectedSeqs.size() > 0){
 			fireSequencesChanged(selectedSeqs);
 		}
@@ -825,12 +832,19 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 	public List<Sequence> insertGapLeftOfSelectedBase(boolean undoable) {
 		List<Sequence> editedSequences = new ArrayList<Sequence>();
 		List<Sequence> selectedSeqs = selectionModel.getSelectedSequences(); 
+		Rectangle selectionBounds = selectionModel.getSelectionBounds();
 		for(Sequence seq: selectedSeqs){
 			if(undoable){
 				editedSequences.add(seq.getCopy());
 			}
 			seq.insertGapLeftOfSelectedBase();
 		}
+		
+		if(selectedSeqs.size() == delegateSequences.size()){
+			int posToAdd = (int) (selectionBounds.getBounds().getMaxX() - 1);
+			getAlignmentMeta().insertPosition(posToAdd);
+		}
+		
 		if(selectedSeqs.size() > 0){
 			fireSequencesChanged(selectedSeqs);
 		}
@@ -841,7 +855,8 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 	public List<Sequence> deleteGapMoveLeft(boolean undoable) {
 		boolean gapPresentInAll = true;
 		List<Sequence> editedSequences = new ArrayList<Sequence>();
-		List<Sequence> selectedSeqs = selectionModel.getSelectedSequences(); 
+		List<Sequence> selectedSeqs = selectionModel.getSelectedSequences();
+		Rectangle selectionBounds = selectionModel.getSelectionBounds();
 		for(Sequence seq: selectedSeqs){
 			//logger.info("hassel" + seq);
 			if(! seq.isGapLeftOfSelection()){
@@ -859,6 +874,11 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 				seq.deleteGapLeftOfSelection();
 			}
 		}
+		if(gapPresentInAll && selectedSeqs.size() == delegateSequences.size()){
+			int posToDelete = (int) (selectionBounds.getBounds().getMaxX() - 1);
+			getAlignmentMeta().deletePosition(posToDelete);
+		}
+		
 		if(gapPresentInAll){
 			fireSequencesChanged(selectedSeqs);
 		}
@@ -870,6 +890,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		boolean gapPresentInAll = true;
 		List<Sequence> editedSequences = new ArrayList<Sequence>();
 		List<Sequence> selectedSeqs = selectionModel.getSelectedSequences(); 
+		Rectangle selectionBounds = selectionModel.getSelectionBounds();
 		for(Sequence seq: selectedSeqs){
 			//logger.info("hassel" + seq);
 			if(! seq.isGapRightOfSelection()){
@@ -886,6 +907,10 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 				}
 				seq.deleteGapRightOfSelection();
 			}
+		}
+		if(gapPresentInAll && selectedSeqs.size() == delegateSequences.size()){
+			int posToDelete = (int) (selectionBounds.getBounds().getMaxX() + 1);
+			getAlignmentMeta().deletePosition(posToDelete);
 		}
 		if(gapPresentInAll){
 			fireSequencesChanged(selectedSeqs);
@@ -1794,7 +1819,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 	public void selectAll(CharSet aCharSet) {
 		List<Integer> columns = new ArrayList<Integer>();
 		for(int n = 0; n < getLongestSequenceLength(); n++){
-			if(aCharSet.isPositionIncluded(n)){
+			if(aCharSet.contains(n)){
 				columns.add(new Integer(n));
 			}else{
 				// nothing to do

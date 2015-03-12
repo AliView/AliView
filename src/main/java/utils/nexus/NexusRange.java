@@ -18,7 +18,6 @@ public class NexusRange{
 		this(new IntRange(min,max), 1, positionVal); // default every one
 	}
 	
-	
 	public NexusRange(int min, int max, int steps, int positionVal) {
 		this(new IntRange(min,max), steps, positionVal);
 	}

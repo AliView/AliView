@@ -2132,24 +2132,24 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		
 		// translated pos to nucleotide pos - save the current vals before changing 
 		// translated/nucleotide view, this is for scrolling to similar position
-		Point transPosTopLeft = alignmentPane.getVisibleUpperLeftMatrixPos();
-		Point nucPosTopLeft = alignmentPane.getVisibleUpperLeftMatrixPos();
-		Rectangle selectRect = alignment.getSelectionAsMinRect();
+		Point oldTransPosTopLeft = alignmentPane.getVisibleUpperLeftMatrixPos();
+		Point oldNucPosTopLeft = alignmentPane.getVisibleUpperLeftMatrixPos();
+		Rectangle oldSelectRect = alignment.getSelectionAsMinRect();
 			
-		boolean isPrevShowTrans = alignment.isTranslatedOnePos();
+		boolean isPrevShowTransOnePos = alignment.isTranslatedOnePos();
 		alignment.setTranslationOnePos(! alignment.isTranslatedOnePos());
-		boolean isNowShowTrans = alignmentPane.isShowTranslationOnePos();
+		boolean isNowShowTransOnePos = alignmentPane.isShowTranslationOnePos();
 		aliViewMenuBar.setEditFunctionsEnabled(alignment.isEditable());
 		
 		// this is to scroll pane to similair position when changing nucleotide/translationOnePos
-		if(isPrevShowTrans != isNowShowTrans){
-			if(isPrevShowTrans){
+		if(isPrevShowTransOnePos != isNowShowTransOnePos){
+			if(isPrevShowTransOnePos){
 							
 				// adjust to make selection at same place after re-translation
 				// get first selected position diff from upper left;
 				int selectionDiff = 0;
-				if(selectRect != null){
-					selectionDiff = selectRect.x - transPosTopLeft.x;
+				if(oldSelectRect != null){
+					selectionDiff = oldSelectRect.x - oldTransPosTopLeft.x;
 					if(selectionDiff > 0 && selectionDiff < 1000){
 						selectionDiff = (int) (2.01 * (double) selectionDiff);
 					}else{
@@ -2158,17 +2158,19 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 				}
 				
 				// translated to nucleotide
-				CodonPos codonPos = alignment.getAlignmentMeta().getCodonPositions().getCodonInTranslatedPos(transPosTopLeft.x);
-				Point nucPosUpperLeft = new Point(codonPos.startPos + selectionDiff, transPosTopLeft.y);
+				CodonPos codonPos = alignment.getAlignmentMeta().getCodonPositions().getCodonInTranslatedPos(oldTransPosTopLeft.x);
+				Point nucPosUpperLeft = new Point(codonPos.startPos + selectionDiff, oldTransPosTopLeft.y);
+
 				alignmentPane.scrollToVisibleUpperLeftMatrixPos(nucPosUpperLeft);	
+				
 				
 			}
 			else{
 				// adjust to make selection at same place after translation
 				// get first selected position diff from upper left;
 				int selectionDiff = 0;
-				if(selectRect != null){
-					selectionDiff = selectRect.x - nucPosTopLeft.x;
+				if(oldSelectRect != null){
+					selectionDiff = oldSelectRect.x - oldNucPosTopLeft.x;
 					if(selectionDiff > 0 && selectionDiff < 1000){
 						selectionDiff = (int) (0.685 * (double) selectionDiff);
 					}else{
@@ -2176,16 +2178,24 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 					}
 				}
 				// nucleotide pos to translated
-				int aaPos = alignment.getAlignmentMeta().getCodonPositions().getAminoAcidPosFromNucleotidePos( nucPosTopLeft.x);
+				int aaPos = alignment.getAlignmentMeta().getCodonPositions().getAminoAcidPosFromNucleotidePos( oldNucPosTopLeft.x);
 				//logger.info("codonPos" + codonPosition);
-				Point translatedUpperLeft = new Point(aaPos - selectionDiff, nucPosTopLeft.y);
+				Point translatedUpperLeft = new Point(aaPos - selectionDiff, oldNucPosTopLeft.y);
 				//logger.info(translatedUpperLeft);
+				
 				alignmentPane.scrollToVisibleUpperLeftMatrixPos(translatedUpperLeft);
-
+				
 			}	
 		}
 
-		requestPaneAndRulerRepaint();
+		
+		
+			//alignmentPane.repaint();
+	//	requestPaneAndRulerRepaint();
+//		if(toPoint != null){
+//			logger.info("alignmentPane.getSize()" + alignmentPane.getSize());
+//			alignmentPane.scrollToVisibleUpperLeftMatrixPos(toPoint);
+//		}
 	}
 
 	public void sortSequencesByName() {
@@ -2293,7 +2303,6 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 			}
 			alignment.deleteSelectedBases();
 		}
-
 		MemoryUtils.logMem();
 
 		requestRepaintAndRevalidateALL();
@@ -2352,7 +2361,6 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 				if(isUndoable()){
 					aliViewWindow.getUndoControler().pushUndoState(new UndoSavedStateEditedSequences(prevState, alignment.getAlignmentMeta()));
 				}
-
 				requestRepaintAndRevalidateALL();
 			}
 		}
@@ -2433,9 +2441,9 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		//requestRepaintAndRevalidateALL();
 	}
 
-	public void removeVerticalGaps() {
+	public void deleteVerticalGaps() {
 		aliViewWindow.getUndoControler().pushUndoState();	
-		alignment.removeVerticalGaps();	
+		alignment.deleteVerticalGaps();	
 		requestPaneRepaint();
 		//logger.info("alignment.getMaximumSequenceLength()" + alignment.getMaximumSequenceLength());
 	}

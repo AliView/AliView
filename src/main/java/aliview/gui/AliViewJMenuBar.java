@@ -575,7 +575,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 		mntmRemoveVerticalGaps.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				aliViewWindow.removeVerticalGaps();
+				aliViewWindow.deleteVerticalGaps();
 
 			}
 		});

@@ -47,7 +47,7 @@ public class AlignmentFactory {
 				
 				
 				AlignmentListModel sequences = seqFactory.createSequences(alignmentFile);			
-				Excludes excludes = new Excludes(sequences.getLongestSequenceLength());
+				Excludes excludes = new Excludes();
 				CodonPositions codonPositions = new CodonPositions();
 				ArrayList<CharSet> charsets = new ArrayList<CharSet>();
 				logger.info("sequences.getLongestSequenceLength()" + sequences.getLongestSequenceLength());

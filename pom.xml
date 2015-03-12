@@ -4,7 +4,7 @@
   <groupId>AliView</groupId>
   <artifactId>AliView</artifactId>
   <packaging>jar</packaging>
-  <version>1.18-beta4</version>
+  <version>1.18-beta5</version>
   <name>AliView</name>
   <url>http://maven.apache.org</url>  
   <properties>

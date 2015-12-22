@@ -4,10 +4,15 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+
+import aliview.AliView;
 
 public class AlignmentFile extends File{
 
+	private static final Logger logger = Logger.getLogger(AlignmentFile.class);
 	private static final String TMP_FILE_PREFIX = "aliview-tmp-";
 	
 	public AlignmentFile(File file) {
@@ -28,8 +33,11 @@ public class AlignmentFile extends File{
 	}
 	
 	public boolean isAliViewTempFile() {
-		String tempFilePath = FileUtils.getTempDirectoryPath();	
-		return tempFilePath.equalsIgnoreCase(this.getParent());
+		String tempFilePath = FilenameUtils.normalizeNoEndSeparator(FileUtils.getTempDirectoryPath());	
+//		logger.debug("tempFilePath" + tempFilePath);
+//		logger.debug("this.getParent()" + this.getParent());
+//		logger.debug("" + tempFilePath.equalsIgnoreCase(this.getParent()));
+		return tempFilePath.equalsIgnoreCase(FilenameUtils.normalizeNoEndSeparator(this.getParent()));
 	}
 
 	public String getNameWithoutTempPrefix(){

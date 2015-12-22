@@ -1,6 +1,6 @@
 Version history
 
-1.18-beata7
+1.18-beata8
 
 - Big rewrite of code handling selection. Improvements and more standardized mouse selection of sequences (compared to other software)
 - Fixed bug when saving alignment in Phylip format with "Save" command, padding was lost.
@@ -14,6 +14,7 @@ Version history
 - Quicker scroll when dragging sequences outside visible part of list
 - Big rewrite of code handling large files (> 1GB)
 - Improved multithreading in some sections of program makes it even more responsive.
+- Fixed bug on Mac where sequences sometimes were saved in temp directory without asking user 
 
 1.17.1
 

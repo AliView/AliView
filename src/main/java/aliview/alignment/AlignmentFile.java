@@ -34,9 +34,6 @@ public class AlignmentFile extends File{
 	
 	public boolean isAliViewTempFile() {
 		String tempFilePath = FilenameUtils.normalizeNoEndSeparator(FileUtils.getTempDirectoryPath());	
-//		logger.debug("tempFilePath" + tempFilePath);
-//		logger.debug("this.getParent()" + this.getParent());
-//		logger.debug("" + tempFilePath.equalsIgnoreCase(this.getParent()));
 		return tempFilePath.equalsIgnoreCase(FilenameUtils.normalizeNoEndSeparator(this.getParent()));
 	}
 

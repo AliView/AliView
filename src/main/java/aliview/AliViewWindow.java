@@ -59,6 +59,7 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Stack;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import java.util.zip.GZIPInputStream;
@@ -118,11 +119,13 @@ import utils.FileUtilities;
 import utils.OSNativeUtils;
 import utils.nexus.CharSet;
 import utils.nexus.CodonPos;
+import utils.nexus.NexusUtilities;
 import aliview.aligner.Aligner;
 import aliview.aligner.AlignerADDItemsFrame;
 import aliview.aligner.AlignerALLItemsFrame;
 import aliview.alignment.Alignment;
 import aliview.alignment.AlignmentEvent;
+import aliview.alignment.AlignmentFile;
 import aliview.alignment.AlignmentMeta;
 import aliview.alignment.AlignmentListener;
 import aliview.color.ColorScheme;
@@ -137,23 +140,28 @@ import aliview.gui.AlignmentPopupMenu;
 import aliview.gui.AppIcons;
 import aliview.gui.GlassPaneKeyListener;
 import aliview.gui.GlassPaneMouseListener;
+import aliview.gui.ListTopOffsetJPanel;
 import aliview.gui.MessageLogFrame;
+import aliview.gui.ScrollBarModelSyncChangeListener;
 import aliview.gui.SearchPanel;
 import aliview.gui.StatusPanel;
+import aliview.gui.TextEditDialog;
+import aliview.gui.TextEditFrame;
+import aliview.gui.TextEditPanel;
+import aliview.gui.TextEditPanelCharsets;
 import aliview.gui.TranslationToolPanel;
+import aliview.gui.pane.AlignmentPane;
+import aliview.gui.pane.CharPixels;
+import aliview.gui.pane.InvalidAlignmentPositionException;
+import aliview.gui.pane.NotUsed_AlignmentPane_Orig;
 import aliview.importer.AlignmentFactory;
 import aliview.importer.AlignmentImportException;
 import aliview.importer.FileFormat;
 import aliview.importer.FileImportUtils;
 import aliview.importer.SequencesFactory;
 import aliview.messenges.Messenger;
-import aliview.messenges.TextEditDialog;
 import aliview.old.ExternalCmdFrame;
 import aliview.old.MyScrollPane;
-import aliview.pane.AlignmentPane;
-import aliview.pane.CharPixels;
-import aliview.pane.InvalidAlignmentPositionException;
-import aliview.pane.NotUsed_AlignmentPane_Orig;
 import aliview.primer.Primer;
 import aliview.primer.PrimerResultsFrame;
 import aliview.sequencelist.AlignmentDataEvent;
@@ -181,6 +189,7 @@ import aliview.undo.UndoSavedStateEverything;
 import aliview.undo.UndoSavedStateMetaOnly;
 import aliview.undo.UndoSavedStateSequenceOrder;
 import aliview.utils.FileDrop;
+import aliview.utils.Utils;
 import aliview.utils.FileDrop.Listener;
 
 public class AliViewWindow extends JFrame implements UndoControler, AlignmentListener, AlignmentSelectionListener, AlignmentDataListener, Printable{
@@ -204,8 +213,13 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 	private JTextField primer2txtField;
 	private PrimerResultsFrame primerResultsFrame;
 	private int nextNameFindSequenceNumber;
-	private LimitedStack<UndoSavedState> undoStack = new LimitedStack<UndoSavedState>(30);
-	private LimitedStack<UndoSavedState> redoStack = new LimitedStack<UndoSavedState>(30);
+//	private LimitedStack<UndoSavedState> undoStack = new LimitedStack<UndoSavedState>(30);
+//	private LimitedStack<UndoSavedState> redoStack = new LimitedStack<UndoSavedState>(30);	
+//	private Stack<UndoSavedState> undoStack = new Stack<UndoSavedState>();
+//	private Stack<UndoSavedState> redoStack = new Stack<UndoSavedState>();
+	
+	UndoList undoList = new UndoList();
+	
 	private boolean hasUnsavedUndoableEdits;
 	private static Component glassPane;
 	private AliViewJMenuBarFactory menuBarFactory;
@@ -220,7 +234,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 //	private AlignmentDataAndSelectionListener aliListener;
 	private TranslationToolPanel translationPanel;
 	private AliToolBar aliToolbar;
-	private JPanel listTopOffset;
+	private ListTopOffsetJPanel listTopOffset;
 	private boolean hasNotifiedUserAboutLimitedUndo;
 	/*
 	public AliViewWindow(AliViewJMenuBarFactory menuBarFactory) {
@@ -228,6 +242,8 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 	}
 	 */
 	private JPanel alignmentAndRulerPanel;
+	private JPanel listAndTopOffset;
+	private JPanel rulerPanel;
 
 	
 	public long getLastPaneEndTime(){
@@ -532,19 +548,32 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		sequenceJList.addSynchPanes(listScrollPane, alignmentScrollPane);
 
 		// Ruler
-		Dimension alignmentRulerDimension = new Dimension(1000,20);
 		JComponent alignmentRuler = alignmentPane.getRulerComponent();
+		Dimension alignmentRulerDimension = new Dimension(1000,20);
 		alignmentRuler.setPreferredSize(alignmentRulerDimension);
+		
+		// CharsetRuler
+		JComponent charsetRuler = alignmentPane.getCharsetRulerComponent();
+		Dimension charsetRulerDimension = new Dimension(0,0);
+		charsetRuler.setPreferredSize(charsetRulerDimension);
+		
+		
+		// RulerPanel	
+		rulerPanel = new JPanel();
+		rulerPanel.setLayout(new BoxLayout(rulerPanel, BoxLayout.Y_AXIS));
+		rulerPanel.add(alignmentRuler);
+		rulerPanel.add(charsetRuler);
+		
+		
+		// Alignment And RulerPanel together
 		alignmentAndRulerPanel = new JPanel(new BorderLayout());
 		alignmentAndRulerPanel.add(alignmentScrollPane, BorderLayout.CENTER);
-		alignmentAndRulerPanel.add(alignmentRuler, BorderLayout.NORTH);
+		alignmentAndRulerPanel.add(rulerPanel, BorderLayout.NORTH);
 
-		// topoffset on listpanel to match ruler
-		listTopOffset = new JPanel();
-
-		//	listTopOffset.setBackground(COLORSCHEME_BACKGROUND);
-		listTopOffset.setPreferredSize(new Dimension(100, alignmentRulerDimension.height));
-		JPanel listAndTopOffset = new JPanel(new BorderLayout());
+		// topoffset listpanel to match rulers height
+		listTopOffset = new ListTopOffsetJPanel(rulerPanel);
+		listTopOffset.setPreferredSize(new Dimension(100, rulerPanel.getPreferredSize().height));
+		listAndTopOffset = new JPanel(new BorderLayout());
 		listAndTopOffset.add(listScrollPane, BorderLayout.CENTER);
 		listAndTopOffset.add(listTopOffset, BorderLayout.NORTH);
 
@@ -728,13 +757,15 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 	}
 
 	public void saveAlignmentFile() {
-		// skip chooser
-		saveAlignmentAsFile();
+		// If alignment only is temp-file then save via chooser - otherwise without chooser
+		if(alignment.getAlignmentFile().isAliViewTempFile()){
+			saveAlignmentAsFileViaChooser();
+		}else{
+			saveAlignmentAsFile();
+		}
 	}
 
-	protected boolean hasUnsavedEdits() {
-		return hasUnsavedUndoableEdits;
-	}	
+		
 
 
 	public void showMessageLog() {
@@ -744,20 +775,36 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 	}
 
 	public void updateWindowTitle() {
-		String fileName = alignment.getFileName();
-		if(fileName == null){
+		AlignmentFile aliFile = alignment.getAlignmentFile();
+		if(aliFile == null || aliFile.getName().length() == 0){
 			this.setTitle("AliView");
 		}else{
-
 			// Add a symbol if unsaved
-			if(hasUnsavedUndoableEdits){
-				this.setTitle("AliView - " + "*" + fileName);
+			if(hasUnsavedUndoableEdits()){
+				this.setTitle("AliView - " + "*" + aliFile.getNameWithoutTempPrefix());
 			}
 			else{
-				this.setTitle("AliView - " + fileName);
+				this.setTitle("AliView - " + aliFile.getNameWithoutTempPrefix());
 			}
 		}
 	}
+
+	private boolean hasUnsavedUndoableEdits() {
+		if(hasUnsavedUndoableEdits == true){
+			return true;
+		}
+		if(alignment.getAlignmentFile() != null){
+			if(alignment.getAlignmentFile().isAliViewTempFile()){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	protected boolean hasUnsavedEdits() {
+		return hasUnsavedUndoableEdits();
+	}
+
 
 	public void performFind(String searchText) {
 		searchPanel.setText(searchText);
@@ -832,8 +879,6 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		alignmentPane.repaint();
 	}
 	
-
-
 	public void requestPaneAndRulerRepaint(){
 		alignmentPane.revalidate();
 		alignmentPane.repaintAndForceRuler();
@@ -843,14 +888,22 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		alignmentPane.scrollRectToSelection();
 	}
 
-	private void requestRepaintAndRevalidateALL() {
-		logger.info("requestRepaintAndRevalidateALL");
+	public void requestRepaintAndRevalidateALL() {
+        // logger.info("requestRepaintAndRevalidateALL");
+		
+		// revalidate is an invalidate and validate
+	
+		alignmentAndRulerPanel.revalidate();
+		listAndTopOffset.revalidate();
+		rulerPanel.revalidate();
+		alignmentPane.getCharsetRulerComponent().revalidate();
 		alignmentPane.validateSequenceOrder();
 		alignmentPane.validateSize();
-		alignmentPane.validate();
-		sequenceJList.validate();
-		alignmentPane.repaint();
+		alignmentPane.revalidate();
+		sequenceJList.revalidate();
+		alignmentPane.repaintAndForceRuler();
 		sequenceJList.repaint();
+		listAndTopOffset.repaint();
 	}
 	
 	
@@ -1029,7 +1082,6 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 				// listScrollPane.getViewport().setViewPosition(new Point(0, newViewPoint.y));
 			}
 		});
-
 	}
 
 	public void zoomOutAt(Point mousePos){
@@ -1130,20 +1182,34 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	public void saveAlignmentAsFileViaChooser(){
-		saveAlignmentAsFileViaChooser(alignment.getFileFormat(), false);
+	public boolean saveAlignmentAsFileViaChooser(){
+		return saveAlignmentAsFileViaChooser(alignment.getFileFormat(), false);
 	}
 
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	public void saveAlignmentAsFileViaChooser(FileFormat fileFormat, boolean saveAsCopy){
+	public boolean saveAlignmentAsFileViaChooser(FileFormat fileFormat, boolean saveAsCopy){
 
 		// Get dir for saving
-		String suggestedDir = alignment.getAlignmentFile().getParent();
-
-		// and filename
-		String suggestedFileName = alignment.getFileName();
+		String suggestedDir = null;
+		String suggestedFileName = null;
+		
+		if(alignment.getAlignmentFile().isAliViewTempFile()){		
+			File lastRecent = Settings.getLastRecentFile();
+			File lastRecentDir = null;
+			if(lastRecent == null){
+				lastRecentDir = AlignmentFile.createUserHomeFile();
+			}else{
+				lastRecentDir = lastRecent.getParentFile();
+			}			
+			suggestedDir = lastRecentDir.getAbsolutePath();
+			suggestedFileName = alignment.getAlignmentFile().getNameWithoutTempPrefix();
+		}else{
+			suggestedDir = alignment.getAlignmentFile().getParent();
+			suggestedFileName = alignment.getFileName();	
+		}
+		
 
 		// if file format not is same as alignment strip surrent suffix and add new one
 		if(fileFormat != alignment.getFileFormat()){		
@@ -1170,7 +1236,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 				String message = "File already exists - do you want to overwrite?";
 				int retVal = JOptionPane.showConfirmDialog(this, message, "Overwrite?", JOptionPane.OK_CANCEL_OPTION);
 				if(retVal != JOptionPane.OK_OPTION){									
-					return;
+					return false;
 				}
 			}
 			try {
@@ -1205,6 +1271,83 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 			}
 
 		}
+		else{
+			return false;
+		}
+		
+		return true;
+	}
+	
+	
+	public void exportRaxMLFile() {
+		exportRaxMLFileViaChooser();
+	}
+	
+	public boolean exportRaxMLFileViaChooser(){
+
+		// Get dir for saving
+		String suggestedDir = null;
+		String suggestedFileName = null;
+		
+		if(alignment.getAlignmentFile().isAliViewTempFile()){		
+			File lastRecent = Settings.getLastRecentFile();
+			File lastRecentDir = null;
+			if(lastRecent == null){
+				lastRecentDir = AlignmentFile.createUserHomeFile();
+			}else{
+				lastRecentDir = lastRecent.getParentFile();
+			}			
+			suggestedDir = lastRecentDir.getAbsolutePath();
+			suggestedFileName = alignment.getAlignmentFile().getNameWithoutTempPrefix();
+		}else{
+			suggestedDir = alignment.getAlignmentFile().getParent();
+			suggestedFileName = alignment.getFileName();	
+		}
+			
+		// make sure there is a file name
+		if(suggestedFileName == null){
+			suggestedFileName = "";
+		}
+		
+		// strip previous suffix
+		suggestedFileName = FileFormat.stripFileSuffixFromName(suggestedFileName);
+		
+		suggestedFileName += ".partitions";
+
+		File suggestedFile = new File(suggestedDir, suggestedFileName);
+		Component parent = this.getParent();
+
+		File selectedFile = FileUtilities.selectSaveFileViaChooser(suggestedFile,parent);
+
+		// här borde det vara alignment getAlignmentAsFastaStream
+
+		if(selectedFile != null){
+
+			// Ask user if file exists
+			if(selectedFile.exists()){
+				String message = "File already exists - do you want to overwrite?";
+				int retVal = JOptionPane.showConfirmDialog(this, message, "Overwrite?", JOptionPane.OK_CANCEL_OPTION);
+				if(retVal != JOptionPane.OK_OPTION){									
+					return false;
+				}
+			}
+			try {
+
+				alignment.exportPartitionsFileRaxMLFormat(selectedFile);
+
+
+			} catch (IOException e) {
+				e.printStackTrace();
+				// Meddela användaren om fel				
+				Messenger.showOKOnlyMessage(Messenger.FILE_SAVE_ERROR, LF + e.getLocalizedMessage(), this);
+			}
+
+		}
+		else{
+			return false;
+		}
+		
+		return true;
 	}
 
 
@@ -1248,9 +1391,12 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 
 
 	public void saveSelectionAsFastaFileViaChooser() {
+		
+		
+			
 		String suggestedDir = alignment.getAlignmentFile().getParent();
-
 		String suggestedFileName = alignment.getAlignmentFile().getName();
+
 		suggestedFileName = FileFormat.stripFileSuffixFromName(suggestedFileName);
 		suggestedFileName += ".selection." + FileFormat.FASTA.getSuffix();
 
@@ -1400,6 +1546,12 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 	}
 
 	public synchronized void reAlignSelectedSequences(){
+		
+		if(alignment.isTranslatedOnePos()){
+			Messenger.showOKOnlyMessage(Messenger.SUGGEST_ALIGN_AS_TRANSLATED, aliViewWindow);	
+			return;
+		}
+		
 		CommandItem firstSelected = null;
 		for(CommandItem item: Settings.getAlignADDCommands()){
 			if(item.isActivated()){
@@ -1413,8 +1565,8 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 				// check that a full sequence is selected
 				if(alignment.hasFullySelectedSequences()){
 					// Save selected sequences in one file and other in another
-					final File unselectedAlignmentTempFile = File.createTempFile("aliview-tmp-unselected-alignment", FileFormat.FASTA.getSuffix());
-					final File selectedAlignmentTempFile = File.createTempFile("aliview-tmp-selected-alignment", FileFormat.FASTA.getSuffix());	
+					final File unselectedAlignmentTempFile = AlignmentFile.createAliViewTempFile("unselected-alignment", FileFormat.FASTA.getSuffix());
+					final File selectedAlignmentTempFile = AlignmentFile.createAliViewTempFile("selected-alignment", FileFormat.FASTA.getSuffix());	
 					alignment.saveSelectedSequencesAsFastaFile(selectedAlignmentTempFile, false);
 					alignment.saveUnSelectedSequencesAsFastaFile(unselectedAlignmentTempFile, false);
 					alignAndAddSequences(firstSelected, unselectedAlignmentTempFile, selectedAlignmentTempFile);
@@ -1433,6 +1585,12 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 	}
 
 	public synchronized void alignAndAddSequences(File additionalSequencesFile) throws IOException {
+		
+		if(alignment.isTranslatedOnePos()){
+			Messenger.showOKOnlyMessage(Messenger.SUGGEST_ALIGN_AS_TRANSLATED, aliViewWindow);	
+			return;
+		}
+		
 		CommandItem firstSelected = null;
 		for(CommandItem item: Settings.getAlignADDCommands()){
 			if(item.isActivated()){
@@ -1444,7 +1602,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		if(firstSelected != null){
 			// Save current alignment in tempdir (to be sure all unsaved changes are there)
 			FileFormat currentTempFileFormat = firstSelected.getCurrentAlignmentFileFormat();
-			final File currentAlignmentTempFile = File.createTempFile("aliview-tmp-current-alignment", currentTempFileFormat.getSuffix());
+			final File currentAlignmentTempFile = AlignmentFile.createAliViewTempFile("current-alignment", currentTempFileFormat.getSuffix());
 			alignment.saveAlignmentAsFile(currentAlignmentTempFile, currentTempFileFormat);	
 			alignAndAddSequences(firstSelected, currentAlignmentTempFile, additionalSequencesFile);
 		}
@@ -1452,6 +1610,11 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 
 
 	public synchronized void alignAndAddSequences(final CommandItem alignItem, File origSequences, File newSeqs){
+		
+		if(alignment.isTranslatedOnePos()){
+			Messenger.showOKOnlyMessage(Messenger.SUGGEST_ALIGN_AS_TRANSLATED, aliViewWindow);	
+			return;
+		}
 		
 		if(StringUtils.containsIgnoreCase(alignItem.getCommand(), "profile")){
 			boolean hideMessage = Settings.getHideMuscleProfileAlignInfoMessage().getBooleanValue();
@@ -1473,7 +1636,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		}
 		try {
 			// Create a tempFile for new alignment
-			final File newAlignmentTempFile = File.createTempFile("aliview-tmp-alignment", ".fasta");
+			final File newAlignmentTempFile = AlignmentFile.createAliViewTempFile("alignment", ".fasta");
 
 
 			final SubProcessWindow subProcessWin = SubProcessWindow.getAlignmentProgressWindow(aliViewWindow, true);
@@ -1535,6 +1698,12 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 
 
 	public void reAlignEverythingWithDefaultProgram() {
+		
+		if(alignment.isTranslatedOnePos()){
+			Messenger.showOKOnlyMessage(Messenger.SUGGEST_ALIGN_AS_TRANSLATED, aliViewWindow);	
+			return;
+		}
+		
 		CommandItem firstSelected = null;
 		for(CommandItem item: Settings.getAlignALLCommands()){
 			if(item.isActivated()){
@@ -1563,6 +1732,12 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 	}
 
 	public synchronized void reAlignSelectionInSeparateThread() {
+		
+		if(alignment.isTranslatedOnePos()){
+			Messenger.showOKOnlyMessage(Messenger.SUGGEST_ALIGN_AS_TRANSLATED, aliViewWindow);	
+			return;
+		}
+		
 		CommandItem firstSelected = null;
 		for(CommandItem item: Settings.getAlignALLCommands()){
 			if(item.isActivated()){
@@ -1578,6 +1753,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 
 
 	public void reAlignEverythingWithAlignCommand(final CommandItem alignItem, final boolean asTranslatedAA, final boolean selection){
+		
 		// ask if realign everything
 		if(! selection){
 
@@ -1608,7 +1784,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 
 			// Save current alignment in tempdir (to be sure all unsaved changes are there)
 			FileFormat currentTempFileFormat = alignItem.getCurrentAlignmentFileFormat();
-			final File currentAlignmentTempFile = File.createTempFile("aliview-tmp-current-alignment", currentTempFileFormat.getSuffix());
+			final File currentAlignmentTempFile = AlignmentFile.createAliViewTempFile("current-alignment", currentTempFileFormat.getSuffix());
 			// save selection if user changes it during alignment
 			final Rectangle selectionBounds = alignment.getSelectionAsMinRect();
 			if(asTranslatedAA){
@@ -1620,7 +1796,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 			}
 
 			// Create a tempFile for new alignment
-			final File newAlignmentTempFile = File.createTempFile("aliview-tmp-alignment", ".fasta");
+			final File newAlignmentTempFile = AlignmentFile.createAliViewTempFile("alignment", ".fasta");
 
 			// Replace static parameters in command
 			alignItem.setParameterCurrentFile(currentAlignmentTempFile);
@@ -1738,7 +1914,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 				}catch(Exception exc){
 					exc.printStackTrace();
 					setSoftLockGUIThroughMenuDisable(false);
-					Messenger.showGeneralExceprionMessage(exc, aliViewWindow);
+					Messenger.showGeneralExceptionMessage(exc, aliViewWindow);
 				}
 			}
 			else{
@@ -1766,9 +1942,9 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 				File storedAlignmentFile = alignment.getAlignmentFile();
 				AlignmentListModel prevSeqOrder = alignment.getSequences();
 
-				// TODO change this so meta is kept when realigning
-				AlignmentMeta storedMeta = alignment.getAlignentMetaCopy();			
-
+				// Keep meta when realigning
+				AlignmentMeta storedMeta = alignment.getAlignentMetaCopy();
+				
 				loadNewAlignmentFile(newRealignedTempFile);
 				// Restore
 				alignment.setAlignmentFile(storedAlignmentFile);
@@ -1779,11 +1955,8 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 
 			}
 			else{
-				//glassPane.setVisible(false);
 				setSoftLockGUIThroughMenuDisable(false);
 				Messenger.showOKOnlyMessage(Messenger.ALIGNER_SOMETHING_PROBLEM_ERROR, aliViewWindow);
-				//				String message = "Something did not work out when aligning";
-				//				JOptionPane.showMessageDialog(aliViewWindow, message, "Problem when aligning", JOptionPane.INFORMATION_MESSAGE);
 			}
 		}
 		logger.info("Finished reAlignWithDefault");
@@ -1792,8 +1965,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 	protected void realignmentDone(boolean wasProcessInterruptedByUser, File newRealignedTempFile) {
 		if(! wasProcessInterruptedByUser){
 
-			// Reload alignment
-			// TO DO HANDLE bad loading of file better
+			// Reload new alignment
 			if(newRealignedTempFile.length() > 0){
 
 				aliViewWindow.getUndoControler().pushUndoState();
@@ -1801,23 +1973,23 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 				// store path to current working file
 				File storedAlignmentFile = alignment.getAlignmentFile();
 
-				// When realigning all dont keep alignment meta
-				//AlignmentMeta storedMeta = alignment.getAlignentMetaCopy();			
+				// When realigning all don't keep alignment meta
+				// AlignmentMeta storedMeta = alignment.getAlignentMetaCopy();			
 
 				loadNewAlignmentFile(newRealignedTempFile);
 				// Restore
 				alignment.setAlignmentFile(storedAlignmentFile);
 				this.updateWindowTitle();
+				
 				// When realigning all dont keep alignment meta
 				//alignment.setAlignentMeta(storedMeta);
+				
 				alignment.padAndTrimSequences();
 			}
 			else{
 				//glassPane.setVisible(false);
 				setSoftLockGUIThroughMenuDisable(false);
 				Messenger.showOKOnlyMessage(Messenger.ALIGNER_SOMETHING_PROBLEM_ERROR, aliViewWindow);
-				//				String message = "Something did not work out when aligning";
-				//				JOptionPane.showMessageDialog(aliViewWindow, message, "Problem when aligning", JOptionPane.INFORMATION_MESSAGE);
 			}
 		}
 
@@ -1966,7 +2138,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 				for(Sequence seq: sequences){
 					try {
 						// Save sequences one by one into temp file
-						File clipboardSequenceFile = File.createTempFile( "clipboard_selection", ".fasta");
+						File clipboardSequenceFile = AlignmentFile.createAliViewTempFile("clipboard_selection", ".fasta");
 						BufferedWriter buffWriter = new BufferedWriter(new FileWriter(clipboardSequenceFile));
 						String fastaSeqName = ">" + seq.getName() + LF + seq.getBasesAsString();
 						buffWriter.append(fastaSeqName);
@@ -2037,7 +2209,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 
 					}
 					// save clipboard to file
-					clipboardSequenceFile = File.createTempFile( "clipboard_selection", ".fasta");
+					clipboardSequenceFile = AlignmentFile.createAliViewTempFile("clipboard_selection", ".fasta");
 					FileUtils.writeStringToFile(clipboardSequenceFile, clipboardSelection);			
 
 				}
@@ -2054,7 +2226,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 	}
 
 	public void toggleDrawCodonpos() {
-		alignmentPane.setDrawCodonPosRuler(! alignmentPane.getDrawCodonPosRuler());
+		alignmentPane.setDrawCodonPosOnRuler(! alignmentPane.getDrawCodonPosOnRuler());
 		requestPaneAndRulerRepaint();
 	}
 
@@ -2099,7 +2271,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		if(selected == false){
 			
 		}
-		alignmentPane.setDrawCodonPosRuler(alignmentPane.isShowTranslation());
+		alignmentPane.setDrawCodonPosOnRuler(alignmentPane.isShowTranslation());
 		if(translationPanel != null){
 			translationPanel.setVisible(alignmentPane.isShowTranslation());
 		}
@@ -2353,7 +2525,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 			pos.translate(130, -60);
 			//logger.info("pos" + pos);
 			TextEditDialog txtEdit = new TextEditDialog(pos);
-			txtEdit.showOKCancelTextEditor(name, TextEditDialog.EDIT_SEQUENCE_NAME, this);
+			txtEdit.showOKCancelTextEditor(name, TextEditDialog.EDIT_SEQUENCE_NAME_TEXT, this);
 			if(txtEdit.getSelectedValue() == JOptionPane.OK_OPTION){
 				String newName = txtEdit.getEditText();
 
@@ -2406,7 +2578,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 			try {
 				File clipFile = null;
 				if(!FileFormat.isThisSequenceFile(clipboardSelection)){
-					clipFile = File.createTempFile("aliview-tmp-clipboard-alignment", ".sequences");
+					clipFile = AlignmentFile.createAliViewTempFile("clipboard-alignment", ".fasta");
 					FileUtils.writeStringToFile(clipFile, clipboardSelection);
 				}else{
 					clipFile = new File(clipboardSelection);
@@ -2636,9 +2808,13 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 			int retVal = JOptionPane.showConfirmDialog(this, message, "Save edits?", JOptionPane.YES_NO_CANCEL_OPTION);
 
 			if(retVal == JOptionPane.YES_OPTION){			
-				this.saveAlignmentAsFileViaChooser();		
+				boolean wasFileSaved = this.saveAlignmentAsFileViaChooser();		
 				// now is OK
-				isCloseOK = true;
+				if(wasFileSaved){
+					isCloseOK = true;
+				}else{
+					isCloseOK = false;
+				}
 			}
 			if(retVal == JOptionPane.NO_OPTION){			
 				isCloseOK = true;
@@ -2671,6 +2847,8 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		listTopOffset.setBackground(color);
 		sequenceJList.setBackground(color);
 		alignmentPane.setBackground(color);
+		alignmentPane.getRulerComponent().setBackground(color);
+		alignmentPane.getCharsetRulerComponent().setBackground(color);
 	}
 
 	public void setColorSchemeNucleotide(ColorScheme aScheme){
@@ -2700,7 +2878,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 
 	public void createStats(){
 		//alignment.getSequences().setTranslation(true);
-		//alignment.getStats();
+		alignment.getStats();
 		MemoryUtils.logMem();
 		
 		/* some old stuff
@@ -2772,26 +2950,18 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 
 	/*
 	 * 
-	 * Undo/Redo, very simple implemented by saving alignment as fasta into memory
+	 * Undo/Redo, very simple implemented
 	 * 
 	 */
 	public void pushUndoState(){
-		logger.info("pushUndo");
-		// push without object then push whole alignment as fasta
-		long startTime = System.currentTimeMillis();
-		//UndoSavedState state = new UndoSavedStateEverything(getUndoSavedStateFastaString(), alignment.getAlignentMetaClone());
-		// Check if there is memory enough to create an undostate
 		if(isUndoable()){
 			UndoSavedState state = new UndoSavedStateEverything(alignment.getSequences().getCopy(), alignment.getAlignentMetaCopy());
 			pushUndoState(state);
 		}
-		long endTime = System.currentTimeMillis();
-		logger.info("Push undo took " + (endTime - startTime) + " milliseconds");
 	}
 
 	public void pushUndoState(UndoSavedState state){
-		undoStack.push(state);
-		redoStack.clear();
+		undoList.add(state);
 		// TODO this should maybe be handled better than indirect as here
 		hasUnsavedUndoableEdits = true;
 		this.updateWindowTitle();
@@ -2812,53 +2982,19 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 	}
 	 */
 
-	public void undo() {
-
-		if(undoStack.size() > 0){
-			if(redoStack.size() == 0){
-				redoStack.push(new UndoSavedStateEverything(alignment.getSequences().getCopy(), alignment.getAlignentMetaCopy()));
-			}		
-			UndoSavedState undoObj = undoStack.pop();
-			redoStack.push(undoObj);
-			logger.info("inne i undo");
-			if(undoObj instanceof UndoSavedStateEverything){
-	// No longer used
-//				try {
-//					logger.info("undo everyt");
-//					undoEverything((UndoSavedStateEverything)undoObj);
-//				} catch (AlignmentImportException e) {
-//					Messenger.showOKOnlyMessage(Messenger.UNDO_REDO_PROBLEM, LF + e.getLocalizedMessage(), aliViewWindow);
-//					e.printStackTrace();
-//				}
-			}else if(undoObj instanceof UndoSavedStateSequenceOrder){
-				undoSequenceOrder((UndoSavedStateSequenceOrder)undoObj);
-			}else if(undoObj instanceof UndoSavedStateEditedSequences){
-				undoSequenceEdit((UndoSavedStateEditedSequences)undoObj);
-			}else if(undoObj instanceof UndoSavedStateMetaOnly){
-				undoMetaOnly((UndoSavedStateMetaOnly)undoObj);
-			}
-			
-			requestRepaintAndRevalidateALL();
-		}
-		if(undoStack.isEmpty()){
-			logger.info("updatingTitl");
-			hasUnsavedUndoableEdits = false;
-			updateWindowTitle();
-		}
-		fireUndoRedoChange();
-	}
+	
 
 	private void fireUndoRedoChange() {
-		aliViewMenuBar.setUndoButtonEnabled(!undoStack.isEmpty());
-		aliViewMenuBar.setRedoButtonEnabled(!redoStack.isEmpty());
+		aliViewMenuBar.setUndoButtonEnabled(!isUndoStackEmpty());
+		aliViewMenuBar.setRedoButtonEnabled(!isRedoStackEmpty());
 	}
 
 	public boolean isUndoStackEmpty(){
-		return undoStack.isEmpty();
+		return ! undoList.hasAvailableUndos();
 	}
 
 	public boolean isRedoStackEmpty(){
-		return redoStack.isEmpty();
+		return ! undoList.hasAvailableRedos();
 	}
 
 	private void undoSequenceEdit(UndoSavedStateEditedSequences undoObj) {
@@ -2885,25 +3021,32 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 
 	private void undoEverything(UndoSavedStateEverything state) throws AlignmentImportException {
 		logger.info("undoEverything");
-		//alignment.setNewSequences(seqFactory.createSequences(new StringReader(state.fastaAlignment)));
-		alignment.setNewSequences(state.sequences);
-		sequenceJList.setModel(alignment.getSequences());
+//		alignment.setNewSequences(seqFactory.createSequences(new StringReader(state.fastaAlignment)));
+		alignment.setNewSequencesFromUndo(state.sequences);
+//		sequenceJList.setModel(alignment.getSequences());
 		alignment.setAlignentMeta(state.meta);
 	}
 
-	public void redo() {
-		if(redoStack.size() > 0){
-			UndoSavedState undoObj = redoStack.pop();
-			undoStack.push(undoObj);
+	public void undo() {	
+		if(undoList.hasAvailableUndos()){
+			
+			// Before first undo is performed save current state so it is possible to redo
+			if(undoList.isCurrentStateNeeded()){
+				// Save current state
+				undoList.addCurrentState(new UndoSavedStateEverything(alignment.getSequences().getCopy(), alignment.getAlignentMetaCopy()));
+			}
+				
+			UndoSavedState undoObj = undoList.getUndoState();
+			logger.info("inne i undo");
 			if(undoObj instanceof UndoSavedStateEverything){
-// No longer used
-//				try {
-//					undoEverything((UndoSavedStateEverything)undoObj);
-//				} catch (AlignmentImportException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//					Messenger.showOKOnlyMessage(Messenger.UNDO_REDO_PROBLEM, LF + e.getLocalizedMessage(), aliViewWindow);
-//				}
+	        // No longer used
+				try {
+					logger.info("undo everyt");
+					undoEverything((UndoSavedStateEverything)undoObj);
+				} catch (AlignmentImportException e) {
+					Messenger.showOKOnlyMessage(Messenger.UNDO_REDO_PROBLEM, LF + e.getLocalizedMessage(), aliViewWindow);
+					e.printStackTrace();
+				}
 			}else if(undoObj instanceof UndoSavedStateSequenceOrder){
 				undoSequenceOrder((UndoSavedStateSequenceOrder)undoObj);
 			}else if(undoObj instanceof UndoSavedStateEditedSequences){
@@ -2911,10 +3054,46 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 			}else if(undoObj instanceof UndoSavedStateMetaOnly){
 				undoMetaOnly((UndoSavedStateMetaOnly)undoObj);
 			}
+			
+
+			
+			requestRepaintAndRevalidateALL();
+		}
+		if(isUndoStackEmpty()){
+			logger.info("updatingTitl");
+			hasUnsavedUndoableEdits = false;
+			updateWindowTitle();
+		}
+		fireUndoRedoChange();
+	}
+	
+	
+	public void redo() {
+		if(undoList.hasAvailableRedos()){
+			
+			UndoSavedState redoObj = undoList.getRedoState();
+
+			if(redoObj instanceof UndoSavedStateEverything){
+				try {
+					undoEverything((UndoSavedStateEverything)redoObj);
+				} catch (AlignmentImportException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					Messenger.showOKOnlyMessage(Messenger.UNDO_REDO_PROBLEM, LF + e.getLocalizedMessage(), aliViewWindow);
+				}
+			}else if(redoObj instanceof UndoSavedStateSequenceOrder){
+				undoSequenceOrder((UndoSavedStateSequenceOrder)redoObj);
+			}else if(redoObj instanceof UndoSavedStateEditedSequences){
+				undoSequenceEdit((UndoSavedStateEditedSequences)redoObj);
+			}else if(redoObj instanceof UndoSavedStateMetaOnly){
+				undoMetaOnly((UndoSavedStateMetaOnly)redoObj);
+			}
 			requestRepaintAndRevalidateALL();;	
 		}
 		fireUndoRedoChange();
 	}
+	
+	
 	/*
 	public static byte[] compress(String inString){
 		long startTime = System.currentTimeMillis();
@@ -2959,9 +3138,6 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 	 * End Undo
 	 * 
 	 */
-
-
-
 
 
 
@@ -3063,25 +3239,31 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 
 			}else{
 				// if startpoint is same as release-point select by point
-				if(startPoint.equals(e.getPoint())){				
+				if(alignmentPane.paneCoordToMatrixCoord(e.getPoint()).distance(alignmentPane.paneCoordToMatrixCoord(startPoint)) == 0){				
 					// if shift is down something is selected already make a new rect selection
 					if(e.isShiftDown()){	
 
-						// set default first pos and override if cursor is selected
-						Point firstPos = alignment.getFirstSelectedPosition();
-						// if there is a cursor-pos and it is selected then use it instead of
-						if(aliCursor != null){
-							if(alignment.isBaseSelected(aliCursor.x, aliCursor.y)){
-								firstPos = new Point(aliCursor.x, aliCursor.y);
-							}
-						}
-						Point firstPosPaneCoord = alignmentPane.matrixCoordToPaneCoord(firstPos);
-						Rectangle selectRect = new Rectangle(e.getPoint());
-						selectRect.add(firstPosPaneCoord);
+//						// set default first pos and override if cursor is selected
+//						Point firstPos = alignment.getFirstSelectedPosition();
+//						// if there is a cursor-pos and it is selected then use it instead of
+//						if(aliCursor != null){
+//							if(alignment.isBaseSelected(aliCursor.x, aliCursor.y)){
+//								firstPos = new Point(aliCursor.x, aliCursor.y);
+//							}
+//						}
+						Point clickPoint = alignmentPane.paneCoordToMatrixCoord(e.getPoint());
+						Rectangle clickRect = new Rectangle(clickPoint);
+						logger.info(clickRect);
+						Rectangle currentSelection = alignment.getSelectionAsMinRect();
+						logger.info(currentSelection);
+						Rectangle newSelection = Utils.addRects(clickRect, currentSelection);
+						logger.info(newSelection);
+						
 
 						// clear before new selection - this to avoid non-rectangle selections
 						alignment.clearSelection();
-						int selectionSize = alignmentPane.selectWithin(selectRect);
+						alignment.setSelectionWithin(newSelection);
+						//int selectionSize = alignmentPane.selectWithin(newSelection);
 					}
 
 					else{
@@ -3792,16 +3974,16 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 
 		try {
 			// Save current alignment in tempdir to make sure unsaved edits are included
-			//File currentAlignmentTempFile = File.createTempFile("aliview-tmp-current-alignment", ".fasta");
+			//File currentAlignmentTempFile = File.createTempFile("current-alignment", ".fasta");
 			//alignment.saveAlignmentAsFile(currentAlignmentTempFile, FileFormat.FASTA);
 
 			// Save current alignment in tempdir (to be sure all unsaved changes are there)
 			FileFormat currentTempFileFormat = cmdItem.getCurrentAlignmentFileFormat();
-			File currentAlignmentTempFile = File.createTempFile("aliview-tmp-current-alignment", currentTempFileFormat.getSuffix());
+			File currentAlignmentTempFile = AlignmentFile.createAliViewTempFile("current-alignment", currentTempFileFormat.getSuffix());
 			alignment.saveAlignmentAsFile(currentAlignmentTempFile, currentTempFileFormat);	
 
 			// Create a tempFile for new alignment
-			File emptyTempFile = File.createTempFile("aliview-tmp", ".tmp");
+			File emptyTempFile = AlignmentFile.createAliViewTempFile("tempfile-for-new-alignment", ".tmp");
 
 			cmdItem.setParameterCurrentFile(currentAlignmentTempFile);
 			cmdItem.setParameterOutputFile(emptyTempFile);
@@ -4126,7 +4308,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 
 	public void countStopCodons() {
 		int count = alignment.countStopCodons();
-		Messenger.showCountCodonMessage(count, this);
+		Messenger.showCountStopCodonMessage(count, this);
 	}
 
 	public void startDebug() {
@@ -4161,7 +4343,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		if(selectedFile != null){
 
 			try {
-				File fastaGenResultFile = File.createTempFile(selectedFile.getName() + "_genotype", FileFormat.FASTA.getSuffix());
+				File fastaGenResultFile = new File(selectedFile.getParentFile(), selectedFile.getName() + "_genotype" + "." + FileFormat.FASTA.getSuffix());
 				Genotype2Phenotype gen2phen = new Genotype2Phenotype();
 				gen2phen.createGenotypeFasta(selectedFile, fastaGenResultFile);
 				AliView.openAlignmentFile(fastaGenResultFile);		
@@ -4190,13 +4372,20 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 	}
 
 
-	
+	public void showCharsetsRuler(boolean selected) {
+		alignmentPane.setShowCharsetRuler(selected);
+		Settings.getShowCharsetRuler().putBooleanValue(selected);
+		requestRepaintAndRevalidateALL();
+	}
 
 
-	
+	public void editCharsets() {
+		TextEditFrame frame = new TextEditFrame(this);
+		TextEditPanelCharsets panel = new TextEditPanelCharsets(frame, this);
+		frame.init(panel);
+		frame.setVisible(true);
+	}
 
-
-	
 }
 
 

@@ -34,6 +34,7 @@ import org.apache.log4j.Logger;
 
 import utils.OSNativeUtils;
 import utils.nexus.CharSet;
+import utils.nexus.CharSets;
 import aliview.AliView;
 import aliview.AliViewWindow;
 import aliview.GeneticCode;
@@ -43,8 +44,8 @@ import aliview.alignment.AlignmentListener;
 import aliview.color.ColorScheme;
 import aliview.color.ColorSchemeFactory;
 import aliview.externalcommands.CommandItem;
+import aliview.gui.pane.CharPixels;
 import aliview.importer.FileFormat;
-import aliview.pane.CharPixels;
 import aliview.sequencelist.AlignmentDataEvent;
 import aliview.sequencelist.AlignmentDataListener;
 import aliview.sequencelist.AlignmentSelectionEvent;
@@ -347,6 +348,17 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 
 		mnFile.add(new JSeparator());
 		
+		JMenuItem mntmExportRaxMLFile = new JMenuItem("Export RaxML partition file");
+		mntmExportRaxMLFile.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				aliViewWindow.exportRaxMLFile();
+			}
+		});
+		mnFile.add(mntmExportRaxMLFile);
+		loadedAlignmentFunctions.add(mntmExportRaxMLFile);
+
+		mnFile.add(new JSeparator());
+		
 //		JMenuItem mntmGenoPheno = new JMenuItem("Genotype > phenotype");
 //		mntmGenoPheno.addActionListener(new ActionListener() {
 //			public void actionPerformed(ActionEvent e) {
@@ -568,7 +580,6 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 		mntmDeleteSelectedItem.setAccelerator(OSNativeUtils.getDeleteKeyAccelerator());
 		mnEdit.add(mntmDeleteSelectedItem);
 		reorderAndDeleteFunctions.add(mntmDeleteSelectedItem);
-		hasSelectionFunctions.add(mntmDeleteSelectedItem);
 
 
 		JMenuItem mntmRemoveVerticalGaps = new JMenuItem("Delete gap-only columns");
@@ -582,7 +593,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 		//mntmRemoveVerticalGaps.setAccelerator(KeyStroke.getKeyStroke(??));
 		mnEdit.add(mntmRemoveVerticalGaps);
 		editFunctions.add(mntmRemoveVerticalGaps);
-		alwaysAvailableFunctions.add(mntmRemoveVerticalGaps);
+		loadedAlignmentFunctions.add(mntmRemoveVerticalGaps);
 
 		JMenuItem mntmRemoveAllGaps = new JMenuItem("Delete all gaps in all sequences");
 		mntmRemoveAllGaps.addActionListener(new ActionListener() {
@@ -720,6 +731,18 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 		});
 		mnEdit.add(mntmRevComp);
 		alwaysAvailableFunctions.add(mntmRevComp);
+		
+		mnEdit.add(new JSeparator());
+		
+		JMenuItem mntmEditCharsets = new JMenuItem("Edit charsets");
+		mntmEditCharsets.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				aliViewWindow.editCharsets();
+			}
+		});
+		mnEdit.add(mntmEditCharsets);
+		loadedAlignmentFunctions.add(mntmEditCharsets);
+		
 
 		mnEdit.add(new JSeparator());
 
@@ -1158,6 +1181,24 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 		mnViewMenu.add(mntmCountStopCodons);
 		loadedAlignmentFunctions.add(mntmCountStopCodons);
 
+		mnViewMenu.add(new JSeparator());
+		
+		JCheckBoxMenuItem mntmShowCharsetsRuler = new JCheckBoxMenuItem("Show charsets ruler (if charsets are defined)");
+		boolean isShowCharsetRuler = Settings.getShowCharsetRuler().getBooleanValue();
+		if(isShowCharsetRuler){
+			mntmShowCharsetsRuler.setSelected(true);
+		}
+		mntmShowCharsetsRuler.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e){
+				JCheckBoxMenuItem btn = (JCheckBoxMenuItem ) e.getSource();
+				aliViewWindow.showCharsetsRuler(btn.isSelected());	
+			}
+		});
+		//mntmFontCase.setAccelerator(OSNativeUtils.getToggleTranslationKeyAccelerator());
+		//buttonGroupOneViewAtATime.add(highlightNonCons);
+		//toggleTranslationButtonModel = mntmToggleTranslation.getModel();
+		mnViewMenu.add(mntmShowCharsetsRuler);
+		alwaysAvailableFunctions.add(mntmShowCharsetsRuler);
 		
 		mnViewMenu.add(new JSeparator());
 		
@@ -1614,7 +1655,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 		logger.info("rebuildSelectCharsetsSubmenu()" + aliViewWindow.getAlignment().getAlignmentMeta().getCharsets());
 		mnSelectCharset.removeAll();
 
-		ArrayList<CharSet> charsets = aliViewWindow.getAlignment().getAlignmentMeta().getCharsets();
+		CharSets charsets = aliViewWindow.getAlignment().getAlignmentMeta().getCharsets();
 		// submenu
 		for(final CharSet aCharset: charsets){
 			JMenuItem nextItem = new JMenuItem(aCharset.getName());

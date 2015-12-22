@@ -13,16 +13,11 @@ public class Ranges implements Iterable<Range> {
 	protected ArrayList<Range> backend;
 
 	public Ranges() {
-		this(new ArrayList<Range>());
-	}
-	
-	public Ranges(ArrayList<Range> backend) {
-		this.backend = backend;
+		this.backend = new ArrayList<Range>();
 	}
 
-	
 	public Ranges(Ranges template) {
-		ArrayList<Range> backend = new ArrayList<Range>(template.size());
+		this();
 		for(Range templateRange: template){
 			backend.add(templateRange.getCopy());
 		}	
@@ -189,6 +184,23 @@ public class Ranges implements Iterable<Range> {
 		}
 		return false;
 	}
+	
+	public boolean intersects(Ranges testRanges) {
+		for(Range aRange: backend){
+			for(Range testRange: testRanges){
+				if(testRange.intersects(aRange)){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	public boolean intersects(int minX, int maxX) {
+		Ranges templateRanges = new Ranges();
+		templateRanges.addRange(minX, maxX);
+		return intersects(templateRanges);
+	}
 
 	public int size() {
 		return backend.size();
@@ -225,11 +237,22 @@ public class Ranges implements Iterable<Range> {
 	}
 
 	public int getMaximumEndPos() {
-		int max = 0;
+		int max = -1;
 		for(Range range: backend){
 			max = Math.max(max, range.end);
 		}
 		return max;
+	}
+	
+	public int getMinimumStartPos() {
+		if(backend == null || backend.size() == 0){
+			return -1;
+		}
+		int min = Integer.MAX_VALUE;
+		for(Range range: backend){
+			min = Math.min(min, range.start);
+		}
+		return min;
 	}
 
 	public void deletePosition(int pos) {
@@ -277,7 +300,10 @@ public class Ranges implements Iterable<Range> {
 	public ArrayList<NexusRange> getAsContinousNexusRanges(){
 		ArrayList<NexusRange> nexusRanges = new ArrayList<NexusRange>();
 		for(Range range: backend){
-			nexusRanges.add(new NexusRange(range.start + 1, range.end + 1, range.step, range.startVal)); // +1 because Nexus uses 1 as first index
+			logger.info("range=" + range);
+			NexusRange continousRange=new NexusRange(range.start + 1, range.end + 1, range.step, range.startVal); // +1 because Nexus uses 1 as first index
+			nexusRanges.add(continousRange);
+			logger.info(continousRange.debug());
 		}
 		return nexusRanges;
 	}

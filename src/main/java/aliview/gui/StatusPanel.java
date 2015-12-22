@@ -11,11 +11,12 @@ import javax.swing.event.ListDataEvent;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import utils.nexus.CharSet;
 import aliview.alignment.Alignment;
 import aliview.alignment.AlignmentEvent;
 import aliview.alignment.AlignmentListener;
-import aliview.pane.AlignmentPane;
-import aliview.pane.InvalidAlignmentPositionException;
+import aliview.gui.pane.AlignmentPane;
+import aliview.gui.pane.InvalidAlignmentPositionException;
 import aliview.sequencelist.AlignmentDataEvent;
 import aliview.sequencelist.AlignmentDataListener;
 import aliview.sequencelist.AlignmentSelectionEvent;
@@ -33,6 +34,7 @@ import javax.swing.SwingConstants;
 import javax.swing.BoxLayout;
 
 import java.awt.Component;
+import java.util.ArrayList;
 
 import javax.swing.Box;
 
@@ -49,21 +51,19 @@ public class StatusPanel extends JPanel implements AlignmentListener, AlignmentD
 	private int selectedColumnCount;
 	private int selectedSeqCount;
 	private String firstSelectedSequenceName = "";
-	JLabel lblTotalSelectedChars;
-	JLabel lblCols;
-	JLabel lblSelectedSeqCount;
-	JLabel lblPosUngaped;
-	JLabel lblPos;
-	JLabel lblSelectedName;
-	JLabel lblAlignmentInfo;
-	/**
-	 * @wbp.nonvisual location=929,-31
-	 */
-	private final JLabel label = new JLabel("New label");
-	private JLabel lblNewLabel;
-	private JSeparator separator;
-	private Component horizontalGlue;
-	private Component horizontalGlue_1;
+	private String firstSelectedCharsetName = "";
+	private JLabel lblTotalSelectedChars;
+	private JLabel lblCols;
+	private JLabel lblSelectedSeqCount;
+	private JLabel lblPosUngaped;
+	private JLabel lblPos;
+	private JLabel lblSelectedName;
+	private JLabel lblAlignmentInfo;
+	private JLabel lblTxtCharset;
+	private JLabel lblCharset;
+	
+
+	
 	
 	public StatusPanel(AlignmentPane alignmentPane, Alignment alignment) {
 		this.aliPane = alignmentPane;
@@ -91,6 +91,23 @@ public class StatusPanel extends JPanel implements AlignmentListener, AlignmentD
 	//	add(new Box.Filler(new Dimension(0,0), new Dimension(Short.MAX_VALUE,0), new Dimension(Short.MAX_VALUE, 0)));
 		
 		add(createStatusPanelSeparator());
+		
+		
+		// add charset info if needed
+		if(alignment.getAlignmentMeta().getCharsets().size() > 0){
+			lblTxtCharset = new JLabel("Charset:");
+		    add(lblTxtCharset);
+		    lblTxtCharset.setPreferredSize(lblTxtCharset.getPreferredSize());
+			
+		    lblCharset = new JLabel("CharsetNameIsThis_1");
+			add(lblCharset);
+			lblCharset.setHorizontalAlignment(SwingConstants.LEADING);
+			lblCharset.setPreferredSize(lblCharset.getPreferredSize());
+			lblCharset.setMinimumSize(lblCharset.getPreferredSize());
+			lblCharset.setText("");
+			
+			add(createStatusPanelSeparator());
+		}
 		
 		lblTxtPos = new JLabel("Pos:");
 	    add(lblTxtPos);
@@ -206,10 +223,8 @@ public class StatusPanel extends JPanel implements AlignmentListener, AlignmentD
 			if(alignment != null && selectionSize > 0){	
 				
 				String firstSelSeqName = StringUtils.substring(firstSelectedSequenceName, 0, 40);			
-				if(firstSelSeqName != null){
-					//if(firstSelSeqName.length() == 40 || selectedSeqCount > 1){
-						firstSelSeqName +="...";
-					//}
+				if(selectedSeqCount > 1){
+					firstSelSeqName +="...";
 				}
 			
 				
@@ -222,6 +237,9 @@ public class StatusPanel extends JPanel implements AlignmentListener, AlignmentD
 				}
 					
 				lblSelectedName.setText(firstSelSeqName);
+				if(lblCharset != null){
+					lblCharset.setText(StringUtils.substring(firstSelectedCharsetName, 0, 40));
+				}
 				lblPos.setText(posInSeqTxt);
 				lblPosUngaped.setText(ungapPos);
 				lblSelectedSeqCount.setText("" + selectedSeqCount);
@@ -230,6 +248,9 @@ public class StatusPanel extends JPanel implements AlignmentListener, AlignmentD
 				
 			}else{
 				lblSelectedName.setText("");
+				if(lblCharset != null){
+					lblCharset.setText("");
+				}
 				lblPos.setText("");
 				lblPosUngaped.setText("");
 				lblSelectedSeqCount.setText("");
@@ -275,11 +296,21 @@ public class StatusPanel extends JPanel implements AlignmentListener, AlignmentD
 			this.selectedColumnCount = alignment.getSelectedColumnCount();
 			this.selectedSeqCount = alignment.getSelectedSequencesCount();
 			this.firstSelectedSequenceName = alignment.getFirstSelectedSequenceName();
-			this.posInSeq = alignment.getFirstSelectedPositionX();
-			this.posInUngapedSeq = alignment.getFirstSelectedUngapedPositionX();
 			if(firstSelectedSequenceName == null){
 				firstSelectedSequenceName = "";
 			}
+			ArrayList<CharSet> selectedCharsets = alignment.getSelectedCharsets();
+			if(selectedCharsets.size() == 0){
+				this.firstSelectedCharsetName = "";
+			}else{
+				for(CharSet charset: selectedCharsets){
+					this.firstSelectedCharsetName += charset.getName() + ",";
+				}
+				this.firstSelectedCharsetName = StringUtils.removeEnd(this.firstSelectedCharsetName, ",");
+			}
+			this.posInSeq = alignment.getFirstSelectedPositionX();
+			this.posInUngapedSeq = alignment.getFirstSelectedUngapedPositionX();
+			
 			
 			this.updateSelectionText();
 		}

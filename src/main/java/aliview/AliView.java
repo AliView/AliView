@@ -562,7 +562,6 @@ public class AliView implements ApplicationListener{
 
 				public void windowClosing(WindowEvent e) {
 					AliViewWindow thisWin = (AliViewWindow) e.getWindow();
-
 					AliView.closeWindow(thisWin);
 				}
 
@@ -608,7 +607,7 @@ public class AliView implements ApplicationListener{
 			aliViewWindows.remove(thisWin);
 			// if this was last then quit
 			if(aliViewWindows.size() == 0){
-				aliView.quitProgram();
+				AliView.quitProgram();
 			}
 
 		}

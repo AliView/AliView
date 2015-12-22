@@ -13,7 +13,7 @@ import org.apache.log4j.Logger;
 
 import aliview.AliViewWindow;
 import aliview.alignment.Alignment;
-import aliview.pane.AlignmentPane;
+import aliview.gui.pane.AlignmentPane;
 
 public class NotUsed_AlignmentDataAndSelectionListener implements AlignmentSelectionListener, AlignmentDataListener{
 

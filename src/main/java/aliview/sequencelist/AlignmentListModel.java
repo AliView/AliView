@@ -228,6 +228,10 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		}
 	}
 	
+	public List<Sequence> getDelegateSequences() {
+		return delegateSequences;
+	}
+	
 	public AlignmentListModel getCopy(){
 		return new AlignmentListModel(this);
 	}
@@ -840,7 +844,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 			seq.insertGapLeftOfSelectedBase();
 		}
 		
-		if(selectedSeqs.size() == delegateSequences.size()){
+		if(selectedSeqs.size() > 0 && selectedSeqs.size() == delegateSequences.size()){
 			int posToAdd = (int) (selectionBounds.getBounds().getMaxX() - 1);
 			getAlignmentMeta().insertPosition(posToAdd);
 		}

@@ -127,12 +127,22 @@ public class NexusParser {
 		
 		return range;
 	}
+	
+	public String getToken() {
+		return  getTokenAt(currentPos);
+	}
+	
 
 	public void debug() {
 //		logger.info("tokenCount=" + countTokens());
 		for(String token: tokens){
 //			logger.info("token='" + token + "'");
 		}
+	}
+
+	public String getLine() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

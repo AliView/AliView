@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
+import java.awt.event.MouseEvent;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -29,6 +30,7 @@ import org.apache.log4j.Logger;
 
 import utils.DialogUtils;
 import utils.nexus.CharSet;
+import utils.nexus.CharSets;
 import utils.nexus.Excludes;
 import utils.nexus.NexusRange;
 import utils.nexus.NexusUtilities;
@@ -37,13 +39,13 @@ import aliview.AminoAcid;
 import aliview.Base;
 import aliview.GeneticCode;
 import aliview.NucleotideUtilities;
+import aliview.gui.TextEditDialog;
 import aliview.importer.AlignmentImportException;
 import aliview.importer.FileFormat;
 import aliview.importer.MSFFileIndexer;
 import aliview.importer.MSFImporter;
 import aliview.importer.SequencesFactory;
 import aliview.messenges.Messenger;
-import aliview.messenges.TextEditDialog;
 import aliview.primer.Dimer;
 import aliview.primer.Primer;
 import aliview.sequencelist.AlignmentDataListener;
@@ -69,7 +71,7 @@ public class Alignment implements FileSequenceLoadListener {
 	AlignmentListModel sequences;
 	protected int nextFindSequenceNumber;
 	protected int nextFindStartPos;
-	private File alignmentFile;
+	private AlignmentFile alignmentFile;
 	private int PRIMER_MAX_DEGENERATE_SCORE = 1000;
 	private boolean isEditedAfterLastSave = false;
 	private AlignmentMeta alignmentMeta;
@@ -96,11 +98,11 @@ public class Alignment implements FileSequenceLoadListener {
 		fireAllSequencesAreNew();
 	}
 	
-	public void setNewSequences(AlignmentListModel seqs){
-		this.sequences = seqs;			
+	public void setNewSequencesFromUndo(AlignmentListModel seqs){
+		this.sequences.setSequences(seqs.getDelegateSequences());
 		// TODO this should also be read from file
 		this.alignmentMeta = new AlignmentMeta();	
-		setEditedAfterLastSave(false);
+		//setEditedAfterLastSave(false);
 		fireAllSequencesAreNew();
 	}
 	
@@ -183,7 +185,7 @@ public class Alignment implements FileSequenceLoadListener {
 		return sequences.indexOf(seq);
 	}
 	
-	public File getAlignmentFile() {
+	public AlignmentFile getAlignmentFile() {
 		return this.alignmentFile;
 	}
 
@@ -192,12 +194,11 @@ public class Alignment implements FileSequenceLoadListener {
 			return null;
 		}
 		return alignmentFile.getName();
-
 	}
 
 	public void setAlignmentFile(File alignmentFile) {
 		if(alignmentFile != null && alignmentFile.exists()){
-			this.alignmentFile = alignmentFile.getAbsoluteFile();
+			this.alignmentFile = new AlignmentFile(alignmentFile);
 		}
 	}
 	
@@ -538,6 +539,51 @@ public class Alignment implements FileSequenceLoadListener {
 		// save as current format
 		saveAlignmentAsFile(outFile,getFileFormat());	
 	}
+	
+	public void exportPartitionsFileRaxMLFormat(File outFile)  throws IOException{
+
+//		DNA,p1=1-1194
+//		DNA,p2=1195-3029
+//		DNA,p3=3030-4345
+//		DNA,p4=4346-5697
+//		DNA,p5=5698-6997
+		
+		
+		String datatypeModel = "";
+		
+		if(isAAAlignment()){
+			datatypeModel = "JTT";
+		}
+		else{
+			datatypeModel = "DNA";
+		}
+		
+		
+		String partitionsAsText = "";
+		CharSets charsets = getAlignmentMeta().getCharsets();
+		for(CharSet charSet: charsets){
+			
+			String charsetRangeText = "";
+			ArrayList<NexusRange> ranges = charSet.getAsContinousNexusRanges();
+			int rangeCount = 0;
+			for(NexusRange range: ranges){
+				charsetRangeText += range.toString() + ",";		
+				rangeCount ++;
+			}
+			
+			// remove last ,
+			if(rangeCount > 0){
+				charsetRangeText = StringUtils.removeEnd(charsetRangeText, ",");
+			}
+			
+			partitionsAsText += datatypeModel + "," + charSet.getName() + " = " + charsetRangeText + LF;
+
+		}
+		
+		FileUtils.writeStringToFile(outFile, partitionsAsText);
+		
+	}
+
 
 	public void saveAlignmentAsFile(File outFile, FileFormat fileFormat) throws IOException{
 		
@@ -656,7 +702,7 @@ public class Alignment implements FileSequenceLoadListener {
 	// TODO this might get wrong if translating sequence and sequence order in alignment not is same, or sequence 
 	// has x offset in alignment
 	private AlignmentMeta getTranslatedMeta(){	
-		ArrayList<CharSet> charsetsTrans = new ArrayList<CharSet>();
+		CharSets charsetsTrans = new CharSets();
 		Excludes excludesTrans = new Excludes();
 		AlignmentMeta metaTrans = new AlignmentMeta(excludesTrans,null,charsetsTrans,alignmentMeta.getGeneticCode());
 		
@@ -971,7 +1017,7 @@ public class Alignment implements FileSequenceLoadListener {
 		
 		logger.info("done cons" + cons);
 		
-		logger.info('-' == cons.charAt(0));
+		//logger.info('-' == cons.charAt(0));
 		
 		// if there is a gap
 		if(cons.indexOf(SequenceUtils.GAP_SYMBOL) >= 0){		
@@ -1692,6 +1738,15 @@ public class Alignment implements FileSequenceLoadListener {
 		List<Sequence> previous = sequences.setFirstSelectedName(newName);
 		return previous;
 	}
+	
+	public ArrayList<CharSet> getSelectedCharsets() {
+		Rectangle selection = sequences.getSelectionBounds();
+		if(selection == null){
+			return new ArrayList<CharSet>();
+		}
+		ArrayList<CharSet> intersected = alignmentMeta.getCharsets().getIntersected(selection);
+		return intersected;
+	}
 
 	public void selectAll(CharSet aCharSet) {
 		sequences.selectAll(aCharSet);
@@ -1865,6 +1920,11 @@ public class Alignment implements FileSequenceLoadListener {
 		return false;
 	}
 
+	
+
+	
+
+	
 	
 	
 }

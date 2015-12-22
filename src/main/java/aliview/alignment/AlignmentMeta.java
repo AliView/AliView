@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 
 import aliview.GeneticCode;
 import utils.nexus.CharSet;
+import utils.nexus.CharSets;
 import utils.nexus.CodonPos;
 import utils.nexus.CodonPositions;
 import utils.nexus.Excludes;
@@ -16,7 +17,7 @@ public class AlignmentMeta {
 	private static final Logger logger = Logger.getLogger(AlignmentMeta.class);
 	private Excludes excludes;
 	private CodonPositions codonPositions;
-	private ArrayList<CharSet> charsets;
+	private CharSets charsets;
 	private GeneticCode geneticCode;
 
 	
@@ -25,10 +26,10 @@ public class AlignmentMeta {
 	}
 
 	public AlignmentMeta(GeneticCode genCode){
-		this(new Excludes(), new CodonPositions(), new ArrayList<CharSet>(), genCode);
+		this(new Excludes(), new CodonPositions(), new CharSets(), genCode);
 	}
 
-	public AlignmentMeta(Excludes excludes, CodonPositions codonPos, ArrayList<CharSet> charsets, GeneticCode genCode) {
+	public AlignmentMeta(Excludes excludes, CodonPositions codonPos, CharSets charsets, GeneticCode genCode) {
 		this.excludes = excludes;
 		this.codonPositions = codonPos;
 		this.charsets = charsets;
@@ -92,11 +93,7 @@ public class AlignmentMeta {
 
 
 	public AlignmentMeta getCopy() {
-		ArrayList<CharSet> copyOfCharsets = new ArrayList<CharSet>();
-		for(CharSet charset: this.charsets){
-			copyOfCharsets.add(charset.getCopy());
-		}
-		return new AlignmentMeta(excludes.getCopy(), codonPositions.getCopy(), copyOfCharsets, this.geneticCode);
+		return new AlignmentMeta(excludes.getCopy(), codonPositions.getCopy(), charsets.getCopy(), this.geneticCode);
 	}
 
 	public ArrayList<Integer> getAllCodonPositions(int wanted, boolean removeExcluded, int startPos, int endPosInclusive) {
@@ -133,21 +130,15 @@ public class AlignmentMeta {
 	
 	public void deletePosition(int n) {	
 		excludes.deletePosition(n);
-		if(codonPositions.size() != 0){
-			codonPositions.removePosition(n);
-			for(CharSet charset: charsets){
-				charset.deletePosition(n); 
-			}
-		}
+		codonPositions.deletePosition(n);
+		charsets.deletePosition(n);
 	}
 	
 	public void insertPosition(int n) {	
 		excludes.insertPosition(n);
 		codonPositions.insertPosition(n);
-		// dont do anything with charset
-//		for(CharSet charset: charsets){
-//			charset.removePosition(n); 
-//		}
+		charsets.insertPosition(n);
+		
 	}
 	
 	public void excludePositions(int start, int end) {
@@ -174,9 +165,8 @@ public class AlignmentMeta {
 		}
 		return false;
 	}
-	
 
-	public ArrayList<CharSet> getCharsets() {
+	public CharSets getCharsets() {
 		return this.charsets;
 	}
 
@@ -198,6 +188,10 @@ public class AlignmentMeta {
 
 	public void setGeneticCode(GeneticCode genCode) {
 		this.geneticCode = genCode;
+	}
+
+	public void setCharsets(CharSets charsets) {
+		this.charsets = charsets;
 	}
 
 	/*

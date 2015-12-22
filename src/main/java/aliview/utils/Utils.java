@@ -1,9 +1,18 @@
 package aliview.utils;
 
 import java.awt.Rectangle;
+import java.io.File;
+import java.io.IOException;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
+
+import utils.FileUtilities;
 
 public class Utils {
+
 	
+
 	public static Rectangle addRects(Rectangle rect1, Rectangle rect2){
 		if(rect1 != null && rect2 != null){
 			Rectangle newRect = new Rectangle(rect1);
@@ -40,5 +49,4 @@ public class Utils {
 			return false;
 		}
 	}
-
 }

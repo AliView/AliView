@@ -2,7 +2,7 @@ package aliview.old;
 
 import javax.swing.JScrollPane;
 
-import aliview.pane.AlignmentPane;
+import aliview.gui.pane.AlignmentPane;
 
 public class MyScrollPane extends JScrollPane {
 //

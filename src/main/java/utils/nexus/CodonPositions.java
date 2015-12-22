@@ -230,7 +230,7 @@ public class CodonPositions{
 		return this.codonRanges.getPosVal(x);
 	}
 
-	public void removePosition(int n) {
+	public void deletePosition(int n) {
 		this.codonRanges.removePosition(n);
 		positionsUpdated();
 	}

@@ -18,7 +18,7 @@ import aliview.alignment.AlignmentListener;
 import aliview.color.ColorScheme;
 import aliview.color.ColorSchemeFactory;
 import aliview.externalcommands.CommandItem;
-import aliview.pane.CharPixels;
+import aliview.gui.pane.CharPixels;
 
 public class Settings {
 	private static final Logger logger = Logger.getLogger(Settings.class);
@@ -51,6 +51,7 @@ public class Settings {
 	private static SettingValue maxPrimerTM = new SettingValue("MAX_PRIMER_TM", 80, 0, 100);
 	private static SettingValue useCustomFontSize = new SettingValue("USE_CUSTOM_FONT_SIZE", false);
 	private static SettingValue customFontSize = new SettingValue("CUSTOM_FONT_SIZE", 12, 1, 24);
+	private static SettingValue showCharsetRuler = new SettingValue("SHOW_CHARSET_RULER", true);
 		
 	private static SettingValue reverseHorizontalMouseWheel = new SettingValue("REVERSE_HORIZONTAL_MOUSE_WHEEL", false);
 	private static SettingValue reverseVerticalMouseWheel = new SettingValue("REVERSE_VERTICAL_MOUSE_WHEEL", false);
@@ -79,8 +80,6 @@ public class Settings {
 	private static SettingValue hideAskBeforeEditMode  = new SettingValue("hideAskBeforeEditMode", false);
 	private static SettingValue fontCase = new SettingValue("fontCase", CharPixels.CASE_UNTOUCHED, 0, 10);
 	
-	
-
 	public static SettingValue getMinPrimerLength(){
 		return minPrimerLength;
 	}
@@ -660,6 +659,15 @@ public class Settings {
 		}
 		return recent;
 	}
+	
+	public static File getLastRecentFile() {	
+		Vector<File> recentFiles = getRecentFiles();	
+		if(recentFiles == null || recentFiles.size() == 0){
+			return null;
+		}
+		return recentFiles.get(0);	
+	}
+	
 
 	public static SettingValue getLargeFileIndexing() {
 		return largeFileIndexing;
@@ -700,6 +708,10 @@ public class Settings {
 	public static SettingValue getCustomFontSize() {
 		return customFontSize;
 	}
+	
+	public static SettingValue getShowCharsetRuler() {
+		return showCharsetRuler;
+	}
 
 	public static SettingValue getMaxFileHistogramSequences() {
 		return maxFileHistogramSequences;
@@ -713,5 +725,6 @@ public class Settings {
 		return fontCase;
 	}
 
+	
 
 }

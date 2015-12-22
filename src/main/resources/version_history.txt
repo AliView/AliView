@@ -1,11 +1,12 @@
 Version history
 
-1.18-beata5
+1.18-beata7
 
 - Big rewrite of code handling selection. Improvements and more standardized mouse selection of sequences (compared to other software)
 - Fixed bug when saving alignment in Phylip format with "Save" command, padding was lost.
 - Improvements when translating nucleotide sequences into aminoacid - editing sequences are now fully supported.
 - Selection follows when translating sequences
+- Added capabilities to define,edit, export(in RaxML format) and view Charsets in alignments
 - Added "Show both aminoacid and nucleotide sequence" when translating nucleotide sequences to amino acids
 - Added "slow" double click on name as a trigger for renaming a sequence
 - Mouse wheel zoom in and zoom out is also working when mouse pointer is on sequence list

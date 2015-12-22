@@ -8,6 +8,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 import utils.nexus.CharSet;
+import utils.nexus.CharSets;
 import utils.nexus.CodonPositions;
 import utils.nexus.Excludes;
 import utils.nexus.NexusAlignmentImportException;
@@ -16,6 +17,7 @@ import aliview.AliView;
 import aliview.GeneticCode;
 import aliview.MemoryUtils;
 import aliview.alignment.Alignment;
+import aliview.alignment.AlignmentFile;
 import aliview.alignment.AlignmentMeta;
 import aliview.messenges.Messenger;
 import aliview.sequencelist.FileSequenceAlignmentListModel;
@@ -23,6 +25,7 @@ import aliview.sequencelist.AlignmentListModel;
 import aliview.sequences.NexusSequence;
 import aliview.sequences.SequenceUtils;
 import aliview.settings.Settings;
+import aliview.utils.Utils;
 
 public class AlignmentFactory {
 	private static final String LF = System.getProperty("line.separator");
@@ -49,7 +52,7 @@ public class AlignmentFactory {
 				AlignmentListModel sequences = seqFactory.createSequences(alignmentFile);			
 				Excludes excludes = new Excludes();
 				CodonPositions codonPositions = new CodonPositions();
-				ArrayList<CharSet> charsets = new ArrayList<CharSet>();
+				CharSets charsets = new CharSets();
 				logger.info("sequences.getLongestSequenceLength()" + sequences.getLongestSequenceLength());
 
 					try {
@@ -123,9 +126,9 @@ public class AlignmentFactory {
 		Alignment alignment = null;
 		try {
 			logger.info("ali" + alignmentText);
-			File tempFile = File.createTempFile("tmp-aliview-clipboard-alignment", "");
-			FileUtils.writeStringToFile(tempFile, alignmentText);
-			alignment = createNewAlignment(tempFile);	
+			AlignmentFile tempAliFile = AlignmentFile.createAliViewTempFile("clipboard-alignment", "");
+			FileUtils.writeStringToFile(tempAliFile, alignmentText);
+			alignment = createNewAlignment(tempAliFile);	
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -14,7 +14,6 @@ import org.apache.log4j.Logger;
 
 import utils.DialogUtils;
 import utils.OSNativeUtils;
-
 import aliview.messenges.Messenger;
 import aliview.settings.Settings;
 
@@ -30,6 +29,7 @@ public class HelpUtils {
 	public static final String DOWNLOAD = "DOWNLOAD";
 	public static final String BUG_OR_FEATURE = "BUG_OR_FEATURE";
 	public static final String MEMORY_SETTINGS = "memory_settings";
+	public static final String EDIT_CHARSETS_DIALOG = "EDIT_CHARSETS_DIALOG";
 	
 	protected static String baseURL = Settings.getAliViewHelpWebPage();
 	protected static String localBaseURL = "file:///home/anders/maven/AliView/web/help/help.html";

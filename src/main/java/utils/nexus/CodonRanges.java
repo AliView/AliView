@@ -19,8 +19,11 @@ public class CodonRanges{
 	
 	public int getPosVal(int pos){
 		CodonRange range = (CodonRange) backend.getRange(pos);
-		int posVal = range.getPosVal(pos);
-		return posVal;
+		if(range != null){
+			return range.getPosVal(pos);
+		}else{
+			return 0;
+		}
 	}
 	
 	public CodonRanges getCopy() {

@@ -20,7 +20,7 @@ public class AlignColorScheme implements ColorScheme {
 	Color[] aminoAcidSelectionBackgroundColor;
 	Color[] aminoAcidSelectionForegroundColor;
 	Color baseConsensusBackgroundColor;
-	Color aminiAcidConsensusBackgroundColor;
+	Color aminoAcidConsensusBackgroundColor;
 	
 	
 	protected String colorSchemeName = "Default";
@@ -178,7 +178,7 @@ public class AlignColorScheme implements ColorScheme {
 		//aminoAcidBackgroundColor[AminoAcid.GAP.intVal] = Color.white;
 		aminoAcidBackgroundColor[AminoAcid.X.intVal] = Color.white;
 		
-		aminiAcidConsensusBackgroundColor = new Color(240,240,240);
+		aminoAcidConsensusBackgroundColor = new Color(240,240,240);
 		
 		aminoAcidForegroundColor = new Color[255];
 		aminoAcidForegroundColor[AminoAcid.A.intVal] = Color.BLACK;
@@ -327,8 +327,8 @@ public class AlignColorScheme implements ColorScheme {
 		return baseConsensusBackgroundColor;
 	}
 
-	public Color getAminiAcidConsensusBackgroundColor() {
-		return aminiAcidConsensusBackgroundColor;
+	public Color getAminoAcidConsensusBackgroundColor() {
+		return aminoAcidConsensusBackgroundColor;
 	}
 
 

@@ -42,7 +42,6 @@ public class Messenger {
 			                        								 "needed is 2 x file size if files are to be read into memory." + LF +
 			                        								 " ", "Limited edit capabilities");
 	
-	
 	public static Message MUSCLE_PROFILE_INFO_MESSAGE = new Message("MUSCLE \"-profile\" command is used for adding new sequences" + LF + 
 			                                                        "to the alignment. The performance of this method might be" + LF +
 			                                                        "less favourable than some other add sequences algorithms." + LF + 
@@ -50,7 +49,6 @@ public class Messenger {
 			                                                        "One option is to download and install MAFFT and then use the" + LF +
 			                                                        "MAFFT -addfragments algorithm instead.",
 			                                                        "Add sequences with MUSCLE profile");
-	
 	
 	public static final Message LIMITED_UNDO_CAPABILITIES = new Message("The size of the alignment prevents Undo functionality when editing." + LF + 
 			 															"- Don't forget to 'Save As' every once in a while....", "Undo function disabled");
@@ -82,6 +80,8 @@ public class Messenger {
 																			"from file when loaded and in Fasta format", "Problem");
 	public static final Message REALIGN_EVERYTHING = new Message("Are you sure you want to realign the whole alignment?", "Realign everything");
 	public static final Message PHENOTYPE_IMAGE_OPEN_ERROR = new Message("Could not create Phenotype from Image file. Wrong file type? (png,jpg)", "Wrong file");
+	public static final Message SUGGEST_ALIGN_AS_TRANSLATED = new Message("If you want to align Nucleotides as translated Amino Acids, please use function:" + LF +
+			                                                              "Realign everything as Translated Amino Acids", "Can not realign");
 	
 
 	private static int lastSelectedOption = -1;
@@ -99,7 +99,7 @@ public class Messenger {
 		 showOKOnlyMessage(GENERAL_ERROR, parentFrame);	
 	}
 	
-	public static void showGeneralExceprionMessage(Exception exception, JFrame parentFrame) {
+	public static void showGeneralExceptionMessage(Exception exception, JFrame parentFrame) {
 		 Message GENERAL_ERROR = new Message("Exception (you can probably still save work as it is)" + LF +
 	              "Description: " + exception.getMessage(), "Exception");
 		 showOKOnlyMessage(GENERAL_ERROR, parentFrame);	
@@ -252,7 +252,7 @@ public class Messenger {
 		
 	}
  
-   public static void showCountCodonMessage(int count, AliViewWindow aliViewWindow) {
+   public static void showCountStopCodonMessage(int count, AliViewWindow aliViewWindow) {
 	   Message countMessage = new Message("Stop codons in alignment: " + count, "Stop codon count");
 	   showOKOnlyMessage(countMessage, aliViewWindow);
    }
@@ -333,25 +333,28 @@ public class Messenger {
 
    }
 
-public static boolean askAllowEditMode() {
-	
-	boolean allowEditMode = false;
-	boolean hideMessage = Settings.getHideAskBeforeEditMode().getBooleanValue();
-	if(hideMessage){
-		allowEditMode = true;
-	}else{
-		boolean hideMessageNextTime = showOKCancelMessageWithCbx(EDIT_MODE_QUESTION, hideMessage, AliView.getActiveWindow());
-		Settings.getHideAskBeforeEditMode().putBooleanValue(hideMessageNextTime);
-		if(getLastSelectedOption() == JOptionPane.OK_OPTION){
+	public static boolean askAllowEditMode() {
+		
+		boolean allowEditMode = false;
+		boolean hideMessage = Settings.getHideAskBeforeEditMode().getBooleanValue();
+		if(hideMessage){
 			allowEditMode = true;
+		}else{
+			boolean hideMessageNextTime = showOKCancelMessageWithCbx(EDIT_MODE_QUESTION, hideMessage, AliView.getActiveWindow());
+			Settings.getHideAskBeforeEditMode().putBooleanValue(hideMessageNextTime);
+			if(getLastSelectedOption() == JOptionPane.OK_OPTION){
+				allowEditMode = true;
+			}
 		}
+		return allowEditMode;
 	}
-	return allowEditMode;
-}
-
-
-   
-   
+	
+	
+	public static void showEditCharsetExceptionMessage(Exception exception, JFrame parentFrame) {
+		 Message charsetExceptionMessage = new Message("Could not parse the charsets text:" + LF +
+				 	exception.getMessage(), "Parse charset text exception");
+		 showOKOnlyMessage(charsetExceptionMessage, parentFrame);	
+	}
 }
 
 class Message{

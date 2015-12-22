@@ -22,7 +22,7 @@ public class Range implements Comparable<Range>{
 	public Range(int start, int end, int startVal) {
 		this(start, end, startVal, 1); // default every pos
 	}
-
+/*
 	public boolean contains(int pos) {
 		if(pos >= start && pos <= end){
 			return true;
@@ -31,10 +31,34 @@ public class Range implements Comparable<Range>{
 			return false;
 		}
 	}
+*/
+	
+	public boolean contains(int testPos, int testStart, int testStep){
+		if(testPos >= start && testPos <= end){
+			if(step == 1 || testStep == 1){
+				return true;
+			}
+			if(step == testStep){
+				if(start % step == testStart % testStep){
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	public boolean contains(int testPos, Range testRange){
+		return contains(testPos, testRange.start, testRange.step);
+	}
+	
+	public boolean contains(int testPos){
+		return contains(testPos, 0, 1);
+	}
 	
 	public boolean containsRange(Range compare) {
 		
-		if(this.contains(compare.start) && this.contains(compare.end)){
+		if(this.contains(compare.start, compare) && this.contains(compare.end, compare)){
 			return true;
 		}
 		
@@ -42,15 +66,33 @@ public class Range implements Comparable<Range>{
 	}
 	
 	public boolean intersects(Range compare) {
-		if(this.contains(compare.start) || this.contains(compare.end)){
+//		logger.info("intersect compare.start" + compare.start + " this.start" + this.start);
+//		logger.info("intersect compare.end" + compare.end + " this.end" + this.end);
+		
+		if(this.contains(compare.start, compare) || this.contains(compare.end, compare) ||
+			compare.contains(this.start, this) || compare.contains(this.end, this)){
+			logger.info("intersects true");
 			return true;
 		}
+//		logger.info("intersects false");
+		return false;
+	}
+	
+	public boolean partlyWithin(Range compare) {
+//		logger.info("intersect compare.start" + compare.start + " this.start" + this.start);
+//		logger.info("intersect compare.end" + compare.end + " this.end" + this.end);
 		
+		if(this.contains(compare.start, compare) || this.contains(compare.end, compare) ||
+			compare.contains(this.start, this) || compare.contains(this.end, this)){
+			logger.info("intersects true");
+			return true;
+		}
+//		logger.info("intersects false");
 		return false;
 	}
 	
 	public boolean within(Range compare) {
-		if(compare.contains(start) && compare.contains(end)){
+		if(compare.contains(start, this) && compare.contains(end, this)){
 			return true;
 		}
 		return false;
@@ -64,12 +106,12 @@ public class Range implements Comparable<Range>{
 	public Range crop(Range cropTemplate) {
 		
 		// crop front adjust template end (or not)
-		if(this.contains(cropTemplate.end)){
+		if(this.contains(cropTemplate.end, cropTemplate)){
 			this.moveStart(cropTemplate.end + 1);
 		}
 		
 		// crop front adjust template end (or not)
-		if(this.contains(cropTemplate.start)){
+		if(this.contains(cropTemplate.start, cropTemplate)){
 			this.moveEnd(cropTemplate.start -1);
 		}
 		
@@ -118,7 +160,6 @@ public class Range implements Comparable<Range>{
 		
 		this.start = newStart;
 		this.startVal = newStartVal;
-			
 	}
 	
 	private void moveEnd(int newEnd) {

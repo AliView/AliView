@@ -2,12 +2,9 @@ package utils.nexus;
 
 import java.util.ArrayList;
 
-import org.apache.commons.lang.math.IntRange;
 import org.apache.log4j.Logger;
 
-import utils.RangeUtils;
-
-public class CharSet extends Ranges{
+public class CharSet extends Ranges implements Comparable<CharSet>{
 	private static final Logger logger = Logger.getLogger(CharSet.class);
 	private String name;
 
@@ -30,7 +27,7 @@ public class CharSet extends Ranges{
 			addNexusRange(nexRange);
 		}
 	}
-
+	
 	public void addNexusRange(NexusRange range){
 		Range newRange = new Range(range.getMinimumInt() - 1, range.getMaximumInt() - 1, 0, range.steps); // one less because internally we work with 0 as first pos
 		logger.info("newRange=" + newRange);
@@ -45,5 +42,9 @@ public class CharSet extends Ranges{
 	public void debug() {
 		super.debug();
 		logger.info("name=" + name);
+	}
+
+	public int compareTo(CharSet other) {
+		return this.getMinimumStartPos() - other.getMinimumStartPos();
 	}
 }

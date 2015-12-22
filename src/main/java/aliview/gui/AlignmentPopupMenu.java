@@ -24,7 +24,7 @@ public class AlignmentPopupMenu extends JPopupMenu implements MouseListener {
 			this.aliViewWin = aliViewWin;
 			this.aliViewMenuBar = aliViewMenuBar;
 			
-			JMenuItem setTraceSeq = new JMenuItem("Set this sequence as template when Highligting difference");
+			JMenuItem setTraceSeq = new JMenuItem("Set this sequence as template when Highlighting difference");
 			setTraceSeq.addActionListener(new ActionListener() {		
 				public void actionPerformed(ActionEvent e) {
 					aliViewWin.setDifferenceTraceSequence(mouseActivationEvent.getPoint());

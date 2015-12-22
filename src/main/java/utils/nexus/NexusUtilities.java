@@ -13,7 +13,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.IntRange;
 import org.apache.log4j.Logger;
 
-
 import utils.RangeUtils;
 
 
@@ -168,7 +167,7 @@ public class NexusUtilities {
 	}
 
 
-	public static String getCharsetsBlockWithoutNexus(List<CharSet> charsets) {
+	public static String getCharsetsBlockWithoutNexus(CharSets charsets) {
 		if(charsets == null){
 			return "";
 		}
@@ -183,7 +182,7 @@ public class NexusUtilities {
 	}
 
 
-	public static String getCharsetsBlockAsNexus(List<CharSet> charsets) {
+	public static String getCharsetsBlockAsNexus(CharSets charsets) {
 		if(charsets == null){
 			return "";
 		}
@@ -198,11 +197,11 @@ public class NexusUtilities {
 	}
 
 
-	public static final ArrayList<CharSet> createCharsetsFromNexusFile(File alignmentFile, int alignmentWidth) throws NexusAlignmentImportException {
+	public static final CharSets createCharsetsFromNexusFile(File alignmentFile, int alignmentWidth) throws NexusAlignmentImportException {
 
 		logger.info("look for nexus BEGIN SETS; block in file " + alignmentFile.toString());
 
-		ArrayList<CharSet> allSets = new ArrayList<CharSet>();
+		CharSets allSets = new CharSets();
 
 		try {
 
@@ -210,46 +209,7 @@ public class NexusUtilities {
 
 			if(setsBlock != null && setsBlock.length() > 0){
 
-				logger.info("Found block");
-
-				setsBlock = setsBlock.toUpperCase();
-
-				String [] tokens = setsBlock.split(";");
-
-				for(String token: tokens){
-					token = token.trim();
-					if(token.length() > 0){
-						String[] parts = token.split("=");
-
-						String name = parts[0].replace("CHARSET", ""); // /i (insensitive
-						name = name.trim();
-						String ranges = parts[1].trim();
-						logger.info("ranges" + ranges);
-						CharSet charSet = new CharSet(name);
-
-						ArrayList<NexusRange> allRanges = parseNexusRanges(ranges, 0);
-
-						// TODO also make it possible to read sets that are not
-						// continous but for example: 
-						// CHARSET 1ST =  1-2356\3;
-						// CHARSET 2ND =  2-2354\3;
-						//
-						// only add ranges if all are next to each other
-						boolean areAllContinous = true;
-						for(NexusRange range: allRanges){
-							if(range.steps != 1){
-								areAllContinous = false;
-							}
-						}
-					//	if(allRanges.size() > 0 && areAllContinous){
-						charSet.addNexusRanges(allRanges);
-						allSets.add(charSet);
-					//	}
-
-						//charSet.debug();
-					}
-
-				}
+				allSets = createCharsetsFromNexusCharsetBlock(setsBlock);
 
 			}else{
 				// No block
@@ -265,7 +225,53 @@ public class NexusUtilities {
 		return allSets;
 	}
 
-	public static ArrayList<NexusRange> parseNexusRanges(String input, int rangePositionVal){
+	public static CharSets createCharsetsFromNexusCharsetBlock(String setsBlock) throws Exception{
+
+		CharSets allSets = new CharSets();
+		
+		setsBlock = setsBlock.toUpperCase();
+
+		String [] tokens = setsBlock.split(";");
+
+		
+		
+			for(String token: tokens){
+				try{
+					token = token.trim();
+					if(token.length() > 0){
+						String[] parts = token.split("=");
+	
+						String name = parts[0].replace("CHARSET", ""); // /i (insensitive
+						name = name.trim();
+						String ranges = parts[1].trim();
+						logger.info("ranges" + ranges);
+						CharSet charSet = new CharSet(name);
+	
+						ArrayList<NexusRange> allRanges;
+						try {
+							allRanges = parseNexusRanges(ranges, 0);
+						} catch (Exception e) {
+							throw new Exception(e.getMessage() + LF + "in line:" + LF + token);
+						}
+	
+						boolean areAllContinous = true;
+						for(NexusRange range: allRanges){
+							if(range.steps != 1){
+								areAllContinous = false;
+							}
+						}
+						charSet.addNexusRanges(allRanges);
+						allSets.add(charSet);
+					}
+				} catch (Exception e) {
+					throw new Exception(token);
+				}
+			}
+		
+		return allSets;
+	}
+
+	public static ArrayList<NexusRange> parseNexusRanges(String input, int rangePositionVal) throws Exception{
 
 		ArrayList<NexusRange> allRanges = new ArrayList<NexusRange>();
 
@@ -274,21 +280,24 @@ public class NexusUtilities {
 		NexusParser parser = new NexusParser(input);	
 		parser.split(" ", true);
 
-//		logger.info(parser.countTokens());
+		logger.info("input:" + input);
+		
+		logger.info(parser.countTokens());
 
 		parser.debug();
 
 		while(parser.hasMoreTokens()){
 			if(parser.isNextTokensIntRange()){
-//				logger.info("TOKENiSiNTRANGE");
+				logger.info("TOKENiSiNTRANGE");
 				allRanges.add(parser.getNexusRange(rangePositionVal));
 			}
 			else if(parser.isNextTokenNumeric()){
-//				logger.info("tokenIsNumeric");
+				logger.info("tokenIsNumeric");
 				parser.getIntegerAsRange();
 			}
 			else{
 				parser.next();
+				throw new Exception("Could not parse text: " + parser.getToken());
 			}
 		}
 

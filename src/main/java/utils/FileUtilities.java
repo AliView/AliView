@@ -1,5 +1,6 @@
 package utils;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FileDialog;
@@ -7,12 +8,12 @@ import java.awt.Frame;
 import java.io.File;
 
 import javax.swing.JFileChooser;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import org.apache.log4j.Logger;
-
-
 
 public class FileUtilities {
 	private static final Logger logger = Logger.getLogger(FileUtilities.class);
@@ -87,7 +88,7 @@ public class FileUtilities {
 		File selectedFile = null;	
 
 		
-		if(OSNativeUtils.isRunningDefectJFilechooserJVM()) { // OSNativeUtils.isMac()
+		if(OSNativeUtils.isRunningDefectJFilechooserJVM()) {
 			// get Frame
 			Component root = SwingUtilities.getRoot(parentComponent);
 	        Frame parentFrame = null;
@@ -117,7 +118,15 @@ public class FileUtilities {
 			// Cannot set file in constructor, then only directory and not also filename is suggested in chooser
 				
 			JFileChooser fc = new JFileChooser();
-			//fc.setFileFilter(filter);
+			
+			// Additional field
+//			JTextField field = new JTextField("Hello, World");
+//			JPanel fcPanel = new JPanel();
+//			fcPanel.setLayout(new BorderLayout());
+//			fcPanel.add(fc, BorderLayout.CENTER);
+//			fcPanel.add(field, BorderLayout.SOUTH);
+			// end additional
+
 			fc.setSelectedFile(suggestedFile);
 			fc.setPreferredSize(new Dimension(preferedWidth, preferedHeight));
 

@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 
 import aliview.AminoAcid;
-import aliview.pane.CharPixelsContainer;
+import aliview.gui.pane.CharPixelsContainer;
 
 public class AACompColorT {
 	

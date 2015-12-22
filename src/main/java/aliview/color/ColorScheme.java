@@ -44,7 +44,7 @@ public interface ColorScheme {
 	
 	public Color getAminoAcidSelectionForegroundColor(AminoAcid acid, int xPos, Alignment alignment);
 	
-	public Color getAminiAcidConsensusBackgroundColor();
+	public Color getAminoAcidConsensusBackgroundColor();
 	
 	public Color[] getALLCompundColors();
 	

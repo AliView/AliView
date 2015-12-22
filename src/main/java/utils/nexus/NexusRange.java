@@ -24,7 +24,13 @@ public class NexusRange{
 	
 	@Override
 	public String toString() {
-		return range.toString() + "\\" + steps;
+		String retVal = "" + range.getMinimumInteger() + "-" + getMaximumInt();
+		
+		// if steps (other than 1) are defined then add it 
+		if(steps != 1){
+			retVal += "\\" + steps;
+		}
+		return retVal;
 	}
 
 	public int getMinimumInt() {
@@ -41,5 +47,10 @@ public class NexusRange{
 	
 	public int getPositionVal() {
 		return positionVal;
+	}
+	
+	public String debug() {
+		String debug = "range=" + range.toString() + "steps=" + steps + "posVal=" + positionVal;
+		return debug;
 	}
 }

@@ -334,9 +334,6 @@ public class GeneralSettingsPanel extends JPanel{
 		
 		Settings.putBooleanValue(Settings.getHideAskBeforeEditMode(), checkBoxHideAskBeforeEditMode.isSelected());
 		
-		
-		
-		
 		try {
 			Settings.getCustomFontSize().putIntValue(Integer.parseInt(txtFontSize.getText()));
 		} catch (NumberFormatException e) {
@@ -364,9 +361,6 @@ public class GeneralSettingsPanel extends JPanel{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
-		
 		
 		try {
 			Settings.getLargeFileIndexing().putIntValue(Integer.parseInt(txtLargeFileIndexingl.getText()));

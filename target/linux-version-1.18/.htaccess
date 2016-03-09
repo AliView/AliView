@@ -1,0 +1,4 @@
+Options All +Indexes
+ReadmeName install.readme.txt
+
+AddType application/x-sh .sh .run 

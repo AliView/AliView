@@ -10,7 +10,7 @@ copy_deploy
 
 upload to GitHub:
 // adding
-git add .
+git add --all
 // removing
 git add -u
 // commit local

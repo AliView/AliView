@@ -167,7 +167,7 @@ public class AlignmentPane extends JPanel{
 	public boolean getDrawCodonPosOnRuler() {
 		return this.drawCodonPosOnRuler;
 	}
-	
+
 	public void setShowCharsetRuler(boolean selected) {
 		charsetRuler.setVisible(selected);
 	}
@@ -826,31 +826,31 @@ public class AlignmentPane extends JPanel{
 			}
 		}
 
-//
-//		// Draw Excludes by manipulating pixelColor			
-//		if(! isShowTranslationOnePos()){
-//			// Two versions depending on if it is small chars or not
-//			if(charWidth < 1){
-//				for(int x = clip.x; x < clip.getMaxX() ; x++){
-//					int xPos =(int)((double)x * (1/(double)charWidth));
-//					if(alignment.isExcluded(xPos) == true){	
-//						logger.info("is excl");
-//						ImageUtils.darkerRGBArrayColumn(clipRGB, x);
-//					}
-//				}
-//			}else{
-//				for(int x = xMin; x < xMax ; x++){
-//					if(alignment.isExcluded(x) == true){
-//
-//						for(int col = x; col < charWidth; col++){
-//							logger.info("is excl");
-//							ImageUtils.darkerRGBArrayColumn(clipRGB, col);
-//						}
-//
-//					}
-//				}
-//			}
-//		}
+		//
+		//		// Draw Excludes by manipulating pixelColor			
+		//		if(! isShowTranslationOnePos()){
+		//			// Two versions depending on if it is small chars or not
+		//			if(charWidth < 1){
+		//				for(int x = clip.x; x < clip.getMaxX() ; x++){
+		//					int xPos =(int)((double)x * (1/(double)charWidth));
+		//					if(alignment.isExcluded(xPos) == true){	
+		//						logger.info("is excl");
+		//						ImageUtils.darkerRGBArrayColumn(clipRGB, x);
+		//					}
+		//				}
+		//			}else{
+		//				for(int x = xMin; x < xMax ; x++){
+		//					if(alignment.isExcluded(x) == true){
+		//
+		//						for(int col = x; col < charWidth; col++){
+		//							logger.info("is excl");
+		//							ImageUtils.darkerRGBArrayColumn(clipRGB, col);
+		//						}
+		//
+		//					}
+		//				}
+		//			}
+		//		}
 
 
 		// Now draw the pixels onto the image
@@ -887,9 +887,9 @@ public class AlignmentPane extends JPanel{
 			}
 		}
 
-		
+
 		// Draw excludes	
-		if(! isShowTranslationOnePos()){
+		if(isShowTranslationOnePos()){
 
 			// calculate height for excludes (this is to avoid drawing below alignment if alignment is not filling panel)
 			int drawExcludesHeight = (int) Math.min(this.getVisibleRect().getHeight(), alignment.getSize()  * charHeight);
@@ -913,9 +913,36 @@ public class AlignmentPane extends JPanel{
 				}
 			}
 		}
-		
+		else{
+			// calculate height for excludes (this is to avoid drawing below alignment if alignment is not filling panel)
+			int drawExcludesHeight = (int) Math.min(this.getVisibleRect().getHeight(), alignment.getSize()  * charHeight);
+
+			// Two versions depending on if it is small chars or not
+			if(charWidth < 1){
+				for(int x = clip.x; x < clip.getMaxX() ; x++){
+					int xPos =(int)((double)x * (1/(double)charWidth));
+					
+					
+					if(alignment.isExcluded(xPos) == true){
+						g2d.setColor(ColorScheme.GREY_TRANSPARENT);
+						g2d.fillRect(x, this.getVisibleRect().y, 1, drawExcludesHeight);
+						//				logger.info("drawExclude");
+					}
+				}
+			}else{
+				for(int x = xMin; x < xMax ; x++){
+					if(alignment.isExcluded(x) == true){
+						g2d.setColor(ColorScheme.GREY_TRANSPARENT);
+						g2d.fillRect((int)(x * charWidth), this.getVisibleRect().y, (int)charWidth, drawExcludesHeight);				
+					}
+				}
+			}
+
+
+		}
+
 		logger.info("done");
-		
+
 
 	}
 
@@ -979,10 +1006,10 @@ public class AlignmentPane extends JPanel{
 
 		// TODO maybe problem when calculating a 0-width rect - then it will give eg. xmin=34 xmax=35
 
-//				logger.info("rect.getMinX()" + rect.getMinX());
-//				logger.info("rect.getMaxX()" + rect.getMaxX());
-//				logger.info("rect.getMinX()/charWidth" + rect.getMinX()/charWidth);
-				
+		//				logger.info("rect.getMinX()" + rect.getMinX());
+		//				logger.info("rect.getMaxX()" + rect.getMaxX());
+		//				logger.info("rect.getMinX()/charWidth" + rect.getMinX()/charWidth);
+
 		int matrixMinX = (int) Math.floor(rect.getMinX()/charWidth); // always round down
 		int matrixMaxX = (int) Math.floor(rect.getMaxX()/charWidth); // always round up
 		int matrixMinY = (int) Math.floor(rect.getMinY()/charHeight); // always round down
@@ -993,14 +1020,14 @@ public class AlignmentPane extends JPanel{
 		matrixMaxX = Math.max(0, matrixMaxX);
 		matrixMinY = Math.max(0, matrixMinY);
 		matrixMaxY = Math.max(0, matrixMaxY);
-//
-//				logger.info("matrixMinX" + matrixMinX);
-//				logger.info("matrixMaxX" + matrixMaxX);
-	//	     	logger.info(getMatrixTopOffset());
-				
+		//
+		//				logger.info("matrixMinX" + matrixMinX);
+		//				logger.info("matrixMaxX" + matrixMaxX);
+		//	     	logger.info(getMatrixTopOffset());
+
 
 		Rectangle converted = new Rectangle(matrixMinX, matrixMinY, matrixMaxX - matrixMinX, matrixMaxY - matrixMinY); 
-//		logger.info("converted" + converted);
+		//		logger.info("converted" + converted);
 		return converted;
 	}
 
@@ -1159,7 +1186,7 @@ public class AlignmentPane extends JPanel{
 	public JComponent getRulerComponent(){
 		return this.alignmentRuler;
 	}
-	
+
 	public JComponent getCharsetRulerComponent(){
 		return this.charsetRuler;
 	}
@@ -1197,7 +1224,7 @@ public class AlignmentPane extends JPanel{
 		logger.info("ulPanePos" + ulPanePos);
 		logger.info("currentVisibleRect " + this.getVisibleRect());
 		logger.info("Scroll to rect" + rect);
-		
+
 		// TODO Maye make this better working
 		// As a workaround first setLocation(0,0)
 		// then scrollRectToVisible is working OK
@@ -1218,7 +1245,7 @@ public class AlignmentPane extends JPanel{
 	public void setIgnoreGapInTranslation(boolean ignoreGapInTranslation) {
 		this.ignoreGapInTranslation = ignoreGapInTranslation;
 	}
-	
+
 	public void setFontCase(int fontCase){
 		this.fontCase = fontCase;
 		createCharPixelsContainers();
@@ -1603,13 +1630,13 @@ public class AlignmentPane extends JPanel{
 		}
 
 	} // end Ruler class
-	
-	
+
+
 	private class CharsetRuler extends JPanel{
 
 		private AlignmentPane alignmentPane;
 		private Color[] charsetColors = new Color[]{new Color(107,215,204), new Color(239,189,93), new Color(215,127,163),new Color(210,213,102), new Color(127,107,215),new Color(203,241,136)};
-		
+
 		public CharsetRuler(AlignmentPane alignmentPane) {
 			this.alignmentPane = alignmentPane;
 			// Add this component to ToolTipManager
@@ -1618,11 +1645,11 @@ public class AlignmentPane extends JPanel{
 
 		public void paintComponent(Graphics g){
 			super.paintComponent(g);
-			if(isVisible()){
+			if(isVisible() && !isShowTranslationOnePos()){
 				paintCharsetRuler(g);
 			}
 		}
-		
+
 		@Override
 		public Dimension getPreferredSize(){
 			logger.info("get pref size");
@@ -1634,16 +1661,16 @@ public class AlignmentPane extends JPanel{
 				return new Dimension(superSize.width, preferredHeight);
 			}	
 		}
-		
+
 		private int calculatePreferredHeight(){
 			// loop through all charsets and see how many overlaps
-			
+
 			int maxCharsetOverlapCount = alignment.getAlignmentMeta().getCharsets().getMaxOverlapCount();
 			int preferredHeight = CHARSET_LINE_HEIGHT * (maxCharsetOverlapCount + 1); // 1 overlap means t
-			
+
 			return preferredHeight;	
 		}
-			
+
 
 		public void paintCharsetRuler(Graphics g){
 
@@ -1659,17 +1686,17 @@ public class AlignmentPane extends JPanel{
 			Rectangle rulerRect = new Rectangle(this.getVisibleRect());
 			g2d.setColor(colorSchemeNucleotide.getBaseBackgroundColor(NucleotideUtilities.GAP));
 			g2d.fill(rulerRect);
-			
+
 			int offsetDueToScrollPanePosition = paneClip.x;
 
 			CharSets charsets = alignment.getAlignmentMeta().getCharsets();
-			
+
 			int maxCharsetOverlapCount = charsets.getMaxOverlapCount();
 			logger.info("maxCharsetOverlapCount" + maxCharsetOverlapCount); 
-			
+
 			int maxX = Math.min(alignment.getMaxX(), (int) matrixClip.getMaxX());
 			int minX = (int) matrixClip.getMinX();
-			
+
 			int colorIndex = 0;
 			int charsetIndex = 0;
 			for(CharSet charSet: charsets){
@@ -1679,21 +1706,21 @@ public class AlignmentPane extends JPanel{
 					int lineHeight = CHARSET_LINE_HEIGHT;
 					int charsetLineYPos = (charsetIndex % (maxCharsetOverlapCount + 1)) * lineHeight;
 					logger.info("charsetLineYPos" + charsetLineYPos);
-					
+
 					int charSetMinX = charSet.getMinimumStartPos();
 					int charSetMaxX = charSet.getMaximumEndPos();
-					
+
 					Point charSetMinXPanePos = alignmentPane.matrixCoordToPaneCoord(new Point(charSetMinX, 0));
 					Point charSetMaxXPanePos = alignmentPane.matrixCoordToPaneCoord(new Point(charSetMaxX, 0));
-					
+
 					int width = charSetMaxXPanePos.x - charSetMinXPanePos.x + (int)(1*charWidth); // + 1 because if start and end is same should be one pixel
-					
+
 					// we are drawing not on a large scrollable ruler, but a window sized fixed pane we have to adjust with offsetDueToScrollPanePosition
 					Rectangle charsetRect = new Rectangle(charSetMinXPanePos.x - offsetDueToScrollPanePosition, charsetLineYPos, width, lineHeight);	
 
 					Color charsetColor = charsetColors[colorIndex % charsetColors.length];
 					g2d.setColor(charsetColor);
-					
+
 					g2d.fill(charsetRect);
 				}
 				charsetIndex ++;
@@ -1703,23 +1730,23 @@ public class AlignmentPane extends JPanel{
 			long endTime = System.currentTimeMillis();
 			logger.info("CharsetRuler PaintComponent took " + (endTime - startTime) + " milliseconds");
 		}
-		
+
 
 		private int roundToClosestUpper(int inval, int roundTo) {
 			// int rounded = ((num + 99) / 100 ) * 100;
 			int rounded = ((inval + roundTo -1) / roundTo ) * roundTo;
 			return rounded;
 		}
-		
+
 		@Override
 		public String getToolTipText(MouseEvent event) {
 			logger.info("ToolTipLoc:" + event.getPoint());
-			
+
 			Rectangle paneClip = alignmentPane.getVisibleRect();
 			int offsetDueToScrollPanePosition = paneClip.x;
 			int xPosPane = offsetDueToScrollPanePosition + event.getPoint().x;
 			Point posMatrix = paneCoordToMatrixCoord(new Point(xPosPane,0));
-			
+
 			String toolTip = "<html>";	
 			CharSets charsets = alignment.getAlignmentMeta().getCharsets();
 			for(CharSet charSet: charsets){
@@ -1728,7 +1755,7 @@ public class AlignmentPane extends JPanel{
 				}
 			}			
 			toolTip += "</html>";
-			
+
 			return toolTip;		
 		}
 

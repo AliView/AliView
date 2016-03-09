@@ -1,6 +1,10 @@
 package utils;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Authenticator;
@@ -11,6 +15,7 @@ import java.net.URLConnection;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+
 import org.apache.log4j.Logger;
 //import org.apache.commons.codec.binary.Base64;
 
@@ -164,6 +169,7 @@ public class WebUtilities {
 		String pageAsString = IOUtils.toString(is, "UTF-8");
 
 	}
+	
 	
 	static class MyAuthenticator extends Authenticator {
 		

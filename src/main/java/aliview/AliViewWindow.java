@@ -605,6 +605,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		//  Create Menubar Toolbar and Popupmenu
 		//
 		aliViewMenuBar = menuBarFactory.create(this);
+		logger.info("done create menubar");
 		this.setJMenuBar(aliViewMenuBar);
 		aliViewMenuBar.disableAllButEssentialButtons();
 		Settings.addSettingsListener(aliViewMenuBar);
@@ -2371,14 +2372,14 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 	}
 
 	public void sortSequencesByName() {
-		aliViewWindow.getUndoControler().pushUndoState(new UndoSavedStateSequenceOrder(alignment.getSequences().getBackendSequencesCopy(), alignment.getAlignentMetaCopy()));
+		aliViewWindow.getUndoControler().pushUndoState(new UndoSavedStateSequenceOrder(alignment.getSequences().getDelegateSequencesCopy(), alignment.getAlignentMetaCopy()));
 		alignment.sortSequencesByName();
 		alignmentPane.validateSequenceOrder();
 		//requestPaneAndListRepaint();
 	}
 
 	public void sortSequencesByCharColumn() {
-		aliViewWindow.getUndoControler().pushUndoState(new UndoSavedStateSequenceOrder(alignment.getSequences().getBackendSequencesCopy(), alignment.getAlignentMetaCopy()));
+		aliViewWindow.getUndoControler().pushUndoState(new UndoSavedStateSequenceOrder(alignment.getSequences().getDelegateSequencesCopy(), alignment.getAlignentMetaCopy()));
 		alignment.sortSequencesByCharInSelectedColumn();
 		alignmentPane.validateSequenceOrder();
 		//requestPaneAndListRepaint();
@@ -2403,21 +2404,21 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 	}
 
 	public void moveSelectedToBottom() {
-		aliViewWindow.getUndoControler().pushUndoState(new UndoSavedStateSequenceOrder(alignment.getSequences().getBackendSequencesCopy(), alignment.getAlignentMetaCopy()));
+		aliViewWindow.getUndoControler().pushUndoState(new UndoSavedStateSequenceOrder(alignment.getSequences().getDelegateSequencesCopy(), alignment.getAlignentMetaCopy()));
 		alignment.moveSelectedSequencesToBottom();
 		//requestPaneAndListRepaint();
 		//alignmentPane.validateSize();
 	}
 
 	public void moveSelectedToTop() {
-		aliViewWindow.getUndoControler().pushUndoState(new UndoSavedStateSequenceOrder(alignment.getSequences().getBackendSequencesCopy(), alignment.getAlignentMetaCopy()));
+		aliViewWindow.getUndoControler().pushUndoState(new UndoSavedStateSequenceOrder(alignment.getSequences().getDelegateSequencesCopy(), alignment.getAlignentMetaCopy()));
 		alignment.moveSelectedSequencesToTop();
 		//requestPaneAndListRepaint();
 		//alignmentPane.validateSize();
 	}
 
 	public void moveSelectedDown() {
-		aliViewWindow.getUndoControler().pushUndoState(new UndoSavedStateSequenceOrder(alignment.getSequences().getBackendSequencesCopy(), alignment.getAlignentMetaCopy()));
+		aliViewWindow.getUndoControler().pushUndoState(new UndoSavedStateSequenceOrder(alignment.getSequences().getDelegateSequencesCopy(), alignment.getAlignentMetaCopy()));
 		alignment.moveSelectedSequencesDown();
 		requestScrollToVisibleSelection();
 		//alignmentPane.validateSize();
@@ -2426,14 +2427,14 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 
 	public void moveSelectedUp() {
 		logger.info("move sel up");
-		aliViewWindow.getUndoControler().pushUndoState(new UndoSavedStateSequenceOrder(alignment.getSequences().getBackendSequencesCopy(), alignment.getAlignentMetaCopy()));
+		aliViewWindow.getUndoControler().pushUndoState(new UndoSavedStateSequenceOrder(alignment.getSequences().getDelegateSequencesCopy(), alignment.getAlignentMetaCopy()));
 		alignment.moveSelectedSequencesUp();
 		requestScrollToVisibleSelection();
 		//alignmentPane.validateSize();
 	}
 	
 	public void moveSelectedTo(int index) {
-		aliViewWindow.getUndoControler().pushUndoState(new UndoSavedStateSequenceOrder(alignment.getSequences().getBackendSequencesCopy(), alignment.getAlignentMetaCopy()));
+		aliViewWindow.getUndoControler().pushUndoState(new UndoSavedStateSequenceOrder(alignment.getSequences().getDelegateSequencesCopy(), alignment.getAlignentMetaCopy()));
 		alignment.moveSelectedSequencesTo(index);
 		requestScrollToVisibleSelection();	
 	}
@@ -2465,7 +2466,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 
 		if(alignment.hasFullySelectedSequences()){
 			if(isUndoable()){
-				aliViewWindow.getUndoControler().pushUndoState(new UndoSavedStateSequenceOrder(alignment.getSequences().getBackendSequencesCopy(), alignment.getAlignentMetaCopy()));
+				aliViewWindow.getUndoControler().pushUndoState(new UndoSavedStateSequenceOrder(alignment.getSequences().getDelegateSequencesCopy(), alignment.getAlignentMetaCopy()));
 			}
 			alignment.deleteFullySelectedSequences();
 		}
@@ -2752,6 +2753,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 			return;
 		}
 		List<Sequence> prevState = alignment.insertGapLeftOfSelectionMoveRight(isUndoable());
+		logger.debug("prevState" + prevState);
 		if(isUndoable()){
 			aliViewWindow.getUndoControler().pushUndoState(new UndoSavedStateEditedSequences(prevState, alignment.getAlignentMetaCopy()));
 		}

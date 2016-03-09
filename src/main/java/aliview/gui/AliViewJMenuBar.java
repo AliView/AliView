@@ -111,6 +111,8 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 		super();
 		aliViewWindow = aliViewWin;
 
+		logger.debug("create menubar");
+		
 		JMenu mnFile = new JMenu("File");
 		mnFile.setMnemonic(KeyEvent.VK_F);
 		this.add(mnFile);
@@ -126,8 +128,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 		mntmNew.setAccelerator(OSNativeUtils.getNewFileAccelerator());
 		mnFile.add(mntmNew);
 		alwaysAvailableFunctions.add(mntmNew);
-
-
+		
 		JMenuItem mntmOpenFile = new JMenuItem("Open File");
 		mntmOpenFile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -138,6 +139,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 		mntmOpenFile.setAccelerator(OSNativeUtils.getOpenFileAccelerator());
 		mnFile.add(mntmOpenFile);
 		alwaysAvailableFunctions.add(mntmOpenFile);
+		
 
 		mnFile.add(new JSeparator());
 
@@ -179,6 +181,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 		mnFile.add(saveAlignmentAsFastaNebu);
 		loadedAlignmentFunctions.add(saveAlignmentAsFastaNebu);
 
+		
 
 		JMenuItem mntmSaveAlignmentAsNexus = new JMenuItem("Save as Nexus");
 		mntmSaveAlignmentAsNexus.addActionListener(new ActionListener() {

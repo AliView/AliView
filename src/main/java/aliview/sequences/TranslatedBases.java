@@ -24,15 +24,19 @@ public class TranslatedBases implements Bases{
 	private static final Logger logger = Logger.getLogger(TranslatedBases.class);
 	private static final String TEXT_FILE_BYTE_ENCODING = "ASCII";
 	private Bases delegate;
-	private Sequence sequence;
+	private Sequence parentSequence;
 
 	public TranslatedBases(Bases delegate, Sequence sequence) {
 		this.delegate = delegate;
-		this.sequence = sequence;
+		this.parentSequence = sequence;
 	}
 
 	public TranslatedBases getCopy(){
-		return new TranslatedBases(delegate.getCopy(), sequence);
+		
+		logger.debug("delegate.getLength()" + delegate.getLength());
+		logger.debug("delegate.getCopy().getLength()" + delegate.getCopy().getLength());
+		
+		return new TranslatedBases(delegate.getCopy(), parentSequence);
 	}
 
 	
@@ -219,11 +223,11 @@ public class TranslatedBases implements Bases{
 		
 		
 		private CodonPositions getCodonPositions() {
-			return sequence.getAlignmentModel().getAlignmentMeta().getCodonPositions();
+			return parentSequence.getAlignmentModel().getAlignmentMeta().getCodonPositions();
 		}
 		
 		private GeneticCode getGeneticCode() {
-			return sequence.getAlignmentModel().getAlignmentMeta().getGeneticCode();
+			return parentSequence.getAlignmentModel().getAlignmentMeta().getGeneticCode();
 		}
 		
 		private boolean isFullCodonStartingAt(int x){

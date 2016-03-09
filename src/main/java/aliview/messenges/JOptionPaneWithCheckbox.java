@@ -4,6 +4,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
 
 
 /*Provides a confirm dialog with a checkbox*/
@@ -28,6 +29,8 @@ or: boolean dontAsk = dontAskBox.isSelected();
 	}
 
 	public JOptionPaneWithCheckbox(JCheckBox cbx, String text, int messageType) {
+		// TODO change into JTextArea without border and editable - to make text selectable
+		//super(new Object[]{new JTextArea(text)," ", cbx}, messageType);
 		super(new Object[]{text," ", cbx}, messageType);
 	}
 

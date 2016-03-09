@@ -495,7 +495,6 @@ public class AliView implements ApplicationListener{
 		try{
 			// if it is empty load file in old window - otherwise create new window
 			logger.info("activeWindow=" + activeWindow);
-			logger.info("activeWindow.isEmpty()" + activeWindow.isEmpty());
 
 			if(hasNonEmptyWindows()){
 				if(souldBreakBecauseOfLowMemory(alignmentFile)){
@@ -588,13 +587,14 @@ public class AliView implements ApplicationListener{
 			newWin.toFront();
 
 		}catch(Exception e) {
-			e.printStackTrace();
+			logger.error(e, e);
 		}catch(OutOfMemoryError memoryErr){
+			logger.error(memoryErr, memoryErr);
 			logger.info("memory err");
 			//	memoryErr.printStackTrace();
 			Messenger.showOKOnlyMessage(Messenger.OUT_OF_MEMORY_ERROR, activeWindow);
 		}catch(Error err){
-			err.printStackTrace();
+			logger.error(err, err);
 		}
 
 	}

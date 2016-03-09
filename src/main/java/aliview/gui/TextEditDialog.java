@@ -34,13 +34,17 @@ public class TextEditDialog {
 		dialog.setModalityType(ModalityType.DOCUMENT_MODAL);
 		
 		textEdit = new JTextField(editString);
-		textEdit.setEditable(true);
+		textEdit.setEditable(true);		
+		textEdit.setMaximumSize(new Dimension(800,30));
+		textEdit.setPreferredSize(new Dimension(350,30));
 		
-		JPanel testPanel = new JPanel();
-		testPanel.setPreferredSize(new Dimension(350,10));
-		testPanel.add(textEdit);
+		JPanel messagePanel = new JPanel();
+//		testPanel.setPreferredSize(new Dimension(350,10));
+//		testPanel.setMaximumSize(new Dimension(350,10));
+//		testPanel.add(textEdit);
 		
-		Object[] messageAndEditor = new Object[]{testPanel,textEdit};
+		Object[] messageAndEditor = new Object[]{messagePanel,textEdit};
+		//Object[] messageAndEditor = new Object[]{textEdit};
 		
 		JOptionPane optPane = new JOptionPane(messageAndEditor,JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
 		optPane.addPropertyChangeListener(new PropertyChangeListener()

@@ -50,7 +50,7 @@ public class BasicSequence implements Sequence, Comparable<Sequence> {
 	public BasicSequence(BasicSequence template) {
 		this.name = template.name;
 		this.id = template.id;
-		this.bases = template.getBases().getCopy();
+		this.bases = template.getNonTranslatedBases().getCopy();
 		this.alignmentModel = template.alignmentModel;
 		this.selectionModel = createNewSelectionModel();
 	}

@@ -188,6 +188,7 @@ public class AlignmentSelectionModel{
 		for(Sequence seq: sequences){
 			
 			if(toSelect.contains(seq)){
+				logger.debug("select" + seq);
 				seq.selectAllBases();
 			}
 			else if(clearFirst){

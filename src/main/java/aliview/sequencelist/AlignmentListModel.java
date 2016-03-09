@@ -302,15 +302,15 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 	}
 	
 	public void addAll(AlignmentListModel otherSeqModel, boolean setSelected) {
-		addAll(otherSeqModel.getBackendSequencesCopy(), setSelected);
+		addAll(otherSeqModel.getDelegateSequencesCopy(), setSelected);
 	}
 	
 	public void addAll(int index, AlignmentListModel otherSeqModel) {
-		for(Sequence seq: otherSeqModel.getBackendSequencesCopy()){
+		for(Sequence seq: otherSeqModel.getDelegateSequencesCopy()){
 			seq.setAlignmentModel(this);
 		}
-		delegateSequences.addAll(index, otherSeqModel.getBackendSequencesCopy());
-		fireSequenceIntervalAdded(index, index + otherSeqModel.getBackendSequencesCopy().size());
+		delegateSequences.addAll(index, otherSeqModel.getDelegateSequencesCopy());
+		fireSequenceIntervalAdded(index, index + otherSeqModel.getDelegateSequencesCopy().size());
 	}
 	
 	public void addAll(List<Sequence> moreSeqs, boolean setSelected) {
@@ -327,7 +327,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 	}
 	
 	
-	public List<Sequence> getBackendSequencesCopy(){
+	public List<Sequence> getDelegateSequencesCopy(){
 		return new ArrayList<Sequence>(delegateSequences);
 	}
 	
@@ -695,11 +695,12 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		}
 	}
 	
-	public FindObject findAndSelectInAASequences(FindObject findObj){
+	public FindObject findAndSelectALLInAASequences(FindObject findObj){
 		String regex = findObj.getRegexSearchTerm();
 		
 		// Identical for AA and NUC search
 		Pattern pattern = Pattern.compile(regex,Pattern.CASE_INSENSITIVE);
+		findObj.setIsFound(false);
 		for(int n = findObj.getNextFindSeqNumber(); n < this.getSize(); n++){
 			Sequence seq = delegateSequences.get(n);
 			Interval foundPos = seq.find(pattern, findObj.getNextFindStartPos());
@@ -709,6 +710,9 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 				// make sure it is not out of index
 				findObj.setNextFindStartPos(Math.min(foundPos.getStartPos() + 1, getLongestSequenceLength() - 1));
 				findObj.setFoundPos(foundPos.getStartPos(),n);
+				findObj.setIsFound(true);
+				// without this one it will find all positions
+				//return findObj;
 			}
 			// not found in this seq - start again from 0
 			findObj.setNextFindStartPos(0);
@@ -716,7 +720,35 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		}
 		findObj.setNextFindSeqNumber(0);
 		findObj.setNextFindStartPos(0);
+		//findObj.setIsFound(false);
+		return findObj;
+	}
+	
+	public FindObject findAndSelectInAASequences(FindObject findObj){
+		String regex = findObj.getRegexSearchTerm();
+		
+		// Identical for AA and NUC search
+		Pattern pattern = Pattern.compile(regex,Pattern.CASE_INSENSITIVE);
 		findObj.setIsFound(false);
+		for(int n = findObj.getNextFindSeqNumber(); n < this.getSize(); n++){
+			Sequence seq = delegateSequences.get(n);
+			Interval foundPos = seq.find(pattern, findObj.getNextFindStartPos());
+			if(foundPos != null){
+				selectionModel.selectBases(seq, foundPos);
+				findObj.setNextFindSeqNumber(n);	
+				// make sure it is not out of index
+				findObj.setNextFindStartPos(Math.min(foundPos.getStartPos() + 1, getLongestSequenceLength() - 1));
+				findObj.setFoundPos(foundPos.getStartPos(),n);
+				findObj.setIsFound(true);
+				// without this one it will find all positions
+				return findObj;
+			}
+			// not found in this seq - start again from 0
+			findObj.setNextFindStartPos(0);
+
+		}
+		findObj.setNextFindSeqNumber(0);
+		findObj.setNextFindStartPos(0);
 		return findObj;
 	}
 
@@ -745,7 +777,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 				Pattern pattern = Pattern.compile(regex,Pattern.CASE_INSENSITIVE);
 				
 				logger.info("startpos = " + findObj.getNextFindStartPos());
-				
+				findObj.setIsFound(false);
 				for(int n = findObj.getNextFindSeqNumber(); n < this.getSize(); n++){
 					Sequence seq = delegateSequences.get(n);
 					Interval foundPos = seq.find(pattern, findObj.getNextFindStartPos());
@@ -756,6 +788,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 						findObj.setNextFindStartPos(Math.min(foundPos.getStartPos() + 1, getLongestSequenceLength() - 1));
 						findObj.setFoundPos(foundPos.getStartPos(),n);
 						findObj.setIsFound(true);
+						// without this one it will find all positions
 						return findObj;
 					}
 					// not found in this seq - start again from 0
@@ -765,8 +798,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 				logger.info("beforereset = " + findObj.getNextFindStartPos());
 				// nothing found reset everything
 				findObj.setNextFindSeqNumber(0);
-				findObj.setNextFindStartPos(0);
-				findObj.setIsFound(false);
+				findObj.setNextFindStartPos(0);	
 				return findObj;
 	}
 
@@ -839,7 +871,8 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		Rectangle selectionBounds = selectionModel.getSelectionBounds();
 		for(Sequence seq: selectedSeqs){
 			if(undoable){
-				editedSequences.add(seq.getCopy());
+				Sequence copy =  seq.getCopy();				
+				editedSequences.add(copy);
 			}
 			seq.insertGapLeftOfSelectedBase();
 		}
@@ -1060,7 +1093,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		// make sure this alignment is translated
 		setTranslation(true);
 		
-		for(Sequence templateSeq: templateSeqs.getBackendSequencesCopy()){
+		for(Sequence templateSeq: templateSeqs.getDelegateSequencesCopy()){
 			
 			// do partial name since it if being cut by some programs....
 			Sequence nucSeq =  this.getSequenceByName(templateSeq.getName());
@@ -1649,40 +1682,35 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 	
 	
 	public ArrayList<Sequence> findDuplicates(){
-		ArrayList<Sequence> uniqueSequences = new ArrayList<Sequence>();
-		ArrayList<Sequence> dupeSequences = new ArrayList<Sequence>();
+	
+		HashSet<Sequence> dupeSequences = new HashSet<Sequence>();
 		for(int n = 0; n < delegateSequences.size(); n++){
-			Sequence testSeq = getBackendSequencesCopy().get(n);
+			Sequence testSeq = delegateSequences.get(n);
 			
-			boolean isUnique = true;
+			boolean isDupe = false;
 			
-			for(int m = 0; m < uniqueSequences.size(); m++){
+			for(int m = n + 1; m < delegateSequences.size(); m++){
 				
-				Sequence anUniqe = uniqueSequences.get(m);
+				Sequence otherSeq = delegateSequences.get(m);
 				
-				if(testSeq.getLength() == anUniqe.getLength()){
-					if(SequenceUtils.isSeqResiduesIdentical(testSeq, anUniqe)){
-						isUnique = false;
-						break;
-					}else{
-						
+				if(testSeq.getLength() == otherSeq.getLength()){
+					if(SequenceUtils.isSeqResiduesIdentical(testSeq, otherSeq)){
+						// add the dupes (since it is a set they will only be added once
+						dupeSequences.add(testSeq);
+						dupeSequences.add(otherSeq);
 					}
 				}
 				else{
-					logger.info("wrong len");
+					logger.debug("wrong len");
 				}
 			}
 			
-			if(isUnique){
-				uniqueSequences.add(testSeq);
-			}else{
-				dupeSequences.add(testSeq);
-			}
+			
 			logger.info("dupeSequences.size()" + dupeSequences.size());
-			logger.info("uniqueSequences.size()" + uniqueSequences.size());
 			
 		}
-		return dupeSequences;
+		ArrayList<Sequence> dupeList = new ArrayList<Sequence>(dupeSequences);
+		return dupeList;
 	}
 
 	/*

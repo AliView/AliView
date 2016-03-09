@@ -2,6 +2,7 @@ package aliview.messenges;
 
 import java.awt.Component;
 import java.awt.Dialog.ModalityType;
+import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -176,6 +177,8 @@ public class Messenger {
 		// OBS DO NOT MODAL - Then there is problem in MAC when executed from error thread
 		dialog.setModal(true);
 		dialog.setAlwaysOnTop(true);
+
+		
 		JCheckBox cbx = new JCheckBox("Don't show this message again (can be undone in Preferences)");
 		cbx.setSelected(cbxSelected);
 		cbx.setFocusPainted(false);
@@ -201,7 +204,12 @@ public class Messenger {
 		   });
 		
 		dialog.setContentPane(optPane);
+		// TODO make sure dialogs does not become larger than screen size
+		dialog.setMaximumSize(new Dimension(800,600));
+		dialog.setPreferredSize(new Dimension(800,600));
+		
 		dialog.pack();
+		logger.debug("dialog.getPreferredSize()" + dialog.getPreferredSize());
 		dialog.setLocationRelativeTo(aliViewWindow);
 		dialog.setVisible(true);
 		

@@ -14,7 +14,7 @@ git add .
 // removing
 git add -u
 // commit local
-git commit -m "version 1.13"
+git commit -m "version 1.xx"
 git push AliView master
 username: AliView
 

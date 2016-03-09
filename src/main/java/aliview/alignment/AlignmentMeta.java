@@ -19,6 +19,7 @@ public class AlignmentMeta {
 	private CodonPositions codonPositions;
 	private CharSets charsets;
 	private GeneticCode geneticCode;
+	private boolean isTranslated;
 
 	
 	public AlignmentMeta(){
@@ -83,7 +84,17 @@ public class AlignmentMeta {
 
 
 	public boolean isExcluded(int x) {
-		return this.excludes.isExcluded(x);
+		boolean isExcluded = false;
+		if(isTranslated){
+			CodonPos codonPos = codonPositions.getCodonInTranslatedPos(x);
+			boolean isStartExcluded = this.excludes.isExcluded(codonPos.startPos);
+			boolean isEndExcluded = this.excludes.isExcluded(codonPos.endPos);
+			isExcluded = (isStartExcluded || isEndExcluded);
+		}
+		else{
+			isExcluded = this.excludes.isExcluded(x);
+		}
+		return isExcluded;
 	}
 
 
@@ -194,25 +205,11 @@ public class AlignmentMeta {
 		this.charsets = charsets;
 	}
 
-	/*
-	public boolean verifyLength(int len){
-		boolean chandged = false;
-		if(excludes != null){
-			if(excludes.getLength() != len){
-//				excludes.insertPosition(excludes.getLength());
-			}
+	public void setTranslation(boolean shouldTrans) {
+		if(shouldTrans != isTranslated){
+			isTranslated = shouldTrans;
 		}
-		if(codonPositions != null){
-			if(codonPositions.getLength() != len){
-				//codonPositions.insertPosition(codonPositions.getLength());
-				codonPositions.resize(len);
-				chandged = true;
-			}
-		}
-		
-		return chandged;
 	}
-	*/
 
 
 }

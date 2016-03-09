@@ -701,38 +701,38 @@ public class Alignment implements FileSequenceLoadListener {
 
 	// TODO this might get wrong if translating sequence and sequence order in alignment not is same, or sequence 
 	// has x offset in alignment
-	private AlignmentMeta getTranslatedMeta(){	
-		CharSets charsetsTrans = new CharSets();
-		Excludes excludesTrans = new Excludes();
-		AlignmentMeta metaTrans = new AlignmentMeta(excludesTrans,null,charsetsTrans,alignmentMeta.getGeneticCode());
-		
-		// This is the translation of the Charsets
-		for(CharSet charset: alignmentMeta.getCharsets()){
-			ArrayList<NexusRange> nexusRanges = charset.getAsContinousNexusRanges();
-			if(nexusRanges != null){
-				logger.info("rangesSize" + nexusRanges.size());
-				
-				CharSet translatedSet = new CharSet(charset.getName());
-				for(NexusRange range: nexusRanges){	
-					NexusRange translatedRange = new NexusRange(alignmentMeta.getCodonPositions().getAminoAcidPosFromNucleotidePos(range.getMinimumInt()) + 1, // +1 för Nexus ranges börjar på 1
-							                                         alignmentMeta.getCodonPositions().getAminoAcidPosFromNucleotidePos(range.getMaximumInt()) + 1, // +1 för Nexus ranges börjar på 1
-							                                           range.getPositionVal(), range.getSteps()); 
-					logger.info(translatedRange);
-					translatedSet.addNexusRange(translatedRange);
-				}
-				charsetsTrans.add(translatedSet);
-			}
-		}
-		
-		// This is the translaiton of the excludes
-		for(NexusRange range: alignmentMeta.getExcludes().getAsContinousNexusRanges()){
-			NexusRange translatedRange = new NexusRange(alignmentMeta.getCodonPositions().getAminoAcidPosFromNucleotidePos(range.getMinimumInt()),
-					                                         alignmentMeta.getCodonPositions().getAminoAcidPosFromNucleotidePos(range.getMaximumInt()),
-					                                         range.getPositionVal(), range.getSteps());
-			excludesTrans.addNexusRange(translatedRange);
-		}
-		return metaTrans;
-	}
+//	private AlignmentMeta getTranslatedMeta(){	
+//		CharSets charsetsTrans = new CharSets();
+//		Excludes excludesTrans = new Excludes();
+//		AlignmentMeta metaTrans = new AlignmentMeta(excludesTrans,null,charsetsTrans,alignmentMeta.getGeneticCode());
+//		
+//		// This is the translation of the Charsets
+//		for(CharSet charset: alignmentMeta.getCharsets()){
+//			ArrayList<NexusRange> nexusRanges = charset.getAsContinousNexusRanges();
+//			if(nexusRanges != null){
+//				logger.info("rangesSize" + nexusRanges.size());
+//				
+//				CharSet translatedSet = new CharSet(charset.getName());
+//				for(NexusRange range: nexusRanges){	
+//					NexusRange translatedRange = new NexusRange(alignmentMeta.getCodonPositions().getAminoAcidPosFromNucleotidePos(range.getMinimumInt()) + 1, // +1 för Nexus ranges börjar på 1
+//							                                         alignmentMeta.getCodonPositions().getAminoAcidPosFromNucleotidePos(range.getMaximumInt()) + 1, // +1 för Nexus ranges börjar på 1
+//							                                           range.getPositionVal(), range.getSteps()); 
+//					logger.info(translatedRange);
+//					translatedSet.addNexusRange(translatedRange);
+//				}
+//				charsetsTrans.add(translatedSet);
+//			}
+//		}
+//		
+//		// This is the translaiton of the excludes
+//		for(NexusRange range: alignmentMeta.getExcludes().getAsContinousNexusRanges()){
+//			NexusRange translatedRange = new NexusRange(alignmentMeta.getCodonPositions().getAminoAcidPosFromNucleotidePos(range.getMinimumInt()),
+//					                                         alignmentMeta.getCodonPositions().getAminoAcidPosFromNucleotidePos(range.getMaximumInt()),
+//					                                         range.getPositionVal(), range.getSteps());
+//			excludesTrans.addNexusRange(translatedRange);
+//		}
+//		return metaTrans;
+//	}
 		
 	
 	/*
@@ -1643,12 +1643,6 @@ public class Alignment implements FileSequenceLoadListener {
 		return sequences.getHistogram();
 	}
 
-	/*
-	private AliHistogram getTranslatedHistogram() {	
-		return sequences.getTranslatedHistogram(new AATranslator(getAlignentMeta().getCodonPositions(),getGeneticCode()));	
-	}
-	*/
-
 	public boolean hasSelection() {
 		return sequences.hasSelection();
 	}
@@ -1703,6 +1697,7 @@ public class Alignment implements FileSequenceLoadListener {
 	public void setTranslationOnePos(boolean showTranslationOnePos){
 		if(isNucleotideAlignment()){
 			sequences.setTranslation(showTranslationOnePos);
+			alignmentMeta.setTranslation(showTranslationOnePos);
 		}
 	}
 	

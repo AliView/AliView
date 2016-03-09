@@ -2,30 +2,34 @@ package aliview.gui;
 
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.net.URL;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
+import org.apache.log4j.Logger;
+
 import aliview.AliViewWindow;
 
 public class AppIcons {
+	private static final Logger logger = Logger.getLogger(AppIcons.class);
 	
-	public static ImageIcon clearIcon = new ImageIcon("http://openiconlibrary.sourceforge.net/gallery2/?./Icons/actions/edit-clear-2.png");
+	//public static ImageIcon clearIcon = new ImageIcon("http://openiconlibrary.sourceforge.net/gallery2/?./Icons/actions/edit-clear-2.png");
 
 	public static ImageIcon getClearIcon(){
-		return new ImageIcon(Toolkit.getDefaultToolkit().getImage(AliViewWindow.class.getResource("/img/appicons/16x16/edit-clear-2.png")));
+		return createIcon("/img/appicons/16x16/edit-clear-2.png");
 	}
 	
 	public static ImageIcon getNewIcon(){
-		return new ImageIcon(Toolkit.getDefaultToolkit().getImage(AliViewWindow.class.getResource("/img/appicons/16x16/new.png")));
+		return createIcon("/img/appicons/16x16/new.png");
 	}
 	
 	public static ImageIcon getQuitIcon(){
-		return new ImageIcon(Toolkit.getDefaultToolkit().getImage(AliViewWindow.class.getResource("/img/appicons/16x16/application-exit.png")));
+		return createIcon("/img/appicons/16x16/application-exit.png");
 	}
 	
 	public static ImageIcon getUndoIcon(){
-		return new ImageIcon(Toolkit.getDefaultToolkit().getImage(AliViewWindow.class.getResource("/img/appicons/16x16/edit-undo.png")));
+		return createIcon("/img/appicons/16x16/edit-undo.png");
 	}
 	
 	public static ImageIcon getGoTopIcon(){
@@ -47,7 +51,6 @@ public class AppIcons {
 	public static ImageIcon getColorsIcon() {
 		return createIcon("/img/appicons/16x16/stock_color.png");
 	}
-	
 	
 	
 	public static ImageIcon getHighlightConsIcon() {
@@ -84,8 +87,6 @@ public class AppIcons {
 	public static ImageIcon getDiffIconLG() {
 		return createIcon("/img/appicons/trace_28.png");
 	}
-	
-	
 	
 	public static ImageIcon getTransOnePosIcon() {
 		return createIcon("/img/appicons/transOnePos22x22.png");
@@ -129,28 +130,37 @@ public class AppIcons {
 	}
 	
 	public static ImageIcon getRedoIcon(){
-		return new ImageIcon(Toolkit.getDefaultToolkit().getImage(AliViewWindow.class.getResource("/img/appicons/16x16/edit-redo.png")));
+		return createIcon("/img/appicons/16x16/edit-redo.png");
 	}
 	
 	public static Image getProgramIconImage() {
-		return Toolkit.getDefaultToolkit().getImage(AliViewWindow.class.getResource("/img/alignment_ico_128x128.png"));
+		ImageIcon icon = createIcon("/img/alignment_ico_128x128.png");
+		logger.debug("icon" + icon);
+		return icon.getImage();
 	}
 
 
 	public static ImageIcon getAlignIcon(){
-		return new ImageIcon(Toolkit.getDefaultToolkit().getImage(AliViewWindow.class.getResource("/img/appicons/16x16/align_format-indent-less.png")));
+		return createIcon("/img/appicons/16x16/align_format-indent-less.png");
 	}
 
 	public static ImageIcon getMoveRightIcon() {
-		return new ImageIcon(Toolkit.getDefaultToolkit().getImage(AliViewWindow.class.getResource("/img/appicons/16x16/go-next.png")));	
+		return createIcon("/img/appicons/16x16/go-next.png");	
 	}
 	
 	public static ImageIcon getMoveLeftIcon() {
-		return new ImageIcon(Toolkit.getDefaultToolkit().getImage(AliViewWindow.class.getResource("/img/appicons/16x16/go-previous.png")));
+		return createIcon("/img/appicons/16x16/go-previous.png");
 	}
 	
 	private static ImageIcon createIcon(String fileName) {
-	    return new ImageIcon(Toolkit.getDefaultToolkit().getImage(AliViewWindow.class.getResource(fileName)));
+		
+		URL resource = AliViewWindow.class.getResource(fileName);
+		if(resource != null){
+			Image image = Toolkit.getDefaultToolkit().getImage(resource);
+			return new ImageIcon(image);
+		}else{
+			return new ImageIcon();
+		}
 	}
 
 

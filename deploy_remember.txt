@@ -21,3 +21,11 @@ username: AliView
 
 move old versions on webserver to /old 
 
+
+------ If there is a new beta version add to wikipage
+
+| latest preview version = 1.18 beta 8
+| latest preview date    = {{release date|2015|12|21|df=yes}}
+
+---------
+

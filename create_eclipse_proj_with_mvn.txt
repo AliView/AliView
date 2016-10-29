@@ -1,2 +1,0 @@
-# you need to use eclipse 2.6 version and not 2.7
-mvn org.apache.maven.plugins:maven-eclipse-plugin:2.6:eclipse -DdownloadSources=true -DdownloadJavadocs=true

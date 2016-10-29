@@ -179,6 +179,7 @@ public class CodonPositions{
 
 	public void setReadingFrame(int readingFrame) {
 		this.readingFrame = readingFrame;
+		positionsUpdated();
 	}
 
 	public int getReadingFrame() {

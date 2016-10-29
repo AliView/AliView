@@ -77,15 +77,22 @@ public class AliView implements ApplicationListener{
 
 		Logger.getRootLogger().setLevel(Level.ALL);
 		logAllLogs();
-
+		
+		
 		logger.info("version " + AliView.getVersion());
 		long time = AliView.getTime(AliView.class);
 		logger.info("version time " + new Date(time));
 
 		System.out.println("Time to here in ms = " + ( System.currentTimeMillis() - startTime));
 
+		// list all properties
 		Properties props = System.getProperties();
-		props.list(System.out);
+		Enumeration keys = props.keys();
+		while (keys.hasMoreElements()) {
+		  String key = (String)keys.nextElement();
+		  String value = (String)props.get(key);
+		  logger.debug(key + "=" + value);
+		}
 
 		try{
 

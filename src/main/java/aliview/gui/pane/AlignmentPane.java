@@ -774,7 +774,8 @@ public class AlignmentPane extends JPanel{
 
 			ExecutorService executor = Executors.newFixedThreadPool(nThreads);
 
-			int clipYPos = 0;			
+			int clipYPos = 0;
+			// Loop rows (The sequence painter is painting a row in its own thread)
 			for(int y = yMin; y < yMax; y = y + 1){
 
 				int seqYPos = y;
@@ -802,7 +803,8 @@ public class AlignmentPane extends JPanel{
 							SequencePainter seqPainter = new SequencePainterAminoAcidTranslated(seq, seqYPos, clipYPos, xPosStart, xPosEnd, normalCharSeqPerPix, charWidth, charHeight, highDPIScaleFactor, clipRGB, this, alignment);	
 							executor.execute(seqPainter);
 						}
-
+					
+					// Normal nucleotide
 					}else{
 						SequencePainter seqPainter = new SequencePainterNucleotide(seq, seqYPos, clipYPos, xPosStart, xPosEnd, normalCharSeqPerPix, charWidth, charHeight, highDPIScaleFactor, clipRGB, this, alignment);	
 						executor.execute(seqPainter);

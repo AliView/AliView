@@ -13,6 +13,7 @@ hs_err_*
 tmp/**/* 
 
 deployed
+target
 
 copy_deploy.sh
 copy_no_deploy.sh

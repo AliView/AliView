@@ -5,7 +5,7 @@ import java.awt.Color;
 import aliview.NucleotideUtilities;
 
 
-public class DefaultColorSchemeFast extends AlignColorScheme {
+public class DefaultColorSchemeFast extends DefaultColorScheme {
 
 	public DefaultColorSchemeFast() {
 		super();

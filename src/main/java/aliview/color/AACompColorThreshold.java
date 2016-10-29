@@ -6,15 +6,15 @@ import java.util.ArrayList;
 import aliview.AminoAcid;
 import aliview.gui.pane.CharPixelsContainer;
 
-public class AACompColorT {
+public class AACompColorThreshold {
 	
 	public AminoAcid[] residues;
-	public ColorT[] thresholds;
+	public ColorThreshold[] thresholds;
 	public int intVal;
 	public Color color;
 	
 
-	public AACompColorT(String residueString, Color color, ColorT[] threasholds) {
+	public AACompColorThreshold(String residueString, Color color, ColorThreshold[] threasholds) {
 		String[] splitted = residueString.split(",");
 		residues = new AminoAcid[splitted.length];
 		for(int n = 0; n<splitted.length; n++){

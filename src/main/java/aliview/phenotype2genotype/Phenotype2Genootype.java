@@ -1,9 +1,9 @@
-package aliview.genotype2phenotype;
+package aliview.phenotype2genotype;
 
 import java.io.File;
 import java.io.IOException;
 
-public class Genotype2Phenotype {
+public class Phenotype2Genootype {
 	
 	File inputFile;
 	File outFile;

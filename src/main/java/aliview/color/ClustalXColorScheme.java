@@ -39,64 +39,64 @@ public class ClustalXColorScheme extends DefaultColorScheme{
 		super();
 	}
 	
-	private static ColorT percent = new ColorT("WLVIMAFCHP",0.6);
-	private static ColorT number = new ColorT("WLVIMAFCHP",0.8);
-	private static ColorT minus = new ColorT("ED",0.5);
-	private static ColorT plus = new ColorT("KR",0.6);
-	private static ColorT g = new ColorT("G",0.5);
-	private static ColorT n = new ColorT("N",0.5);
-	private static ColorT q = new ColorT("QE",0.5);
-	private static ColorT p = new ColorT("P",0.5);
-	private static ColorT t = new ColorT("TS",0.5);
-	private static ColorT A = new ColorT("A",0.85);
-	private static ColorT C = new ColorT("C",0.85);
-	private static ColorT D = new ColorT("D",0.85);
-	private static ColorT E = new ColorT("E",0.85);
-	private static ColorT F = new ColorT("F",0.85);
-	private static ColorT G = new ColorT("G",0.85);
-	private static ColorT H = new ColorT("H",0.85);
-	private static ColorT I = new ColorT("I",0.85);
-	private static ColorT K = new ColorT("K",0.85);
-	private static ColorT L = new ColorT("L",0.85);
-	private static ColorT M = new ColorT("M",0.85);
-	private static ColorT N = new ColorT("N",0.85);
-	private static ColorT P = new ColorT("P",0.85);
-	private static ColorT Q = new ColorT("Q",0.85);
-	private static ColorT R = new ColorT("R",0.85);
-	private static ColorT S = new ColorT("S",0.85);
-	private static ColorT T = new ColorT("T",0.85);
-	private static ColorT V = new ColorT("V",0.85);
-	private static ColorT W = new ColorT("W",0.85);
-	private static ColorT Y = new ColorT("Y",0.85);
-	private static ColorT ALWAYS_G = new ColorT("G",0.0);
-	private static ColorT ALWAYS_P = new ColorT("P",0.0);
+	private static ColorThreshold percent = new ColorThreshold("WLVIMAFCHP",0.6);
+	private static ColorThreshold number = new ColorThreshold("WLVIMAFCHP",0.8);
+	private static ColorThreshold minus = new ColorThreshold("ED",0.5);
+	private static ColorThreshold plus = new ColorThreshold("KR",0.6);
+	private static ColorThreshold g = new ColorThreshold("G",0.5);
+	private static ColorThreshold n = new ColorThreshold("N",0.5);
+	private static ColorThreshold q = new ColorThreshold("QE",0.5);
+	private static ColorThreshold p = new ColorThreshold("P",0.5);
+	private static ColorThreshold t = new ColorThreshold("TS",0.5);
+	private static ColorThreshold A = new ColorThreshold("A",0.85);
+	private static ColorThreshold C = new ColorThreshold("C",0.85);
+	private static ColorThreshold D = new ColorThreshold("D",0.85);
+	private static ColorThreshold E = new ColorThreshold("E",0.85);
+	private static ColorThreshold F = new ColorThreshold("F",0.85);
+	private static ColorThreshold G = new ColorThreshold("G",0.85);
+	private static ColorThreshold H = new ColorThreshold("H",0.85);
+	private static ColorThreshold I = new ColorThreshold("I",0.85);
+	private static ColorThreshold K = new ColorThreshold("K",0.85);
+	private static ColorThreshold L = new ColorThreshold("L",0.85);
+	private static ColorThreshold M = new ColorThreshold("M",0.85);
+	private static ColorThreshold N = new ColorThreshold("N",0.85);
+	private static ColorThreshold P = new ColorThreshold("P",0.85);
+	private static ColorThreshold Q = new ColorThreshold("Q",0.85);
+	private static ColorThreshold R = new ColorThreshold("R",0.85);
+	private static ColorThreshold S = new ColorThreshold("S",0.85);
+	private static ColorThreshold T = new ColorThreshold("T",0.85);
+	private static ColorThreshold V = new ColorThreshold("V",0.85);
+	private static ColorThreshold W = new ColorThreshold("W",0.85);
+	private static ColorThreshold Y = new ColorThreshold("Y",0.85);
+	private static ColorThreshold ALWAYS_G = new ColorThreshold("G",0.0);
+	private static ColorThreshold ALWAYS_P = new ColorThreshold("P",0.0);
 
   Color[] ALL_COMPOUND_COLORS = new Color[]{
 		  CLUSTAL_RED, CLUSTAL_BLUE, CLUSTAL_GREEN, CLUSTAL_ORANGE, CLUSTAL_CYAN, CLUSTAL_PINK, CLUSTAL_PINK, CLUSTAL_MAGENTA, CLUSTAL_YELLOW, COLOR_OTHER};
 	
-  AACompColorT[] ALL_COMPOUNDS = new AACompColorT[]{	
-	new AACompColorT("F,I,L,M,F,V,W", CLUSTAL_BLUE, new ColorT[]{percent,number,A,C,F,H,I,L,M,V,W,Y,P,p}),
-	new AACompColorT("K,R", CLUSTAL_RED, new ColorT[]{plus,K,R,Q}),
-	new AACompColorT("C", CLUSTAL_BLUE, new ColorT[]{percent,number,A,C,F,H,I,L,M,V,W,S,P,p}),
-	new AACompColorT("C", CLUSTAL_PINK, new ColorT[]{C}),
-	new AACompColorT("C", CLUSTAL_PINK, new ColorT[]{C}),
-	new AACompColorT("G", CLUSTAL_ORANGE, new ColorT[]{ALWAYS_G}),
-	new AACompColorT("P", CLUSTAL_YELLOW, new ColorT[]{ALWAYS_P}),
-	new AACompColorT("H,Y", CLUSTAL_CYAN, new ColorT[]{percent,number,A,C,F,H,I,L,M,V,W,Y,P,p}),
-	new AACompColorT("E", CLUSTAL_MAGENTA, new ColorT[]{minus,D,E,q,Q}),
-	new AACompColorT("D", CLUSTAL_MAGENTA, new ColorT[]{minus,D,E,n,N}),
-	new AACompColorT("A", CLUSTAL_BLUE, new ColorT[]{percent,number,A,C,F,H,I,L,M,V,W,Y,P,p,T,S,G}),
-	new AACompColorT("T", CLUSTAL_GREEN, new ColorT[]{percent,number,t,S,T}),
-	new AACompColorT("S", CLUSTAL_GREEN, new ColorT[]{number,t,S,T}),
-	new AACompColorT("N", CLUSTAL_GREEN, new ColorT[]{n,N,D}),
-	new AACompColorT("Q", CLUSTAL_GREEN, new ColorT[]{q,Q,E,plus,K,R}),
+  AACompColorThreshold[] ALL_COMPOUNDS = new AACompColorThreshold[]{	
+	new AACompColorThreshold("F,I,L,M,F,V,W", CLUSTAL_BLUE, new ColorThreshold[]{percent,number,A,C,F,H,I,L,M,V,W,Y,P,p}),
+	new AACompColorThreshold("K,R", CLUSTAL_RED, new ColorThreshold[]{plus,K,R,Q}),
+	new AACompColorThreshold("C", CLUSTAL_BLUE, new ColorThreshold[]{percent,number,A,C,F,H,I,L,M,V,W,S,P,p}),
+	new AACompColorThreshold("C", CLUSTAL_PINK, new ColorThreshold[]{C}),
+	new AACompColorThreshold("C", CLUSTAL_PINK, new ColorThreshold[]{C}),
+	new AACompColorThreshold("G", CLUSTAL_ORANGE, new ColorThreshold[]{ALWAYS_G}),
+	new AACompColorThreshold("P", CLUSTAL_YELLOW, new ColorThreshold[]{ALWAYS_P}),
+	new AACompColorThreshold("H,Y", CLUSTAL_CYAN, new ColorThreshold[]{percent,number,A,C,F,H,I,L,M,V,W,Y,P,p}),
+	new AACompColorThreshold("E", CLUSTAL_MAGENTA, new ColorThreshold[]{minus,D,E,q,Q}),
+	new AACompColorThreshold("D", CLUSTAL_MAGENTA, new ColorThreshold[]{minus,D,E,n,N}),
+	new AACompColorThreshold("A", CLUSTAL_BLUE, new ColorThreshold[]{percent,number,A,C,F,H,I,L,M,V,W,Y,P,p,T,S,G}),
+	new AACompColorThreshold("T", CLUSTAL_GREEN, new ColorThreshold[]{percent,number,t,S,T}),
+	new AACompColorThreshold("S", CLUSTAL_GREEN, new ColorThreshold[]{number,t,S,T}),
+	new AACompColorThreshold("N", CLUSTAL_GREEN, new ColorThreshold[]{n,N,D}),
+	new AACompColorThreshold("Q", CLUSTAL_GREEN, new ColorThreshold[]{q,Q,E,plus,K,R}),
 	};
 	
 	
-	public AACompColorT getCompIfResidueWithinThreshold(AminoAcid acid, int xPos, Alignment alignment){
-		ArrayList<AACompColorT> allComp = getCompoundThresholdsFromAcid(acid);
-		for(AACompColorT aComp: allComp){
-			for(ColorT tHold: aComp.thresholds){
+	private AACompColorThreshold getCompIfResidueWithinThreshold(AminoAcid acid, int xPos, Alignment alignment){
+		ArrayList<AACompColorThreshold> allComp = getCompoundThresholdsFromAcid(acid);
+		for(AACompColorThreshold aComp: allComp){
+			for(ColorThreshold tHold: aComp.thresholds){
 				if(tHold.threshold <= alignment.getHistogram().getProportionCount(xPos, tHold.acids)){
 					return aComp;
 				}
@@ -105,9 +105,9 @@ public class ClustalXColorScheme extends DefaultColorScheme{
 		return null;
 	}
 
-	private ArrayList<AACompColorT> getCompoundThresholdsFromAcid(AminoAcid acid){
-		ArrayList<AACompColorT> all = new ArrayList<AACompColorT>();
-		for(AACompColorT comp: ALL_COMPOUNDS){
+	private ArrayList<AACompColorThreshold> getCompoundThresholdsFromAcid(AminoAcid acid){
+		ArrayList<AACompColorThreshold> all = new ArrayList<AACompColorThreshold>();
+		for(AACompColorThreshold comp: ALL_COMPOUNDS){
 			for(AminoAcid residue: comp.residues){
 				if(residue == acid){
 					all.add(comp);
@@ -118,7 +118,7 @@ public class ClustalXColorScheme extends DefaultColorScheme{
 	}
 
 	public Color getAminoAcidBackgroundColor(AminoAcid acid, int xPos, Alignment alignment) {
-		AACompColorT compColorT = getCompIfResidueWithinThreshold(acid, xPos, alignment);
+		AACompColorThreshold compColorT = getCompIfResidueWithinThreshold(acid, xPos, alignment);
 		if(compColorT != null){
 			return compColorT.color;
 		}
@@ -132,7 +132,7 @@ public class ClustalXColorScheme extends DefaultColorScheme{
 	}
 
 	public Color getAminoAcidSelectionBackgroundColor(AminoAcid acid, int xPos, Alignment alignment) {
-		AACompColorT compColorT = getCompIfResidueWithinThreshold(acid, xPos, alignment);
+		AACompColorThreshold compColorT = getCompIfResidueWithinThreshold(acid, xPos, alignment);
 		if(compColorT != null){
 			return compColorT.color;
 		}

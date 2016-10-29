@@ -132,7 +132,6 @@ import aliview.color.ColorScheme;
 import aliview.exporter.ImageExporter;
 import aliview.externalcommands.CommandItem;
 import aliview.externalcommands.ExternalCommandExecutor;
-import aliview.genotype2phenotype.Genotype2Phenotype;
 import aliview.gui.AliToolBar;
 import aliview.gui.AliViewJMenuBar;
 import aliview.gui.AliViewJMenuBarFactory;
@@ -162,6 +161,7 @@ import aliview.importer.SequencesFactory;
 import aliview.messenges.Messenger;
 import aliview.old.ExternalCmdFrame;
 import aliview.old.MyScrollPane;
+import aliview.phenotype2genotype.Phenotype2Genootype;
 import aliview.primer.Primer;
 import aliview.primer.PrimerResultsFrame;
 import aliview.sequencelist.AlignmentDataEvent;
@@ -4337,7 +4337,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 
 
 
-	public void genotype2phenotype() {
+	public void phenotype2genotype() {
 		// As default get last used stored directory
 		String suggestedDir = Settings.getLoadAlignmentDirectory();
 		File suggestedFile = new File(suggestedDir);
@@ -4346,7 +4346,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 
 			try {
 				File fastaGenResultFile = new File(selectedFile.getParentFile(), selectedFile.getName() + "_genotype" + "." + FileFormat.FASTA.getSuffix());
-				Genotype2Phenotype gen2phen = new Genotype2Phenotype();
+				Phenotype2Genootype gen2phen = new Phenotype2Genootype();
 				gen2phen.createGenotypeFasta(selectedFile, fastaGenResultFile);
 				AliView.openAlignmentFile(fastaGenResultFile);		
 				//Settings.putLoadAlignmentDirectory(selectedFile.getParent());

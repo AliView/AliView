@@ -5,7 +5,7 @@ import java.util.List;
 
 public class ColorSchemeFactory {
 	
-	private static ColorScheme DEFAULT_COLOR_SCHEME = new AlignColorScheme();
+	private static ColorScheme DEFAULT_COLOR_SCHEME = new DefaultColorScheme();
 	private static ColorScheme DEFAULT_COLOR_SCHEME_FAST = new DefaultColorSchemeFast();
 	private static ColorScheme SEAVIEW_COLOR_SCHEME = new SeaViewColorScheme();
 	private static ColorScheme CLUSTAL_X_COLOR_SCHEME = new ClustalXColorScheme();

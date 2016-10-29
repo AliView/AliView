@@ -1,4 +1,4 @@
-package aliview.genotype2phenotype;
+package aliview.phenotype2genotype;
 
 
 	import java.awt.Color;

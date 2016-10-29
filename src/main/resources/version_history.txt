@@ -1,5 +1,14 @@
 Version history
 
+1.19 beta 4
+
+- Added support for user color schemes
+
+1.19 beta 3
+
+- Updated osX application stub to make it recognize Oracle Java VM and not only Apple Java VM
+
+
 1.18
 
 - Big rewrite of code handling selection. Improvements and more standardized mouse selection of sequences (compared to other software)

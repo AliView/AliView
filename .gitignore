@@ -14,7 +14,16 @@ tmp/**/*
 
 deployed
 target
-
 copy_deploy.sh
 copy_no_deploy.sh
 copy_web.sh
+.git
+.settings
+.classpath
+.project
+copy_deploy.sh
+copy_no_deploy.sh
+copy_web.sh
+create_eclipse_proj_with_mvn.txt
+deploy_remember.txt
+git-commit.sh

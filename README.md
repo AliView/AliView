@@ -1,8 +1,8 @@
 AliView
 =======
 Download: www.ormbunkar.se/aliview/downloads
-Webpage: www.ormbunkar.se/aliview
-Help: http://www.ormbunkar.se/aliview/#TOP_HELP
+<br>Webpage: www.ormbunkar.se/aliview
+<br>Help: http://www.ormbunkar.se/aliview/#TOP_HELP
 
 <strong>AliView is yet another alignment viewer and editor, but this one is probably one of the fastest and most intuitive to use, less bloated and hopefully to your liking.</strong>
 

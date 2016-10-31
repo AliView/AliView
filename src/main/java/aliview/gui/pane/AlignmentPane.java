@@ -329,7 +329,7 @@ public class AlignmentPane extends JPanel{
 		// AminoAcid
 
 		charPixDefaultAA =  new AACharPixelsContainer();
-		if(colorSchemeAminoAcid.getALLCompundColors() != null){
+		if(colorSchemeAminoAcid.isCompoundAminoAcidColorScheme()){
 			CompoundCharPixelsContainer compContainer = CompoundCharPixelsContainer.createDefaultCompoundColorContainer(charFont, charMaxSizeToDraw,
 					charPixWidth, charPixHeight, colorSchemeAminoAcid, getFontCase());
 			charPixDefaultAA.setCompoundContainer(compContainer);
@@ -339,7 +339,7 @@ public class AlignmentPane extends JPanel{
 		}
 
 		charPixSelectedAA =  new AACharPixelsContainer();
-		if(colorSchemeAminoAcid.getALLCompundColors() != null){
+		if(colorSchemeAminoAcid.isCompoundAminoAcidColorScheme()){
 
 			CompoundCharPixelsContainer compContainer = CompoundCharPixelsContainer.createSelectedCompoundColorContainer(charFont, charMaxSizeToDraw,
 					charPixWidth, charPixHeight, colorSchemeAminoAcid, getFontCase());
@@ -350,7 +350,7 @@ public class AlignmentPane extends JPanel{
 		}
 
 		charPixConsensusAA =  new AACharPixelsContainer();
-		if(colorSchemeAminoAcid.getALLCompundColors() != null){
+		if(colorSchemeAminoAcid.isCompoundAminoAcidColorScheme()){
 			CompoundCharPixelsContainer compContainer = CompoundCharPixelsContainer.createDefaultCompoundColorContainer(charFont, charMaxSizeToDraw,
 					charPixWidth, charPixHeight, colorSchemeAminoAcid, getFontCase());
 			charPixConsensusAA.setCompoundContainer(compContainer);

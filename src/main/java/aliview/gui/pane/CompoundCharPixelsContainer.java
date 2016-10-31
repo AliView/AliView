@@ -28,7 +28,12 @@ public class CompoundCharPixelsContainer {
 	public RGBArray getRGBArray(byte residue, int xPos, Alignment alignment){
 		AminoAcid aa = AminoAcid.getAminoAcidFromByte(residue);
 		Color compoundColor = colorScheme.getAminoAcidBackgroundColor(aa, xPos, alignment);
+		
+//		logger.debug("compoundColor=" + compoundColor);
+		
 		CharPixelsContainer pixContainer = colorContainerMap.get(compoundColor);
+		
+//		logger.debug("colorContainerMap=" + colorContainerMap);
 
 		return pixContainer.getRGBArray(residue);
 	}
@@ -36,17 +41,17 @@ public class CompoundCharPixelsContainer {
 	
 	public static CompoundCharPixelsContainer createDefaultCompoundColorContainer(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCase) {
 		
-		if(colorScheme.getALLCompundColors() == null || colorScheme.getALLCompundColors().length == 0){
+		if(! colorScheme.isCompoundAminoAcidColorScheme() ||  colorScheme.getAminoAcidBackgroundColors() == null || colorScheme.getAminoAcidBackgroundColors().length == 0){
 			return null;
 		}
 		
 		CompoundCharPixelsContainer compundContainer = new CompoundCharPixelsContainer();
 		compundContainer.colorScheme = colorScheme;
 		
-		compundContainer.colorContainerMap = new HashMap<Color, CharPixelsContainer>(colorScheme.getALLCompundColors().length);
+		compundContainer.colorContainerMap = new HashMap<Color, CharPixelsContainer>(colorScheme.getAminoAcidBackgroundColors().length);
 		
 		
-		for(Color bgColor : colorScheme.getALLCompundColors()){
+		for(Color bgColor :colorScheme.getAminoAcidBackgroundColors()){
 				
 			CharPixelsContainer container = new CharPixelsContainer();	
 			for(int n = 0; n < container.backend.length; n++){	
@@ -56,6 +61,8 @@ public class CompoundCharPixelsContainer {
 			}
 
 			compundContainer.colorContainerMap.put(bgColor, container);
+			
+			logger.debug("compundContainer=" + compundContainer);
 
 		}
 		
@@ -65,16 +72,17 @@ public class CompoundCharPixelsContainer {
 
 	public static CompoundCharPixelsContainer createSelectedCompoundColorContainer(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCase) {
 		
-		if(colorScheme.getALLCompundColors() == null || colorScheme.getALLCompundColors().length == 0){
+		if(! colorScheme.isCompoundAminoAcidColorScheme() ||  colorScheme.getAminoAcidBackgroundColors() == null || colorScheme.getAminoAcidBackgroundColors().length == 0){
 			return null;
 		}
+		
 		
 		CompoundCharPixelsContainer compundContainer = new CompoundCharPixelsContainer();
 		compundContainer.colorScheme = colorScheme;
 		
-		compundContainer.colorContainerMap = new HashMap<Color, CharPixelsContainer>(colorScheme.getALLCompundColors().length);
+		compundContainer.colorContainerMap = new HashMap<Color, CharPixelsContainer>(colorScheme.getAminoAcidBackgroundColors().length);
 		
-		for(Color bgColor : colorScheme.getALLCompundColors()){
+		for(Color bgColor : colorScheme.getAminoAcidBackgroundColors()){
 			
 			CharPixelsContainer container = new CharPixelsContainer();	
 			for(int n = 0; n < container.backend.length; n++){	

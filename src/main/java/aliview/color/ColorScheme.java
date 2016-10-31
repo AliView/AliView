@@ -2,6 +2,7 @@ package aliview.color;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.util.ArrayList;
 
 import aliview.AminoAcid;
 import aliview.alignment.AAHistogram;
@@ -46,7 +47,9 @@ public interface ColorScheme {
 	
 	public Color getAminoAcidConsensusBackgroundColor();
 	
-	public Color[] getALLCompundColors();
+	public boolean isCompoundAminoAcidColorScheme();
+
+	public Color[] getAminoAcidBackgroundColors();
 	
 
 }

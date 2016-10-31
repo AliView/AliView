@@ -7,6 +7,7 @@ Version history
 1.19 beta 3
 
 - Updated osX application stub to make it recognize Oracle Java VM and not only Apple Java VM
+- Updated Windows installer for better Windows 10 experience
 
 
 1.18

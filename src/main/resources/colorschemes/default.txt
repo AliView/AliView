@@ -1,0 +1,26 @@
+
+@rgbindex
+
+magenta 255, 0, 255
+magenta 1.0 0.0 1.0
+mangeta 0xFF00FF
+
+
+@consensus
+% = 60% w:l:v:i:m:a:f:c:y:h:p
+# = 80% w:l:v:i:m:a:f:c:y:h:p
+- = 50% e:d
++ = 60% k:r
+q = 50% q:e
+p = 50% p
+n = 50% n
+t = 50% t:s
+
+
+@color
+g = RED
+p = YELLOW
+t = GREEN if t:%:#
+n = GREEN if n
+w = BLUE if %:#:p
+k = RED if +

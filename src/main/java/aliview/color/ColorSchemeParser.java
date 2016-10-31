@@ -9,7 +9,7 @@ import aliview.alignment.AAHistogram;
 import aliview.alignment.AliHistogram;
 import aliview.alignment.Alignment;
 
-public class DefaultColorScheme implements ColorScheme {
+public class ColorSchemeParser{
 
 	Color[] baseBackgroundColor;
 	Color[] baseForegroundColor;
@@ -29,11 +29,11 @@ public class DefaultColorScheme implements ColorScheme {
 		return colorSchemeName;
 	}
 	
-	public DefaultColorScheme() {
+	public ColorSchemeParser() {
 		
 		this.colorSchemeName = "Default";
 		
-
+		
 		baseForegroundColor = new Color[64];
 		baseForegroundColor[NucleotideUtilities.A] = new Color(1,128,1); //Color.green
 		baseForegroundColor[NucleotideUtilities.C] = new Color(1,1,255); //Color.blue
@@ -331,12 +331,9 @@ public class DefaultColorScheme implements ColorScheme {
 		return aminoAcidConsensusBackgroundColor;
 	}
 
-	public boolean isCompoundAminoAcidColorScheme() {
-		return false;
-	}
 
-	public Color[] getAminoAcidBackgroundColors() {
-		return aminoAcidBackgroundColor;
+	public boolean isCompoundAminoAcidColorScheme() {
+		return true;
 	}
 
 }

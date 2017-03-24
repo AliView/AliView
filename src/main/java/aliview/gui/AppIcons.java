@@ -154,7 +154,11 @@ public class AppIcons {
 	
 	private static ImageIcon createIcon(String fileName) {
 		
+		
 		URL resource = AliViewWindow.class.getResource(fileName);
+		
+		// TODO If resource == null then read from local file system
+		
 		if(resource != null){
 			Image image = Toolkit.getDefaultToolkit().getImage(resource);
 			return new ImageIcon(image);

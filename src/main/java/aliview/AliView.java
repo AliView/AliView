@@ -44,7 +44,6 @@ import org.simplericity.macify.eawt.DefaultApplication;
 
 import utils.DialogUtils;
 import utils.FileUtilities;
-import utils.MacAdapter;
 import utils.OSNativeUtils;
 import aliview.gui.AliViewJMenuBarFactory;
 import aliview.gui.RepeatingKeyEventsFixer;

@@ -19,16 +19,16 @@ import aliview.alignment.Alignment;
 
 public class ClustalXColorScheme extends DefaultColorScheme{
 
-	private static final Logger logger = Logger.getLogger(ClustalXColorSchemeParser.class);
+	private static final Logger logger = Logger.getLogger(ClustalXColorScheme.class);
 	private static final String LF = System.getProperty("line.separator");
 	
-	static final Color COLOR_FOREGROUND = Color.BLACK;
-	static final Color COLOR_FOREGROUND_SELECTED = Color.WHITE;
-	static final Color COLOR_BACKGROUND_SELECTED = Color.LIGHT_GRAY.darker();
-	static final Color COLOR_OTHER = Color.WHITE;
+	static private final NamedColor COLOR_FOREGROUND = new NamedColor("COLOR_FOREGROUND", Color.BLACK);
+	static private final NamedColor COLOR_FOREGROUND_SELECTED = new NamedColor("COLOR_FOREGROUND_SELECTED", Color.WHITE);
+	static private final NamedColor COLOR_BACKGROUND_SELECTED = new NamedColor("COLOR_BACKGROUND_SELECTED", Color.LIGHT_GRAY.darker());
+	static private final NamedColor COLOR_OTHER = new NamedColor("COLOR_OTHER", Color.WHITE);
 	
-	static ArrayList<ColorAndThreshold>[] residueConsensusColors;
-	static HashMap<String, Color> allRgbColors;
+	static private Color[] allBgColorsList;
+	static private ArrayList<ColorAndThreshold>[] residueConsensusColors;
 	
 	public static void main(String[] args) throws Exception {
 		Logger.getRootLogger().setLevel(Level.DEBUG);
@@ -37,8 +37,6 @@ public class ClustalXColorScheme extends DefaultColorScheme{
 		colorParser.parseFile(textfile);
 	}
 
-	private Color[] allBgColorsList;
-	
 	public ClustalXColorScheme(){
 		try {
 			File textfile = new File("/home/anders/projekt/maven/AliView/src/main/resources/colorschemes/clustal.txt");
@@ -49,44 +47,62 @@ public class ClustalXColorScheme extends DefaultColorScheme{
 		}
 
 	}
-	
-	
-	private void parseFile(File textfile) throws Exception{
 		
-		String definition = FileUtils.readFileToString(textfile);
-		// make sure there is an end-tag
-		definition += LF + "@end";
+	private void parseFile(File textfile){
 		
-		String rgbIndexBlock = StringUtils.substringBetween(definition, "@rgbindex", "@");
-		allRgbColors = parseRgbColors(rgbIndexBlock);
-
-		logger.debug(allRgbColors);
-		
-		allRgbColors.put("COLOR_FOREGROUND", COLOR_FOREGROUND);
-		allRgbColors.put("COLOR_FOREGROUND_SELECTED", COLOR_FOREGROUND_SELECTED);
-		allRgbColors.put("COLOR_OTHER", COLOR_BACKGROUND_SELECTED);
-		allRgbColors.put("COLOR_OTHER", COLOR_OTHER);
-		
-		allBgColorsList = new Color[allRgbColors.size()];
-		int index = 0;
-		for(String key: allRgbColors.keySet()){
-			allBgColorsList[index] = allRgbColors.get(key);
-			index ++;
-		}
-		
-		String consensusBlock =  StringUtils.substringBetween(definition, "@consensus", "@");
-		HashMap<String, ClustalThreshold> allConsensusThresholds = parseConsensusThresholds(consensusBlock);
-		logger.debug(allConsensusThresholds);
+		try {
+			String definition = FileUtils.readFileToString(textfile);
 			
-		String colorBlock = StringUtils.substringBetween(definition, "@color", "@");
-		residueConsensusColors = parseColorBlock(colorBlock, allRgbColors, allConsensusThresholds);
-		logger.info(residueConsensusColors);
-		for(ArrayList<ColorAndThreshold> cAndTList : residueConsensusColors){
-			logger.debug(cAndTList);
+			// make sure there is an end-tag
+			definition += LF + "@end";
+			
+			String rgbIndexBlock = StringUtils.substringBetween(definition, "@rgbindex", "@");
+			HashMap<String, Color> allRgbColors = parseRgbColors(rgbIndexBlock);
+
+			// Add default values to optional color parameters that might not be in clustalfile
+			allRgbColors = addDefaultOptionalColors(allRgbColors);
+			
+			// Save available colors in an array
+			allBgColorsList = allRgbColors.values().toArray(new Color[0]);
+			
+			logger.debug("allBgColorsList.length" + allBgColorsList.length);
+			
+//			allBgColorsList = new Color[allRgbColors.size()];
+//			int index = 0;
+//			for(String key: allRgbColors.keySet()){
+//				allBgColorsList[index] = allRgbColors.get(key);
+//				index ++;
+//			}
+			
+			String consensusBlock =  StringUtils.substringBetween(definition, "@consensus", "@");
+			HashMap<String, ClustalThreshold> allConsensusThresholds = parseConsensusThresholds(consensusBlock);
+			logger.debug(allConsensusThresholds);
+				
+			String colorBlock = StringUtils.substringBetween(definition, "@color", "@");
+			residueConsensusColors = parseColorBlock(colorBlock, allRgbColors, allConsensusThresholds);
+			logger.info(residueConsensusColors);
+			
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 	}
 	
+	private HashMap<String, Color> addDefaultOptionalColors(HashMap<String, Color> colormap) {
+		colormap.put(COLOR_FOREGROUND.name, COLOR_FOREGROUND.color);
+		colormap.put(COLOR_FOREGROUND_SELECTED.name, COLOR_FOREGROUND_SELECTED.color);
+		colormap.put(COLOR_OTHER.name, COLOR_BACKGROUND_SELECTED.color);
+		colormap.put(COLOR_OTHER.name, COLOR_OTHER.color);
+		return colormap;
+	}
+
+
+
 	private ArrayList<ColorAndThreshold>[] parseColorBlock(String colorBlock, HashMap<String, Color> allRgbColors, HashMap<String, ClustalThreshold> allConsensusThresholds) throws Exception {
 		ArrayList<ColorAndThreshold>[] residueConsensusColors = (ArrayList<ColorAndThreshold> []) new ArrayList[AminoAcid.HIGEST_AA_INT_VAL + 1];
 		String[]lines = colorBlock.split("\n");
@@ -196,25 +212,25 @@ public class ClustalXColorScheme extends DefaultColorScheme{
 	public Color getAminoAcidBackgroundColor(AminoAcid acid, int xPos, Alignment alignment) {
 		Color bgColor = getColorIfResidueWithinThreshold(acid, xPos, alignment);
 		if(bgColor == null){
-			bgColor = COLOR_OTHER;
+			bgColor = COLOR_OTHER.color;
 		}
 		return bgColor;
 	}
 
 	public Color getAminoAcidForgroundColor(AminoAcid acid, int xPos, Alignment alignment) {
-		return COLOR_FOREGROUND;
+		return COLOR_FOREGROUND.color;
 	}
 
 	public Color getAminoAcidSelectionBackgroundColor(AminoAcid acid, int xPos, Alignment alignment) {
 		Color bgColor = getColorIfResidueWithinThreshold(acid, xPos, alignment);
 		if(bgColor == null){
-			bgColor = COLOR_BACKGROUND_SELECTED;
+			bgColor = COLOR_BACKGROUND_SELECTED.color;
 		}
 		return bgColor;
 	}
 
 	public Color getAminoAcidSelectionForegroundColor(AminoAcid acid, int xPos, Alignment alignment) {
-		return COLOR_FOREGROUND_SELECTED;
+		return COLOR_FOREGROUND_SELECTED.color;
 	}
 	
 	public String getName() {

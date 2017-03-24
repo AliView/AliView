@@ -62,7 +62,7 @@ public class NucleotideUtilities {
 			complement = 'K';
 			break;
 		case 'K': 
-			complement = 'S';
+			complement = 'M';
 			break;
 		case 'W': 
 			complement = 'W';

@@ -1,14 +1,10 @@
 Version history
 
-1.19 beta 4
+1.18.1
 
-- Added support for user color schemes
-
-1.19 beta 3
-
+- Fixed bug in complement translation. IUPAC-K is now translated into M instead of previously S
 - Updated osX application stub to make it recognize Oracle Java VM and not only Apple Java VM
 - Updated Windows installer for better Windows 10 experience
-
 
 1.18
 

@@ -379,39 +379,37 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		this.fileFormat = fileFormat;
 	}
 
-		public int getSequenceType() {
-
-			if(delegateSequences.size() > 0 && sequenceType == SequenceUtils.TYPE_UNKNOWN){
-				// TODO could figure out if not a sequence
-				int gapCount = 0;
-				int nucleotideCount = 0;
-				
-				
-				// Loop through 5000 bases or sequence length
-				Sequence testSeq = delegateSequences.get(0);
-				int maxLen = Math.min(5000, testSeq.getLength());
-				for(int n = 0; n < maxLen; n++){
-					byte base = testSeq.getBaseAtPos(n); 
-					if(NucleotideUtilities.isGap(base)){
-						gapCount ++;
-					}else if(NucleotideUtilities.isNucleoticeOrIUPAC(base)){
-						nucleotideCount ++;
-					}
-					else{
-//						logger.info("other base=" + base);
-					}
-				}
-				
-				// allow 1 wrong base
-				if(maxLen == 0 || (nucleotideCount + gapCount + 1 >= maxLen)){
-					this.sequenceType = SequenceUtils.TYPE_NUCLEIC_ACID;
+	public int getSequenceType() {
+		if(delegateSequences.size() > 0 && sequenceType == SequenceUtils.TYPE_UNKNOWN){
+			// TODO could figure out if not a sequence
+			int gapCount = 0;
+			int nucleotideCount = 0;
+			
+			// Loop through 5000 bases or sequence length
+			Sequence testSeq = delegateSequences.get(0);
+			int maxLen = Math.min(5000, testSeq.getLength());
+			for(int n = 0; n < maxLen; n++){
+				byte base = testSeq.getBaseAtPos(n); 
+				if(NucleotideUtilities.isGap(base)){
+					gapCount ++;
+				}else if(NucleotideUtilities.isNucleoticeOrIUPAC(base)){
+					nucleotideCount ++;
 				}
 				else{
-					this.sequenceType = SequenceUtils.TYPE_AMINO_ACID;
+					// logger.info("other base=" + base);
 				}
-			}	
+			}
+				
+			// allow 1 wrong base
+			if(maxLen == 0 || (nucleotideCount + gapCount + 1 >= maxLen)){
+				this.sequenceType = SequenceUtils.TYPE_NUCLEIC_ACID;
+			}
+			else{
+				this.sequenceType = SequenceUtils.TYPE_AMINO_ACID;
+			}
+		}	
 
-			return sequenceType;	
+		return sequenceType;	
 	}
 
 

@@ -15,11 +15,13 @@ import javax.swing.border.LineBorder;
 
 import org.apache.log4j.Logger;
 
+import utils.OSNativeUtils;
+
 
 public class PrimerPanel extends JPanel {
 	private static final Logger logger = Logger.getLogger(PrimerPanel.class);
 	private Primer primer;
-	private Font baseFont = new Font(Font.MONOSPACED, Font.PLAIN, 10);
+	private Font baseFont = new Font(OSNativeUtils.getMonospacedFontName(), Font.PLAIN, 10);
 	private LineBorder unselectedBorder = new LineBorder(Color.LIGHT_GRAY);
 	private LineBorder selectedBorder = new LineBorder(Color.DARK_GRAY);
 	private static final DecimalFormat DEC_FORMAT = new DecimalFormat("##.###");
@@ -54,7 +56,7 @@ public class PrimerPanel extends JPanel {
 		add(lblPosition, gbc_lblPosition);
 		
 		JLabel lblLength = new JLabel("" + primer.getLength());
-		lblLength.setFont(new Font("Monospaced", Font.PLAIN, 10));
+		lblLength.setFont(baseFont);
 		GridBagConstraints gbc_lblLength = new GridBagConstraints();
 		gbc_lblLength.insets = new Insets(0, 0, 0, 5);
 		gbc_lblLength.gridx = 2;
@@ -76,7 +78,7 @@ public class PrimerPanel extends JPanel {
 		add(primerDisplay, gbc_primerDisplay);
 		
 		JLabel lblGCcontent = new JLabel("" + DEC_FORMAT.format(primer.getGCcontent()));
-		lblGCcontent.setFont(new Font("Monospaced", Font.PLAIN, 10));
+		lblGCcontent.setFont(baseFont);
 		GridBagConstraints gbc_lblGCcontent = new GridBagConstraints();
 		gbc_lblGCcontent.insets = new Insets(0, 0, 0, 5);
 		gbc_lblGCcontent.gridx = 4;
@@ -93,7 +95,7 @@ public class PrimerPanel extends JPanel {
 		add(lblTm, gbc_lblTm);
 		
 		JLabel lbl3EndDimer = new JLabel("" + primer.get3EndDimerMaxLength());
-		lbl3EndDimer.setFont(new Font("Monospaced", Font.PLAIN, 10));
+		lbl3EndDimer.setFont(baseFont);
 		GridBagConstraints gbc_lbl3EndDimer = new GridBagConstraints();
 		gbc_lbl3EndDimer.insets = new Insets(0, 0, 0, 5);
 		gbc_lbl3EndDimer.gridx = 6;
@@ -101,7 +103,7 @@ public class PrimerPanel extends JPanel {
 		add(lbl3EndDimer, gbc_lbl3EndDimer);
 		
 		JLabel lblDimer = new JLabel("" + primer.getDimerMaxLength());
-		lblDimer.setFont(new Font("Monospaced", Font.PLAIN, 10));
+		lblDimer.setFont(baseFont);
 		GridBagConstraints gbc_lblDimer = new GridBagConstraints();
 		gbc_lblDimer.insets = new Insets(0, 0, 0, 5);
 		gbc_lblDimer.gridx = 7;

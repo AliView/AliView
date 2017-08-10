@@ -32,13 +32,14 @@ import javax.swing.JScrollPane;
 
 import org.apache.log4j.Logger;
 
+import utils.OSNativeUtils;
 import utils.nexus.CharSets;
 import utils.nexus.NexusUtilities;
 
 public class TextEditPanelCharsets extends JPanel{
 	private static final Logger logger = Logger.getLogger(TextEditPanelCharsets.class);
 	private static final String LF = System.getProperty("line.separator");
-	private static final Font MONOSPACED_FONT = new Font("Monospaced", Font.PLAIN, new JTextArea().getFont().getSize());
+	private static final Font MONOSPACED_FONT = new Font(OSNativeUtils.getMonospacedFontName(), Font.PLAIN, new JTextArea().getFont().getSize());
 	private JFrame parentFrame;
 	private JTextArea editTextArea;
 	private CharSets originalCharsets;

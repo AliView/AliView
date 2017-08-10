@@ -1,6 +1,7 @@
 package utils;
 
 import java.awt.AWTKeyStroke;
+import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -586,7 +587,11 @@ public class OSNativeUtils {
 		return registerOK;
 	}
 
-	
-
-
+	public static String getMonospacedFontName() {
+		if(isMac()){
+			return "Courier";
+		}else{
+			return Font.MONOSPACED;
+		}
+	}
 }

@@ -15,6 +15,7 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
 import aliview.HelpUtils;
+import utils.OSNativeUtils;
 
 import java.awt.Font;
 import java.awt.GridBagLayout;
@@ -26,7 +27,7 @@ import javax.swing.JTextArea;
 import javax.swing.JScrollPane;
 
 public class TextEditPanel extends JPanel{
-	private static final Font MONOSPACED_FONT = new Font("Monospaced", Font.PLAIN, new JTextArea().getFont().getSize());
+	private static final Font MONOSPACED_FONT = new Font(OSNativeUtils.getMonospacedFontName(), Font.PLAIN, new JTextArea().getFont().getSize());
 	private JFrame parentFrame;
 
 	public TextEditPanel(JFrame parFrame) {

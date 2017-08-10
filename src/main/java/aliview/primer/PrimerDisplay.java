@@ -10,13 +10,14 @@ import javax.swing.JComponent;
 import aliview.NucleotideUtilities;
 import aliview.color.ColorScheme;
 import aliview.color.DefaultColorScheme;
+import utils.OSNativeUtils;
 
 public class PrimerDisplay extends JComponent{
 	
 	double charWidth = 7;
 	double charHeight = 9;
 	ColorScheme colorScheme = new DefaultColorScheme();
-	private Font baseFont = new Font(Font.MONOSPACED, Font.PLAIN, (int)charWidth);
+	private Font baseFont = new Font(OSNativeUtils.getMonospacedFontName(), Font.PLAIN, (int)charWidth);
 	
 	private String sequence;
 	

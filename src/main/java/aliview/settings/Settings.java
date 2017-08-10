@@ -79,6 +79,10 @@ public class Settings {
 	private static SettingValue hideAlignmentProgramInvalidCharsInfoMessage = new SettingValue("hideAlignmentProgramInvalidCharsInfoMessage", false);
 	private static SettingValue hideAskBeforeEditMode  = new SettingValue("hideAskBeforeEditMode", false);
 	private static SettingValue fontCase = new SettingValue("fontCase", CharPixels.CASE_UNTOUCHED, 0, 10);
+	private static SettingValue hideDeleteVerticalGapsMessage = new SettingValue("hideDeleteVerticalGapsMessage", false);
+	private static SettingValue hideDeleteAllGapsMessage = new SettingValue("hideDeleteAllGapsMessage", false);
+	private static SettingValue hideDeleteAllSelectedSequences = new SettingValue("hideDeleteAllSelectedSequences", false);
+	private static SettingValue hideDeleteAllSelectedBases = new SettingValue("hideDeleteAllSelectedBases", false);
 	
 	public static SettingValue getMinPrimerLength(){
 		return minPrimerLength;
@@ -563,6 +567,10 @@ public class Settings {
 		return hideEditModeMessage;
 	}
 	
+	public static SettingValue getHideDeleteVerticalGapsMessage() {
+		return hideDeleteVerticalGapsMessage;
+	}
+	
 	public static SettingValue getHideMuscleProfileAlignInfoMessage() {
 		return hideMuscleProfileAlignInfoMessage;
 	}
@@ -582,6 +590,18 @@ public class Settings {
 	
 	public static SettingValue getHideDuplicateSeqNamesMessage() {
 		return hideDuplicateSeqNamesMessage;
+	}
+	
+	public static SettingValue getHideDeleteAllGapsMessage() {
+		return hideDeleteAllGapsMessage;
+	}
+	
+	public static SettingValue getHideDeleteAllSelectedSequences() {
+		return hideDeleteAllSelectedSequences;
+	}
+	
+	public static SettingValue getHideDeleteAllSelectedBases() {
+		return hideDeleteAllSelectedBases;
 	}
 	
 	public static SettingValue getHideAskBeforeEditMode() {
@@ -724,7 +744,5 @@ public class Settings {
 	public static SettingValue getFontCase() {
 		return fontCase;
 	}
-
-	
 
 }

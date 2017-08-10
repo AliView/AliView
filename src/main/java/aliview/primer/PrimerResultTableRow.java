@@ -10,10 +10,12 @@ import javax.swing.JLabel;
 
 import org.apache.log4j.Logger;
 
+import utils.OSNativeUtils;
+
 public class PrimerResultTableRow {
 	private static final Logger logger = Logger.getLogger(PrimerResultTableRow.class);
 	private Primer primer;
-	private Font baseFont = new Font(Font.MONOSPACED, Font.PLAIN, 10);
+	private Font baseFont = new Font(OSNativeUtils.getMonospacedFontName(), Font.PLAIN, 10);
 	private static final DecimalFormat DEC_FORMAT = new DecimalFormat("##.###");
 
 	public PrimerResultTableRow(Primer primer) {
@@ -70,7 +72,7 @@ public class PrimerResultTableRow {
 		//row.add(new String("" + primer.getPosition()));
 
 		JLabel lblLength = new JLabel("" + primer.getLength());
-		lblLength.setFont(new Font("Monospaced", Font.PLAIN, 10));
+		lblLength.setFont(baseFont);
 		row.add(lblLength);
 		//row.add(new String("" + primer.getLength()));
 
@@ -84,7 +86,7 @@ public class PrimerResultTableRow {
 
 
 		JLabel lblGCcontent = new JLabel("" + DEC_FORMAT.format(primer.getGCcontent()));
-		lblGCcontent.setFont(new Font("Monospaced", Font.PLAIN, 10));
+		lblGCcontent.setFont(baseFont);
 		row.add(lblGCcontent);
 
 		JLabel lblTm = new JLabel(primer.getBaseStackingTmAsString() + " (avg=" + primer.getBaseStackingAvgTmAsString() + ")" );
@@ -92,11 +94,11 @@ public class PrimerResultTableRow {
 		row.add(lblTm);
 
 		JLabel lbl3EndDimer = new JLabel("" + primer.get3EndDimerMaxLength());
-		lbl3EndDimer.setFont(new Font("Monospaced", Font.PLAIN, 10));
+		lbl3EndDimer.setFont(baseFont);
 		row.add(lbl3EndDimer);
 
 		JLabel lblDimer = new JLabel("" + primer.getDimerMaxLength());
-		lblDimer.setFont(new Font("Monospaced", Font.PLAIN, 10));
+		lblDimer.setFont(baseFont);
 		row.add(lblDimer);
 		
 		JLabel lblSequence = new JLabel(primer.getSequence());

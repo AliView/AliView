@@ -381,11 +381,17 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		}
 		// Action_COPY = open new window
 		else{
+			if(files.length > 10){
+				Messenger.showOKCancelMessage(Messenger.MULTI_FILE_DROP_WARNING,
+						aliViewWindow);
+				int choise = Messenger.getLastSelectedOption();
+				if(choise == JOptionPane.CANCEL_OPTION){
+					return;
+				}
+			}
 			for(File droppedFile: files){
 				logger.info("file dropped");
 				AliView.openAlignmentFile(droppedFile);
-				// TODO only open one for now
-				break;
 			}
 		}
 		
@@ -2457,20 +2463,39 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		if(! requestEditMode()){
 			return;
 		}
-
-		/*
-		aliViewWindow.getUndoControler().pushUndoState();
-		sequenceJList.deleteSelectedSequences();
-		alignment.deleteSelectedBases();
-		 */
+		
 
 		if(alignment.hasFullySelectedSequences()){
+			
+			// first confirm
+			boolean hideMessage = Settings.getHideDeleteAllSelectedSequences().getBooleanValue();
+			if(! hideMessage){
+				boolean hideMessageNextTime = Messenger.showOKCancelMessageWithCbx(Messenger.DELETE_SELECTED_SEQUENCES, false, aliViewWindow);
+				Settings.getHideDeleteAllSelectedSequences().putBooleanValue(hideMessageNextTime);
+				int choise = Messenger.getLastSelectedOption();
+				if(choise == JOptionPane.CANCEL_OPTION){
+					return;
+				}
+			}
+			
 			if(isUndoable()){
 				aliViewWindow.getUndoControler().pushUndoState(new UndoSavedStateSequenceOrder(alignment.getSequences().getDelegateSequencesCopy(), alignment.getAlignentMetaCopy()));
 			}
 			alignment.deleteFullySelectedSequences();
 		}
 		else if(alignment.hasSelection()){
+			
+			// first confirm
+			boolean hideMessage = Settings.getHideDeleteAllSelectedBases().getBooleanValue();
+			if(! hideMessage){
+				boolean hideMessageNextTime = Messenger.showOKCancelMessageWithCbx(Messenger.DELETE_SELECTED_BASES, false, aliViewWindow);
+				Settings.getHideDeleteAllSelectedBases().putBooleanValue(hideMessageNextTime);
+				int choise = Messenger.getLastSelectedOption();
+				if(choise == JOptionPane.CANCEL_OPTION){
+					return;
+				}
+			}
+			
 			if(isUndoable()){
 				aliViewWindow.getUndoControler().pushUndoState();
 			}
@@ -2485,24 +2510,11 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 	public void deleteExludedBases() {
 		aliViewWindow.getUndoControler().pushUndoState();
 		alignment.deleteAllExsetBases();
-		// Currently recalc codon-pos after deletion
-		//alignment.getCodonPositions().updateCodonPositionsToDefault123BetweenExset(alignment.getExcludes());
-		//requestPaneRepaint();
 	}
 
 	public void deleteEmptySequences() {
 		aliViewWindow.getUndoControler().pushUndoState();
 		alignment.deleteEmptySequences();
-		/*
-		// todo remove this ugly synch of list and pane so they communicate themselves
-		SequenceListModel lm = (SequenceListModel) alignmentList.getModel();
-		ArrayList<Sequence> sequences = new ArrayList<Sequence>();
-		for(Sequence seq: lm){
-			sequences.add(seq);
-		}
-		 */
-		//alignmentList.revalidate();
-		//requestPaneAndListRepaint();
 	}
 
 	public void copySelectionAsFasta() {
@@ -2615,6 +2627,18 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 	}
 
 	public void deleteVerticalGaps() {
+		
+		// first confirm
+		boolean hideMessage = Settings.getHideDeleteVerticalGapsMessage().getBooleanValue();
+		if(! hideMessage){
+			boolean hideMessageNextTime = Messenger.showOKCancelMessageWithCbx(Messenger.DELETE_VERTICAL_GAPS, true, aliViewWindow);
+			Settings.getHideDeleteVerticalGapsMessage().putBooleanValue(hideMessageNextTime);
+			int choise = Messenger.getLastSelectedOption();
+			if(choise == JOptionPane.CANCEL_OPTION){
+				return;
+			}
+		}
+		
 		aliViewWindow.getUndoControler().pushUndoState();	
 		alignment.deleteVerticalGaps();	
 		requestPaneRepaint();
@@ -2688,6 +2712,18 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		if(! requestEditMode()){
 			return;
 		}
+		
+		// first confirm
+		boolean hideMessage = Settings.getHideDeleteAllGapsMessage().getBooleanValue();
+		if(! hideMessage){
+			boolean hideMessageNextTime = Messenger.showOKCancelMessageWithCbx(Messenger.DELETE_ALL_GAPS, false, aliViewWindow);
+			Settings.getHideDeleteAllGapsMessage().putBooleanValue(hideMessageNextTime);
+			int choise = Messenger.getLastSelectedOption();
+			if(choise == JOptionPane.CANCEL_OPTION){
+				return;
+			}
+		}
+		
 		undoControler.pushUndoState();
 		alignment.deleteAllGaps();
 		alignment.rightPadSequencesWithGapUntilEqualLength();

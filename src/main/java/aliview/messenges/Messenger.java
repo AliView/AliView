@@ -80,13 +80,16 @@ public class Messenger {
 	public static final Message NO_FASTA_INDEX_COULD_BE_SAVED = new Message("Could not save Fasta index file: Alignment has to be indexed" + LF + 
 																			"from file when loaded and in Fasta format", "Problem");
 	public static final Message REALIGN_EVERYTHING = new Message("Are you sure you want to realign the whole alignment?", "Realign everything");
+	public static final Message DELETE_VERTICAL_GAPS = new Message("Are you sure you want to delete all vertical gaps?", "Delete vertical gaps?");
+	public static final Message DELETE_ALL_GAPS = new Message("Are you sure you want to delete all gaps in all sequences?", "Delete ALL gaps?");
+	public static final Message DELETE_SELECTED_SEQUENCES = new Message("Are you sure you want to delete all selected sequences?", "Delete selected Sequences?");
+	public static final Message DELETE_SELECTED_BASES = new Message("Are you sure you want to clear all selected positions?", "Clear selected positions?");
 	public static final Message PHENOTYPE_IMAGE_OPEN_ERROR = new Message("Could not create Phenotype from Image file. Wrong file type? (png,jpg)", "Wrong file");
-	public static final Message SUGGEST_ALIGN_AS_TRANSLATED = new Message("If you want to align Nucleotides as translated Amino Acids, please use function:" + LF +
-			                                                              "Realign everything as Translated Amino Acids", "Can not realign");
-	
+	public static final Message SUGGEST_ALIGN_AS_TRANSLATED = new Message("If you want to align Nucleotides as translated Amino Acids, please use function:" + LF +			                                                              "Realign everything as Translated Amino Acids", "Can not realign");
+	public static final Message MULTI_FILE_DROP_WARNING = new Message("More than 10 files dropped at once - Is this what you intended? " , "Multiple files dropped");
 
 	private static int lastSelectedOption = -1;
-    private static boolean showedMaxJPanelSizeMessageOnceThisSession;
+	private static boolean showedMaxJPanelSizeMessageOnceThisSession;
 	   
 	
 	public static void main(String[] args) {
@@ -217,6 +220,43 @@ public class Messenger {
 		
 	}
    
+   public static void showOKCancelMessage(Message message,AliViewWindow aliViewWindow) {
+		
+		final JDialog dialog = new JDialog(aliViewWindow);
+		dialog.setTitle(message.title);
+		// OBS DO NOT MODAL - Then there is problem in MAC when executed from error thread
+		dialog.setModal(true);
+		dialog.setAlwaysOnTop(true);
+		JOptionPane optPane = new JOptionPane(message.text,JOptionPane.INFORMATION_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
+		optPane.addPropertyChangeListener(new PropertyChangeListener()
+		   {
+		      public void propertyChange(PropertyChangeEvent e)
+		      {
+		         if (e.getPropertyName().equals("value"))
+		         {
+		            switch ((Integer)e.getNewValue())
+		            {
+		               case JOptionPane.OK_OPTION:
+		            	   lastSelectedOption = JOptionPane.OK_OPTION;
+		                  break;
+		               case JOptionPane.CANCEL_OPTION:
+		                  lastSelectedOption = JOptionPane.CANCEL_OPTION;
+		                  break;                       
+		            }
+		            // dialog.setModal(false);
+		            dialog.dispose();
+		         }
+		      }
+		   });
+		
+		dialog.setContentPane(optPane);
+		dialog.pack();
+		dialog.setLocationRelativeTo(aliViewWindow);
+		dialog.setVisible(true);
+		//dialog.setModal(false);
+			
+	}
+   
    public static boolean showOKCancelMessageWithCbx(Message message, boolean cbxSelected, AliViewWindow aliViewWindow) {
 		
 		final JDialog dialog = new JDialog(aliViewWindow);
@@ -256,7 +296,6 @@ public class Messenger {
 		//dialog.setModal(false);
 		
 		return cbx.isSelected();
-		//return dialog;
 		
 	}
  

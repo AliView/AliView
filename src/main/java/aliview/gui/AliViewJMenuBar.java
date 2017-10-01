@@ -52,7 +52,6 @@ import aliview.sequencelist.AlignmentSelectionEvent;
 import aliview.sequencelist.AlignmentSelectionListener;
 import aliview.sequencelist.FilePage;
 import aliview.sequencelist.FileSequenceAlignmentListModel;
-import aliview.sequences.SequenceUtils;
 import aliview.settings.Settings;
 import aliview.settings.SettingsListener;
 
@@ -747,55 +746,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 		mnEdit.add(mntmEditCharsets);
 		loadedAlignmentFunctions.add(mntmEditCharsets);
 		
-		mnEdit.add(new JSeparator());
-		
-		// create ColorMenu and submenu
-		JMenu mnAlignmentType = new JMenu("Alignment Sequence Type");
 
-		JMenuItem sequenceTypeSubM = new JMenuItem("Nucleotide");
-		sequenceTypeSubM.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				aliViewWindow.getAlignment().getse(SequenceUtils.TYPE_NUCLEIC_ACID);
-			}
-		});
-		mnAlignmentType.add(sequenceTypeSubM);
-
-		JCheckBoxMenuItem sequenceTypeSubmenu = new JCheckBoxMenuItem("Nucleoide");
-		colorSubmenu.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				aliViewWindow.setColorSchemeNucleotide(aScheme);
-			}
-		});
-					colorSchemeGroup.add(colorSubmenu);
-					// if this is the one from settings then select button
-					if(settingsColorScheme == aScheme){
-						colorSubmenu.setSelected(true);
-					}
-					mnNucleotideSub.add(colorSubmenu);
-				}
-				JMenu mnAASub = new JMenu("Amino Acid");
-				mnColorScheme.add(mnAASub);
-				ButtonGroup colorSchemeGroupAA = new ButtonGroup();
-				ColorScheme settingsColorSchemeAA = Settings.getColorSchemeAminoAcid();
-				for(final ColorScheme aScheme: ColorSchemeFactory.getAAColorSchemes()){
-					JCheckBoxMenuItem colorSubmenu = new JCheckBoxMenuItem(aScheme.getName());
-					colorSubmenu.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent e) {
-							aliViewWindow.setColorSchemeAminoAcid(aScheme);
-						}
-					});
-					colorSchemeGroupAA.add(colorSubmenu);
-					// if this is the one from settings then select button
-					if(settingsColorSchemeAA == aScheme){
-						colorSubmenu.setSelected(true);
-					}
-					mnAASub.add(colorSubmenu);
-				}
-				mnColorScheme.setIcon(AppIcons.getColorsIcon());
-				mnViewMenu.add(mnColorScheme);
-				alwaysAvailableFunctions.add(mnColorScheme);
-				
-				
 		mnEdit.add(new JSeparator());
 
 		// Mac has its own menu item

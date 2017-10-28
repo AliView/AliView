@@ -69,6 +69,8 @@ public class Settings {
 	private static Preferences prefs = Preferences.userNodeForPackage(Settings.class);
 	private static ArrayList<SettingsListener> settingListeners = new ArrayList<SettingsListener>();
 	
+	private static SettingValue fontCase = new SettingValue("fontCase", CharPixels.CASE_UNTOUCHED, 0, 10);
+	
 	// This is a good place for putting all hide checkbox values
 	private static SettingValue hideFileSeqLimitedEditCapabilities = new SettingValue("hideFileSeqLimitedEditCapabilities", false);
 	private static SettingValue hideEditModeMessage = new SettingValue("hideEditModeMessage", false);
@@ -78,12 +80,27 @@ public class Settings {
 	private static SettingValue hideDuplicateSeqNamesMessage = new SettingValue("hideDuplicateSeqNamesMessage", false);
 	private static SettingValue hideAlignmentProgramInvalidCharsInfoMessage = new SettingValue("hideAlignmentProgramInvalidCharsInfoMessage", false);
 	private static SettingValue hideAskBeforeEditMode  = new SettingValue("hideAskBeforeEditMode", false);
-	private static SettingValue fontCase = new SettingValue("fontCase", CharPixels.CASE_UNTOUCHED, 0, 10);
 	private static SettingValue hideDeleteVerticalGapsMessage = new SettingValue("hideDeleteVerticalGapsMessage", false);
 	private static SettingValue hideDeleteAllGapsMessage = new SettingValue("hideDeleteAllGapsMessage", false);
 	private static SettingValue hideDeleteAllSelectedSequences = new SettingValue("hideDeleteAllSelectedSequences", false);
 	private static SettingValue hideDeleteAllSelectedBases = new SettingValue("hideDeleteAllSelectedBases", false);
 	private static SettingValue hideUnknownAlignmentType = new SettingValue("hideUnknownAlignmentType", false);
+	private static ArrayList<SettingValue> allHideMsgSettingVals = new ArrayList<SettingValue>();
+	static{
+		allHideMsgSettingVals.add(hideFileSeqLimitedEditCapabilities);
+		allHideMsgSettingVals.add(hideEditModeMessage);
+		allHideMsgSettingVals.add(hideMuscleProfileAlignInfoMessage);
+		allHideMsgSettingVals.add(hideRealignEverythingMessage);
+		allHideMsgSettingVals.add(hideAlignmentProgressWindowWhenDone);
+		allHideMsgSettingVals.add(hideDuplicateSeqNamesMessage);
+		allHideMsgSettingVals.add(hideAlignmentProgramInvalidCharsInfoMessage);
+		allHideMsgSettingVals.add(hideAskBeforeEditMode);
+		allHideMsgSettingVals.add(hideDeleteVerticalGapsMessage);
+		allHideMsgSettingVals.add(hideDeleteAllGapsMessage);
+		allHideMsgSettingVals.add(hideDeleteAllSelectedSequences);
+		allHideMsgSettingVals.add(hideDeleteAllSelectedBases);
+		allHideMsgSettingVals.add(hideUnknownAlignmentType);
+	}
 	
 	public static SettingValue getMinPrimerLength(){
 		return minPrimerLength;
@@ -614,15 +631,10 @@ public class Settings {
 	}
 	
 	public static void clearAllHideThisDialogCheckboxes() {
-		getHideFileSeqLimitedEditCapabilities().putBooleanValue(false);
-		getHideEditModeMessage().putBooleanValue(false);
-		getHideMuscleProfileAlignInfoMessage().putBooleanValue(false);
-		getHideRealignEverythingMessage().putBooleanValue(false);
-		getHideAlignmentProgressWindowWhenDone().putBooleanValue(false);
-		getHideDuplicateSeqNamesMessage().putBooleanValue(false);
-		getHideAskBeforeEditMode().putBooleanValue(false);
+		for(SettingValue setVal: allHideMsgSettingVals){
+			setVal.putBooleanValue(false);
+		}
 	}
-	
 
 	public static void addRecentFile(File alignmentFile){
 		Vector<File> files = getRecentFiles();

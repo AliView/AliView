@@ -44,7 +44,6 @@ import org.simplericity.macify.eawt.DefaultApplication;
 
 import utils.DialogUtils;
 import utils.FileUtilities;
-import utils.MacAdapter;
 import utils.OSNativeUtils;
 import aliview.gui.AliViewJMenuBarFactory;
 import aliview.gui.RepeatingKeyEventsFixer;
@@ -60,7 +59,7 @@ public class AliView implements ApplicationListener{
 	private static ArrayList<AliViewWindow> aliViewWindows = new ArrayList<AliViewWindow>();
 	private static AliViewWindow activeWindow = null;
 	private static final Logger logger = Logger.getLogger(AliView.class);
-	private static File savedInitialArgumentAlignmentFileForMac = null;
+	private static File savedInitialArgumentAlignmentForMac = null;
 	private static boolean debugMode = false;
 
 	/**

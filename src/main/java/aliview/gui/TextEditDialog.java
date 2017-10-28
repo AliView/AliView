@@ -16,10 +16,14 @@ import aliview.AliViewWindow;
 
 public class TextEditDialog {
 	private static final String LF = System.getProperty("line.separator");
-	public static final String EDIT_SEQUENCE_NAME_TEXT = "Rename sequence";
+	public static final String TITLE_EDIT_SEQUENCE_NAME = "Rename sequence";
+	public static final String TITLE_GO_TO_POS = "Go to position (x) or (,y) or (x,y)";
 	private static JTextField textEdit;
 	protected Integer selectedValue = -1;
 	private Point preferredPos;
+	
+	public TextEditDialog() {
+	}
 	
 	public TextEditDialog(Point pos) {
 		this.preferredPos = pos;
@@ -37,7 +41,7 @@ public class TextEditDialog {
 		textEdit.setEditable(true);		
 		textEdit.setMaximumSize(new Dimension(800,30));
 		textEdit.setPreferredSize(new Dimension(350,30));
-		
+
 		JPanel messagePanel = new JPanel();
 //		testPanel.setPreferredSize(new Dimension(350,10));
 //		testPanel.setMaximumSize(new Dimension(350,10));
@@ -77,6 +81,7 @@ public class TextEditDialog {
 		else{
 			dialog.setLocationRelativeTo(aliViewWindow);
 		}
+		textEdit.selectAll();
 		dialog.setVisible(true);
 	}
 	

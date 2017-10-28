@@ -46,7 +46,6 @@ import aliview.alignment.AliHistogram;
 import aliview.alignment.Alignment;
 import aliview.alignment.AlignmentMeta;
 import aliview.alignment.NucleotideHistogram;
-import aliview.gui.SequenceTypeSelectDialog;
 import aliview.gui.TextEditDialog;
 import aliview.importer.AlignmentImportException;
 import aliview.importer.FileFormat;

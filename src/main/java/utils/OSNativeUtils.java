@@ -347,6 +347,14 @@ public class OSNativeUtils {
 			return KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.SHIFT_DOWN_MASK | InputEvent.ALT_DOWN_MASK);
 		}
 	}
+	
+	public static KeyStroke getGoToPosKeyAccelerator() {
+		if(isMac()){
+			return KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.META_DOWN_MASK);
+		}else{
+			return KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_DOWN_MASK);
+		}
+	}
 
 	public static KeyStroke incReadingFrameKeyAccelerator() {
 		if(isMac()){
@@ -594,4 +602,5 @@ public class OSNativeUtils {
 			return Font.MONOSPACED;
 		}
 	}
+
 }

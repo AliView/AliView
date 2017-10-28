@@ -411,7 +411,6 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 					}		
 				}
 				
-			
 				// First check low or nucleotide count to avoid div by zero 
                 if(nucleotideCount < 4){
                 	this.sequenceType = SequenceUtils.TYPE_UNKNOWN;

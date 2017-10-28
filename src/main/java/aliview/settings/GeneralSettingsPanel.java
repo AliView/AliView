@@ -36,9 +36,9 @@ public class GeneralSettingsPanel extends JPanel{
 	private JTextField txtFontSize;
 	private JTextField txtMaxHistogramLargeFiles;
 	private JCheckBox chckbxOverrideDefaultFont;
-	
+
 	static JFrame parFrame;
-	
+
 	public GeneralSettingsPanel(final JFrame parFrame) {
 		this.parFrame = parFrame;
 		this.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -48,8 +48,8 @@ public class GeneralSettingsPanel extends JPanel{
 		gridBagLayout.columnWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
-		
-		
+
+
 		JLabel lblReverseHorizontal = new JLabel("Reverse horizontal mouse wheel movement");		         
 		GridBagConstraints gbc_lblReverseHorizontal = new GridBagConstraints();
 		gbc_lblReverseHorizontal.fill = GridBagConstraints.BOTH;
@@ -65,8 +65,8 @@ public class GeneralSettingsPanel extends JPanel{
 		gbc_cbxReverseHorizontalMouseWheel.gridx = 2;
 		gbc_cbxReverseHorizontalMouseWheel.gridy = 0;
 		add(cbxReverseHorizontalMouseWheel, gbc_cbxReverseHorizontalMouseWheel);
-		
-		
+
+
 		JLabel lblReverseVertical = new JLabel("Reverse vertical mouse wheel movement");		         
 		GridBagConstraints gbc_lblReverseVertical = new GridBagConstraints();
 		gbc_lblReverseVertical.fill = GridBagConstraints.BOTH;
@@ -82,10 +82,10 @@ public class GeneralSettingsPanel extends JPanel{
 		gbc_cbxReverseVerticalMouseWheel.gridx = 2;
 		gbc_cbxReverseVerticalMouseWheel.gridy = 1;
 		add(cbxReverseVerticalMouseWheel, gbc_cbxReverseVerticalMouseWheel);
-		
-		
+
+
 		JLabel lblHWheelMod = new JLabel("Horizontal scroll speed (" +	         
-                Settings.getHorizontalScrollModifier().getMinIntVal() + "-" + Settings.getHorizontalScrollModifier().getMaxIntVal() + ")");
+				Settings.getHorizontalScrollModifier().getMinIntVal() + "-" + Settings.getHorizontalScrollModifier().getMaxIntVal() + ")");
 		GridBagConstraints gbc_lblHWheelMod = new GridBagConstraints();
 		gbc_lblHWheelMod.fill = GridBagConstraints.BOTH;
 		gbc_lblHWheelMod.insets = new Insets(0, 0, 5, 5);
@@ -100,9 +100,9 @@ public class GeneralSettingsPanel extends JPanel{
 		gbc_txtHWheelMod.gridx = 2;
 		gbc_txtHWheelMod.gridy = 2;
 		add(txtHWheelMod, gbc_txtHWheelMod);
-		
+
 		JLabel lblVWheelMod = new JLabel("Vertical scroll speed (" +	         
-                Settings.getVerticalScrollModifier().getMinIntVal() + "-" + Settings.getVerticalScrollModifier().getMaxIntVal() + ")");
+				Settings.getVerticalScrollModifier().getMinIntVal() + "-" + Settings.getVerticalScrollModifier().getMaxIntVal() + ")");
 		GridBagConstraints gbc_lblVWheelMod = new GridBagConstraints();
 		gbc_lblVWheelMod.fill = GridBagConstraints.BOTH;
 		gbc_lblVWheelMod.insets = new Insets(0, 0, 5, 5);
@@ -117,7 +117,7 @@ public class GeneralSettingsPanel extends JPanel{
 		gbc_txtVWheelMod.gridx = 2;
 		gbc_txtVWheelMod.gridy = 3;
 		add(txtVWheelMod, gbc_txtVWheelMod);
-		
+
 		txtFontSize = new JTextField();
 		txtFontSize.setText("" + Settings.getCustomFontSize().getIntValue());
 		GridBagConstraints gbc_textField = new GridBagConstraints();
@@ -133,7 +133,7 @@ public class GeneralSettingsPanel extends JPanel{
 				//setNewFontSizeInstantly(txtFontSize.getText());
 			}
 		});
-		
+
 		chckbxOverrideDefaultFont = new JCheckBox("Override default program font size");
 		chckbxOverrideDefaultFont.setToolTipText("You will also need to close and reopen program before changes take place");
 		chckbxOverrideDefaultFont.addActionListener(new ActionListener() {	
@@ -152,14 +152,14 @@ public class GeneralSettingsPanel extends JPanel{
 		}else{
 			txtFontSize.setEnabled(false);
 		}
-		
+
 		GridBagConstraints gbc_chckbxOverrideDefaultProgram = new GridBagConstraints();
 		gbc_chckbxOverrideDefaultProgram.anchor = GridBagConstraints.WEST;
 		gbc_chckbxOverrideDefaultProgram.insets = new Insets(0, 0, 5, 5);
 		gbc_chckbxOverrideDefaultProgram.gridx = 0;
 		gbc_chckbxOverrideDefaultProgram.gridy = 4;
 		add(chckbxOverrideDefaultFont, gbc_chckbxOverrideDefaultProgram);
-		
+
 		JLabel lblClearAll = new JLabel("Clear all \"Hide this checkbox\" selections");
 		lblClearAll.setHorizontalAlignment(SwingConstants.LEFT);
 		GridBagConstraints gbc_lblClearAll = new GridBagConstraints();
@@ -168,7 +168,7 @@ public class GeneralSettingsPanel extends JPanel{
 		gbc_lblClearAll.gridx = 0;
 		gbc_lblClearAll.gridy = 6;
 		add(lblClearAll, gbc_lblClearAll);
-		
+
 		JButton clearCbxButton = new JButton("Clear");
 		clearCbxButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {			
@@ -181,7 +181,7 @@ public class GeneralSettingsPanel extends JPanel{
 		gbc_clearCBXbutton.gridx = 2;
 		gbc_clearCBXbutton.gridy = 6;
 		add(clearCbxButton, gbc_clearCBXbutton);
-		
+
 		JLabel lblAskBeforeEntering = new JLabel("Hide dialog asking before entering edit mode");
 		lblAskBeforeEntering.setHorizontalAlignment(SwingConstants.LEFT);
 		GridBagConstraints gbc_lblAskBeforeEntering = new GridBagConstraints();
@@ -190,7 +190,7 @@ public class GeneralSettingsPanel extends JPanel{
 		gbc_lblAskBeforeEntering.gridx = 0;
 		gbc_lblAskBeforeEntering.gridy = 7;
 		add(lblAskBeforeEntering, gbc_lblAskBeforeEntering);
-		
+
 		checkBoxHideAskBeforeEditMode = new JCheckBox("");
 		checkBoxHideAskBeforeEditMode.setSelected(Settings.getHideAskBeforeEditMode().getBooleanValue());
 		GridBagConstraints gbc_checkBox = new GridBagConstraints();
@@ -199,7 +199,7 @@ public class GeneralSettingsPanel extends JPanel{
 		gbc_checkBox.gridx = 2;
 		gbc_checkBox.gridy = 7;
 		add(checkBoxHideAskBeforeEditMode, gbc_checkBox);
-		
+
 		GridBagConstraints gbc_lblNumberOfFiles = new GridBagConstraints();
 		gbc_lblNumberOfFiles.fill = GridBagConstraints.BOTH;
 		gbc_lblNumberOfFiles.insets = new Insets(0, 0, 5, 5);
@@ -215,7 +215,7 @@ public class GeneralSettingsPanel extends JPanel{
 		txtLargeFileIndexingl = new JTextField();
 		txtLargeFileIndexingl.setText("" + Settings.getLargeFileIndexing().getIntValue());
 		add(txtLargeFileIndexingl, gbc_txtLargeFileIndexingl);
-		
+
 		JLabel lblNumberOfSequences = new JLabel("Number of sequences to count when calculating ClustalX-");
 		GridBagConstraints gbc_lblNumberOfSequences = new GridBagConstraints();
 		gbc_lblNumberOfSequences.anchor = GridBagConstraints.WEST;
@@ -223,7 +223,7 @@ public class GeneralSettingsPanel extends JPanel{
 		gbc_lblNumberOfSequences.gridx = 0;
 		gbc_lblNumberOfSequences.gridy = 9;
 		add(lblNumberOfSequences, gbc_lblNumberOfSequences);
-		
+
 		txtMaxHistogramLargeFiles = new JTextField();
 		txtMaxHistogramLargeFiles.setText("" + Settings.getMaxFileHistogramSequences().getIntValue());
 		GridBagConstraints gbc_textField_1 = new GridBagConstraints();
@@ -239,8 +239,8 @@ public class GeneralSettingsPanel extends JPanel{
 		gbc_lblNewLabel.gridx = 0;
 		gbc_lblNewLabel.gridy = 10;
 		add(lblNewLabel, gbc_lblNewLabel);
-		
-		
+
+
 		GridBagConstraints gbc_4 = new GridBagConstraints();
 		gbc_4.fill = GridBagConstraints.BOTH;
 		gbc_4.insets = new Insets(0, 0, 5, 5);
@@ -248,7 +248,7 @@ public class GeneralSettingsPanel extends JPanel{
 		gbc_4.gridy = 11;
 		JLabel label_1 = new JLabel("");
 		add(label_1, gbc_4);
-		
+
 		JButton btnHelp = new JButton("Help");
 		btnHelp.setPreferredSize(new Dimension(100,30));
 		btnHelp.addActionListener(new ActionListener() {
@@ -262,8 +262,8 @@ public class GeneralSettingsPanel extends JPanel{
 		gbc_btnHelp.gridx = 0;
 		gbc_btnHelp.gridy = 12;
 		add(btnHelp, gbc_btnHelp);
-		
-		
+
+
 		JButton btnCancel = new JButton("Cancel");
 		btnCancel.setPreferredSize(new Dimension(100, 30));
 		btnCancel.addActionListener(new ActionListener() {
@@ -291,7 +291,7 @@ public class GeneralSettingsPanel extends JPanel{
 		gbc_btnOk.gridx = 2;
 		gbc_btnOk.gridy = 12;
 		add(btnOk, gbc_btnOk);
-		
+
 	}
 	/*
 	private void setNewFontSizeInstantly(String string)
@@ -304,10 +304,10 @@ public class GeneralSettingsPanel extends JPanel{
 		}
 		// and some more keys
 		setUIFontSize(userSize);
-		
+
 	}
 
-	
+
 	public static void setUIFontSize (float newSize){
 	    Enumeration<Object> keys = UIManager.getLookAndFeelDefaults().keys();
 	    while (keys.hasMoreElements()) {
@@ -321,53 +321,53 @@ public class GeneralSettingsPanel extends JPanel{
 	    }
 	    SwingUtilities.updateComponentTreeUI(parFrame);
 	}
-	*/
-	
-	
+	 */
+
+
 	public void saveSettings(){
 
 		Settings.putBooleanValue(Settings.getReverseHorizontalMouseWheel(), cbxReverseHorizontalMouseWheel.isSelected());
 
 		Settings.putBooleanValue(Settings.getReverseVerticalMouseWheel(), cbxReverseVerticalMouseWheel.isSelected());
-		
+
 		Settings.putBooleanValue(Settings.getUseCustomFontSize(), chckbxOverrideDefaultFont.isSelected());
-		
+
 		Settings.putBooleanValue(Settings.getHideAskBeforeEditMode(), checkBoxHideAskBeforeEditMode.isSelected());
-		
+
 		try {
 			Settings.getCustomFontSize().putIntValue(Integer.parseInt(txtFontSize.getText()));
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		try {
 			Settings.getMaxFileHistogramSequences().putIntValue(Integer.parseInt(txtMaxHistogramLargeFiles.getText()));
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		try {
 			Settings.getHorizontalScrollModifier().putIntValue(Integer.parseInt(txtHWheelMod.getText()));
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		try {
 			Settings.getVerticalScrollModifier().putIntValue(Integer.parseInt(txtVWheelMod.getText()));
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		try {
 			Settings.getLargeFileIndexing().putIntValue(Integer.parseInt(txtLargeFileIndexingl.getText()));
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
 }

@@ -32,9 +32,9 @@ public class AlignmentFactory {
 	private static final Logger logger = Logger.getLogger(AlignmentFactory.class);
 	private static final SequencesFactory seqFactory = new SequencesFactory();
 	// TODO change so it also reads from buffer
-	
-	
-	
+
+
+
 	/*
 	 * Create alignment in factory since we dont know until we have read file if it is a nucleotide
 	 * or a protein alignment
@@ -43,88 +43,88 @@ public class AlignmentFactory {
 	public static Alignment createNewAlignment(File alignmentFile){
 		return createNewAlignment(alignmentFile, SequenceUtils.TYPE_UNKNOWN);
 	}
-	
-	public static Alignment createNewAlignment(File alignmentFile, int sequenceType){
-		
-			logger.info("inside createNewAlignment");
-			
-			long startTime;
-			startTime = System.currentTimeMillis();
-			Alignment alignment = null;
-			try {
-								
-				AlignmentListModel sequences = seqFactory.createSequences(alignmentFile);			
-				Excludes excludes = new Excludes();
-				CodonPositions codonPositions = new CodonPositions();
-				CharSets charsets = new CharSets();
-				logger.info("sequences.getLongestSequenceLength()" + sequences.getLongestSequenceLength());
 
-					try {
-						// Try to read Excludes etc. from alignmentfile	
-						if(NexusUtilities.isNexusFile(alignmentFile) && sequences instanceof FileSequenceAlignmentListModel == false && sequences.get(0) instanceof NexusSequence == false){
-							NexusUtilities.updateExcludesFromFile(alignmentFile,excludes);
-							NexusUtilities.updateCodonPositionsFromNexusFile(alignmentFile, codonPositions);
-							charsets = NexusUtilities.createCharsetsFromNexusFile(alignmentFile, sequences.getLongestSequenceLength());
-						}
-						// Try to read Excludes etc. from metaFile
-						else{
-							// Try to read Excludes from metaFile
-							File metaFile = new File(alignmentFile.getAbsolutePath()+ ".meta");
-							if(metaFile.exists()){
-								NexusUtilities.updateExcludesFromFile(metaFile,excludes);
-								NexusUtilities.updateCodonPositionsFromNexusFile(metaFile, codonPositions);
-								charsets = NexusUtilities.createCharsetsFromNexusFile(metaFile, sequences.getLongestSequenceLength());
-							}
-						}
-					} catch (NexusAlignmentImportException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-						logger.error(e);
-						Messenger.showOKOnlyMessage(Messenger.ALIGNMENT_META_READ_ERROR,
-								LF + e.getLocalizedMessage());	
-					}
-				
-				
-				MemoryUtils.logMem();
-				AlignmentMeta aliMeta = new AlignmentMeta(excludes, codonPositions, charsets, GeneticCode.DEFAULT);
-				
-				// Set sequence type if specified
-				if(sequenceType != SequenceUtils.TYPE_UNKNOWN){
-					sequences.setSequenceType(sequenceType);
+	public static Alignment createNewAlignment(File alignmentFile, int sequenceType){
+
+		logger.info("inside createNewAlignment");
+
+		long startTime;
+		startTime = System.currentTimeMillis();
+		Alignment alignment = null;
+		try {
+
+			AlignmentListModel sequences = seqFactory.createSequences(alignmentFile);			
+			Excludes excludes = new Excludes();
+			CodonPositions codonPositions = new CodonPositions();
+			CharSets charsets = new CharSets();
+			logger.info("sequences.getLongestSequenceLength()" + sequences.getLongestSequenceLength());
+
+			try {
+				// Try to read Excludes etc. from alignmentfile	
+				if(NexusUtilities.isNexusFile(alignmentFile) && sequences instanceof FileSequenceAlignmentListModel == false && sequences.get(0) instanceof NexusSequence == false){
+					NexusUtilities.updateExcludesFromFile(alignmentFile,excludes);
+					NexusUtilities.updateCodonPositionsFromNexusFile(alignmentFile, codonPositions);
+					charsets = NexusUtilities.createCharsetsFromNexusFile(alignmentFile, sequences.getLongestSequenceLength());
 				}
-				
-				// Create alignment
-				alignment = new Alignment(alignmentFile, sequences, aliMeta);
-				MemoryUtils.logMem();
-				
-				
-			// There was a problem 
-			} catch (AlignmentImportException e) {
+				// Try to read Excludes etc. from metaFile
+				else{
+					// Try to read Excludes from metaFile
+					File metaFile = new File(alignmentFile.getAbsolutePath()+ ".meta");
+					if(metaFile.exists()){
+						NexusUtilities.updateExcludesFromFile(metaFile,excludes);
+						NexusUtilities.updateCodonPositionsFromNexusFile(metaFile, codonPositions);
+						charsets = NexusUtilities.createCharsetsFromNexusFile(metaFile, sequences.getLongestSequenceLength());
+					}
+				}
+			} catch (NexusAlignmentImportException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				logger.error(e);
-				Messenger.showOKOnlyMessage(Messenger.ALIGNMENT_IMPORT_ERROR,
-						LF + e.getLocalizedMessage());
-
+				Messenger.showOKOnlyMessage(Messenger.ALIGNMENT_META_READ_ERROR,
+						LF + e.getLocalizedMessage());	
 			}
-			
-			// Check if unique names - otherwise warn
-			if(alignment != null){
-				boolean hideMessage = Settings.getHideDuplicateSeqNamesMessage().getBooleanValue();
-				if(! hideMessage){
-					ArrayList duplicateSeqNames = alignment.findDuplicateNames();
-					if(duplicateSeqNames != null && duplicateSeqNames.size() > 0){
-						alignment.selectDuplicateNamesSequences();
-						Messenger.showDuplicateSeqNamesMessage(duplicateSeqNames);
-					}
+
+
+			MemoryUtils.logMem();
+			AlignmentMeta aliMeta = new AlignmentMeta(excludes, codonPositions, charsets, GeneticCode.DEFAULT);
+
+			// Set sequence type if specified
+			if(sequenceType != SequenceUtils.TYPE_UNKNOWN){
+				sequences.setSequenceType(sequenceType);
+			}
+
+			// Create alignment
+			alignment = new Alignment(alignmentFile, sequences, aliMeta);
+			MemoryUtils.logMem();
+
+
+			// There was a problem 
+		} catch (AlignmentImportException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.error(e);
+			Messenger.showOKOnlyMessage(Messenger.ALIGNMENT_IMPORT_ERROR,
+					LF + e.getLocalizedMessage());
+
+		}
+
+		// Check if unique names - otherwise warn
+		if(alignment != null){
+			boolean hideMessage = Settings.getHideDuplicateSeqNamesMessage().getBooleanValue();
+			if(! hideMessage){
+				ArrayList duplicateSeqNames = alignment.findDuplicateNames();
+				if(duplicateSeqNames != null && duplicateSeqNames.size() > 0){
+					alignment.selectDuplicateNamesSequences();
+					Messenger.showDuplicateSeqNamesMessage(duplicateSeqNames);
 				}
 			}
-			
-			long endTime = System.currentTimeMillis();
-			System.out.println("Importing sequences took " + (endTime - startTime) + " milliseconds");
-			
-			return alignment;
 		}
+
+		long endTime = System.currentTimeMillis();
+		System.out.println("Importing sequences took " + (endTime - startTime) + " milliseconds");
+
+		return alignment;
+	}
 
 	// ToDO maybe throw something if not working
 	public static Alignment createNewAlignment(String alignmentText){
@@ -140,10 +140,10 @@ public class AlignmentFactory {
 		}
 		return alignment;
 	}
-	
+
 	public static Alignment createNewEmptyAlignment(){
 		return new Alignment();
 	}
 
 }
-		
+

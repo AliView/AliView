@@ -15,7 +15,7 @@ public class AlignmentDataEvent extends javax.swing.event.ListDataEvent {
 		super(source, type, bounds.y, bounds.y + bounds.height);
 		this.bounds = bounds;	
 	}
-	
+
 	public Rectangle getBounds() {
 		return bounds;
 	}

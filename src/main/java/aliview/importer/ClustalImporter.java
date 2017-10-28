@@ -43,7 +43,7 @@ public class ClustalImporter {
 		this.formatType = formatType;
 		this.fileSize = fileSize;
 	}
-	
+
 	public ClustalImporter(Reader reader, long fileSize) {
 		this(reader,INTERLEAVED_OR_SINGLELINE_SEQUENTIAL, fileSize);
 	}
@@ -85,13 +85,13 @@ public class ClustalImporter {
 				// in clustal there can be a non blank row without name that contains preservation
 				while(helper.isNextLineStartingWithNonBlankChar()){
 					String line = helper.getNextLine();
-	//				logger.info("line" + line);
+					//				logger.info("line" + line);
 					int index = helper.indexOfFirstNonWhiteCharAfterWhiteChar(line);
 					String name = line.substring(0, index).trim();
 					seqNames.add(name);
 
 					longestName = Math.max(longestName, name.length());
-					
+
 					// in clustal there cqan be another space followed by number - this should be removed
 					int endIndex = line.indexOf(' ',index);
 					if(endIndex == -1){
@@ -104,7 +104,7 @@ public class ClustalImporter {
 					if(seqChars.indexOf(' ') > -1){
 						seqChars = StringUtils.remove(seqChars, ' ');
 					}
-					
+
 					seqPartLen = Math.max(seqPartLen, seqChars.length());
 
 					int capacity = 1000; // we dont know in Clustal format
@@ -118,7 +118,7 @@ public class ClustalImporter {
 
 				// skip until start of seq
 				helper.readUntilNextNonBlankLine();
-				
+
 				// Calculate seqBuff size
 				int interleaveSize = (longestName + seqPartLen) * seqCount;
 				long nInterleaves = fileSize / interleaveSize;			
@@ -127,15 +127,15 @@ public class ClustalImporter {
 				logger.info("guessedCapacity" + guessedCapacity);
 
 				MemoryUtils.logMem();
-				
+
 				for(ByteBufferAutogrow seqBuff: seqBuffers){
 					seqBuff.ensureCapacity(guessedCapacity);
 				}
-				
+
 				MemoryUtils.logMem();
-				
+
 				logger.info("seqCount * guessedCapacity=" + (seqCount * guessedCapacity));
-				
+
 				// if sequences are interleaved then there are more data to read
 				while(helper.isNextLineStartingWithNonBlankChar()){
 
@@ -146,7 +146,7 @@ public class ClustalImporter {
 						// read lines of seq data
 						String line = helper.getNextLine();
 
-		//				logger.info("line" + line);
+						//				logger.info("line" + line);
 
 						// in clustal there is the name so lets find end of name
 						int seqStart = helper.indexOfFirstNonWhiteCharAfterWhiteChar(line);
@@ -169,14 +169,14 @@ public class ClustalImporter {
 						lineCount ++;
 						helper.readNextLine();
 					}
-//					logger.info("readUntilNextNonBlankLine");
+					//					logger.info("readUntilNextNonBlankLine");
 					helper.readUntilNextNonBlankLine();
-//					logger.info("donereadUntilNextNonBlankLine");
-				//	MemoryUtils.logMem();
+					//					logger.info("donereadUntilNextNonBlankLine");
+					//	MemoryUtils.logMem();
 				}
 
 				logger.info("before convert");
-				
+
 				for(int n = 0; n <seqCount; n++){	
 					//sequences.add(new PhylipSequence(seqNames.get(n), ""));
 					sequences.add(new ClustalSequence(seqNames.get(n), seqBuffers.get(n).getBytes()));
@@ -185,9 +185,9 @@ public class ClustalImporter {
 					seqBuffers.set(n,null);
 				}
 
-//				for(Sequence seq: sequences){
-//					logger.info(seq.getName() + " " + seq.getBasesAsString());
-//				}
+				//				for(Sequence seq: sequences){
+				//					logger.info(seq.getName() + " " + seq.getBasesAsString());
+				//				}
 			}
 
 

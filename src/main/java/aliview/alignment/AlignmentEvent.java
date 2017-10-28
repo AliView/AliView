@@ -8,7 +8,7 @@ public class AlignmentEvent extends Alignment{
 	public AlignmentEvent(Alignment alignment) {
 		this.source = alignment;
 	}
-	
+
 	public Alignment getSource(){
 		return this.source;
 	}

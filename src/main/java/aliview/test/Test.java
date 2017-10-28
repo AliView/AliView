@@ -34,100 +34,100 @@ public class Test implements Cloneable{
 	private static final String NUM_ROWS = "num_rows";
 	private static final String NUM_COLS = "num_cols";
 	public int[] array = new int[]{12,13,19};
-	
+
 	private static byte[] testByte ="GTCACCGGCA".getBytes();
 	private static String testString = "GTCACCGGCA";
-	
+
 
 	public static void main(String[] args) throws CloneNotSupportedException {
-	
+
 		logger.info(2 % 2);
-		
-		
+
+
 		NexusRange range = new NexusRange(new IntRange(64, 80), 3, 1);
-		
+
 		int n = 64;
-		
+
 		int posInRange = n - range.getMinimumInt();
 		int rest = posInRange % range.getSteps();
-		
+
 		logger.info("rest=" + rest);
 
 		n = 3029;
 		int startVal = 1;
-		
-	//	int target = ((n + startValOffset) % 3) + 1;
-		
-	//	logger.info("target=" + target);
-		
+
+		//	int target = ((n + startValOffset) % 3) + 1;
+
+		//	logger.info("target=" + target);
+
 
 		int pos = 5;
 		startVal = 2;
 		int start = 0;
-		
+
 		int diff = -5;
-		
+
 		diff = Math.abs(diff);
 		int posVal = ( ( (startVal - 1) + diff) % 3)  + 1;
 		posVal = 4 - Math.abs(posVal);
-		
+
 		logger.info(posVal);
-		
+
 		int endPos=2147483647;
 		int startCorrected=0;
-		
+
 		int val = (int) Math.ceil( (double)(endPos - startCorrected + 1) / 3 );
-		
+
 		logger.info(val);
 
-//		logger.info("pos" + pos);
-//		logger.info("startVal" + startVal);
-//		logger.info("(pos % 3)" + (pos % 3));
-//		logger.info("(pos % 3) + startVal=" + ((pos % 3) + startVal));
+		//		logger.info("pos" + pos);
+		//		logger.info("startVal" + startVal);
+		//		logger.info("(pos % 3)" + (pos % 3));
+		//		logger.info("(pos % 3) + startVal=" + ((pos % 3) + startVal));
 		logger.info("((pos - start) % 3) + startVal=" + ((pos - start) % 3 + startVal));
-		
-		
+
+
 		//logger.info( (pos % 3) );
-		
+
 		//getAATextInfo(true);
-		
-	//	logger.info(8 % 3);
-		
+
+		//	logger.info(8 % 3);
+
 		testAlphaColor();
-		
+
 		//showMemStats();
 		//testBitSet();
 		Test t1 = new Test();
 		Test tClone = (Test) t1.clone();
 		t1.array[1] = 15;
 		logger.info(tClone.array[1]);
-		
+
 		String[] splitted = "kjs   \t sdkj".split("\\s+");
 		logger.info(splitted.length);
-//		logger.info(System.getProperty("java.util.prefs.PreferencesFactory"));
-//		
-//		try {
-//			buildTestFasta();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		
-//		logger.info("r="+getRed(-687486));
-//		logger.info("g="+getGreen(-687486));
-//		logger.info("b="+getBlue(-687486));
-//		logger.info("a="+getAlpha(-687486));
-//		
-//		logger.info("r="+getRed(-9553093));
-//		logger.info("g="+getGreen(-9553093));
-//		logger.info("b="+getBlue(-9553093));
-//		logger.info("a="+getAlpha(-9553093));
-		
+		//		logger.info(System.getProperty("java.util.prefs.PreferencesFactory"));
+		//		
+		//		try {
+		//			buildTestFasta();
+		//		} catch (IOException e) {
+		//			// TODO Auto-generated catch block
+		//			e.printStackTrace();
+		//		}
+
+		//		logger.info("r="+getRed(-687486));
+		//		logger.info("g="+getGreen(-687486));
+		//		logger.info("b="+getBlue(-687486));
+		//		logger.info("a="+getAlpha(-687486));
+		//		
+		//		logger.info("r="+getRed(-9553093));
+		//		logger.info("g="+getGreen(-9553093));
+		//		logger.info("b="+getBlue(-9553093));
+		//		logger.info("a="+getAlpha(-9553093));
+
 	}
 
 	/*
 	private static AATextInfo getAATextInfoFromMap(Map hints) {
-	    
+
         Object aaHint   = hints.get(RenderingHints.KEY_TEXT_ANTIALIASING);
         Object contHint = hints.get(RenderingHints.KEY_TEXT_LCD_CONTRAST);
 
@@ -150,87 +150,87 @@ public class Test implements Cloneable{
         	for (Map.Entry<Object, Object> entry : ((RenderingHints) map).entrySet()) {
         	    System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
         	}
-        	
+
             return getAATextInfoFromMap((Map)map);
         } else {
         	logger.info("is null");
             return null;
         }
     }
-    
-    */
-    
-	
-	
+
+	 */
+
+
+
 	private static void testAlphaColor() {
 		Color test = new Color(1,1,10,0);
 		logger.info("test.getAlpha()" + test.getAlpha());
-	//	logger.info("getRGB" + getRGB(test.getRGB()));
+		//	logger.info("getRGB" + getRGB(test.getRGB()));
 		logger.info(test.getRGB());
-		
+
 		logger.info(addTranspGrey(-687486, 0.45));
-		
+
 	}
 	public static int getGolorVal(int r, int g, int b, int a) {
-        int rgba = ((a & 0xFF) << 24) |
-                ((r & 0xFF) << 16) |
-                ((g & 0xFF) << 8)  |
-                ((b & 0xFF) << 0);
-        return rgba;
-    }
-	
+		int rgba = ((a & 0xFF) << 24) |
+				((r & 0xFF) << 16) |
+				((g & 0xFF) << 8)  |
+				((b & 0xFF) << 0);
+		return rgba;
+	}
+
 	public static int addTranspGrey(int inVal, double transp){
-		
+
 		int a = 255;//getAlpha(inVal);
 		int r = (int)(getRed(inVal) * transp);
 		int g = (int)(getGreen(inVal) * transp);
 		int b = (int)(getBlue(inVal) * transp);
-		
-        int rgba = ((a & 0xFF) << 24) |
-                ((r & 0xFF) << 16) |
-                ((g & 0xFF) << 8)  |
-                ((b & 0xFF) << 0);
-        return rgba;
-    }
-	
-	
+
+		int rgba = ((a & 0xFF) << 24) |
+				((r & 0xFF) << 16) |
+				((g & 0xFF) << 8)  |
+				((b & 0xFF) << 0);
+		return rgba;
+	}
+
+
 	public static int getRed(int colVal) {
 		return (colVal >> 16) & 0xFF;
-	    }
+	}
 
-	    /**
-	     * Returns the green component in the range 0-255 in the default sRGB
-	     * space.
-	     * @return the green component.
-	     * @see #getRGB
-	     */
-	    public static int getGreen(int colVal) {
+	/**
+	 * Returns the green component in the range 0-255 in the default sRGB
+	 * space.
+	 * @return the green component.
+	 * @see #getRGB
+	 */
+	public static int getGreen(int colVal) {
 		return (colVal >> 8) & 0xFF;
-	    }
+	}
 
-	    /**
-	     * Returns the blue component in the range 0-255 in the default sRGB
-	     * space.
-	     * @return the blue component.
-	     * @see #getRGB
-	     */
-	    public static int getBlue(int colVal) {
+	/**
+	 * Returns the blue component in the range 0-255 in the default sRGB
+	 * space.
+	 * @return the blue component.
+	 * @see #getRGB
+	 */
+	public static int getBlue(int colVal) {
 		return (colVal >> 0) & 0xFF;
-	    }
+	}
 
-	    /**
-	     * Returns the alpha component in the range 0-255.
-	     * @return the alpha component.
-	     * @see #getRGB
-	     */
-	    public static int getAlpha(int colVal) {
-	        return (colVal >> 24) & 0xff;
-	    }
-	
+	/**
+	 * Returns the alpha component in the range 0-255.
+	 * @return the alpha component.
+	 * @see #getRGB
+	 */
+	public static int getAlpha(int colVal) {
+		return (colVal >> 24) & 0xff;
+	}
+
 	public static void buildTestFasta() throws IOException{
 		File fasta = new File("/vol2/big_data/test-wide.fasta");
 		BufferedWriter out = new BufferedWriter(new FileWriter(fasta));
-		
+
 		for(int i = 0; i < 500; i++){
 			out.write(">Testseq-" + i + "\n");
 			for(int n = 0; n < 1000000; n++){
@@ -239,42 +239,42 @@ public class Test implements Cloneable{
 			out.write('\n');
 			logger.info("done with seq" + i);
 		}
-		
+
 	}
-	
+
 
 
 	public Test() {
 		// TODO Auto-generated constructor stub
 	}
-	
+
 	private static void testBitSet() {
 		BitSet bitSelection = new BitSet();
-		
+
 		bitSelection.set(8);
-		
+
 		logger.info(bitSelection.length());
-		
+
 		logger.info(bitSelection.get(4));
-		
+
 		logger.info(bitSelection.length());
-		
+
 		logger.info(bitSelection.get(100));
-		
+
 		logger.info(bitSelection.length());
-		
+
 		bitSelection.set(100);
-		
+
 		logger.info(bitSelection.length());
-		
+
 		bitSelection.set(98, true);
-		
+
 		bitSelection.set(90, true);
-		
+
 		logger.info(bitSelection.length());
-		
+
 		bitSelection.set(100, false);
-		
+
 		logger.info(bitSelection.length());
 	}
 

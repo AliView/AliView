@@ -21,7 +21,7 @@ public class AlignmentMeta {
 	private GeneticCode geneticCode;
 	private boolean isTranslated;
 
-	
+
 	public AlignmentMeta(){
 		this(GeneticCode.DEFAULT);
 	}
@@ -109,7 +109,7 @@ public class AlignmentMeta {
 
 	public ArrayList<Integer> getAllCodonPositions(int wanted, boolean removeExcluded, int startPos, int endPosInclusive) {
 		ArrayList<Integer> positions = codonPositions.getAllPositions(wanted, startPos, endPosInclusive);
-		
+
 		// delete positions from list if they are excluded
 		if(removeExcluded){
 			Iterator<Integer> iter = positions.iterator();
@@ -138,36 +138,36 @@ public class AlignmentMeta {
 			}		
 		}
 	}
-	
+
 	public void deletePosition(int n) {	
 		excludes.deletePosition(n);
 		codonPositions.deletePosition(n);
 		charsets.deletePosition(n);
 	}
-	
+
 	public void insertPosition(int n) {	
 		excludes.insertPosition(n);
 		codonPositions.insertPosition(n);
 		charsets.insertPosition(n);
-		
+
 	}
-	
+
 	public void excludePositions(int start, int end) {
 		for(int n = start; n <= end; n++){
 			this.excludes.set(n, true);
 		}
 	}
-	
+
 	public void excludeRange(int start, int stop) {
 		this.excludes.addRange(start, stop);
 	}
-	
+
 	public void removeExcludeRange(int start, int stop) {
 		this.excludes.clearRange(start, stop);
-		
+
 	}
-	
-	
+
+
 	public boolean excludesIntersectsPositions(int start, int end) {
 		for(int n = start; n <= end; n++){
 			if(this.excludes.isExcluded(n)){
@@ -184,7 +184,7 @@ public class AlignmentMeta {
 	public int[] translatePositions(int[] selection) {
 		return codonPositions.translatePositions(selection);
 	}
-	
+
 	public int[] reTranslatePositions(int[] selection) {
 		return codonPositions.reTranslatePositions(selection);
 	}

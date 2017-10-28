@@ -191,8 +191,8 @@ public class NotUsed_AlignmentPane_Orig extends JPanel{
 		Font calcFont = baseFont.deriveFont(attributes);
 		FontMetrics metrics = getFontMetrics(calcFont);
 		int fontActualWidth = metrics.stringWidth("X");
-		
-		
+
+
 		double sizeDiff = charWidth - fontActualWidth;
 		// Calculate tracking for font size
 		double tracking = (double)sizeDiff/charWidth;
@@ -921,13 +921,13 @@ public class NotUsed_AlignmentPane_Orig extends JPanel{
 		}
 	}
 
-	
+
 
 	private void drawNucleotides(Graphics2D g2d, byte residue, int x, int y, int xPaneCoord, int yPaneCoord, int width, int height,
 			int charCenterXOffset, int charCenterYOffset){
 
 		int baseVal = NucleotideUtilities.baseValFromBase(residue);
-		
+
 		byteToDraw = residue;
 
 		// Set default
@@ -1491,8 +1491,8 @@ public class NotUsed_AlignmentPane_Orig extends JPanel{
 	//		preserveBaseSelection = false;
 	//
 	//	}
-	
-	*/
+
+	 */
 
 }
 

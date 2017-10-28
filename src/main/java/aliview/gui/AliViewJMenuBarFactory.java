@@ -18,7 +18,7 @@ public class AliViewJMenuBarFactory{
 
 	public AliViewJMenuBarFactory() {		
 	}
-	
+
 	public AliViewJMenuBar create(AliViewWindow aliViewWin){
 		return new AliViewJMenuBar(aliViewWin);
 	}

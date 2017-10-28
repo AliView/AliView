@@ -23,21 +23,21 @@ public class PrimerDetailFrame extends JFrame {
 	private AliViewWindow aliViewWindow;
 	JTextArea mainTextArea;
 	private Font textFont = new Font(OSNativeUtils.getMonospacedFontName(), Font.PLAIN, 11);
-	
+
 	public PrimerDetailFrame(AliViewWindow aliViewWin) {
 		this.aliViewWindow = aliViewWin;
 		mainPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		mainPanel.setBackground(Color.WHITE);
 		JScrollPane scrollPane = new JScrollPane(mainPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		mainPanel.setLayout(new BorderLayout(0, 0));
-		
+
 		mainTextArea = new JTextArea();
 		mainTextArea.setText("This is demo text");
 		mainTextArea.setEditable(false);
 		mainTextArea.setFont(textFont);
 		mainPanel.add(mainTextArea, BorderLayout.CENTER);
 		getContentPane().add(scrollPane, BorderLayout.CENTER);
-			
+
 		this.setTitle("Primer detail");
 		this.setIconImage(AppIcons.getProgramIconImage());
 		this.setPreferredSize(new Dimension(500,400));
@@ -45,8 +45,8 @@ public class PrimerDetailFrame extends JFrame {
 		this.pack();
 		this.setVisible(true);		
 	}
-	
-	
+
+
 	public void setText(String text){
 		mainTextArea.setText(text);
 		mainTextArea.setCaretPosition(0);

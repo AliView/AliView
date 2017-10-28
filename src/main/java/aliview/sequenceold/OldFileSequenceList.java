@@ -16,12 +16,12 @@ import aliview.sequences.FileSequence;
 import aliview.sequences.Sequence;
 
 public class OldFileSequenceList implements List<Sequence>{
-	
+
 	private FileFormat fileFormat;
 	private File aliFile;
 	private int estimatedSize;
 	private SequenceCache seqCache = new SequenceCache(1000);
-	
+
 	public OldFileSequenceList(File aliFile) {
 		this.aliFile = aliFile;	
 		try {
@@ -30,11 +30,11 @@ public class OldFileSequenceList implements List<Sequence>{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
 	private void createFileSequences(int firstIndex, int lastIndex, int seqLength) throws IOException {
-		
+
 		OptimizedRandomAccessFile raf = new OptimizedRandomAccessFile(aliFile, "r");
 		List<FileSequence> seqs = findSequencesInFile(raf);	
 		estimatedSize = seqs.size();	
@@ -42,98 +42,98 @@ public class OldFileSequenceList implements List<Sequence>{
 			seqCache.put( new Integer(n) ,seqs.get(n) );
 		}
 	}
-	
+
 	private ArrayList<FileSequence> findSequencesInFile(OptimizedRandomAccessFile raf) throws IOException{
-	
+
 		long startTime = System.currentTimeMillis();
-		
+
 		ArrayList<FileSequence> allSeqs = new ArrayList<FileSequence>();
 		String line = "";
 		long nSeqCount = 0;
-	
+
 		byte[] buffer = new byte[100];
-	
+
 		long startPos = 0;
-		
-//		StringBuilder name = new StringBuilder();
+
+		//		StringBuilder name = new StringBuilder();
 		boolean bytesUntilNextLFAreName = false;
 		FileSequence sequence = null;
 		while ((raf.read(buffer)) > 0) {
-				
-				long filePoint = raf.getFilePointer();
-				boolean findNextLF = false;
-				
-				int n = 0;
-				
-				while(n<buffer.length){
-					
-					//System.out.println("buffer[n]" + buffer[n]);
-					
-					// Find name start
-					if(buffer[n] == '>'){	
-						
-						startPos = filePoint - n;
-						
-						// save last seq and start a new one
-						if(sequence != null){
-//							sequence.addName(name.toString());
-//							name = new StringBuilder('>');
-							bytesUntilNextLFAreName = true;
-//							sequence.setNextSeqStartPos(startPos);
-//							allSeqs.add(sequence);
-						}
-//						sequence = new FileSequence(raf, startPos);
-						
-						//raf.seek(filePoint + 48000 *10);
-						//n = 100000;
-						
-						
-						
+
+			long filePoint = raf.getFilePointer();
+			boolean findNextLF = false;
+
+			int n = 0;
+
+			while(n<buffer.length){
+
+				//System.out.println("buffer[n]" + buffer[n]);
+
+				// Find name start
+				if(buffer[n] == '>'){	
+
+					startPos = filePoint - n;
+
+					// save last seq and start a new one
+					if(sequence != null){
+						//							sequence.addName(name.toString());
+						//							name = new StringBuilder('>');
+						bytesUntilNextLFAreName = true;
+						//							sequence.setNextSeqStartPos(startPos);
+						//							allSeqs.add(sequence);
 					}
-					
-					
-					if(buffer[n] == '\n'){
-						raf.seek(filePoint + 48000);
-						
-							nSeqCount ++;
-							if(nSeqCount % 1000 == 1){
-								//System.out.println("n" + n);
-								System.out.println("nSeqCount" + nSeqCount);
-								System.out.println("raf.getFilePointer()" + raf.getFilePointer());
-							}
-							
-						
-						n = 100000;
-					}
-					
-					if(bytesUntilNextLFAreName){
-//						name.append((char) buffer[n]);
-					}
-		
-					n++;
-				
+					//						sequence = new FileSequence(raf, startPos);
+
+					//raf.seek(filePoint + 48000 *10);
+					//n = 100000;
+
+
+
 				}
-				
+
+
+				if(buffer[n] == '\n'){
+					raf.seek(filePoint + 48000);
+
+					nSeqCount ++;
+					if(nSeqCount % 1000 == 1){
+						//System.out.println("n" + n);
+						System.out.println("nSeqCount" + nSeqCount);
+						System.out.println("raf.getFilePointer()" + raf.getFilePointer());
+					}
+
+
+					n = 100000;
+				}
+
+				if(bytesUntilNextLFAreName){
+					//						name.append((char) buffer[n]);
+				}
+
+				n++;
+
+			}
+
 			//	System.out.println("nSeqCount" + nSeqCount);
 			//	System.out.println("raf.getFilePointer()" + raf.getFilePointer());
 
 
 		}
-		
+
 		// Skip adding the last seq for now
 		//long endPos = raf.length();
 		//sequence.addNextSeqStartPos(startPos);
-	
-		
+
+
 		long endTime = System.currentTimeMillis();
 		System.out.println("reading sequences took " + (endTime - startTime) + " milliseconds");
-		
+
 		return allSeqs;
 	}
 
 	public byte getByteInFile(int pos) {
-//		byte[] val = new byte[1];
-//		mappedBuff.read(val,pos,1);
+		//		byte[] val = new byte[1];
+		//		mappedBuff.read(val,pos,1);
 		return 66;
 	}
 
@@ -246,14 +246,14 @@ public class OldFileSequenceList implements List<Sequence>{
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	 private class SequenceCache extends LinkedHashMap<Integer,Sequence> {
-		    private int cacheSize;
 
-		    public SequenceCache (int size) {
-		      cacheSize = size;
-		    }
-		    /*
+	private class SequenceCache extends LinkedHashMap<Integer,Sequence> {
+		private int cacheSize;
+
+		public SequenceCache (int size) {
+			cacheSize = size;
+		}
+		/*
 		    protected boolean removeEldestEntry(Entry<Integer, Record> eldest) {
 		      if (size() > ldcSize) {
 		        // Release some memory
@@ -262,7 +262,7 @@ public class OldFileSequenceList implements List<Sequence>{
 		      }
 		      return false;
 		    }
-		    */
-		  }
-	
+		 */
+	}
+
 }

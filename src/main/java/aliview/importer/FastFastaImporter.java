@@ -16,14 +16,14 @@ public class FastFastaImporter {
 	private static final Logger logger = Logger.getLogger(FastFastaImporter.class);
 	private Reader reader;
 	private int longestSequenceLength;
-	
+
 
 	public FastFastaImporter(Reader reader) {
 		this.reader = reader;
 	}
 
-	
-	
+
+
 	public List<Sequence> importSequences() throws AlignmentImportException {
 		long startTime = System.currentTimeMillis();
 		ArrayList<Sequence> sequences = new ArrayList<Sequence>();
@@ -31,15 +31,15 @@ public class FastFastaImporter {
 		double maxMem = MemoryUtils.getMaxMem();
 		try {
 			StringBuilder sequence = new StringBuilder(nextSeqEstSize);
-//			ByteBufferAutogrow seqBuff = new ByteBufferAutogrow(capacity);
+			//			ByteBufferAutogrow seqBuff = new ByteBufferAutogrow(capacity);
 			BufferedReader r = new BufferedReader(this.reader);
 			String line;
 			String name = null;
 			int nLine = 0;
 			while ((line = r.readLine()) != null) {
-				
+
 				line = line.trim();
-				
+
 				if(nLine == 0){
 					// if not fasta file then break
 					if(line.length() > 0 && line.charAt(0) != '>'){
@@ -47,25 +47,25 @@ public class FastFastaImporter {
 						throw new AlignmentImportException("Fasta file should start with > character");
 					}
 				}
-			
+
 				if(line.length() > 0){
 
 					if(line.charAt(0) == '>'){
 
 						// if there is one sequence in buffer already create that one before starting a new one
 						if(name != null && name.length() > 0){
-							
+
 							//String seqAsString = sequence.toString();
 							//nextSeqEstSize = sequence.length();
 							// if there are whitespace replace them
 							if(sequence.indexOf(" ") > -1){
-							   sequence = FileImportUtils.removeAll(sequence, " ");
+								sequence = FileImportUtils.removeAll(sequence, " ");
 							}
 							//FileImportUtils.replaceChar(sequence, '.', '-');
-												
+
 							byte[] bytes = getBytesFromBuffer(sequence);
 							sequences.add(new FastFastaSequence(name, bytes));
-							
+
 							this.longestSequenceLength = Math.max(this.longestSequenceLength, sequence.length());
 							sequence = new StringBuilder(nextSeqEstSize + 10);
 							name = null;
@@ -83,22 +83,22 @@ public class FastFastaImporter {
 				}
 				nLine ++;
 			}
-			
+
 			// add last sequence
 			if(name != null && name.length() > 0){
-				
+
 				if(sequence.indexOf(" ") > -1){
 					// sequence = FileImportUtils.replace(sequence, " ", "", -1);
-				   sequence = FileImportUtils.removeAll(sequence, " ");
+					sequence = FileImportUtils.removeAll(sequence, " ");
 				}
-				
+
 				byte[] bytes = getBytesFromBuffer(sequence);
 				sequences.add(new FastFastaSequence(name, bytes));
-				
+
 				this.longestSequenceLength = Math.max(this.longestSequenceLength, sequence.length());
 			}	
-			
-			
+
+
 		} catch (Exception e) {
 			logger.error(e);
 			// TODO Auto-generated catch block
@@ -109,10 +109,10 @@ public class FastFastaImporter {
 
 		return sequences;
 	}
-	
-	
 
-	
+
+
+
 	//
 	// Byte buffer version
 	//
@@ -128,9 +128,9 @@ public class FastFastaImporter {
 			String name = null;
 			int nLine = 0;
 			while ((line = r.readLine()) != null) {
-				
+
 				line = line.trim();
-				
+
 				if(nLine == 0){
 					// if not fasta file then break
 					if(line.length() > 0 && line.charAt(0) != '>'){
@@ -138,23 +138,23 @@ public class FastFastaImporter {
 						throw new AlignmentImportException("Fasta file should start with > character");
 					}
 				}
-			
+
 				if(line.length() > 0){
 
 					if(line.charAt(0) == '>'){
 
 						// if there is one sequence in buffer already create that one before starting a new one
 						if(name != null && name.length() > 0){
-							
+
 							// if there are whitespace replace them
-//							if(sequence.indexOf(" ") > -1){
-//							   sequence = FileImportUtils.removeAll(sequence, " ");
-//							}
-//							//FileImportUtils.replaceChar(sequence, '.', '-');
-												
+							//							if(sequence.indexOf(" ") > -1){
+							//							   sequence = FileImportUtils.removeAll(sequence, " ");
+							//							}
+							//							//FileImportUtils.replaceChar(sequence, '.', '-');
+
 							byte[] bytes = seqBuff.getBytes();
 							sequences.add(new FastFastaSequence(name, bytes));
-							
+
 							this.longestSequenceLength = Math.max(this.longestSequenceLength, seqBuff.position());
 							seqBuff.ensureCapacity(this.longestSequenceLength);
 							seqBuff.clear();
@@ -172,19 +172,19 @@ public class FastFastaImporter {
 				}
 				nLine ++;
 			}
-			
+
 			// add last sequence
 			if(name != null && name.length() > 0){
-				
+
 				line= FileImportUtils.removeAll(line, ' ');
 
 				byte[] bytes = seqBuff.getBytes();
 				sequences.add(new FastFastaSequence(name, bytes));
-				
+
 				this.longestSequenceLength = Math.max(this.longestSequenceLength, seqBuff.position());
 			}	
-			
-			
+
+
 		} catch (Exception e) {
 			logger.error(e);
 			// TODO Auto-generated catch block
@@ -195,7 +195,7 @@ public class FastFastaImporter {
 
 		return sequences;
 	}
-	
+
 	private boolean bufferContains(StringBuilder sequence, char target) {
 		for(int n = 0; n < sequence.length(); n ++){
 			if(sequence.charAt(n) == target){
@@ -216,5 +216,5 @@ public class FastFastaImporter {
 	public int getLongestSequenceLength() {
 		return longestSequenceLength;
 	}
-	
+
 }

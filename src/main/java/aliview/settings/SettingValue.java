@@ -8,7 +8,7 @@ public class SettingValue {
 	private boolean defaultBooleanValue;
 	private int minIntVal;
 	private int maxIntVal;
-	
+
 
 	public SettingValue(String prefsKey, String defaultStringValue) {
 		this.prefsKey = prefsKey;
@@ -21,7 +21,7 @@ public class SettingValue {
 		this.minIntVal = minIntVal;
 		this.maxIntVal = maxIntVal;
 	}
-	
+
 	public SettingValue(String prefsKey, boolean defaultBooleanValue) {
 		this.prefsKey = prefsKey;
 		this.defaultBooleanValue = defaultBooleanValue;
@@ -70,8 +70,8 @@ public class SettingValue {
 	public String getStringValue() {
 		return Settings.getStringValue(this);
 	}
-	
-	
+
+
 	public void putStringValue(String stringValue) {
 		Settings.putStringValue(this, stringValue);
 	}
@@ -82,11 +82,11 @@ public class SettingValue {
 		intValue = bounded;
 		Settings.putIntValue(this, bounded);
 	}
-	
+
 	public int getIntValue() {
 		return Settings.getIntValue(this);
 	}
-	
+
 	public boolean getDefaultBooleanValue() {
 		return defaultBooleanValue;
 	}
@@ -98,7 +98,7 @@ public class SettingValue {
 	public void putBooleanValue(boolean booleanValue) {
 		Settings.putBooleanValue(this, booleanValue);
 	}
-	
+
 	public boolean getBooleanValue() {
 		return Settings.getBooleanValue(this);
 	}

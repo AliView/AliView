@@ -38,7 +38,7 @@ public class TranslationCharPixelsContainerShowBoth {
 		}
 		return transContainer;
 	}
-	
+
 	public static TranslationCharPixelsContainerShowBoth createSelectedTranslationPixelsContainer(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCase) {
 		TranslationCharPixelsContainerShowBoth transContainer = new TranslationCharPixelsContainerShowBoth();
 		transContainer.allAAContainers = new CharPixelsContainer[AminoAcid.HIGEST_AA_INT_VAL + 1];
@@ -55,7 +55,7 @@ public class TranslationCharPixelsContainerShowBoth {
 		}
 		return transContainer;
 	}
-	
+
 	public static TranslationCharPixelsContainerShowBoth createLetterTranslationPixelsContainer(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCase) {
 		TranslationCharPixelsContainerShowBoth transContainer = new TranslationCharPixelsContainerShowBoth();
 		transContainer.allAAContainers = new CharPixelsContainer[AminoAcid.HIGEST_AA_INT_VAL + 1];
@@ -70,7 +70,7 @@ public class TranslationCharPixelsContainerShowBoth {
 		}
 		return transContainer;
 	}
-	
+
 	public static TranslationCharPixelsContainerShowBoth createSelectedLetterTranslationPixelsContainer(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCase) {
 		TranslationCharPixelsContainerShowBoth transContainer = new TranslationCharPixelsContainerShowBoth();
 		transContainer.allAAContainers = new CharPixelsContainer[AminoAcid.HIGEST_AA_INT_VAL + 1];

@@ -18,9 +18,9 @@ public class FastaFileIndexer implements FileIndexer{
 
 	public ArrayList<Sequence> findSequencesInFile(MemoryMappedSequencesFile sequencesFile, long filePointerStart, int seqOffset, int nSeqsToRetrieve,
 			SubThreadProgressWindow progressWin) {
-		
+
 		ByteBufferInpStream mappedBuff = sequencesFile.getMappedBuff();
-		
+
 		this.fileSize = mappedBuff.length();
 		int nSeqCount = 0;
 		ArrayList<Sequence> allSeqs = new ArrayList<Sequence>();
@@ -53,17 +53,17 @@ public class FastaFileIndexer implements FileIndexer{
 				estimateTotalSeqInFile = fileSize / oneSeqFileSizeSize;
 				final int current = lastSeqIndex;
 				progressWin.setMessage("Indexing file " + current + " out of ~" + estimateTotalSeqInFile);
-				                        		
+
 			}
 
 			if(progressWin.wasSubThreadInterruptedByUser()){
 				Thread.currentThread().interrupt();
 				break;
 			}
-			
-			
+
+
 			// TODO check if window is closed - then kill thread
-			
+
 			// if other thread is waiting for mapped buffer (e.g. main Thread, pause indexing for 200ms)
 			// this is done by releasing lock and sleeping a short while
 			if(sequencesFile.getMappedBuffLock().hasQueuedThreads()){
@@ -90,7 +90,7 @@ public class FastaFileIndexer implements FileIndexer{
 		ByteBufferInpStream mappedBuff = sequencesFile.getMappedBuff();
 		mappedBuff.position(filePointerStart);
 		int lineLength = 0;
-		
+
 		while ((nextByte = (byte)mappedBuff.read()) != -1) {
 
 			boolean findNextLF = false;
@@ -136,14 +136,14 @@ public class FastaFileIndexer implements FileIndexer{
 
 				}
 			}
-			
+
 			lineLength ++;
 
 			// build name
 			if(bytesUntilNextLFAreName){
 				name.append((char) nextByte);
 			}
-			
+
 		}
 
 		// EOF

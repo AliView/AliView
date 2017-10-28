@@ -25,7 +25,7 @@ public class FindObject {
 	public FindObject(String searchTerm) {
 		this(searchTerm, false);
 	}
-	
+
 	public FindObject(String searchTerm, boolean findAll) {
 		this.searchTerm = searchTerm;
 		this.findAll = findAll;
@@ -38,7 +38,7 @@ public class FindObject {
 	public int getNextFindSeqNumber() {
 		return nextFindSeqNumber;
 	}
-	
+
 	public void setNextFindSeqNumber(int nextFindSeqNumber) {
 		this.nextFindSeqNumber = nextFindSeqNumber;
 	}
@@ -46,7 +46,7 @@ public class FindObject {
 	public void setFoundPos(int position, int sequenceIndex) {
 		this.foundPos = new Point(position, sequenceIndex);
 	}
-	
+
 	public Point getFoundPos() {
 		return foundPos;
 	}
@@ -61,9 +61,9 @@ public class FindObject {
 
 	public void setIsFound(boolean isFound) {
 		this.isFound = isFound;
-		
+
 	}
-	
+
 	public boolean isFound() {
 		return isFound;
 	}
@@ -84,7 +84,7 @@ public class FindObject {
 
 	public void setFindAll(boolean b) {
 		this.findAll = b;
-		
+
 	}
 
 	public boolean isFindAll() {
@@ -94,7 +94,7 @@ public class FindObject {
 	public void addFoundNameIndex(int n) {
 		foundIndices.add(n);
 	}
-	
+
 	public void setFoundNameIndex(int n) {
 		foundIndices.clear();
 		foundIndices.add(n);
@@ -109,18 +109,18 @@ public class FindObject {
 			int lastFound = foundIndices.get(foundIndices.size() - 1).intValue();
 			return  lastFound + 1;
 		}
-		
+
 	}
 
 	public void clearIndices() {
 		foundIndices.clear();
-		
+
 	}
 
 	public boolean findNextInNames(){
 		return findInNames;
 	}
-	
+
 	public boolean findNextInSequences() {
 		return !findInNames;
 	}
@@ -128,10 +128,10 @@ public class FindObject {
 	public void setFindNextInNames(boolean b) {
 		this.findInNames = b;
 	}
-	
+
 	public void setFindNextInSequences(boolean b) {
 		this.findInNames = !b;
 	}
-	
+
 
 }

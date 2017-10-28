@@ -42,31 +42,31 @@ public class AlignerALLItemsFrame extends JFrame {
 	JPanel mainPanel;
 
 	public AlignerALLItemsFrame(final AliViewWindow aliViewWin){
-		
+
 		getContentPane().add(new AlignerALLItemsPanel(this), BorderLayout.CENTER);
-	
+
 		// Arrange Frame
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.addWindowListener(new WindowAdapter() {		
 			public void windowClosing(WindowEvent e){
 				// Dont save here - only close
 				dispose();
-				}
+			}
 		});
-		
+
 		this.setTitle("Alignment program settings");
 		this.setPreferredSize(new Dimension(650,600));
 		this.pack();
 		this.centerLocationToThisComponent(aliViewWin);
 		this.setVisible(true);
 	}
-	
+
 	public void centerLocationToThisComponent(Component parent){
 		// align to middle of parent window
 		if(parent != null){
 			int newX = parent.getX() + parent.getWidth()/2 - this.getWidth()/2;
 			int newY = parent.getY() + parent.getHeight()/2 - this.getHeight()/2;
-			
+
 			if(newX > parent.getX() && newX > parent.getY()){
 				this.setLocation(newX, newY);
 			}

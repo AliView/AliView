@@ -2,19 +2,19 @@ package aliview;
 
 
 public final class GeneticCode {
-	
+
 	private final static int CODE_STATES = 64;
 	public final AminoAcid[] acidTranslation = new AminoAcid[CODE_STATES];
 	public int transTable;
 	public String name;
 	public String codeString;
 	private String startCodon;
-	
-	
+
+
 	// Genetic code information: http://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi
 	//
-	
-	
+
+
 	public static final GeneticCode GC1 = new GeneticCode(1,"Standard code","FFLLSSSSYY**CC*WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG", "AUG");
 	public static final GeneticCode  GC2 = new GeneticCode(2,"Vertebrate Mitochondrial", "FFLLSSSSYY**CCWWLLLLPPPPHHQQRRRRIIMMTTTTNNKKSS**VVVVAAAADDEEGGGG","AUG");
 	public static final GeneticCode  GC3 = new GeneticCode(3,"Yeast Mitochondrial","FFLLSSSSYY**CCWWTTTTPPPPHHQQRRRRIIMMTTTTNNKKSSRRVVVVAAAADDEEGGGG","AUG");
@@ -42,7 +42,7 @@ public final class GeneticCode {
 	public GeneticCode(int transTable, String name, String codeString){
 		this(transTable,name,codeString,"AUG");
 	}
-	
+
 	public GeneticCode(int transTable, String name, String codeString, String startCodon){
 		this.transTable = transTable;
 		this.name = name;
@@ -52,10 +52,10 @@ public final class GeneticCode {
 			acidTranslation[n] = AminoAcid.getAminoAcidFromChar(codeString.charAt(n));
 		}
 	}
-	
+
 	@Override
 	public String toString() {
 		return "" + transTable + ". " + name;
 	}
-	
+
 }

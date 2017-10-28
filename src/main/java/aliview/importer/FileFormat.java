@@ -10,13 +10,13 @@ import utils.OSNativeUtils;
 
 
 public class FileFormat {
-	
+
 	private static final Logger logger = Logger.getLogger(FileFormat.class);
-	
+
 	private String name;
 	private String suffix;
 	private String suffixWin;
-	
+
 	public static final FileFormat UNKNOWN = new FileFormat("Unknown", "", "");
 	public static final FileFormat FILE_FASTA = new FileFormat("Fasta", "fasta", "fas");
 	public static final FileFormat FASTA = new FileFormat("Fasta", "fasta", "fas");
@@ -29,19 +29,19 @@ public class FileFormat {
 	public static final FileFormat PHYLIP_RELAXED_PADDED_INTERLEAVED_AKA_LONG_NAME_INTERLEAVED = new FileFormat("Phylip", "phy", "phy");
 	public static final FileFormat PHYLIP_STRICT_SEQUENTIAL_AKA_SHORT_NAME_SEQUENTIAL = new FileFormat("Phylip", "phy", "phy");
 	public static final FileFormat PHYLIP_SHORT_NAME_INTERLEAVED = new FileFormat("Phylip", "phy", "phy");
-	
+
 
 	public static final FileFormat MSF = new FileFormat("MSF", "msf", "msf");
 	public static final FileFormat CLUSTAL = new FileFormat("Clustal", "aln", "aln");
-	
+
 	public static final FileFormat IMAGE_PNG = new FileFormat("png-image", "png", "png");
-	
+
 	// TODO should be different when not translated AminoAcid
 	public static final FileFormat PHYLIP_TRANSLATED_AMINO_ACID = new FileFormat("PhylipAminoAcid", "translated.phy", "translated.phy");
 	public static final FileFormat NEXUS_TRANSLATED_AMINO_ACID = new FileFormat("NexusTranslated", "translated.nexus", "translated.nex");
 	public static final FileFormat FASTA_TRANSLATED_AMINO_ACID = new FileFormat("FastaTranslated", "translated.fasta", "translated.fas");
-	
-	
+
+
 	public static void main(String[] args) {
 		//FileFormat ffFileTest = new FileFormat();
 		//ffFileTest.isFileOfAlignmentFormat(new File("/vol2/big_data/SSURef_108_filtered_bacteria_pos_5389-24317.fasta"));
@@ -52,12 +52,12 @@ public class FileFormat {
 		this.suffix = suffix;
 		this.suffixWin = suffixWin;
 	}
-	
+
 	public static final String stripFileSuffixFromName(String name){
 		String strippedName = StringUtils.substringBeforeLast(name, ".");
 		return strippedName;
 	}
-	
+
 	public String getSuffix(){
 		if(OSNativeUtils.isWindows()){
 			return suffixWin;
@@ -65,12 +65,12 @@ public class FileFormat {
 			return suffix;
 		}
 	}
-	
+
 	@Override
 	public String toString() {
 		return this.name;
 	}
-	
+
 	public static boolean isThisFasta(String seq){
 		boolean isFasta = false;
 		if(seq != null && seq.startsWith(">")){
@@ -78,13 +78,13 @@ public class FileFormat {
 		}
 		return isFasta;
 	}
-	
-	
+
+
 	public static FileFormat isFileOfAlignmentFormat(File seqFile){
 		if(seqFile == null || !seqFile.exists()){
 			return null;
 		}
-		
+
 		long startTime = System.currentTimeMillis();
 		FileFormat foundFormat = null;
 
@@ -114,7 +114,7 @@ public class FileFormat {
 				// only first char
 				String[] splitted = filestart.split("\n");
 				String firstLine = splitted[0];
-				
+
 				logger.info("firstLine" + firstLine);
 
 				if(firstLine.startsWith(">")){
@@ -128,7 +128,7 @@ public class FileFormat {
 				}else if(PhylipImporter.isStringValidFirstLine(firstLine)){
 					foundFormat = FileFormat.PHYLIP;
 				}
-				
+
 			}
 
 			long endTime = System.currentTimeMillis();

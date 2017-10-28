@@ -17,14 +17,14 @@ import org.apache.log4j.Logger;
 public class NotUsedSequenceListSelectionListener implements ListSelectionListener{
 	private static final Logger logger = Logger.getLogger(NotUsedSequenceListSelectionListener.class);
 
-	
+
 	public void valueChanged(ListSelectionEvent e) {
-		
+
 		// Skip if is adjusting
 		if(e.getValueIsAdjusting() == true){
 			return;
 		}
-			
+
 	}
-	
+
 }

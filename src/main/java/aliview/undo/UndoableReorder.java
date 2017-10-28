@@ -8,7 +8,7 @@ import aliview.sequences.Sequence;
 
 
 public class UndoableReorder extends AbstractUndoableEdit{
-	
+
 	private List<Sequence> sequenceList;
 	private AlignmentMeta meta;
 
@@ -16,7 +16,7 @@ public class UndoableReorder extends AbstractUndoableEdit{
 		this.sequenceList = sequenceList;
 		this.meta = meta;
 	}
-	
+
 	public String getPresentationName() { return "Reorder sequences"; }
-	
+
 }

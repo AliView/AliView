@@ -17,19 +17,19 @@ import aliview.sequencelist.MemoryMappedSequencesFile;
 
 public class FileSequence extends BasicSequence {
 	private static final Logger logger = Logger.getLogger(FileSequence.class);
-	
+
 	public FileSequence(MemoryMappedSequencesFile sequencesFile, long startPointer) {
 		this(new FileSequenceBases(sequencesFile, startPointer));
 	}
-	
+
 	public FileSequence(FileSequenceBases fileSequenceBases) {
 		super(fileSequenceBases);
 	}
-	
+
 	public FileSequence(FileSequence template) {
 		super(template);
 	}
-	
+
 	/*
 	 * This is called when creating sequences from an .fai index file
 	 */
@@ -42,7 +42,7 @@ public class FileSequence extends BasicSequence {
 		//this.lineCharLength = lineCharLength;
 		//this.lineAbsoluteLength = lineAbsoluteLength;
 	}
-	
+
 	public FileSequence getCopy() {
 		return new FileSequence(this);
 	}
@@ -50,23 +50,23 @@ public class FileSequence extends BasicSequence {
 	public long getEndPointer(){
 		return getFileSequenceBases().getEndPointer();
 	}
-	
+
 	public void setEndPointer(long pointer) {
 		getFileSequenceBases().setEndPointer(pointer);
 	}
-	
+
 	public void setSequenceAfterNameStartPointer(long pointer) {
 		getFileSequenceBases().setSequenceAfterNameStartPointer(pointer);
 	}
-	
+
 	public long getSequenceAfterNameStartPointer(){
 		return getFileSequenceBases().getSequenceAfterNameStartPointer();
 	}
-	
+
 	private FileSequenceBases getFileSequenceBases(){
 		return (FileSequenceBases) bases;
 	}
-	
+
 
 	public byte getBaseAtPos(int n) {
 		return (byte) getBases().get(n);
@@ -102,10 +102,10 @@ public class FileSequence extends BasicSequence {
 			}
 		}	
 	}
-	
+
 
 	public Interval find(Pattern pattern, int startPos) {
-		
+
 		Interval foundInterval = null;
 		// split into chunks length = 5MB
 		int buffSize = 5000*1000;
@@ -136,7 +136,7 @@ public class FileSequence extends BasicSequence {
 		}
 		return foundInterval;
 	}
-	
+
 
 	public void reverseComplement() {
 		// TODO Auto-generated method stub
@@ -188,7 +188,7 @@ public class FileSequence extends BasicSequence {
 	public void moveSelectedResiduesLeftIfGapIsPresent() {
 		// TODO Auto-generated method stub
 	}
-	
+
 	public void moveSelectedResiduesRightIfGapOrEndIsPresent() {
 		// TODO Auto-generated method stub
 	}
@@ -211,7 +211,7 @@ public class FileSequence extends BasicSequence {
 	public void deleteGapLeftOfSelection() {
 		// TODO Auto-generated method stub
 	}
-	
+
 	public void deleteGapRightOfSelection() {
 		// TODO Auto-generated method stub	
 	}
@@ -227,18 +227,18 @@ public class FileSequence extends BasicSequence {
 	public void selectAllBasesUntilGap(int x) {
 		// TODO Auto-generated method stub	
 	}
-	
+
 	public int indexOf(char testChar) {
 		logger.warn("This might take a long time");
 		return super.indexOf(testChar);
 	}
-		
+
 	public int countChar(char targetChar, int startpos, int endpos) {	
 		logger.warn("This might take a long time");
 		return super.countChar(targetChar, startpos, endpos);
-		
+
 	}
-	
+
 	public int getUngapedLength() {
 		logger.warn("this could take a lot of time and ruin memory");
 		return -1;

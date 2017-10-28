@@ -28,7 +28,7 @@ public class PrimerPanel extends JPanel {
 
 	public PrimerPanel(Primer primer) {
 		this.primer = primer;
-		
+
 		this.setFont(baseFont);
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{50, 50, 44, 150, 44, 224, 33, 0, 150, 0};
@@ -36,7 +36,7 @@ public class PrimerPanel extends JPanel {
 		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
-		
+
 		JLabel lblScore = new JLabel("" + primer.getScore());
 		lblScore.setFont(baseFont);
 		GridBagConstraints gbc_lblScore = new GridBagConstraints();
@@ -45,7 +45,7 @@ public class PrimerPanel extends JPanel {
 		gbc_lblScore.gridx = 0;
 		gbc_lblScore.gridy = 0;
 		add(lblScore, gbc_lblScore);
-		
+
 		JLabel lblPosition = new JLabel("" + primer.getPosition());
 		lblPosition.setFont(baseFont);
 		GridBagConstraints gbc_lblPosition = new GridBagConstraints();
@@ -54,7 +54,7 @@ public class PrimerPanel extends JPanel {
 		gbc_lblPosition.gridx = 1;
 		gbc_lblPosition.gridy = 0;
 		add(lblPosition, gbc_lblPosition);
-		
+
 		JLabel lblLength = new JLabel("" + primer.getLength());
 		lblLength.setFont(baseFont);
 		GridBagConstraints gbc_lblLength = new GridBagConstraints();
@@ -62,7 +62,7 @@ public class PrimerPanel extends JPanel {
 		gbc_lblLength.gridx = 2;
 		gbc_lblLength.gridy = 0;
 		add(lblLength, gbc_lblLength);
-		
+
 		PrimerDisplay primerDisplay = new PrimerDisplay(primer.getSequence());
 		primerDisplay.addMouseListener(new MouseAdapter() {
 			@Override
@@ -76,7 +76,7 @@ public class PrimerPanel extends JPanel {
 		gbc_primerDisplay.gridx = 3;
 		gbc_primerDisplay.gridy = 0;
 		add(primerDisplay, gbc_primerDisplay);
-		
+
 		JLabel lblGCcontent = new JLabel("" + DEC_FORMAT.format(primer.getGCcontent()));
 		lblGCcontent.setFont(baseFont);
 		GridBagConstraints gbc_lblGCcontent = new GridBagConstraints();
@@ -84,7 +84,7 @@ public class PrimerPanel extends JPanel {
 		gbc_lblGCcontent.gridx = 4;
 		gbc_lblGCcontent.gridy = 0;
 		add(lblGCcontent, gbc_lblGCcontent);
-		
+
 		JLabel lblTm = new JLabel(primer.getBaseStackingTmAsString() + " (avg=" + primer.getBaseStackingAvgTmAsString() + ")" );
 		lblTm.setFont(baseFont);
 		GridBagConstraints gbc_lblTm = new GridBagConstraints();
@@ -93,7 +93,7 @@ public class PrimerPanel extends JPanel {
 		gbc_lblTm.gridx = 5;
 		gbc_lblTm.gridy = 0;
 		add(lblTm, gbc_lblTm);
-		
+
 		JLabel lbl3EndDimer = new JLabel("" + primer.get3EndDimerMaxLength());
 		lbl3EndDimer.setFont(baseFont);
 		GridBagConstraints gbc_lbl3EndDimer = new GridBagConstraints();
@@ -101,7 +101,7 @@ public class PrimerPanel extends JPanel {
 		gbc_lbl3EndDimer.gridx = 6;
 		gbc_lbl3EndDimer.gridy = 0;
 		add(lbl3EndDimer, gbc_lbl3EndDimer);
-		
+
 		JLabel lblDimer = new JLabel("" + primer.getDimerMaxLength());
 		lblDimer.setFont(baseFont);
 		GridBagConstraints gbc_lblDimer = new GridBagConstraints();
@@ -109,7 +109,7 @@ public class PrimerPanel extends JPanel {
 		gbc_lblDimer.gridx = 7;
 		gbc_lblDimer.gridy = 0;
 		add(lblDimer, gbc_lblDimer);
-		
+
 		JLabel lblSequence = new JLabel(primer.getSequence());
 		lblSequence.setFont(baseFont);
 		GridBagConstraints gbc_lblSequence = new GridBagConstraints();
@@ -123,7 +123,7 @@ public class PrimerPanel extends JPanel {
 		Dimension prefSize = new Dimension(300,30);
 		return prefSize;
 	}
-	*/
+	 */
 
 	public void isSelected(boolean isSelected) {
 		if(isSelected){
@@ -137,7 +137,7 @@ public class PrimerPanel extends JPanel {
 	public Primer getPrimer() {
 		return primer;
 	}
-	
-	
+
+
 
 }

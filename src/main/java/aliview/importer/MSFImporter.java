@@ -54,14 +54,14 @@ public class MSFImporter {
 			BufferedReader r = new BufferedReader(this.reader);
 			ReaderHelper helper = new ReaderHelper(r);
 
-			
+
 			helper.readNextLine();
 			String firstLine = helper.getNextLine();
 			boolean isRightFormat = isStringValidFirstLine(firstLine);
 			if(! isRightFormat){
 				throw new AlignmentImportException("Could not read file as MSF format");
 			}
-			
+
 			boolean containsMSF = helper.readUntilNextLineContains("MSF:");
 			String metaLine = helper.getNextLine();		
 			String strLength = StringUtils.substringBetween(metaLine,"MSF:","Type:");
@@ -73,9 +73,9 @@ public class MSFImporter {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 			logger.info("guessedLength" + guessedLength);
-			
+
 			boolean containsName = helper.readUntilNextLineContains("Name:");
 			String firstNameLine = helper.getNextLine();		
 			String firstName = StringUtils.substringBetween(firstNameLine,": "," ");
@@ -91,7 +91,7 @@ public class MSFImporter {
 				// skip until start of sequences
 				helper.readUntilNextLineContains("//");
 				helper.readUntilNextLineContains(firstName);
-				
+
 
 				// get first rows of sequences(
 				int seqCount = 0;
@@ -100,7 +100,7 @@ public class MSFImporter {
 				// in clustal there can be a non blank row without name that contains preservation
 				while(helper.isNextLineContainingNonWhitespaceChars()){
 					String line = helper.getNextLine();
-			//		logger.info("line" + line);
+					//		logger.info("line" + line);
 					// remove blanks in beginning of name
 					line = line.trim();
 					int index = ReaderHelper.indexOfFirstNonWhiteCharAfterWhiteChar(line);
@@ -121,7 +121,7 @@ public class MSFImporter {
 
 					helper.readNextLine();
 				}
-				
+
 
 
 
@@ -150,9 +150,9 @@ public class MSFImporter {
 						lineCount ++;
 						helper.readNextLine();
 					}
-					
-				//	MemoryUtils.logMem();
-	
+
+					//	MemoryUtils.logMem();
+
 				}
 
 				for(int n = 0; n <seqCount; n++){	
@@ -164,9 +164,9 @@ public class MSFImporter {
 				}
 
 				// Only logging
-//				for(Sequence seq: sequences){
-//					logger.info(seq.getName() + " " + seq.getBasesAsString());
-//				}
+				//				for(Sequence seq: sequences){
+				//					logger.info(seq.getName() + " " + seq.getBasesAsString());
+				//				}
 			}
 
 
@@ -199,30 +199,30 @@ public class MSFImporter {
 			return false;
 		}
 	}
-	
+
 	/*
 	 * 
 	 * This method is copied and modified from iubio.readseq
 	 * 
 	 */
-	
+
 	public static int GCGchecksum(Sequence seq){
 		int check = 0;
-	
-		  for (int n = 0; n < seq.getLength(); n++){
-				byte byteVal = seq.getBaseAtPos(n);
-				int val = Character.toLowerCase(byteVal);
-				if (val >= 'a' && val <= 'z'){
-					val -= 32;
-				}
-				
-				int positionMultiplier = n % 57 + 1;
-				check += val * positionMultiplier;
-						
-		   }
-		  check %= 10000;
-	  return check;
+
+		for (int n = 0; n < seq.getLength(); n++){
+			byte byteVal = seq.getBaseAtPos(n);
+			int val = Character.toLowerCase(byteVal);
+			if (val >= 'a' && val <= 'z'){
+				val -= 32;
+			}
+
+			int positionMultiplier = n % 57 + 1;
+			check += val * positionMultiplier;
+
+		}
+		check %= 10000;
+		return check;
 	}
-	
+
 }
 

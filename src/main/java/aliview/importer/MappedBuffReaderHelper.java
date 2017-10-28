@@ -24,7 +24,7 @@ public class MappedBuffReaderHelper {
 	public void setPosition(long position) {
 		mappedBuff.position(position);	
 	}
-	
+
 	public long findNext(byte target){
 		while(true){
 			if(target == mappedBuff.read()){
@@ -32,16 +32,16 @@ public class MappedBuffReaderHelper {
 			}
 		}
 	}
-	
+
 	public long findNextOrEOF(byte target) {
 
-			while(true){
-				if(target == mappedBuff.read()){
-					return mappedBuff.position() - 1;
-				}
+		while(true){
+			if(target == mappedBuff.read()){
+				return mappedBuff.position() - 1;
 			}
+		}
 	}
-	
+
 	private boolean isEOF(){
 		return lastRead == -1;
 	}
@@ -54,8 +54,8 @@ public class MappedBuffReaderHelper {
 		}
 		return lastRead;
 	}
-	
-	
+
+
 	public long appendBytesUntilNextLF(StringBuilder stringBuff) throws EOFException{
 		while(true){
 			int nextByte = read();
@@ -73,38 +73,38 @@ public class MappedBuffReaderHelper {
 		}
 		return false;
 	}
-	
+
 	private boolean isLF(int nextByte) {
 		if(nextByte == '\n'){
 			return true;
 		}
 		return false;
 	}
-	
-	
-	
+
+
+
 	private boolean isSpaceOrTab(int nextByte) {
 		if(nextByte == ' ' || nextByte == '\t'){
 			return true;
 		}
 		return false;
 	}
-	
+
 	private boolean isWhiteOrLF(int nextByte){
 		if(nextByte == ' ' || nextByte == '\t' || nextByte == '\r' || nextByte == '\n'){
 			return true;
 		}
 		return false;
 	}
-	
-	
+
+
 	private boolean isSpace(int nextByte) {
 		if(nextByte == ' '){
 			return true;
 		}
 		return false;
 	}
-	
+
 	private boolean isCitation(byte nextByte) {
 		if(nextByte == '\''){
 			return true;
@@ -137,14 +137,14 @@ public class MappedBuffReaderHelper {
 		}
 		return foundPos;
 	}
-	
-	
+
+
 	public void posOfFirstCharAfterNexusName() {
 		boolean charFound = false;
 		boolean whiteFound = false;
-		
-	/*	
-		
+
+		/*	
+
 		while(true){
 			byte next = read();
 			if(isCitation(next)){
@@ -156,16 +156,16 @@ public class MappedBuffReaderHelper {
 			}else{
 				charFound = true;
 			}
-			
+
 			if(whiteFound && !isSpaceOrTab(next)){
 				foundPos = mappedBuff.position() - 1;
 				break;
 			}
 		}
 		return foundPos;
-		*/
+		 */
 	}
-	
+
 
 
 	public boolean hasLineOnlyOneContinousSpace() throws EOFException {
@@ -185,7 +185,7 @@ public class MappedBuffReaderHelper {
 			previous = next;
 		}
 	}
-	
+
 
 	public long posOfNextNewline() throws EOFException {
 		long foundPos = -1;
@@ -197,7 +197,7 @@ public class MappedBuffReaderHelper {
 			}
 		}
 		return foundPos;
-		
+
 	}
 
 	public int countSpaceBetween(long seqStartPos, long firstNewlinePos) throws EOFException {
@@ -212,10 +212,10 @@ public class MappedBuffReaderHelper {
 		}
 		return spaceCount;
 	}
-	
+
 	public long posAtNSequenceCharacters(long seqStartPos, int countTarget) throws EOFException {
 		mappedBuff.position(seqStartPos);
-		
+
 		int charCount = 0;
 		while(charCount < countTarget){
 			byte next = read();
@@ -250,23 +250,23 @@ public class MappedBuffReaderHelper {
 		}
 		return foundPos;
 	}
-	
+
 	public long skipUntilNextNonWhiteChar() throws EOFException {
 		return posOfNextNonWhiteChar();
 	}
-	
+
 	public int skipUntilNextNonWhiteCharOnNextLine() throws EOFException {
 		long foundPos = -1;
 		int linebreaks = 0;
 		while(true){
 			byte next = read();
-			
+
 			//logger.info("next" + (char) next);
-			
+
 			if(isLF(next)){
 				linebreaks ++;
 			}
-			
+
 			if(linebreaks > 0){
 				if(! isWhiteOrLF(next)){
 					mappedBuff.position(mappedBuff.position() - 1);
@@ -275,22 +275,22 @@ public class MappedBuffReaderHelper {
 			}
 		}
 	}
-	
-	
+
+
 	public int skipUntilNextNonWhiteCharInFirstPosAfterNewLine() throws EOFException {
 		long foundPos = -1;
 		int linebreaks = 0;
 		int charCountSinceLF = 0;
 		while(true){
 			byte next = read();
-			
+
 			charCountSinceLF ++;
-			
+
 			if(isLF(next)){
 				linebreaks ++;
 				charCountSinceLF = 0;
 			}
-			
+
 			if(charCountSinceLF == 1){
 				if(linebreaks > 0){
 					if(! isWhiteOrLF(next)){
@@ -301,9 +301,9 @@ public class MappedBuffReaderHelper {
 			}
 		}
 	}
-	
-	
-	
+
+
+
 
 	public String skipUntilLineContains(String string) throws EOFException {
 		long startPointer = mappedBuff.position();
@@ -316,26 +316,26 @@ public class MappedBuffReaderHelper {
 			}
 		}
 	}
-	
+
 	private boolean isTokenDelimiter(int nextByte){
 		if(nextByte == ' ' || nextByte == '\t' || nextByte == '\r' || nextByte == '\n' || nextByte == '=' || nextByte == ';'){
 			return true;
 		}
 		return false;
 	}
-	
+
 	private boolean isNexusCommentStart(int nextByte){
 		return nextByte == '[';
 	}
-	
+
 	private boolean isNexusCommentEnd(int nextByte){
 		return nextByte == ']';
 	}
-	
+
 	private boolean isNexusNameCitation(int nextByte) {
 		return nextByte == '\'';
 	}
-	
+
 	public String getCharsUntilNexusCitation() throws EOFException{
 		StringBuilder buff = new StringBuilder();
 		while(true){
@@ -348,30 +348,30 @@ public class MappedBuffReaderHelper {
 			}
 		}
 	}
-	
+
 	public void skipUntilNexusCommentEnd() throws EOFException{
 		while(true){
 			int nextByte = read();
 			if(isNexusCommentEnd(nextByte)){
-	//			logger.info("done skip comment");
+				//			logger.info("done skip comment");
 				return;
 			}
-	//		logger.info("skip comment");
+			//		logger.info("skip comment");
 		}
 	}
-	
+
 
 	public ArrayList<String> readAllNexusTokensUntil(String endToken) throws EOFException{
 		ArrayList<String> tokens = new ArrayList<String>();
 		StringBuilder buff = new StringBuilder();	
-		
+
 		while(true){
 			int nextByte = read();
-			
+
 			if(isNexusCommentStart(nextByte)){
 				skipUntilNexusCommentEnd();
 			}
-			
+
 			if(isTokenDelimiter(nextByte)){
 				if(buff.length() > 0){
 					String token = buff.toString();
@@ -385,14 +385,14 @@ public class MappedBuffReaderHelper {
 				buff.append((char)nextByte);
 			}
 		}
-		
+
 	}
 
 	public String readNextNexusSeqName() throws EOFException {
 		StringBuilder buff = new StringBuilder();	
 		while(true){
 			int nextByte = read();
-			
+
 			if(isNexusCommentStart(nextByte)){
 				skipUntilNexusCommentEnd();
 			}
@@ -411,41 +411,41 @@ public class MappedBuffReaderHelper {
 			}
 		}
 	}
-	
-	
+
+
 
 	public long posOfNextNonWhiteNexusChar() throws EOFException {	
 		while(true){
 			int nextByte = read();
-			
+
 			if(isNexusCommentStart(nextByte)){
 				skipUntilNexusCommentEnd();
 			}
-			
+
 			if(isWhiteOrLF(nextByte)){
 				// skip
 			}else{
-				
+
 				return mappedBuff.position() -1;
 			}
 		}
 	}
-	
+
 	public long posOfNextWhitespaceOrLF() throws EOFException {
 		while(true){
 			int nextByte = read();
-			
+
 			if(isWhiteOrLF(nextByte)){
 				return mappedBuff.position() - 1;
 			}
 		}
 	}
-	
+
 	public long getPosOfNonWhiteNexusCharacter(int skipCount) throws EOFException {
 		int counter = 0;
 		while(true){
 			int nextByte = read();
-			
+
 			if(isNexusCommentStart(nextByte)){
 				skipUntilNexusCommentEnd();
 			}		
@@ -453,9 +453,9 @@ public class MappedBuffReaderHelper {
 				// skip
 			}else{
 				counter++;
-//				logger.info((char)nextByte);
+				//				logger.info((char)nextByte);
 				if(counter == skipCount){
-				//	logger.info("lastseqchar=" + (char)nextByte);
+					//	logger.info("lastseqchar=" + (char)nextByte);
 					return mappedBuff.position() - 1;
 				}
 			}
@@ -471,15 +471,15 @@ public class MappedBuffReaderHelper {
 
 	public void readUntilNextNonBlankLine() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public long position() {
 		return mappedBuff.position();
 	}
 
-	
 
-	
-	
+
+
+
 }

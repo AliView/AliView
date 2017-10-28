@@ -14,16 +14,16 @@ public class AlignmentFile extends File{
 
 	private static final Logger logger = Logger.getLogger(AlignmentFile.class);
 	private static final String TMP_FILE_PREFIX = "aliview-tmp-";
-	
+
 	public AlignmentFile(File file) {
 		super(file.getAbsolutePath());
 	}
-	
+
 	public static AlignmentFile createAliViewTempFile(String name, String suffix) throws IOException {
 		String nameWithTmpPrefix = TMP_FILE_PREFIX + name + "_";
 		return new AlignmentFile(File.createTempFile(nameWithTmpPrefix, suffix));
 	}
-	
+
 	public static AlignmentFile createUserHomeFile() {
 		String pathString = System.getenv("USERPROFILE");
 		if(pathString == null){
@@ -31,7 +31,7 @@ public class AlignmentFile extends File{
 		}
 		return new AlignmentFile(new File(pathString));
 	}
-	
+
 	public boolean isAliViewTempFile() {
 		String tempFilePath = FilenameUtils.normalizeNoEndSeparator(FileUtils.getTempDirectoryPath());	
 		return tempFilePath.equalsIgnoreCase(FilenameUtils.normalizeNoEndSeparator(this.getParent()));

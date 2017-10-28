@@ -55,31 +55,31 @@ public class SequencesFactory {
 		// Check if file is to large - then create OnFile sequences instead of InMemory
 		String importErrorMessage = "";
 		AlignmentListModel model = null;
-				
+
 		// check if file size is to big for memory sequences
 		boolean memorySequences = true;
 		if(alignmentFile != null){
 			if(alignmentFile.exists()){
 				double fileSize = alignmentFile.length();
 				double maxMem = MemoryUtils.getMaxMem();
-				
+
 				logger.info("maxMem" + maxMem);
 				logger.info("fileSize" + fileSize);
-				
+
 				// memory need to be ca 1.3 * times file size
 				if(maxMem/fileSize < 1.3){
 					logger.info("maxMem/fileSize=" + maxMem/fileSize);
 					memorySequences = false;
 				}
-//					
-//				// TODO remove - this is pretty much only for testing
-//				if(AliView.isDebugMode() && fileSize > 1000 * 1000){
-//					memorySequences = false;
-//				}
-				
+				//					
+				//				// TODO remove - this is pretty much only for testing
+				//				if(AliView.isDebugMode() && fileSize > 1000 * 1000){
+				//					memorySequences = false;
+				//				}
+
 			}
 		}	
-		
+
 		logger.info("memorySequences=" + memorySequences);
 
 		//
@@ -88,12 +88,12 @@ public class SequencesFactory {
 		if(memorySequences){
 			// import sequences into memory
 			logger.info("memorySequence");
-			
+
 			// check file-format
 			FileFormat foundFormat = FileFormat.isFileOfAlignmentFormat(alignmentFile);
-			
+
 			if(foundFormat == FileFormat.FASTA){
-				
+
 				try {
 					FastFastaImporter fastaImporter = new FastFastaImporter(new FileReader(alignmentFile));
 					List<Sequence> sequences = fastaImporter.importSequences();
@@ -110,9 +110,9 @@ public class SequencesFactory {
 					}
 				}
 			}
-			
+
 			if(foundFormat == FileFormat.MSF){
-				
+
 				try {
 					MSFImporter importer = new MSFImporter(new FileReader(alignmentFile));
 					List<Sequence> sequences = importer.importSequences();
@@ -125,9 +125,9 @@ public class SequencesFactory {
 					logger.error(e);
 				}	
 			}
-			
+
 			if(foundFormat == FileFormat.CLUSTAL){
-				
+
 				try {
 					ClustalImporter importer = new ClustalImporter(new FileReader(alignmentFile), alignmentFile.length());
 					List<Sequence> sequences = importer.importSequences();
@@ -140,26 +140,26 @@ public class SequencesFactory {
 					logger.error(e);
 				}	
 			}
-			
-			
+
+
 			if(foundFormat == FileFormat.PHYLIP){
-				
+
 				try {
-						// First try phylip sequencial long names
-						PhylipImporter phylipImporter = new PhylipImporter(new FileReader(alignmentFile), FileFormat.PHYLIP_RELAXED_PADDED_AKA_LONG_NAME_SEQUENTIAL);
-						// this method will throw error if problem importing as this format and then we can try with other versions of phylip
-						List<Sequence> sequences = phylipImporter.importSequences();
-						model = new MemorySequenceAlignmentListModel();
-						model.setSequences(sequences);
-						model.setFileFormat(FileFormat.PHYLIP);
-	
+					// First try phylip sequencial long names
+					PhylipImporter phylipImporter = new PhylipImporter(new FileReader(alignmentFile), FileFormat.PHYLIP_RELAXED_PADDED_AKA_LONG_NAME_SEQUENTIAL);
+					// this method will throw error if problem importing as this format and then we can try with other versions of phylip
+					List<Sequence> sequences = phylipImporter.importSequences();
+					model = new MemorySequenceAlignmentListModel();
+					model.setSequences(sequences);
+					model.setFileFormat(FileFormat.PHYLIP);
+
 				} catch (Exception e) {
-						// TODO Auto-generated catch block
-						importErrorMessage += "Tried import as Phylip but: " + e.getMessage() + LF;
-						logger.error(importErrorMessage);
-						logger.error(e);
+					// TODO Auto-generated catch block
+					importErrorMessage += "Tried import as Phylip but: " + e.getMessage() + LF;
+					logger.error(importErrorMessage);
+					logger.error(e);
 				}
-				
+
 				if(model == null){			
 					try {
 						logger.info("try LONG_NAME_INTERLEAVED");
@@ -177,8 +177,8 @@ public class SequencesFactory {
 						logger.error(e);
 					}					
 				}	
-				
-					
+
+
 				if(model == null){			
 					try {
 						logger.info("try short name sequential");
@@ -196,8 +196,8 @@ public class SequencesFactory {
 						logger.error(e);
 					}					
 				}	
-				
-				
+
+
 				if(model == null){		
 					try {
 						logger.info("try short name interleaved");
@@ -216,13 +216,13 @@ public class SequencesFactory {
 					}		
 				}
 			}
-	
+
 			if(foundFormat == FileFormat.NEXUS){
-			
-				
+
+
 				long fileSize = alignmentFile.length();
-				
-				
+
+
 				// Import sequences with jebl-library
 				if(fileSize < 200 * 1000 * 1000){ // 200MB
 					try{
@@ -237,8 +237,8 @@ public class SequencesFactory {
 						logger.error(impExc);
 						importErrorMessage += "Tried import as Nexus but: " + impExc.userMessage() + LF;
 					}catch (Exception e) {
-							logger.error(e);
-							importErrorMessage += "Tried import as Nexus but: " + e.getMessage() + LF;
+						logger.error(e);
+						importErrorMessage += "Tried import as Nexus but: " + e.getMessage() + LF;
 					}
 				}
 				else{
@@ -256,9 +256,9 @@ public class SequencesFactory {
 						logger.error(e);
 					}
 				}
-				
+
 			}
-			
+
 			if( memorySequences == true ){
 				if(foundFormat == null || model == null || model.getSize() == 0){
 					// still nothing 
@@ -266,47 +266,47 @@ public class SequencesFactory {
 				}
 			}
 		}
-			
+
 		//
 		// FILE SEQUENCES
 		//
 		if(!memorySequences){
-		
-				FileFormat foundFormat = FileFormat.isFileOfAlignmentFormat(alignmentFile);
-				
-				if(foundFormat == FileFormat.FASTA || foundFormat == FileFormat.PHYLIP || 
-						foundFormat == FileFormat.NEXUS || foundFormat == FileFormat.CLUSTAL ||
-						    foundFormat == FileFormat.MSF){
-					try{
-						model = new FileSequenceAlignmentListModel(alignmentFile, foundFormat);
-						logger.info(model.getFileFormat());
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
+
+			FileFormat foundFormat = FileFormat.isFileOfAlignmentFormat(alignmentFile);
+
+			if(foundFormat == FileFormat.FASTA || foundFormat == FileFormat.PHYLIP || 
+					foundFormat == FileFormat.NEXUS || foundFormat == FileFormat.CLUSTAL ||
+					foundFormat == FileFormat.MSF){
+				try{
+					model = new FileSequenceAlignmentListModel(alignmentFile, foundFormat);
+					logger.info(model.getFileFormat());
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
-				// no supported large file format
-				else{
-					
-				}
+			}
+			// no supported large file format
+			else{
+
+			}
 		}
-		
+
 		// could still be null
 		return model;
 	}
-	
+
 	public AlignmentListModel createFastaSequences(StringReader stringReader) throws AlignmentImportException {
 		AlignmentListModel model = new MemorySequenceAlignmentListModel();
-			
-			try {
-				// First try fast fasta
-				FastFastaImporter fastaImporter = new FastFastaImporter(stringReader);
-				model.setSequences(fastaImporter.importSequences());
-				model.setFileFormat(FileFormat.FASTA);
-			} catch (Exception e) {
-				logger.error(e);	
-			}
-			
-			return model;
+
+		try {
+			// First try fast fasta
+			FastFastaImporter fastaImporter = new FastFastaImporter(stringReader);
+			model.setSequences(fastaImporter.importSequences());
+			model.setFileFormat(FileFormat.FASTA);
+		} catch (Exception e) {
+			logger.error(e);	
+		}
+
+		return model;
 	}
 
 	private List<Sequence> convertJEBLSequences(List<jebl.evolution.sequences.Sequence> jeblSequences) {
@@ -319,7 +319,7 @@ public class SequencesFactory {
 		return sequences;
 	}
 
-	
-	
-	
+
+
+
 }

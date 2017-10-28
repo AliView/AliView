@@ -22,9 +22,9 @@ import aliview.externalcommands.CommandItem;
 
 public class CommandItemPanel extends JPanel{
 	private static final String LF = System.getProperty("line.separator");	
-	
+
 	public CommandItemPanel(final CommandItem cmdItem, final AliViewWindow aliWin){
-	
+
 		JTextField txtCommandName = new JTextField(cmdItem.getName(), 15);
 		txtCommandName.setMaximumSize(new Dimension(130, 25));
 		txtCommandName.setMinimumSize(new Dimension(130, 25));
@@ -36,7 +36,7 @@ public class CommandItemPanel extends JPanel{
 			public void focusGained(FocusEvent e) {
 			}
 		});
-		
+
 		JTextArea txtCommand = new JTextArea(cmdItem.getCommand(),2,50);
 		txtCommand.setBorder(new CompoundBorder(new BevelBorder(BevelBorder.LOWERED), new EmptyBorder(2,2,2,2)));
 		txtCommand.addFocusListener(new FocusListener() {		
@@ -47,7 +47,7 @@ public class CommandItemPanel extends JPanel{
 			public void focusGained(FocusEvent e) {
 			}
 		});
-		
+
 		JCheckBox cbxIsActivated = new JCheckBox();
 		cbxIsActivated.setSelected(cmdItem.isActivated());
 		cbxIsActivated.addActionListener(new ActionListener() {
@@ -56,7 +56,7 @@ public class CommandItemPanel extends JPanel{
 				cmdItem.setActivated(cbx.isSelected());
 			}
 		});
-		
+
 		JCheckBox cbxOutputWin = new JCheckBox();
 		cbxOutputWin.setSelected(cmdItem.isShowCommandWindow());
 		cbxOutputWin.addActionListener(new ActionListener() {
@@ -65,8 +65,8 @@ public class CommandItemPanel extends JPanel{
 				cmdItem.setShowCommandWindow(cbx.isSelected());
 			}
 		});
-		
-		
+
+
 		this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		this.setBorder(new EmptyBorder(5, 5, 5, 5));
 		//GridLayout layout = new GridLayout(1,4,3,3);
@@ -79,7 +79,7 @@ public class CommandItemPanel extends JPanel{
 		//JButton removeButton = new JButton("Remove");
 		//this.add(removeButton);
 		JButton testButton = new JButton("Test");			
-	//	this.add(testButton);
+		//	this.add(testButton);
 		testButton.addActionListener(new ActionListener() {	
 			public void actionPerformed(ActionEvent e) {
 				aliWin.runExternalCommand(cmdItem);
@@ -87,5 +87,5 @@ public class CommandItemPanel extends JPanel{
 		});
 		this.setMaximumSize(new Dimension(2000,30));
 	}
-	
+
 }

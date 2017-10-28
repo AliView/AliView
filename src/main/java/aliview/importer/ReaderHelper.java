@@ -23,7 +23,7 @@ public class ReaderHelper {
 	public ReaderHelper(BufferedReader reader){
 		this.reader = reader;
 	}
-	
+
 	public String getStringUntilNextSpaceOrTab() throws IOException{
 		StringBuilder chars = new StringBuilder();
 		boolean haveHadNonWhiteChars = false;
@@ -39,7 +39,7 @@ public class ReaderHelper {
 		}
 		return chars.toString();
 	}
-	
+
 	public String getStringFromNextPositions(int count) throws IOException {
 		StringBuilder chars = new StringBuilder();
 		for(int n = 0; n < count; n++){
@@ -52,13 +52,13 @@ public class ReaderHelper {
 		}
 		return chars.toString();
 	}
-	
+
 	public String getNonWhiteCharsUntilNextLineOrEOF() throws IOException {
 		StringBuilder chars = new StringBuilder();
 		try {
 			while(true){
 				char nextChar = readChar();
-				
+
 				if(isNewline(nextChar)){
 					break;
 				}else if(isWhiteSpaceNotNewline(nextChar)){
@@ -72,7 +72,7 @@ public class ReaderHelper {
 		}
 		return chars.toString();
 	}
-	
+
 	public byte[] getNonWhiteBytes(int count) throws IOException{
 		byte[] bytes = new byte[count];
 		int nextInt;
@@ -89,13 +89,13 @@ public class ReaderHelper {
 		}
 		return bytes;
 	}
-	
+
 	public String getNonWhiteCharsUntilNextOrEOF(char targetChar, int nextSeqSizeEstimate) throws IOException {
 		StringBuilder chars = new StringBuilder(nextSeqSizeEstimate);
 		try {
 			while(true){
 				char nextChar = readChar();
-				
+
 				if(nextChar == targetChar){
 					break;
 				}else if(isWhiteSpace(nextChar)){
@@ -110,22 +110,22 @@ public class ReaderHelper {
 		return chars.toString();	
 	}
 
-    public char readChar() throws IOException{
-	    return (char) read();
+	public char readChar() throws IOException{
+		return (char) read();
 	}
-	
-    public int read() throws IOException{
-        lastReadInt = reader.read();
-        if(lastReadInt == -1){
-        	throw new EOFException();
-        }
-        return lastReadInt;
-    }
-    
-    public boolean isEOF(){
-    	return lastReadInt == -1;
-    }
-    
+
+	public int read() throws IOException{
+		lastReadInt = reader.read();
+		if(lastReadInt == -1){
+			throw new EOFException();
+		}
+		return lastReadInt;
+	}
+
+	public boolean isEOF(){
+		return lastReadInt == -1;
+	}
+
 	public void skipPastNextline() throws IOException {
 		while(readChar() != '\n');
 	}
@@ -133,33 +133,33 @@ public class ReaderHelper {
 	public void skipPastNext(char c) throws IOException {
 		while(readChar() != c);
 	}
-	
+
 	public void readNextLine() throws IOException{
 		nextLine = reader.readLine();
 	}
-	
+
 	public String getNextLine() throws IOException{
 		return nextLine;
 	}
-	
+
 	public boolean isNextLineEOF() throws IOException{
 		return (nextLine == null);
 	}
-	
+
 	public boolean isNextLineContainingNonWhitespaceChars() throws IOException{
 		if(isNextLineEOF()){
 			return false;
 		}
 		return isStringContainingNonWhitespaceChars(nextLine);
 	}
-	
+
 	public boolean isNextLineEmptyOrOnlyWhitespaceChars() throws IOException{
 		if(isNextLineEOF()){
 			return false;
 		}
 		return !isStringContainingNonWhitespaceChars(nextLine);
 	}
-	
+
 	public boolean isNextLineStartingWithNonBlankChar(){
 		if(nextLine != null){
 			if(nextLine.length() > 0){
@@ -170,7 +170,7 @@ public class ReaderHelper {
 		}
 		return false;
 	}
-	
+
 	public void readUntilNextNonBlankLine() throws IOException{
 		readNextLine();
 		while(isNextLineEmptyOrOnlyWhitespaceChars()){
@@ -188,15 +188,15 @@ public class ReaderHelper {
 		}
 		return false;
 	}
-	
-	
-	
+
+
+
 
 	//
 	//	Utility methods
 	//
-	
-	
+
+
 	private static boolean isPhylipNameChar(char c) {
 		if(c == '\t' || c=='\r' || c=='\n'){
 			return false;
@@ -205,11 +205,11 @@ public class ReaderHelper {
 			return true;
 		}
 	}	
-	
+
 	private static boolean isWhiteSpace(int c) {
 		return isWhiteSpace((char)c);
 	}
-	
+
 	private static boolean isSpaceOrTab(char c) {
 		if(c==' ' || c=='\t'){
 			return true;
@@ -218,7 +218,7 @@ public class ReaderHelper {
 			return false;
 		}
 	}
-	
+
 	private static boolean isWhiteSpace(char c) {
 		if(c==' ' || c == '\t' || c=='\r' || c=='\n'){
 			return true;
@@ -227,7 +227,7 @@ public class ReaderHelper {
 			return false;
 		}
 	}
-	
+
 	private static boolean isWhiteSpaceNotNewline(char c) {
 		if(c==' ' || c == '\t' || c=='\r'){
 			return true;
@@ -236,7 +236,7 @@ public class ReaderHelper {
 			return false;
 		}
 	}
-	
+
 	private static boolean isNewline(char c) {
 		if(c=='\n'){
 			return true;
@@ -245,9 +245,9 @@ public class ReaderHelper {
 			return false;
 		}
 	}
-	
-	
-	
+
+
+
 	public static boolean isStringContainingNonWhitespaceChars(String input){
 		if(input == null){
 			return false;
@@ -259,14 +259,14 @@ public class ReaderHelper {
 		}
 		return false;
 	}
-	
+
 	public static String removeSpace(String text) {
 		if(text.indexOf(' ')>-1){
 			text = StringUtils.remove(text, ' ');
 		}
 		return text;
 	}
-	
+
 	public static String removeTab(String text) {
 		if(text.indexOf('\t')>-1){
 			text = StringUtils.remove(text, '\t');
@@ -280,7 +280,7 @@ public class ReaderHelper {
 		text = removeTab(text);
 		return text;
 	}
-	
+
 	public static int indexOfFirstNonWhiteCharAfterWhiteChar(String text) {
 		boolean whiteFound = false;
 		int index = -1;
@@ -295,7 +295,7 @@ public class ReaderHelper {
 		}
 		return index;
 	}
-	
+
 	public static int indexOfFirstNonWhiteChar(String text) {
 		int index = -1;
 		for(int n = 0; n< text.length(); n++){
@@ -306,5 +306,5 @@ public class ReaderHelper {
 		}
 		return index;
 	}
-	
+
 }

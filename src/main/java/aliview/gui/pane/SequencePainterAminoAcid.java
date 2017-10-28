@@ -20,14 +20,14 @@ public class SequencePainterAminoAcid extends SequencePainter {
 
 
 	private static final Logger logger = Logger.getLogger(SequencePainterAminoAcid.class);
-	
 
-	
+
+
 	@Override
 	protected void copyPixels(Sequence seq, RGBArray clipRGB, int seqXPos, int seqYPos, int pixelPosX, int pixelPosY, AlignmentPane aliPane, Alignment alignment) {
-		
+
 		byte residue = seq.getBaseAtPos(seqXPos);
-		
+
 		// A small hack
 		if(residue == 0){
 			residue = ' ';

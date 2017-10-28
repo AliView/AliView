@@ -21,107 +21,107 @@ import javax.swing.JScrollPane;
 import javax.swing.TransferHandler;
 
 public class DragDropList extends JList {
-  DefaultListModel model;
+	DefaultListModel model;
 
-  public DragDropList() {
-    super(new DefaultListModel());
-    model = (DefaultListModel) getModel();
-    setDragEnabled(true);
-    setDropMode(DropMode.INSERT);
+	public DragDropList() {
+		super(new DefaultListModel());
+		model = (DefaultListModel) getModel();
+		setDragEnabled(true);
+		setDropMode(DropMode.INSERT);
 
-    setTransferHandler(new MyListDropHandler(this));
+		setTransferHandler(new MyListDropHandler(this));
 
-    new MyDragListener(this);
-    
-    model.addElement("a");
-    model.addElement("b");
-    model.addElement("c");
-  }
+		new MyDragListener(this);
 
-  public static void main(String[] a){
-    JFrame f = new JFrame();
-    f.add(new JScrollPane(new DragDropList()));
-    f.setSize(300,300);
-    f.setVisible(true);
-  }
+		model.addElement("a");
+		model.addElement("b");
+		model.addElement("c");
+	}
+
+	public static void main(String[] a){
+		JFrame f = new JFrame();
+		f.add(new JScrollPane(new DragDropList()));
+		f.setSize(300,300);
+		f.setVisible(true);
+	}
 }
 
 class MyDragListener implements DragSourceListener, DragGestureListener {
-  DragDropList list;
+	DragDropList list;
 
-  DragSource ds = new DragSource();
+	DragSource ds = new DragSource();
 
-  public MyDragListener(DragDropList list) {
-    this.list = list;
-    DragGestureRecognizer dgr = ds.createDefaultDragGestureRecognizer(list,
-        DnDConstants.ACTION_MOVE, this);
+	public MyDragListener(DragDropList list) {
+		this.list = list;
+		DragGestureRecognizer dgr = ds.createDefaultDragGestureRecognizer(list,
+				DnDConstants.ACTION_MOVE, this);
 
-  }
+	}
 
-  public void dragGestureRecognized(DragGestureEvent dge) {
-    StringSelection transferable = new StringSelection(Integer.toString(list.getSelectedIndex()));
-    ds.startDrag(dge, DragSource.DefaultCopyDrop, transferable, this);
-  }
+	public void dragGestureRecognized(DragGestureEvent dge) {
+		StringSelection transferable = new StringSelection(Integer.toString(list.getSelectedIndex()));
+		ds.startDrag(dge, DragSource.DefaultCopyDrop, transferable, this);
+	}
 
-  public void dragEnter(DragSourceDragEvent dsde) {
-  }
+	public void dragEnter(DragSourceDragEvent dsde) {
+	}
 
-  public void dragExit(DragSourceEvent dse) {
-  }
+	public void dragExit(DragSourceEvent dse) {
+	}
 
-  public void dragOver(DragSourceDragEvent dsde) {
-  }
+	public void dragOver(DragSourceDragEvent dsde) {
+	}
 
-  public void dragDropEnd(DragSourceDropEvent dsde) {
-    if (dsde.getDropSuccess()) {
-      System.out.println("Succeeded");
-    } else {
-      System.out.println("Failed");
-    }
-  }
+	public void dragDropEnd(DragSourceDropEvent dsde) {
+		if (dsde.getDropSuccess()) {
+			System.out.println("Succeeded");
+		} else {
+			System.out.println("Failed");
+		}
+	}
 
-  public void dropActionChanged(DragSourceDragEvent dsde) {
-  }
+	public void dropActionChanged(DragSourceDragEvent dsde) {
+	}
 }
 
 class MyListDropHandler extends TransferHandler {
-  DragDropList list;
+	DragDropList list;
 
-  public MyListDropHandler(DragDropList list) {
-    this.list = list;
-  }
+	public MyListDropHandler(DragDropList list) {
+		this.list = list;
+	}
 
-  public boolean canImport(TransferHandler.TransferSupport support) {
-    if (!support.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-      return false;
-    }
-    JList.DropLocation dl = (JList.DropLocation) support.getDropLocation();
-    if (dl.getIndex() == -1) {
-      return false;
-    } else {
-      return true;
-    }
-  }
+	public boolean canImport(TransferHandler.TransferSupport support) {
+		if (!support.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+			return false;
+		}
+		JList.DropLocation dl = (JList.DropLocation) support.getDropLocation();
+		if (dl.getIndex() == -1) {
+			return false;
+		} else {
+			return true;
+		}
+	}
 
-  public boolean importData(TransferHandler.TransferSupport support) {
-    if (!canImport(support)) {
-      return false;
-    }
+	public boolean importData(TransferHandler.TransferSupport support) {
+		if (!canImport(support)) {
+			return false;
+		}
 
-    Transferable transferable = support.getTransferable();
-    String indexString;
-    try {
-      indexString = (String) transferable.getTransferData(DataFlavor.stringFlavor);
-    } catch (Exception e) {
-      return false;
-    }
+		Transferable transferable = support.getTransferable();
+		String indexString;
+		try {
+			indexString = (String) transferable.getTransferData(DataFlavor.stringFlavor);
+		} catch (Exception e) {
+			return false;
+		}
 
-    int index = Integer.parseInt(indexString);
-    JList.DropLocation dl = (JList.DropLocation) support.getDropLocation();
-    int dropTargetIndex = dl.getIndex();
+		int index = Integer.parseInt(indexString);
+		JList.DropLocation dl = (JList.DropLocation) support.getDropLocation();
+		int dropTargetIndex = dl.getIndex();
 
-    System.out.println(dropTargetIndex + " : ");
-    System.out.println("inserted");
-    return true;
-  }
+		System.out.println(dropTargetIndex + " : ");
+		System.out.println("inserted");
+		return true;
+	}
 }

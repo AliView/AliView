@@ -11,13 +11,13 @@ public class AlignemtItem {
 		this.alignAllCmd = alignAllCmd;
 		this.addAlignCmd = addAlignCmd;
 	}
-	
+
 	public CommandItem getAddAlignCmd() {
 		return addAlignCmd;
 	}
-	
+
 	public CommandItem getAlignAllCmd() {
 		return alignAllCmd;
 	}
-	
+
 }

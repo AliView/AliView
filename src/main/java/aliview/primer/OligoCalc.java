@@ -4,7 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 public class OligoCalc {
-	
+
 	/**
 	 * 
 	 * Calculation were converted into java from 
@@ -16,16 +16,16 @@ public class OligoCalc {
 	 * 
 	 */
 	private static final Logger logger = Logger.getLogger(OligoCalc.class);
-	
+
 	public static void main(String[] args){
 		double conc_primer = 200;// nM 
 		double conc_salt = 50; //mM
 		double conc_mg = 0; //mM
 		String testSeq = "cagcaatggatggatgatct";
-		
+
 		logger.info(OligoCalc.getBaseStackingTM(testSeq, conc_primer, conc_salt, conc_mg));
 	}
-	
+
 	private static double getEnthalpy(String seq){
 
 		double entalphy = 0;
@@ -76,69 +76,69 @@ public class OligoCalc {
 		return entropy;
 	}
 
-	
-	
-		
+
+
+
 	public static double getBaseStackingTM(String sequence, double conc_primer, double conc_salt, double conc_mg){
 
 		sequence = sequence.toUpperCase();
-		
-        // to do check only valid bases
+
+		// to do check only valid bases
 		// to do check len > 0
 
 
-        // effect on entropy by salt correction; von Ahsen et al 1999
-        // Increase of stability due to presence of Mg;
-        double salt_effect = conc_salt/1000 + conc_mg/1000 * 140;
-        
-        double h = 0;
-        double s = 0;
-        
-        // effect on entropy
-        s =0.368 * (sequence.length() -1) * Math.log(salt_effect);
+		// effect on entropy by salt correction; von Ahsen et al 1999
+		// Increase of stability due to presence of Mg;
+		double salt_effect = conc_salt/1000 + conc_mg/1000 * 140;
 
-        // terminal corrections. Santalucia 1998
-        char firstnucleotide=sequence.charAt(0);
-        if (firstnucleotide=='G' || firstnucleotide=='C'){
-        	h+=0.1;
-        	s+=-2.8;
-        }
-        if (firstnucleotide=='A' || firstnucleotide=='T'){
-        	h+=2.3;
-        	s+=4.1;
-        }
-        char lastnucleotide=sequence.charAt(sequence.length() - 1);
-        if (lastnucleotide=='G' || lastnucleotide=='C'){
-        	h+=0.1;
-        	s+=-2.8;
-        }
-        if (lastnucleotide=='A' || lastnucleotide=='T'){
-        	h+=2.3;
-        	s+=4.1;
-        }
-        
-        // compute new H and s based on sequence. Santalucia 1998
-        for(int i=0; i < sequence.length()-1; i++){
-                String subSeq=sequence.substring(i,i+2);
-                h += getEnthalpy(subSeq);
-                s += getEntropy(subSeq);
-        }
-        
-        double tm=((1000*h)/(s+(1.987*Math.log(conc_primer/2000000000))))-273.15;
-        //print "Tm:                 <font color=880000><b>".round($tm,1)." &deg;C</b></font>";
-        //print  "\n<font color=008800>  Enthalpy: ".round($h,2)."\n  Entropy:  ".round($s,2)."</font>";
-        return tm;
-}
-	
+		double h = 0;
+		double s = 0;
+
+		// effect on entropy
+		s =0.368 * (sequence.length() -1) * Math.log(salt_effect);
+
+		// terminal corrections. Santalucia 1998
+		char firstnucleotide=sequence.charAt(0);
+		if (firstnucleotide=='G' || firstnucleotide=='C'){
+			h+=0.1;
+			s+=-2.8;
+		}
+		if (firstnucleotide=='A' || firstnucleotide=='T'){
+			h+=2.3;
+			s+=4.1;
+		}
+		char lastnucleotide=sequence.charAt(sequence.length() - 1);
+		if (lastnucleotide=='G' || lastnucleotide=='C'){
+			h+=0.1;
+			s+=-2.8;
+		}
+		if (lastnucleotide=='A' || lastnucleotide=='T'){
+			h+=2.3;
+			s+=4.1;
+		}
+
+		// compute new H and s based on sequence. Santalucia 1998
+		for(int i=0; i < sequence.length()-1; i++){
+			String subSeq=sequence.substring(i,i+2);
+			h += getEnthalpy(subSeq);
+			s += getEntropy(subSeq);
+		}
+
+		double tm=((1000*h)/(s+(1.987*Math.log(conc_primer/2000000000))))-273.15;
+		//print "Tm:                 <font color=880000><b>".round($tm,1)." &deg;C</b></font>";
+		//print  "\n<font color=008800>  Enthalpy: ".round($h,2)."\n  Entropy:  ".round($s,2)."</font>";
+		return tm;
+	}
+
 	public static double getEurofinsTM(String sequence){
-		
+
 		sequence = sequence.toUpperCase();
 		double L = sequence.length();
 		double ng = StringUtils.countMatches(sequence, "G");
 		double nc = StringUtils.countMatches(sequence, "C");
 		double na = StringUtils.countMatches(sequence, "A");
 		double nt = StringUtils.countMatches(sequence, "T");
-		
+
 		double tm;
 		if(sequence.length() > 15){
 			tm = 69.3 + 41 * (ng + nc)/L - 650/L;
@@ -146,13 +146,13 @@ public class OligoCalc {
 		else{
 			tm = 2*(na + nt) + 4*(ng + nc);
 		}
-		
+
 		return tm;
 	}
-	
-	
 
-/*
+
+
+	/*
 function Mol_wt($primer){
 $upper_mwt=molwt($primer,"DNA","upperlimit");
 $lower_mwt=molwt($primer,"DNA","lowerlimit");
@@ -284,10 +284,10 @@ function molwt($sequence,$moltype,$limit)
 
         return $mwt;
     }
-*/
-	
+	 */
+
 	/*
-	
+
 	private terminalcorrections(seq)//helix initiation corrections from Santalucia 1998 & Allawi & Santalucia 1997
 	{
 	var deltah=0;
@@ -302,7 +302,7 @@ function molwt($sequence,$moltype,$limit)
 		deltah+=2.3;
 		deltas+=4.1;
 		}
-		
+
 	if ((seq.charAt(seq.length-1)=="G")||(seq.charAt(seq.length-1)=="C"))
 		{
 		deltah+=0.1;
@@ -324,7 +324,7 @@ function saltcorrections(seq,salt)//changes to ds dependant on the salt concentr
 	deltas+=0.368 * (seq.length-1)* Math.log(salt);//This comes from von Ahsen et al 1999
 	ds+=deltas;
 	}
-	
+
 function stack(seq,salt, primer)// base stacking calculations. 
 {
 ds=0;
@@ -433,7 +433,7 @@ dh=0;//deltaH. Enthalpy
 	tm= ((1000* dh)/(ds+(R * Math.log(K))))-273.15;	//The actual answer!
 	return tm;	
 	}
-	
-	*/
+
+	 */
 
 }

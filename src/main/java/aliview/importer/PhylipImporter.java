@@ -20,23 +20,23 @@ import aliview.sequences.Sequence;
 
 public class PhylipImporter {
 	private static final Logger logger = Logger.getLogger(PhylipImporter.class);
-	
+
 	private Reader reader;
 	private int longestSequenceLength;
 	public FileFormat formatType;
-	
+
 	public static void main(String[] args) throws FileNotFoundException, AlignmentImportException {
 		File alignmentFile = new File("/home/anders/projekt/alignments/smalphylipSeqShortName.phy");
 		PhylipImporter importer = new PhylipImporter(new FileReader(alignmentFile), FileFormat.PHYLIP_SHORT_NAME_INTERLEAVED);
 		importer.importSequences();
 	}
-	
-	
+
+
 	public PhylipImporter(Reader reader, FileFormat formatType) {
 		this.reader = reader;
 		this.formatType = formatType;
 	}
-	
+
 	public List<Sequence> importSequences() throws AlignmentImportException {
 
 		long startTime = System.currentTimeMillis();
@@ -44,7 +44,7 @@ public class PhylipImporter {
 		try {
 			String sequenceString = "";
 			BufferedReader r = new BufferedReader(this.reader);
-			
+
 			String firstLine = r.readLine();
 			firstLine = firstLine.trim();
 
@@ -61,18 +61,18 @@ public class PhylipImporter {
 			}
 
 			ReaderHelper helper = new ReaderHelper(r);
-			
+
 			logger.info("inside phy importer");
-			
+
 			try{
-				
+
 				if(formatType == FileFormat.PHYLIP_RELAXED_PADDED_INTERLEAVED_AKA_LONG_NAME_INTERLEAVED){
-					
+
 					List<String> seqNames = new ArrayList<String>();
 					// since we already know sequence size then we can use ByteBuffer
 					List<ByteBuffer> seqBuffers = new ArrayList<ByteBuffer>();
 					//List<StringBuilder> seqBuffers = new ArrayList<StringBuilder>();
-					
+
 					// try long name sequential
 					for(int n = 0; n <seqCount; n++){
 						// read lines of seq data
@@ -81,10 +81,10 @@ public class PhylipImporter {
 						int index = ReaderHelper.indexOfFirstNonWhiteCharAfterWhiteChar(line);
 						String name = line.substring(0, index).trim();	
 						seqNames.add(name);
-						
+
 						logger.info("name" + name);
 						logger.info("index" + index);
-						
+
 						int capacity = longestSequenceLength;
 						ByteBuffer seqBuff = ByteBuffer.allocate(capacity);
 						String seqChars = line.substring(index);
@@ -93,9 +93,9 @@ public class PhylipImporter {
 						seqBuff.put(seqChars.getBytes());
 						seqBuffers.add(seqBuff);					
 					}
-							
+
 					while(true){
-							
+
 						// loop through all sequences in order
 						int lineCount = 0;
 						while(lineCount < seqCount){		
@@ -103,13 +103,13 @@ public class PhylipImporter {
 							helper.readNextLine();
 							String line = helper.getNextLine();
 							int index = ReaderHelper.indexOfFirstNonWhiteChar(line);
-							
+
 							// Skip empty lines
 							if(index == -1){
 								logger.info("skip empty");
 							}else{
 								String moreChars = line.substring(index);
-								
+
 								moreChars = ReaderHelper.removeSpaceAndTab(moreChars);
 								ByteBuffer seqBuff = seqBuffers.get(lineCount);
 								seqBuff.put(moreChars.getBytes());
@@ -120,7 +120,7 @@ public class PhylipImporter {
 						// check to see if last sequence is filled then break
 						if(seqBuff.position() == longestSequenceLength){
 							logger.info("right length");
-							
+
 							// create sequences
 							for(int n = 0; n <seqCount; n++){	
 								//sequences.add(new PhylipSequence(seqNames.get(n), ""));
@@ -128,20 +128,20 @@ public class PhylipImporter {
 								seqNames.set(n,null);
 								seqBuffers.set(n,null);
 							}
-							
+
 							break;			
 						}else{
 							logger.info("seqBuff.position()" + seqBuff.position());
 						}
-						
+
 						if(seqBuff.position() > longestSequenceLength){
 							logger.info("wrong length");	
 							throw new AlignmentImportException("Did not match Phylip.LONG_NAME_INTERLEAVED");		
 						}
 					}
-					
+
 				}
-				
+
 				if(formatType == FileFormat.PHYLIP_RELAXED_PADDED_AKA_LONG_NAME_SEQUENTIAL){
 					// try long name sequential
 					for(int n = 0; n <seqCount; n++){
@@ -161,7 +161,7 @@ public class PhylipImporter {
 						sequences.add(new PhylipSequence(name, seqBuffer.toString()));
 					}
 				}
-				
+
 				if(formatType == FileFormat.PHYLIP_STRICT_SEQUENTIAL_AKA_SHORT_NAME_SEQUENTIAL){
 					// try long name sequential
 					for(int n = 0; n <seqCount; n++){
@@ -174,26 +174,26 @@ public class PhylipImporter {
 						}
 					}
 				}
-				
-				
+
+
 				if(formatType == FileFormat.PHYLIP_SHORT_NAME_INTERLEAVED){
 					// try long name sequential
-					
+
 					// first read names lines
 					for(int n = 0; n <seqCount; n++){
-					
+
 						// short name sequential
 						String name = helper.getStringFromNextPositions(10);
-						
+
 						// read rest of line as seq data
 						helper.readNextLine();
 						String line = helper.getNextLine();
 						line = ReaderHelper.removeSpaceAndTab(line);			
 						sequences.add(new PhylipSequence(name, line));
 					}
-					
+
 					// now read rest of sequences
-					
+
 					while(true){
 						// loop through all sequences in order
 						for(int n = 0; n <seqCount; n++){			
@@ -211,14 +211,14 @@ public class PhylipImporter {
 						}
 					}
 				}
-				
-				
+
+
 			}catch(EOFException eofExc){
 				// if import is ok there should not have been an EOF
 				throw new AlignmentImportException("Premature End of file when importing");
 			}
-			
-			
+
+
 			/*
 			if(importerType == SHORT_NAME_INTERLEAVED){
 				// try short name sequential
@@ -232,19 +232,19 @@ public class PhylipImporter {
 					}
 				}
 			}
-			*/
-			
-			
-			
-			
-			
-			// try long name interleaved
-			
-			// try short name sequential
-			
+			 */
 
-			
-			
+
+
+
+
+			// try long name interleaved
+
+			// try short name sequential
+
+
+
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

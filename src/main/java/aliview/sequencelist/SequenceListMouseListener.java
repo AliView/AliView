@@ -32,8 +32,8 @@ public class SequenceListMouseListener implements MouseListener, MouseMotionList
 	private long minReleaseInterval = 500;
 	private long maxReleaseInterval = 2000;
 	private AliViewWindow aliWin;
-	
-	
+
+
 	public SequenceListMouseListener(AliViewWindow aliWin) {
 		super();
 		this.aliWin = aliWin;
@@ -42,15 +42,15 @@ public class SequenceListMouseListener implements MouseListener, MouseMotionList
 
 	public void mousePressed(MouseEvent e){
 		logger.info("mousePressed");
-	
-		
+
+
 		if(e.isAltDown() || e.isControlDown() || e.isShiftDown() || e.isMetaDown()){
 			return;
 		}
-		
+
 		JList list = (JList) e.getSource();
 		int clickIndex = list.locationToIndex(e.getPoint());
-		
+
 		// if already selected return and let default mouseListener in JList
 		// take care about event - could for example be a drag event
 		if(list.isSelectedIndex(clickIndex)){
@@ -66,26 +66,26 @@ public class SequenceListMouseListener implements MouseListener, MouseMotionList
 		}
 	}
 
-	
+
 	public void mouseReleased(MouseEvent e) {
 		logger.info("mouseReleased");
-		
+
 		// return if not left click
 		if(e.getButton() != MouseEvent.BUTTON1){
 			return;
 		}
-		
+
 		// check if this release is part of a rename-trigger-event
 		if(isRenameTrigger(e)){
 			aliWin.renameFirstSelected();		
 			e.consume();
 		}
-		
+
 		if(startIndex != -1){
 			startIndex = -1;
 			e.consume();
 		}	
-		
+
 	}
 
 
@@ -94,7 +94,7 @@ public class SequenceListMouseListener implements MouseListener, MouseMotionList
 		long releaseTime = e.getWhen();
 		JList list = (JList) e.getSource();
 		int releaseIndex = list.locationToIndex(e.getPoint());
-		
+
 		boolean isRenameTrigger = false;
 		if(lastReleaseIndex == releaseIndex){
 			if(list.isSelectedIndex(releaseIndex)){
@@ -102,15 +102,15 @@ public class SequenceListMouseListener implements MouseListener, MouseMotionList
 				if(timeBetweenReleases > minReleaseInterval && timeBetweenReleases < maxReleaseInterval){
 					isRenameTrigger = true;
 				}
-				
+
 			}
 		}
 
 		lastReleaseIndex = releaseIndex;
 		lastReleaseTime = releaseTime;
-		
+
 		return isRenameTrigger;
-		
+
 	}
 
 	//
@@ -124,7 +124,7 @@ public class SequenceListMouseListener implements MouseListener, MouseMotionList
 		if(e.isAltDown() || e.isControlDown() || e.isShiftDown() || e.isMetaDown()){
 			return;
 		}
-		
+
 		JList list = (JList) e.getSource();
 		int pointerIndex = list.locationToIndex(e.getPoint());
 		logger.info(pointerIndex);
@@ -136,13 +136,13 @@ public class SequenceListMouseListener implements MouseListener, MouseMotionList
 
 	public void mouseMoved(MouseEvent e) {
 	}
-	
+
 	public void mouseEntered(MouseEvent e) {
 	}
 
 	public void mouseExited(MouseEvent e) {
 	}
-	
+
 	public void mouseClicked(MouseEvent e) {	
 	}
 }

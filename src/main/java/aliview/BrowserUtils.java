@@ -16,89 +16,89 @@ public class BrowserUtils {
 	 *
 	 * @author gedden
 	 *************************************/
-		/*************************************
-		 * Attempts to open a browser. Currently
-		 * this method ONLY supports http.
-		 *
-		 * @param url
-		 * @throws Exception 
-		 *************************************/
-		public static final void open(URL url) throws Exception
-		{
-			open(url.toString());
+	/*************************************
+	 * Attempts to open a browser. Currently
+	 * this method ONLY supports http.
+	 *
+	 * @param url
+	 * @throws Exception 
+	 *************************************/
+	public static final void open(URL url) throws Exception
+	{
+		open(url.toString());
+	}
+
+
+	/*************************************
+	 * Attempts to open a browser. Currently
+	 * this method ONLY supports http.
+	 *
+	 * @param url
+	 * @throws Exception 
+	 *************************************/
+	public static final void open(String URL) throws Exception
+	{
+
+		logger.info(OSNativeUtils.isWindows());
+
+		if(OSNativeUtils.isWindows()){
+			openBroswerWindows(URL);
 		}
-
-
-		/*************************************
-		 * Attempts to open a browser. Currently
-		 * this method ONLY supports http.
-		 *
-		 * @param url
-		 * @throws Exception 
-		 *************************************/
-		public static final void open(String URL) throws Exception
-		{
-			
-			logger.info(OSNativeUtils.isWindows());
-			
-				if(OSNativeUtils.isWindows()){
-					openBroswerWindows(URL);
-				}
-				else if(OSNativeUtils.isMac()){
-					openBroswerOSX(URL);
-				}
-				else{
-					openBroswerLINUX(URL);
-				}
+		else if(OSNativeUtils.isMac()){
+			openBroswerOSX(URL);
 		}
-
-		/*************************************
-		 * Opens a browser on a windows
-		 * computer
-		 *
-		 * @param url
-		 *************************************/
-		private static void openBroswerWindows(String url) throws Exception
-		{
-			Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);
-		}
-
-		/*************************************
-		 * Opens a browser on a mac
-		 *
-		 * @param url
-		 *************************************/
-		private static void openBroswerOSX(String url) throws Exception
-		{
-			Runtime.getRuntime().exec("open " + url);
-		}
-
-		/*************************************
-		 * Opens a browser on linux
-		 *
-		 * @param url
-		 *************************************/
-		private static void openBroswerLINUX(String url) throws Exception
-		{
-			Process p = Runtime.getRuntime().exec("which firefox");
-			if (p.waitFor() == 0)
-			{
-				Runtime.getRuntime().exec("firefox " + url);
-				return;
-			}
-
-			p = Runtime.getRuntime().exec("which netscape");
-			if (p.waitFor() == 0)
-			{
-				Runtime.getRuntime().exec("netscape " + url);
-				return;
-			}
-
-			p = Runtime.getRuntime().exec("which opera");
-			if (p.waitFor() == 0)
-			{
-				Runtime.getRuntime().exec("opera " + url);
-				return;
-			}
+		else{
+			openBroswerLINUX(URL);
 		}
 	}
+
+	/*************************************
+	 * Opens a browser on a windows
+	 * computer
+	 *
+	 * @param url
+	 *************************************/
+	private static void openBroswerWindows(String url) throws Exception
+	{
+		Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);
+	}
+
+	/*************************************
+	 * Opens a browser on a mac
+	 *
+	 * @param url
+	 *************************************/
+	private static void openBroswerOSX(String url) throws Exception
+	{
+		Runtime.getRuntime().exec("open " + url);
+	}
+
+	/*************************************
+	 * Opens a browser on linux
+	 *
+	 * @param url
+	 *************************************/
+	private static void openBroswerLINUX(String url) throws Exception
+	{
+		Process p = Runtime.getRuntime().exec("which firefox");
+		if (p.waitFor() == 0)
+		{
+			Runtime.getRuntime().exec("firefox " + url);
+			return;
+		}
+
+		p = Runtime.getRuntime().exec("which netscape");
+		if (p.waitFor() == 0)
+		{
+			Runtime.getRuntime().exec("netscape " + url);
+			return;
+		}
+
+		p = Runtime.getRuntime().exec("which opera");
+		if (p.waitFor() == 0)
+		{
+			Runtime.getRuntime().exec("opera " + url);
+			return;
+		}
+	}
+}

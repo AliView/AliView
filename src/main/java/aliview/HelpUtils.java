@@ -30,37 +30,37 @@ public class HelpUtils {
 	public static final String BUG_OR_FEATURE = "BUG_OR_FEATURE";
 	public static final String MEMORY_SETTINGS = "memory_settings";
 	public static final String EDIT_CHARSETS_DIALOG = "EDIT_CHARSETS_DIALOG";
-	
+
 	protected static String baseURL = Settings.getAliViewHelpWebPage();
 	protected static String localBaseURL = "file:///home/anders/maven/AliView/web/help/help.html";
-	
+
 	/*
 	public static void display(String bookmark) {
 		display(bookmark,DialogUtils.getDialogParent());
 	}
-	*/
+	 */
 
 	public static void display(String bookmark, JFrame parentFrame) {
 		URL location = getURL(bookmark);
-		
+
 		try {
 			openWebpage(location);
 		} catch (Exception e) {
 			// Nothing to do
 			Messenger.showOKOnlyMessage(Messenger.COULD_NOT_OPEN_HELP_IN_BROWSER, parentFrame);
-			
+
 			e.printStackTrace();
 		}
 	}
-	
+
 	private static URL getURL(String bookmark) {
-		
+
 		String baseLocation = baseURL;
 		String username = System.getenv("USERNAME");
 		if(username != null && username.equals("anders-not-being-used")){
 			baseLocation = localBaseURL;
 		}
-		
+
 		URL location = null;
 		try {
 			location = new URL(baseLocation + "#" + bookmark);
@@ -72,40 +72,40 @@ public class HelpUtils {
 	}
 
 	public static void openWebpage(URL url) throws Exception {
-		
-		ArrayList<String> cmds = new ArrayList<String>();
-		
-		  if (OSNativeUtils.isMac())
-		  {
-		     cmds.add("open");
-		     cmds.add(url.toString());
-		  }
-		  else if (OSNativeUtils.isWindows())
-		  {
-		     cmds.add("cmd.exe");
-		     cmds.add("/c");
-		     cmds.add("start");
-		     cmds.add(url.toString());
-		  }
-		  else{
-			  cmds.add("xdg-open");
-			  cmds.add(url.toString());
-		  }
-		
-		  ProcessBuilder builder = new ProcessBuilder(cmds);
-		  
-		  builder.start();
 
-// 		I skipped Desktop.class since it is Java 1.6
-// 		
-//	    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-//	    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-//	        try {
-//	            desktop.browse(uri);
-//	        } catch (Exception e) {
-//	            e.printStackTrace();
-//	        }
-//	    }
+		ArrayList<String> cmds = new ArrayList<String>();
+
+		if (OSNativeUtils.isMac())
+		{
+			cmds.add("open");
+			cmds.add(url.toString());
+		}
+		else if (OSNativeUtils.isWindows())
+		{
+			cmds.add("cmd.exe");
+			cmds.add("/c");
+			cmds.add("start");
+			cmds.add(url.toString());
+		}
+		else{
+			cmds.add("xdg-open");
+			cmds.add(url.toString());
+		}
+
+		ProcessBuilder builder = new ProcessBuilder(cmds);
+
+		builder.start();
+
+		// 		I skipped Desktop.class since it is Java 1.6
+		// 		
+		//	    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+		//	    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+		//	        try {
+		//	            desktop.browse(uri);
+		//	        } catch (Exception e) {
+		//	            e.printStackTrace();
+		//	        }
+		//	    }
 	}
 
 	public static void displayVersionDownload(String version){
@@ -119,7 +119,7 @@ public class HelpUtils {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static void displayVersionHistory(){
 		try {
 			String versionDownloadURL = "http://www.ormbunkar.se/aliview/version_history.txt";

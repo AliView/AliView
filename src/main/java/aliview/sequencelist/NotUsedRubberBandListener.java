@@ -58,4 +58,4 @@ class RubberBandingListener extends MouseInputAdapter {
 	  }
 	}
 
-*/
+ */

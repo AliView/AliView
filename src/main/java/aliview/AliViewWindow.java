@@ -139,7 +139,6 @@ import aliview.gui.AlignmentPopupMenu;
 import aliview.gui.AppIcons;
 import aliview.gui.GlassPaneKeyListener;
 import aliview.gui.GlassPaneMouseListener;
-import aliview.gui.GoToPosDialog;
 import aliview.gui.ListTopOffsetJPanel;
 import aliview.gui.MessageLogFrame;
 import aliview.gui.ScrollBarModelSyncChangeListener;
@@ -3789,7 +3788,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 	public void scrollToPos(Point matrixPos) {
 		alignmentPane.scrollToPos(matrixPos);
 	}
-	
+
 	public void scrollToCursor(int keyDirection) {
 
 		AliCursor aliCursor = getAliCursor();
@@ -4399,31 +4398,31 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 	public void goToPos() {
 		TextEditDialog goToPosDlg = new TextEditDialog();
 		goToPosDlg.showOKCancelTextEditor(goToPosTextFieldValue, TextEditDialog.TITLE_GO_TO_POS, this);
-		
+
 		if(goToPosDlg.getSelectedValue() == JOptionPane.OK_OPTION){
 			String posText = goToPosDlg.getEditText();
 			goToPosTextFieldValue=posText;
-			
+
 			Point currentPos = alignmentPane.getVisibleCenterMatrixPos();
 			int newX = currentPos.x;
 			int newY = currentPos.y;
 			try {
 				String xPos = StringUtils.substringBefore(posText, ",");
 				newX = Integer.parseInt(xPos);
-		    } catch (NumberFormatException e) {
-		    	// TODO maybe err handling
-		    }
+			} catch (NumberFormatException e) {
+				// TODO maybe err handling
+			}
 			try {
 				String yPos = StringUtils.substringAfter(posText, ",");
 				newY = Integer.parseInt(yPos);
-		    } catch (NumberFormatException e) {
-		    	// TODO maybe err handling
-		    }
-			
+			} catch (NumberFormatException e) {
+				// TODO maybe err handling
+			}
+
 			Point newPos = new Point(newX,newY);
 			scrollToPos(newPos);
 		}
-		
+
 	}
 
 }

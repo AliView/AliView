@@ -392,7 +392,6 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 				int nucleotideCount = 0;
 				int otherCount = 0;
 				
-				int 
 				// Loop through 1000 bases
 				mainLoop:
 				for(Sequence seq: delegateSequences){

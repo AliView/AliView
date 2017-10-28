@@ -572,7 +572,7 @@ public class AliView implements ApplicationListener{
 
 				public void windowOpened(WindowEvent e) {
 					AliViewWindow thisWin = (AliViewWindow) e.getWindow();
-					
+
 					// Show dialog if sequence type was not detected
 					if(thisWin.getAlignment() != null && !thisWin.getAlignment().isEmptyAlignment() &&  thisWin.getAlignment().isUnknownAlignment()){
 						boolean hideMessage = Settings.getHideUnknownAlignmentType().getBooleanValue();

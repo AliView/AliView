@@ -26,18 +26,18 @@ public class MessageLogFrame extends JFrame{
 	private static final String LF = System.getProperty("line.separator");
 	private JTextArea messageArea;
 	private AliViewWindow aliViewWindow;
-	
+
 	public MessageLogFrame(AliViewWindow aliViewWin) {
 		this.aliViewWindow = aliViewWin;
 		messageArea = new JTextArea();
-		
+
 		refreshLog();
 
 		JScrollPane scrollPane = new JScrollPane(messageArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		
+
 		this.getContentPane().add(scrollPane, BorderLayout.CENTER);
 
-		
+
 		JButton btnLogStatistics = new JButton("Log statistics");
 		btnLogStatistics.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){
@@ -45,7 +45,7 @@ public class MessageLogFrame extends JFrame{
 				refreshLog();
 			}
 		});
-		
+
 		JButton btnRequestGC = new JButton("Request GC");
 		btnRequestGC.setToolTipText("Request Java Garbage Collection");
 		btnRequestGC.addActionListener(new ActionListener() {
@@ -54,16 +54,16 @@ public class MessageLogFrame extends JFrame{
 				refreshLog();
 			}
 		});
-		
+
 		JButton refreshButton = new JButton("Refresh log");
 		refreshButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				refreshLog();	
 			}
 		});
-		
+
 		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		
+
 		buttonPanel.add(btnLogStatistics);
 		buttonPanel.add(btnRequestGC);
 		buttonPanel.add(refreshButton);
@@ -74,7 +74,7 @@ public class MessageLogFrame extends JFrame{
 		this.setIconImage(AppIcons.getProgramIconImage());
 		this.centerLocationToThisComponent(aliViewWindow);
 	}
-	
+
 	protected void refreshLog() {
 		try {
 			aliViewWindow.flushAllLogs();
@@ -95,7 +95,7 @@ public class MessageLogFrame extends JFrame{
 			this.setLocation(newX, newY);
 		}
 	}
-	
+
 	public void centerLocationToThisComponent(Component parent){
 		// align to middle of parent window
 		if(parent != null){

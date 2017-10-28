@@ -9,7 +9,7 @@ import aliview.alignment.NucleotideHistogram;
 import aliview.sequences.Sequence;
 
 public class SequencePainterNucleotideTranslatedShowNucAndAcid extends SequencePainter {
-	
+
 	private static final Logger logger = Logger.getLogger(SequencePainterNucleotideTranslatedShowNucAndAcid.class);
 
 	public SequencePainterNucleotideTranslatedShowNucAndAcid(Sequence seq,
@@ -23,7 +23,7 @@ public class SequencePainterNucleotideTranslatedShowNucAndAcid extends SequenceP
 	}
 
 
-	
+
 
 
 	@Override
@@ -35,7 +35,7 @@ public class SequencePainterNucleotideTranslatedShowNucAndAcid extends SequenceP
 		if(residue == 0){
 			residue = ' ';
 		}
-		
+
 
 		// adjust colors if selected and temp selection
 		// We have to calculate within this way - because rect.contains(Point) is always returning false on a 0-width or 0 height Rectangle

@@ -8,7 +8,7 @@ import aliview.alignment.NucleotideHistogram;
 import aliview.sequences.Sequence;
 
 public class SequencePainterNucleotide extends SequencePainter {
-	
+
 	private static final Logger logger = Logger.getLogger(SequencePainterNucleotide.class);
 
 	public SequencePainterNucleotide(Sequence seq, int seqYPos, int clipPosY,
@@ -24,7 +24,7 @@ public class SequencePainterNucleotide extends SequencePainter {
 	protected void copyPixels(Sequence seq, RGBArray clipArray, int seqXPos, int seqYPos, int pixelPosX, int pixelPosY, AlignmentPane aliPane, Alignment alignment){
 
 		byte residue = seq.getBaseAtPos(seqXPos);
-		
+
 		// A small hack
 		if(residue == 0){
 			residue = ' ';

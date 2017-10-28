@@ -23,7 +23,7 @@ public class SequencePainterAminoAcidTranslatedIgnoreGap extends SequencePainter
 
 	private static final Logger logger = Logger.getLogger(SequencePainterAminoAcidTranslatedIgnoreGap.class);
 
-	
+
 
 	@Override
 	protected void copyPixels(Sequence seq, RGBArray clipRGB, int seqXPos, int seqYPos, int pixelPosX, int pixelPosY, AlignmentPane aliPane, Alignment alignment) {
@@ -32,7 +32,7 @@ public class SequencePainterAminoAcidTranslatedIgnoreGap extends SequencePainter
 		int acidStartPos = aaAndPos.position;
 		AminoAcid acid = aaAndPos.acid;	
 		byte residue = seq.getBaseAtPos(seqXPos);
-		
+
 
 		TranslationCharPixelsContainer pixContainerToUse = aliPane.charPixTranslationDefault;
 		TranslationCharPixelsContainer pixLetterContainerToUse = aliPane.charPixTranslationLetter;

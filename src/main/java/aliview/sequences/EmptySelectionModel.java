@@ -14,7 +14,7 @@ public class EmptySelectionModel implements SequenceSelectionModel {
 	public void selectAll() {
 		// TODO Auto-generated method stub
 	}
-	
+
 	public void invertSelection(int length){
 	}
 
@@ -35,12 +35,12 @@ public class EmptySelectionModel implements SequenceSelectionModel {
 
 	public void setSelectionAt(int i) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void clearSelectionAt(int i) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public int[] getSelectedPositions(int startIndex, int endIndex) {
@@ -57,7 +57,7 @@ public class EmptySelectionModel implements SequenceSelectionModel {
 		// TODO Auto-generated method stub
 
 	}
-	
+
 	public void clearSelection(int startIndex, int endIndex, boolean clearFirst) {
 		// TODO Auto-generated method stub
 
@@ -75,7 +75,7 @@ public class EmptySelectionModel implements SequenceSelectionModel {
 
 	public void removePosition(int index) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public int size() {
@@ -85,17 +85,17 @@ public class EmptySelectionModel implements SequenceSelectionModel {
 
 	public void rightPad(int length) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void leftPad(int length) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void insertNewPosAt(int n) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public int countPositionsUntilSelectedCount(int posInSeq) {
@@ -109,6 +109,6 @@ public class EmptySelectionModel implements SequenceSelectionModel {
 		return false;
 	}
 
-	
+
 
 }

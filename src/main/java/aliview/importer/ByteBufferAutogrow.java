@@ -9,12 +9,12 @@ import org.apache.log4j.Logger;
 public class ByteBufferAutogrow {
 	private static final Logger logger = Logger.getLogger(ByteBufferAutogrow.class);
 	private ByteBuffer backend;
-	
+
 	private double ALLOCATE_MULTIPLIER = 1.5;
 	private double ALLOCATE_MULTIPLIER_AFTER_100MB = 1.1;
 	private double MB = 1000*1000;
 	private boolean DIRECT_BUFF = false;
-	
+
 	public ByteBufferAutogrow(int initialCapacity) {
 		if(DIRECT_BUFF){
 			backend = ByteBuffer.allocateDirect(initialCapacity);
@@ -27,13 +27,13 @@ public class ByteBufferAutogrow {
 		if(more == null || more.length() == 0){
 			return;
 		}
-		
+
 		byte[] moreBytes = more.getBytes();
-		
+
 		// Ensure size
 		if(backend.remaining() < moreBytes.length){
 			int exactSize = backend.position() + moreBytes.length;
-			
+
 			double multiplier = ALLOCATE_MULTIPLIER;
 			if(exactSize > 100*MB ){
 				multiplier = ALLOCATE_MULTIPLIER_AFTER_100MB;
@@ -42,22 +42,22 @@ public class ByteBufferAutogrow {
 			logger.info("newCap=" + newCapacity);
 			reallocate(newCapacity);
 		}
-		
+
 		backend.put(moreBytes);
-		
+
 	}
-	
+
 	public void ensureCapacity(int requestCapacity) {
 		if(requestCapacity > backend.limit()){
 			reallocate(requestCapacity);
 		}
 	}
-	
+
 	public void clear(){
 		backend.clear();
 	}
-	
-	
+
+
 	/*
 	 * 
 	 * method inspired by org.deftserver.io.buffer;
@@ -65,9 +65,9 @@ public class ByteBufferAutogrow {
 	 */
 	// Preserves position.
 	private void reallocate(int newCapacity) {
-//		logger.info("reallocate");
+		//		logger.info("reallocate");
 		int oldPosition = backend.position();
-		
+
 		if(backend.hasArray()){
 			byte[] newBuffer = new byte[newCapacity];
 			System.arraycopy(backend.array(), 0, newBuffer, 0, backend.position());
@@ -96,14 +96,14 @@ public class ByteBufferAutogrow {
 			return retVal;
 		}
 	}
-	
+
 	public String toString(){
-	    return new String(getBytes());    
+		return new String(getBytes());    
 	}
 
 	public int position() {
 		return backend.position();
 	}
 
-	
+
 }

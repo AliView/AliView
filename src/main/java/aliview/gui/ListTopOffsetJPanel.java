@@ -12,11 +12,11 @@ public class ListTopOffsetJPanel extends JPanel{
 	private static final Logger logger = Logger.getLogger(ListTopOffsetJPanel.class);
 	Component watchedComponent;
 	int preferredWidth = 100;
-	
+
 	public ListTopOffsetJPanel(Component componentWhichHeightToFollow) {
 		this.watchedComponent = componentWhichHeightToFollow;
 	}
-	
+
 	@Override
 	public Dimension getPreferredSize() {
 		Dimension prefSize = null;

@@ -30,81 +30,81 @@ import java.lang.reflect.Method;
  */
 class NotUsedTextCellRenderer extends JLabel implements ListCellRenderer 
 {
-    String text;
-    final int borderWidth = 1;
-    final int width;
-    final int height;
-    final BufferedImage buffImg = new BufferedImage(200, 20, BufferedImage.TYPE_INT_ARGB);
-    
+	String text;
+	final int borderWidth = 1;
+	final int width;
+	final int height;
+	final BufferedImage buffImg = new BufferedImage(200, 20, BufferedImage.TYPE_INT_ARGB);
 
-    NotUsedTextCellRenderer(int width, int height, Font font) {
-	super();
-	this.height = height;
-	this.width = width;
-	this.setFont(font);
-	
-    }
 
-    /** 
-     * Return the renderers fixed size here.
-     */
-    public Dimension getPreferredSize() {
-	return new Dimension(width, height);
-    }
+	NotUsedTextCellRenderer(int width, int height, Font font) {
+		super();
+		this.height = height;
+		this.width = width;
+		this.setFont(font);
 
-    /**
-     * Completely bypass all of the standard JComponent painting machinery.
-     * This is a special case: the renderer is guaranteed to be opaque,
-     * it has no children, and it's only a child of the JList while
-     * it's being used to rubber stamp cells.
-     * <p>
-     * Clear the background and then draw the text.
-     */
-    public void paint(Graphics g) {
-    	
-    	Graphics2D g2 = (Graphics2D) g;
-    	
-//    	g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);	
-//		g2.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
-		
+	}
+
+	/** 
+	 * Return the renderers fixed size here.
+	 */
+	public Dimension getPreferredSize() {
+		return new Dimension(width, height);
+	}
+
+	/**
+	 * Completely bypass all of the standard JComponent painting machinery.
+	 * This is a special case: the renderer is guaranteed to be opaque,
+	 * it has no children, and it's only a child of the JList while
+	 * it's being used to rubber stamp cells.
+	 * <p>
+	 * Clear the background and then draw the text.
+	 */
+	public void paint(Graphics g) {
+
+		Graphics2D g2 = (Graphics2D) g;
+
+		//    	g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);	
+		//		g2.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+
 		// This need to be off because I use exact font width in createAdjustedDerivedBaseFont
-	//	g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_OFF);
-			g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-//		}
-//		g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
-    	
-    //g.setFont(this.getFont());
-	//g.setColor(getBackground());
-	//g.fillRect(0, 0, getWidth(), getHeight());
-	//g.setColor(getForeground());
-	g.drawImage(buffImg, 0,0, null);
-//	g.drawString(" ", borderWidth, getHeight());
-	//g.drawString(text, borderWidth, getHeight());
-    }
+		//	g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_OFF);
+		g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		//		}
+		//		g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
 
-
-    /* This is is the ListCellRenderer method.  It just sets
-     * the foreground and background properties and updates the
-     * local text field.
-     */
-    public Component getListCellRendererComponent(
-        JList list,
-        Object value,
-        int index,
-        boolean isSelected,
-        boolean cellHasFocus) 
-    {
-	if (isSelected) {
-	    setBackground(list.getSelectionBackground());
-	    setForeground(list.getSelectionForeground());
+		//g.setFont(this.getFont());
+		//g.setColor(getBackground());
+		//g.fillRect(0, 0, getWidth(), getHeight());
+		//g.setColor(getForeground());
+		g.drawImage(buffImg, 0,0, null);
+		//	g.drawString(" ", borderWidth, getHeight());
+		//g.drawString(text, borderWidth, getHeight());
 	}
-	else {
-	    setBackground(list.getBackground());
-	    setForeground(list.getForeground());
-	}
-	this.setFont(list.getFont());
-	text = value.toString();
 
-	return this;
-    }
+
+	/* This is is the ListCellRenderer method.  It just sets
+	 * the foreground and background properties and updates the
+	 * local text field.
+	 */
+	public Component getListCellRendererComponent(
+			JList list,
+			Object value,
+			int index,
+			boolean isSelected,
+			boolean cellHasFocus) 
+	{
+		if (isSelected) {
+			setBackground(list.getSelectionBackground());
+			setForeground(list.getSelectionForeground());
+		}
+		else {
+			setBackground(list.getBackground());
+			setForeground(list.getForeground());
+		}
+		this.setFont(list.getFont());
+		text = value.toString();
+
+		return this;
+	}
 }

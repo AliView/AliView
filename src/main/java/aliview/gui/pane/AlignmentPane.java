@@ -803,8 +803,8 @@ public class AlignmentPane extends JPanel{
 							SequencePainter seqPainter = new SequencePainterAminoAcidTranslated(seq, seqYPos, clipYPos, xPosStart, xPosEnd, normalCharSeqPerPix, charWidth, charHeight, highDPIScaleFactor, clipRGB, this, alignment);	
 							executor.execute(seqPainter);
 						}
-					
-					// Normal nucleotide
+
+						// Normal nucleotide
 					}else{
 						SequencePainter seqPainter = new SequencePainterNucleotide(seq, seqYPos, clipYPos, xPosStart, xPosEnd, normalCharSeqPerPix, charWidth, charHeight, highDPIScaleFactor, clipRGB, this, alignment);	
 						executor.execute(seqPainter);
@@ -923,8 +923,8 @@ public class AlignmentPane extends JPanel{
 			if(charWidth < 1){
 				for(int x = clip.x; x < clip.getMaxX() ; x++){
 					int xPos =(int)((double)x * (1/(double)charWidth));
-					
-					
+
+
 					if(alignment.isExcluded(xPos) == true){
 						g2d.setColor(ColorScheme.GREY_TRANSPARENT);
 						g2d.fillRect(x, this.getVisibleRect().y, 1, drawExcludesHeight);
@@ -1218,7 +1218,7 @@ public class AlignmentPane extends JPanel{
 		Point ulMatrixPos = paneCoordToMatrixCoord(ulPanePos);
 		return ulMatrixPos;
 	}
-	
+
 	public Point getVisibleCenterMatrixPos() {
 		Rectangle rect = this.getVisibleRect();
 		Point centerPanePos = new Point((int)rect.getCenterX(),(int)rect.getCenterY());
@@ -1271,7 +1271,7 @@ public class AlignmentPane extends JPanel{
 			}
 		}
 	}
-	
+
 	public void scrollRectToSelectionCenter() {
 		Rectangle selectRect = alignment.getSelectionAsMinRect();
 		if(selectRect != null){
@@ -1285,9 +1285,9 @@ public class AlignmentPane extends JPanel{
 	}
 
 	public void scrollToPos(Point matrixPos) {
-		
+
 		logger.info("newMatrixPos" + matrixPos);
-		
+
 		Point paneCoord = matrixCoordToPaneCoord(matrixPos);
 		Rectangle newVisible = new Rectangle(paneCoord);
 		// We need to grow to half the width and height to center it

@@ -23,17 +23,17 @@ public class FileUtilities {
 	public static File selectOpenFileViaChooser(File suggestedFile, Component parentComponent){
 
 		File selectedFile = null;
-	
+
 		// If mac or windows open FileDialog
 		// I have skipped using Native FileUtils in mac - it is sometimes crashing
 		// Only for some Windos VM is it used
 		if(OSNativeUtils.isRunningDefectJFilechooserJVM()) {
 			// get Frame
 			Component root = SwingUtilities.getRoot(parentComponent);
-	        Frame parentFrame = null;
-	        if (root instanceof Frame) {
-	        	parentFrame = (Frame) root;
-	        }
+			Frame parentFrame = null;
+			if (root instanceof Frame) {
+				parentFrame = (Frame) root;
+			}
 			// use the native file dialog
 			FileDialog dialog = new FileDialog(parentFrame, "Open",FileDialog.LOAD);
 			dialog.setDirectory(suggestedFile.getParent());
@@ -71,11 +71,11 @@ public class FileUtilities {
 			} else {
 				selectedFile = null;
 			}
-		
+
 			preferedWidth = fc.getSize().width;
 			preferedHeight = fc.getSize().height;
 		}
-		
+
 		System.out.println("selectedfile" + selectedFile);
 
 		return selectedFile;
@@ -87,14 +87,14 @@ public class FileUtilities {
 
 		File selectedFile = null;	
 
-		
+
 		if(OSNativeUtils.isRunningDefectJFilechooserJVM()) {
 			// get Frame
 			Component root = SwingUtilities.getRoot(parentComponent);
-	        Frame parentFrame = null;
-	        if (root instanceof Frame) {
-	        	parentFrame = (Frame) root;
-	        }
+			Frame parentFrame = null;
+			if (root instanceof Frame) {
+				parentFrame = (Frame) root;
+			}
 			// use the native file dialog on the mac
 			FileDialog dialog = new FileDialog(parentFrame, "Save",FileDialog.SAVE);
 			dialog.setDirectory(suggestedFile.getParent());
@@ -106,8 +106,8 @@ public class FileUtilities {
 				selectedFile = new File(directory, fileName);
 			}
 		}
-		
-		
+
+
 		else{
 
 			// Else JFileChooser
@@ -116,21 +116,21 @@ public class FileUtilities {
 			// UIManager.put("FileChooser.readOnly", Boolean.TRUE); 
 
 			// Cannot set file in constructor, then only directory and not also filename is suggested in chooser
-				
+
 			JFileChooser fc = new JFileChooser();
-			
+
 			// Additional field
-//			JTextField field = new JTextField("Hello, World");
-//			JPanel fcPanel = new JPanel();
-//			fcPanel.setLayout(new BorderLayout());
-//			fcPanel.add(fc, BorderLayout.CENTER);
-//			fcPanel.add(field, BorderLayout.SOUTH);
+			//			JTextField field = new JTextField("Hello, World");
+			//			JPanel fcPanel = new JPanel();
+			//			fcPanel.setLayout(new BorderLayout());
+			//			fcPanel.add(fc, BorderLayout.CENTER);
+			//			fcPanel.add(field, BorderLayout.SOUTH);
 			// end additional
 
 			fc.setSelectedFile(suggestedFile);
 			fc.setPreferredSize(new Dimension(preferedWidth, preferedHeight));
 
-	
+
 			int returnVal = fc.showSaveDialog(parentComponent);
 
 			if (returnVal == JFileChooser.APPROVE_OPTION) {

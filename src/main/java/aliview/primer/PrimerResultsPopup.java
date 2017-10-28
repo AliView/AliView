@@ -3,7 +3,7 @@ package aliview.primer;
 
 /*
 public class PrimerResultsPopup extends JPopupMenu extends MouseAdapter{
-	
+
 	    JMenuItem anItem;
 	    public PopUpDemo(){
 	        anItem = new JMenuItem("Click Me!");
@@ -28,4 +28,4 @@ class PopClickListener extends MouseAdapter {
         menu.show(e.getComponent(), e.getX(), e.getY());
     }
 }
-*/
+ */

@@ -21,7 +21,7 @@ import org.apache.log4j.Logger;
 
 public class WebUtilities {
 	private static final Logger logger = Logger.getLogger(WebUtilities.class);
-	
+
 	private static String cachedURLString;
 	private static String cachedPage;
 
@@ -80,7 +80,7 @@ public class WebUtilities {
 		return allStrings;
 
 	}
-	
+
 	private static String removeBlanksAndNbsp(String theString) {
 		theString = StringUtils.remove(theString, "&nbsp;");
 		theString = StringUtils.trim(theString);
@@ -137,7 +137,7 @@ public class WebUtilities {
 		if(cookie != null){
 			conn.setRequestProperty("Cookie", cookie);
 		}
-		
+
 		InputStream is = conn.getInputStream();
 
 		// Read page into a string
@@ -147,13 +147,13 @@ public class WebUtilities {
 
 		return pageAsString;
 	}
-	
+
 	public static void readURLIntoFile(URL url, File file, String cookie, String username, String password) throws IOException{
 
 		Authenticator.setDefault(new MyAuthenticator(username,password));
-		
+
 		URLConnection conn = url.openConnection();
-		
+
 		// Set cookie if provided
 		if(cookie != null){
 			conn.setRequestProperty("Cookie", cookie);
@@ -162,29 +162,29 @@ public class WebUtilities {
 		InputStream is = conn.getInputStream();
 
 		logger.info(url.toString());
-		
+
 		FileUtils.copyURLToFile(url, file);
-		
+
 		//String pageAsString = IOUtils.toString(is, "ISO-8859-1");
 		String pageAsString = IOUtils.toString(is, "UTF-8");
 
 	}
-	
-	
+
+
 	static class MyAuthenticator extends Authenticator {
-		
+
 		private static String user;
 		private static String passw;
-		
+
 		public MyAuthenticator(String username, String password) {
 			user = username;
 			passw = password;
 		}
-		
-        public PasswordAuthentication getPasswordAuthentication () {
-            return new PasswordAuthentication (user, passw.toCharArray());
-        }
-        
-    }
+
+		public PasswordAuthentication getPasswordAuthentication () {
+			return new PasswordAuthentication (user, passw.toCharArray());
+		}
+
+	}
 
 }

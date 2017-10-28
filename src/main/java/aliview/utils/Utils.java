@@ -11,7 +11,7 @@ import utils.FileUtilities;
 
 public class Utils {
 
-	
+
 
 	public static Rectangle addRects(Rectangle rect1, Rectangle rect2){
 		if(rect1 != null && rect2 != null){
@@ -28,7 +28,7 @@ public class Utils {
 			return null;
 		}
 	}
-	
+
 	public static boolean hasSameBounds(Rectangle rect1, Rectangle rect2){
 		if(rect1 != null && rect2 != null){
 			if(rect1.x != rect2.x){

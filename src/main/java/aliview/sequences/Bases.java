@@ -19,7 +19,7 @@ public interface Bases {
 
 	public abstract byte[] toByteArray(int startIndexInclusive,
 			int endIndexInclusive);
-	
+
 	public abstract String toString();
 
 	public abstract void set(int n, byte newBase);

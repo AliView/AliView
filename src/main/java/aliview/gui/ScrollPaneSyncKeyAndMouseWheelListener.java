@@ -27,7 +27,7 @@ public class ScrollPaneSyncKeyAndMouseWheelListener implements MouseWheelListene
 		this.source = source;
 		this.dest = dest;
 	}
-	
+
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		syncViewports();
 
@@ -43,32 +43,32 @@ public class ScrollPaneSyncKeyAndMouseWheelListener implements MouseWheelListene
 
 	public void keyReleased(KeyEvent e) {
 		syncViewports();
-		
+
 	}
 
 	public void mouseDragged(MouseEvent e) {
 		syncViewports();
-		
+
 	}
 
 	public void mouseMoved(MouseEvent e) {
-			
+
 	}
 
 	public void mouseClicked(MouseEvent e) {
-	//	syncViewports();
-		
+		//	syncViewports();
+
 	}
 
 	public void mousePressed(MouseEvent e) {
 		syncViewports();
-		
+
 	}
 
 	public void mouseReleased(MouseEvent e) {
 		syncViewports();
 	}
-	
+
 	private void syncViewports() {
 		// keep x position on the dest viewport - only adjust y
 		Point viewPos = new Point( dest.getViewport().getViewPosition().x, source.getViewport().getViewPosition().y );
@@ -77,14 +77,14 @@ public class ScrollPaneSyncKeyAndMouseWheelListener implements MouseWheelListene
 
 	public void mouseEntered(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-	
-	
+
+
 }

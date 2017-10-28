@@ -14,12 +14,12 @@ import aliview.sequences.FileSequence;
 
 public class NotUsed_IndexFileReader {
 	private static final Logger logger = Logger.getLogger(NotUsed_IndexFileReader.class);
-/*
+	/*
 	public static ArrayList<FileSequence> createSequences(File indexFile, FileMMSequenceList seqList) {
-		
+
 			long startTime = System.currentTimeMillis();
 			ArrayList<FileSequence> sequences = new ArrayList<FileSequence>();
-			
+
 			try {
 				BufferedReader r = new BufferedReader(new FileReader(indexFile));
 				String line;
@@ -27,14 +27,14 @@ public class NotUsed_IndexFileReader {
 				int seqIndex = 0;
 		//		String[] splitted = new String[5];
 				while ((line = r.readLine()) != null) {
-					
+
 					line = line.trim();
-				
+
 					if(line.length() > 0){
-						
+
 						String[] splitted = StringUtils.split(line, '\t');
 					//	String[] splitted = line.split("\t");//StringUtils.split(line, '\t');
-						
+
 //						int startPos = 0;
 //						int endPos = line.indexOf('\t',startPos);
 //						
@@ -51,31 +51,31 @@ public class NotUsed_IndexFileReader {
 //						startPos = endPos + 1;
 //						endPos = line.indexOf('\t',startPos);
 //						splitted[4] = line.substring(startPos, endPos);
-						
+
 						String  seqName = splitted[0];
 						int seqWithoutWhitespaceLength = Integer.parseInt(splitted[1]);
 						long seqAfterNameStartPointer = Long.parseLong(splitted[2]);
 						int lineCharLength = Integer.parseInt(splitted[3]);
 						int lineAbsoluteLength = Integer.parseInt(splitted[4]);
-						
+
 						int nSeqFullLines = (int)Math.floor(seqWithoutWhitespaceLength/lineCharLength);
 						int lineDiff = lineAbsoluteLength - lineCharLength;
-						
-						
+
+
 						double partialLine = ((double)seqWithoutWhitespaceLength/(double)lineCharLength) - (double)nSeqFullLines;
-						
+
 						int extraChars = (int)Math.floor(partialLine * lineDiff);
-						
-						
+
+
 						long endPointer = seqAfterNameStartPointer + seqWithoutWhitespaceLength + nSeqFullLines * lineDiff + extraChars;
-						
+
 						FileSequence seq = new FileSequence(seqList, seqIndex, seqName, seqWithoutWhitespaceLength, seqAfterNameStartPointer, endPointer, lineCharLength, lineAbsoluteLength);
 						sequences.add(seq);
 						seqIndex ++;
 					}
 					nLine ++;
 				}
-				
+
 			} catch (Exception e) {
 				logger.error(e);
 			}
@@ -84,6 +84,6 @@ public class NotUsed_IndexFileReader {
 
 			return sequences;
 		}
-		
-*/
+
+	 */
 }

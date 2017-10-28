@@ -15,20 +15,20 @@ import aliview.sequencelist.AlignmentListModel;
 public class CharPixelsContainer {
 	CharPixels[] backend = new CharPixels[256];
 	private static final Logger logger = Logger.getLogger(CharPixelsContainer.class);
-	
+
 	// Below is for CompounColorScheme
 	private ColorScheme colorScheme;
-	
+
 	public CharPixelsContainer() {
-	//	logger.info("init CharPixContainer");
+		//	logger.info("init CharPixContainer");
 	}
-	
+
 	public RGBArray getRGBArray(byte target){
 		return backend[target].getRGBArray();
 	}
-		
+
 	public static CharPixelsContainer createDefaultNucleotideContainer(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCalse){
-		
+
 		CharPixelsContainer container = new CharPixelsContainer();	
 		for(int n = 0; n < container.backend.length; n++){
 			int baseVal = NucleotideUtilities.baseValFromBase((byte)n);
@@ -38,7 +38,7 @@ public class CharPixelsContainer {
 		}
 		return container;
 	}
-	
+
 	public static CharPixelsContainer createSelectedNucleotideContainer(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCase){
 		CharPixelsContainer container = new CharPixelsContainer();	
 		for(int n = 0; n < container.backend.length; n++){	
@@ -60,7 +60,7 @@ public class CharPixelsContainer {
 		}
 		return container;
 	}
-	
+
 	public static CharPixelsContainer createDefaultAAContainer(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCase) {
 		CharPixelsContainer container = new CharPixelsContainer();	
 		for(int n = 0; n < container.backend.length; n++){	
@@ -71,7 +71,7 @@ public class CharPixelsContainer {
 		}
 		return container;
 	}
-	
+
 	public static CharPixelsContainer createSelectedAAContainer(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCase) {
 		CharPixelsContainer container = new CharPixelsContainer();	
 		for(int n = 0; n < container.backend.length; n++){	

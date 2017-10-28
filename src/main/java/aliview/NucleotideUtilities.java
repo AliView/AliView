@@ -15,7 +15,7 @@ public class NucleotideUtilities {
 	public static final int TU = 8;
 	public static final int U = 8;
 	public static final int T = 8;
-	
+
 	public static final int UNKNOWN = 32;
 	public static final int R = A + G;
 	public static final int Y = C + TU;
@@ -28,17 +28,17 @@ public class NucleotideUtilities {
 	public static final int H = A + TU + C;
 	public static final int V = A + C + G;
 	public static final int N = A + C + T + G;
-	
-	
+
+
 	public static final int baseValFromBase(byte base){
 		return baseValFromChar((char)base);
 	}
-	
+
 	public static final byte complement(char base){
 		byte complement;
-		
+
 		switch (base) {
-		
+
 		case 'A': 
 			complement = 'T';
 			break;
@@ -138,10 +138,10 @@ public class NucleotideUtilities {
 			complement = (byte)base;
 			break;
 		}
-		
+
 		return complement;
 	}
-	
+
 	public static final boolean isGap(byte base){
 		if(baseValFromBase(base) == GAP){
 			return true;
@@ -149,7 +149,7 @@ public class NucleotideUtilities {
 			return false;
 		}
 	}
-	
+
 	public static final boolean isNucleoticeOrIUPAC(byte base){
 		//logger.info("baseValFromBase(base)" + baseValFromBase(base));
 		int baseVal = baseValFromBase(base); 
@@ -159,8 +159,8 @@ public class NucleotideUtilities {
 			return false;
 		}
 	}
-	
-	
+
+
 	public static final int baseValFromChar(char base){
 
 		int baseVal;
@@ -224,7 +224,7 @@ public class NucleotideUtilities {
 		return baseVal;
 
 	}
-	
+
 	public static byte byteFromBaseVal(int consensusVal) {
 		char charVal = charFromBaseVal(consensusVal);
 		//logger.info(charVal);
@@ -251,37 +251,37 @@ public class NucleotideUtilities {
 			break;
 		case A + G:
 			base = 'R';
-			break;
+		break;
 		case C + TU:
 			base = 'Y';
-			break;
+		break;
 		case C + A:
 			base = 'M';
-			break;
+		break;
 		case TU + G:
 			base = 'K';
-			break;
+		break;
 		case TU + A: 
 			base = 'W';
-			break;
+		break;
 		case C + G: 
 			base = 'S';
-			break;
+		break;
 		case C + TU + G: 
 			base = 'B';
-			break;
+		break;
 		case A + TU + G: 
 			base = 'D';
-			break;
+		break;
 		case A + TU + C: 
 			base = 'H';
-			break;
+		break;
 		case A + C + G: 
 			base = 'V';
-			break;
+		break;
 		case A + TU + C + G:
 			base = 'N';
-			break;	
+		break;	
 		case GAP:
 			base = '-';
 			break;
@@ -319,16 +319,16 @@ public class NucleotideUtilities {
 			degenFold = 1;
 			break;
 		}
-		
+
 		return degenFold;
 
 
 	}
 
 	public static char[] nucleotideCharsFromBaseVal(int baseVal) {
-		
+
 		String nuces = "";
-		
+
 		if( (A & baseVal) == A){
 			nuces += "A";
 		}
@@ -341,16 +341,16 @@ public class NucleotideUtilities {
 		if( (8 & baseVal) == 8){
 			nuces += "T";
 		}
-		
+
 		return nuces.toCharArray();
 	}
-	
 
-	
+
+
 	public static ArrayList<String> regenerateDegenerated(String input) {
 		ArrayList<String> sequences = new ArrayList<String>();
 		sequences.add(input);
-		
+
 		// loop through sequences - new replaced are added to end of list and will be iterated through also
 		for(int n = 0; n < sequences.size(); n++){
 			String nextSeq = sequences.get(n);
@@ -363,7 +363,7 @@ public class NucleotideUtilities {
 				n = n -1;
 			}
 		}
-		
+
 		// loop through sequences - new replaced are added to end of list and will be iterated through also
 		for(int n = 0; n < sequences.size(); n++){
 			String nextSeq = sequences.get(n);
@@ -376,7 +376,7 @@ public class NucleotideUtilities {
 				n = n -1;
 			}
 		}
-		
+
 		// loop through sequences - new replaced are added to end of list and will be iterated through also
 		for(int n = 0; n < sequences.size(); n++){
 			String nextSeq = sequences.get(n);
@@ -389,7 +389,7 @@ public class NucleotideUtilities {
 				n = n -1;
 			}
 		}
-		
+
 		// loop through sequences - new replaced are added to end of list and will be iterated through also
 		for(int n = 0; n < sequences.size(); n++){
 			String nextSeq = sequences.get(n);
@@ -402,7 +402,7 @@ public class NucleotideUtilities {
 				n = n -1;
 			}
 		}
-		
+
 		// loop through sequences - new replaced are added to end of list and will be iterated through also
 		for(int n = 0; n < sequences.size(); n++){
 			String nextSeq = sequences.get(n);
@@ -415,7 +415,7 @@ public class NucleotideUtilities {
 				n = n -1;
 			}
 		}
-		
+
 		// loop through sequences - new replaced are added to end of list and will be iterated through also
 		for(int n = 0; n < sequences.size(); n++){
 			String nextSeq = sequences.get(n);
@@ -428,7 +428,7 @@ public class NucleotideUtilities {
 				n = n -1;
 			}
 		}
-		
+
 		// loop through sequences - new replaced are added to end of list and will be iterated through also
 		for(int n = 0; n < sequences.size(); n++){
 			String nextSeq = sequences.get(n);
@@ -441,7 +441,7 @@ public class NucleotideUtilities {
 				n = n -1;
 			}
 		}
-		
+
 		// loop through sequences - new replaced are added to end of list and will be iterated through also
 		for(int n = 0; n < sequences.size(); n++){
 			String nextSeq = sequences.get(n);
@@ -454,7 +454,7 @@ public class NucleotideUtilities {
 				n = n -1;
 			}
 		}
-		
+
 		// loop through sequences - new replaced are added to end of list and will be iterated through also
 		for(int n = 0; n < sequences.size(); n++){
 			String nextSeq = sequences.get(n);
@@ -467,7 +467,7 @@ public class NucleotideUtilities {
 				n = n -1;
 			}
 		}
-		
+
 		// loop through sequences - new replaced are added to end of list and will be iterated through also
 		for(int n = 0; n < sequences.size(); n++){
 			String nextSeq = sequences.get(n);
@@ -480,7 +480,7 @@ public class NucleotideUtilities {
 				n = n -1;
 			}
 		}
-		
+
 		// loop through sequences - new replaced are added to end of list and will be iterated through also
 		for(int n = 0; n < sequences.size(); n++){
 			String nextSeq = sequences.get(n);
@@ -493,10 +493,10 @@ public class NucleotideUtilities {
 				n = n -1;
 			}
 		}
-		
+
 		return sequences;
 	}
-	
+
 	private static ArrayList<String> deUpac(String input, String upac, String replace){
 		ArrayList<String> replaced = null;
 		if(input.indexOf(upac) != -1){
@@ -504,7 +504,7 @@ public class NucleotideUtilities {
 			for(int n = 0; n < replace.length(); n++){
 				String replacedString  = input.replace(upac.charAt(0), replace.charAt(n));
 				replaced.add(replacedString);
-			//	replaced.add(StringUtils.replaceOnce(input,upac, replace.substring(n, n+1)));
+				//	replaced.add(StringUtils.replaceOnce(input,upac, replace.substring(n, n+1)));
 			}
 		}
 		return replaced;	
@@ -520,7 +520,7 @@ public class NucleotideUtilities {
 		}
 		return replaced;	
 	}
-	*/
+	 */
 
 	public static final String reverse(String input) {
 		StringBuffer sb = new StringBuffer(input);
@@ -531,9 +531,9 @@ public class NucleotideUtilities {
 	public static final String complement(String input) {
 		String NORMAL =     "AaCcGgTtUuRrYyKkMmSsWwBbDdHhVvNn-";
 		String COMPLEMENT = "TtGgCcAaAaYyRrMmKkSsWwVvHhDdBbNn-";
-		
+
 		String output = "";
-		
+
 		for(int n = 0; n < input.length(); n++){
 			char normChar = input.charAt(n);
 			int nuclIndex = NORMAL.indexOf(normChar);
@@ -545,15 +545,15 @@ public class NucleotideUtilities {
 				output += normChar;
 			}
 		}
-		
+
 		return output;
-		
+
 	}
 
 	public static final String revComp(String sequence) {
 		return reverse( complement(sequence) );
 	}
-	
+
 	public static boolean containsA(char input){
 		int baseVal = baseValFromChar(input);
 		if( (A & baseVal)  == A){
@@ -562,9 +562,9 @@ public class NucleotideUtilities {
 		else{
 			return false;
 		}
-		
+
 	}
-	
+
 	public static boolean containsC(char input){
 		int baseVal = baseValFromChar(input);
 		if( (C & baseVal)  == C){
@@ -573,9 +573,9 @@ public class NucleotideUtilities {
 		else{
 			return false;
 		}
-		
+
 	}
-	
+
 	public static boolean containsT(char input){
 		int baseVal = baseValFromChar(input);
 		if( (T & baseVal)  == T){
@@ -584,9 +584,9 @@ public class NucleotideUtilities {
 		else{
 			return false;
 		}
-		
+
 	}
-	
+
 	public static boolean containsG(char input){
 		int baseVal = baseValFromChar(input);
 		if( (G & baseVal)  == G){
@@ -595,79 +595,79 @@ public class NucleotideUtilities {
 		else{
 			return false;
 		}
-		
+
 	}
 
-	
+
 	public static int getDimerBinding(char n1Char, char n2Char) {
 		int n1Val = baseValFromChar(n1Char);
 		int n2Val = baseValFromChar(n2Char);
-		
-		
+
+
 		int bindVal = 0;
 		int bindCount = 0;
-		
+
 		// check
 		if(containsA(n1Char) && containsT(n2Char)){
 			bindVal += 2;
 			bindCount ++;
 		}
-		
+
 		if(containsT(n1Char) && containsA(n2Char)){
 			bindVal += 2;
 			bindCount ++;
 		}
-		
+
 		if(containsC(n1Char) && containsG(n2Char)){
 			bindVal += 4;
 			bindCount ++;
 		}
-		
+
 		if(containsG(n1Char) && containsC(n2Char)){
 			bindVal += 4;
 			bindCount ++;
 		}
-		
+
 		int degenerateFold = degenFoldFromChar(n1Char) * degenFoldFromChar(n2Char);
-		
+
 		// is degenerate - calculate new bindval
 		if(degenerateFold > 1){	
 			bindVal = bindCount*2 / degenerateFold;
 		}
-		
+
 		return bindVal;
-		
+
 	}
-	
+
 	public static final String[] seqToDeUPACStringArray(String sequence) {
-	
+
 		// create a new char-matrix to hold result
 		char[][] matrix = new char[4][sequence.length()];
 		for(char[] row: matrix){
 			Arrays.fill(row, ' ');
 		}
-		
+
 		for(int x = 0; x < sequence.length(); x++){
-			
+
 			char baseChar = sequence.charAt(x);
-			
+
 			int baseVal = baseValFromChar(baseChar);
-			
+
 			char[] nucleotidesInThisXpos = nucleotideCharsFromBaseVal(baseVal);
-			
+
 			// loop through all chars in this pos
 			for(int y = 0; y < nucleotidesInThisXpos.length; y++){				
 				matrix[y][x]=nucleotidesInThisXpos[y];					
 			}
 		}
-		
+
 		String[] stringArray = new String[4];
 		for(int n = 0; n < matrix.length; n++){
 			stringArray[n] = new String(matrix[n]);
 		}
-		
+
 		return stringArray;
-		
+
 	}
 
 	public static void complement(byte[] byteSeq) {
@@ -678,22 +678,22 @@ public class NucleotideUtilities {
 
 	public static byte getConsensusFromBases(byte base1, byte base2) {
 
-			int baseVal1 = baseValFromBase(base1);
-			int baseVal2 = baseValFromBase(base2);
+		int baseVal1 = baseValFromBase(base1);
+		int baseVal2 = baseValFromBase(base2);
 
-			// Create consensus by bitwise OR of the bases in the same column
-			int consensusVal = baseVal1 | baseVal2;
+		// Create consensus by bitwise OR of the bases in the same column
+		int consensusVal = baseVal1 | baseVal2;
 
-			// skip GAP
-			/*
+		// skip GAP
+		/*
 			if((consensusVal & NucleotideUtilities.GAP) == NucleotideUtilities.GAP){
 				consensusVal = consensusVal - NucleotideUtilities.GAP;
 			}
-			 */
+		 */
 
-			byte consensus = byteFromBaseVal(consensusVal);
-			return consensus;
-		}
+		byte consensus = byteFromBaseVal(consensusVal);
+		return consensus;
+	}
 
 
 	public static byte getMinBase(byte base1, byte base2) {
@@ -705,7 +705,7 @@ public class NucleotideUtilities {
 		return byteFromBaseVal(minBaseVal);
 	}
 
-	
+
 	public static boolean isAtLeastOneGap(byte base1, byte base2) {
 		if(isGap(base1) || isGap(base2)){
 			return true;
@@ -719,5 +719,5 @@ public class NucleotideUtilities {
 	public static int baseValFromBaseOtherVer(byte residue) {
 		return allResidues[residue];
 	}
-	
+
 }

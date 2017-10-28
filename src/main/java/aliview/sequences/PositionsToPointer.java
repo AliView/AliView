@@ -3,7 +3,7 @@ package aliview.sequences;
 import java.util.ArrayList;
 
 public class PositionsToPointer {
-	
+
 	ArrayList<PositionToPointer> posToPointerList = new ArrayList<PositionToPointer>();
 	private PositionToPointer cachedPosToPoint;
 
@@ -16,11 +16,11 @@ public class PositionsToPointer {
 		}
 		return copy;
 	}
-	
+
 	public void add(PositionToPointer posToPoint){
 		posToPointerList.add(posToPoint);
 	}
-	
+
 	public long getPointerFromPos(int pos){
 		long pointer = -1;
 		if(cachedPosToPoint != null){
@@ -46,10 +46,10 @@ public class PositionsToPointer {
 		PositionToPointer lastPosPoint = posToPointerList.get(posToPointerList.size() - 1);
 		return lastPosPoint.getEndPos();
 	}
-	
+
 	public long getMaxPointer() {
 		PositionToPointer lastPosPoint = posToPointerList.get(posToPointerList.size() - 1);
 		return lastPosPoint.getEndPointer();
 	}
-	
+
 }

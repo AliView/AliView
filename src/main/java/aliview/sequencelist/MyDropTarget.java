@@ -18,17 +18,17 @@ import javax.swing.Timer;
 import org.apache.log4j.Logger;
 
 public class MyDropTarget extends DropTarget {
-	
+
 	private static final Logger logger = Logger.getLogger(SequenceJList.class);
 
-	
+
 	public MyDropTarget() {
 		super();
 		logger.info("Create MyDT");
 	}
-	
+
 	protected void initializeAutoscrolling(Point p) {
-		
+
 		logger.info("this.getComponent() instanceof Autoscroll" + (this.getComponent() instanceof Autoscroll));
 		System.out.println("init Autoscrolling");
 		//autoScroller = createDropTargetAutoScroller(component, p);
@@ -37,11 +37,11 @@ public class MyDropTarget extends DropTarget {
 	        if (component == null || !(component instanceof Autoscroll)) return;
 
 	        autoScroller = createDropTargetAutoScroller(component, p);
-	     */
+		 */
 
-    }
-	
-	
+	}
+
+
 	protected DropTargetAutoScroller createDropTargetAutoScroller( Component c, Point p) {
 		logger.info("Create MyDT Autoscroll");
 		return new MyDropTargetAutoScroller(c, p);
@@ -53,9 +53,9 @@ public class MyDropTarget extends DropTarget {
 		protected MyDropTargetAutoScroller(Component c, Point p) {
 			super(c, p);
 			super.stop();
-			
-			
-			
+
+
+
 			System.out.println("Created Autoscroller");
 
 			component  = c;
@@ -172,7 +172,7 @@ public class MyDropTarget extends DropTarget {
 
 			//System.out.println("autoscrolling actionPerformed");
 			// updateRegion();
-			
+
 			Point componentLocation = new Point(screenLocation);
 			SwingUtilities.convertPointFromScreen(componentLocation, component);
 			autoScroll.autoscroll(componentLocation);
@@ -184,8 +184,8 @@ public class MyDropTarget extends DropTarget {
 
 				autoScroll.autoscroll(componentLocation);
 			}
-			*/
-			
+			 */
+
 
 
 		}

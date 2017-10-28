@@ -8,7 +8,7 @@ import aliview.undo.UndoSavedStateEverything;
 public class UndoList{
 	private ArrayList<UndoSavedState> delegate = new ArrayList<UndoSavedState>();
 	private int positionPointer = -1;
-	
+
 	public void add(UndoSavedState state) {
 		delegate.add(state);
 		positionPointer = delegate.size() - 1;
@@ -20,7 +20,7 @@ public class UndoList{
 		}
 		return false;
 	}
-	
+
 	public boolean hasAvailableRedos() {
 		if(delegate.size() > 0 && positionPointer < (delegate.size()-1)){
 			return true;
@@ -48,7 +48,7 @@ public class UndoList{
 		}
 		return state;
 	}
-	
+
 	public UndoSavedState getRedoState(){
 		UndoSavedState state = null;
 		if(hasAvailableRedos()){
@@ -57,5 +57,5 @@ public class UndoList{
 		}
 		return state;
 	}
-	
+
 }

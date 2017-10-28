@@ -3,7 +3,7 @@ package utils;
 import java.util.ArrayList;
 
 public class StringParser{
-	
+
 	private String input;
 	private String delimiter;
 	private String[] tokensArray;
@@ -17,7 +17,7 @@ public class StringParser{
 			tokens.add(nextString);
 		}
 	}
-	
+
 	public boolean anyTokenMatches(String compare){
 		for(String token: tokens){
 			if(token.contains(compare)){

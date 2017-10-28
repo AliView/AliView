@@ -28,7 +28,7 @@ public class FileSequenceAlignmentListModel extends AlignmentListModel{
 	private static final Logger logger = Logger.getLogger(FileSequenceAlignmentListModel.class);
 	private static final String LF = System.getProperty("line.separator");
 	private List<FileSequenceLoadListener> fileSeqLoadListeners = new ArrayList<FileSequenceLoadListener>();
-	
+
 	public FileSequenceAlignmentListModel(File alignmentFile, FileFormat foundFormat) throws IOException {
 		super(new CopyOnWriteArrayList<Sequence>(), foundFormat);
 		MemoryMappedSequencesFile sequencesFile = new MemoryMappedSequencesFile(alignmentFile, foundFormat);
@@ -68,18 +68,18 @@ public class FileSequenceAlignmentListModel extends AlignmentListModel{
 		logger.info("Write done");
 	}
 
-	
+
 
 	public boolean isEditable(){
 		return false;
 	}
-	
+
 	public void addMoreFileSequences(List<Sequence> moreSeqs, boolean setSelected) {
 		super.addAll(moreSeqs, setSelected);
 	}
-	
-	
-	
+
+
+
 	@Override
 	public AliHistogram getHistogram() {
 		long startTime = System.currentTimeMillis();
@@ -89,7 +89,7 @@ public class FileSequenceAlignmentListModel extends AlignmentListModel{
 		}else{
 			histogram = new NucleotideHistogram(getLongestSequenceLength());
 		}
-		
+
 		// only do MAX_HISTOGRAM_SEQUENCES
 		int counter = 0;
 		for(Sequence seq: delegateSequences){
@@ -107,7 +107,7 @@ public class FileSequenceAlignmentListModel extends AlignmentListModel{
 		logger.info("Create histogram took " + (endTime - startTime) + " milliseconds");
 		return histogram;
 	}
-	
+
 	/*
 	public void addAll(List<Sequence> moreSeqs, boolean setSelected) {
 		for(Sequence seq: moreSeqs){
@@ -119,24 +119,24 @@ public class FileSequenceAlignmentListModel extends AlignmentListModel{
 			//getSeleselectionModel.setSequenceSelection(moreSeqs);
 		}
 	}
-	*/
-	
-	
+	 */
+
+
 	// Skip padding if filesequences
 	public boolean rightPadWithGapUntilEqualLength(){
 		return false;
 	}
-	
+
 	// Skip padding if filesequences
 	public boolean leftPadWithGapUntilEqualLength() {
 		return false;
 	}
-	
+
 	// Skip trimming if filesequences
 	public boolean rightTrimSequencesRemoveGapsUntilEqualLength(){
 		return false;
 	}
-	
+
 	// Skip delete if filesequences
 	public void deleteBasesInAllSequencesFromMask(boolean[] deleteMask) {
 		return;

@@ -6,16 +6,16 @@ import javax.swing.ButtonModel;
 import javax.swing.JButton;
 
 public class NoneSelectedButtonGroup extends ButtonGroup {
-    private AbstractButton hack;
+	private AbstractButton hack;
 
-    public NoneSelectedButtonGroup() {
-        super();
-        hack = new JButton();
-        add(hack);
-    }
+	public NoneSelectedButtonGroup() {
+		super();
+		hack = new JButton();
+		add(hack);
+	}
 
-    @Override
-    public void setSelected(ButtonModel model, boolean selected) {
-        super.setSelected(selected ? model : hack.getModel(), true);
-    }
+	@Override
+	public void setSelected(ButtonModel model, boolean selected) {
+		super.setSelected(selected ? model : hack.getModel(), true);
+	}
 }

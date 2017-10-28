@@ -19,9 +19,9 @@ public class ComponentCellRenderer implements TableCellRenderer, TableCellEditor
 	private static final LineBorder selectedBorder = new LineBorder(Color.DARK_GRAY);
 
 	public Component getTableCellRendererComponent(JTable table, Object obj,
-													boolean isSelected, boolean hasFocus,
-													int row, int column) {
-		
+			boolean isSelected, boolean hasFocus,
+			int row, int column) {
+
 		JComponent comp = (JComponent) obj;
 		if(isSelected){
 			comp.setBorder(selectedBorder);
@@ -30,23 +30,23 @@ public class ComponentCellRenderer implements TableCellRenderer, TableCellEditor
 		}
 
 		return (Component) obj;
-		
+
 	}
 
 	public Component getTableCellEditorComponent(JTable table, Object obj,
 			boolean isSelected, int row, int column) {
-		
+
 		return (Component) obj;
 	}
 
 	public void addCellEditorListener(CellEditorListener l) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void cancelCellEditing() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public Object getCellEditorValue() {
@@ -61,7 +61,7 @@ public class ComponentCellRenderer implements TableCellRenderer, TableCellEditor
 
 	public void removeCellEditorListener(CellEditorListener l) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public boolean shouldSelectCell(EventObject anEvent) {

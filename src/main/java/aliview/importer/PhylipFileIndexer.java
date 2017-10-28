@@ -32,7 +32,7 @@ public class PhylipFileIndexer implements FileIndexer{
 			SubThreadProgressWindow progressWin) throws AlignmentImportException {
 
 		ByteBufferInpStream mappedBuff = sequencesFile.getMappedBuff();
-		
+
 		ArrayList<Sequence> allSeqs = new ArrayList<Sequence>();
 		try{
 			this.fileSize = mappedBuff.length();
@@ -121,14 +121,14 @@ public class PhylipFileIndexer implements FileIndexer{
 			}
 
 
-			
+
 			// load depending on file type
 			if(formatType == FileFormat.PHYLIP_RELAXED_PADDED_INTERLEAVED_AKA_LONG_NAME_INTERLEAVED){
 
 				long nameStartPointer = firstNameStartPointer;
 				readerHelper.setPosition(nameStartPointer);
 				int lineCount = 0;
-				
+
 				for(int n = 0; n <seqCount; n++){
 					int seqPos = 0;
 					// position sequence start (also name endpos)
@@ -181,7 +181,7 @@ public class PhylipFileIndexer implements FileIndexer{
 						interleavedStartPointer = interleavedStartPointer + lengthBetweenTwoInterleaveStartPointer +1;
 						interleavedEndLinePointer = interleavedStartPointer + (seqSeqmentLen -1);
 					}
-					
+
 					// break when full
 					//					logger.info("allSeqs.get(0).getLength()" + allSeqs.get(0).getLength());
 					//					logger.info("longestSequenceLength" + longestSequenceLength);
@@ -192,7 +192,7 @@ public class PhylipFileIndexer implements FileIndexer{
 						FileSequence lastSeq = (FileSequence) allSeqs.get(allSeqs.size()-1);
 						mappedBuff.position(lastSeq.getEndPointer() + 1);
 					}
-					
+
 					lineCount ++;
 					if(lineCount % 1000 == 0){
 						progressWin.setMessage("Indexing interleaved Phylip file" + LF + "line:" + lineCount);
@@ -246,7 +246,7 @@ public class PhylipFileIndexer implements FileIndexer{
 						}
 					}
 				}
-				
+
 				FileSequence lastSeq = (FileSequence) allSeqs.get(allSeqs.size()-1);
 				mappedBuff.position(lastSeq.getEndPointer() + 1);
 
@@ -278,13 +278,13 @@ public class PhylipFileIndexer implements FileIndexer{
 						logger.info("done indexing");
 						break;
 					}else{
-						
+
 						FileSequence theLastSeq = (FileSequence) allSeqs.get(allSeqs.size()-1);
 						mappedBuff.position(theLastSeq.getEndPointer() + 1);
-						
+
 					}
-					
-					
+
+
 					lineCount ++;
 					if(lineCount % 1000 == 0){
 						progressWin.setMessage("Indexing interleaved Phylip file" + LF + "line:" + lineCount);
@@ -336,7 +336,7 @@ public class PhylipFileIndexer implements FileIndexer{
 
 					// move forward
 					nameStartPointer = sequentialEndPointer + newlineLen + 1;
-					
+
 					if(n % 1000 == 0){
 						progressWin.setMessage("Indexing Phylip sequential file" + LF + "seq:" + n + "/" + seqCount);
 						if(progressWin.wasSubThreadInterruptedByUser()){
@@ -386,7 +386,7 @@ public class PhylipFileIndexer implements FileIndexer{
 
 					// move forward
 					nameStartPointer = sequentialEndPointer + newlineLen + 1;
-					
+
 					if(n % 1000 == 0){
 						progressWin.setMessage("Indexing Phylip sequential file" + LF + "seq:" + n + "/" + seqCount);
 						if(progressWin.wasSubThreadInterruptedByUser()){

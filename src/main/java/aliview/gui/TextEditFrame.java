@@ -18,12 +18,12 @@ import aliview.gui.AppIcons;
 public class TextEditFrame extends JFrame {
 	private static final Logger logger = Logger.getLogger(TextEditFrame.class);
 	private Component parentFrame;
-	
+
 	public TextEditFrame(Component parent){
 		this.parentFrame = parent;
 		logger.info("constructor");
 	}
-	
+
 	public void init(JPanel mainPanel){
 		this.getContentPane().add(mainPanel);
 		this.setIconImage(AppIcons.getProgramIconImage());
@@ -33,7 +33,7 @@ public class TextEditFrame extends JFrame {
 		this.pack();
 		this.centerLocationToThisComponent(parentFrame);
 	}
-	
+
 	public void centerLocationToThisComponent(Component parent){
 		// align to middle of parent window
 		if(parent != null){
@@ -42,5 +42,5 @@ public class TextEditFrame extends JFrame {
 			this.setLocation(newX, newY);
 		}
 	}
-	
+
 }

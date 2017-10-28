@@ -30,7 +30,7 @@ import aliview.settings.Settings;
 
 
 public class SubProcessWindow{
-	
+
 	private JDialog dialog;
 	private static final Logger logger = Logger.getLogger(SubProcessWindow.class);
 	private Process subProcess;
@@ -44,63 +44,63 @@ public class SubProcessWindow{
 	public SubProcessWindow(JFrame parentFrame){
 		init(parentFrame, false);
 	}
-	
+
 	public SubProcessWindow(JFrame parentFrame, boolean withAutoCloseWhenDoneCbx) {
 		init(parentFrame, true);
 	}
-	
+
 	public static SubProcessWindow getAlignmentProgressWindow(JFrame parentFrame, boolean autoCloseWhenDoneCbxSelected){
-		
+
 		SubProcessWindow procWin = new SubProcessWindow(parentFrame, true);
-		
+
 		procWin.closeAutomaticCbx.setText("Close this type of progress window automatically when done");
 		procWin.closeAutomaticCbx.setSelected(autoCloseWhenDoneCbxSelected);
 		procWin.closeAutomaticCbx.addActionListener(new ActionListener() {
-			 public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(ActionEvent e) {
 				JCheckBox box = (JCheckBox) e.getSource();
 				Settings.getHideAlignmentProgressWindowWhenDone().putBooleanValue(box.isSelected());
 			}
 		});
-	
+
 		return procWin;
 	}
-	
-	
+
+
 	public void init(JFrame parentFrame, boolean withAutocloseBox){
-		
+
 		this.parentFrame = parentFrame;
 		dialog = new JDialog(parentFrame);
-		
+
 		consoleTextArea = new JTextArea();
 		JScrollPane scrollPane = new JScrollPane(consoleTextArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		
+
 		dialog.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		dialog.addWindowListener(new WindowAdapter() {		
 			public void windowClosing(WindowEvent e) {
-				
+
 				// destroy subprocess if there is one
 				if(subProcess != null){
 					logger.info("destroy-subprocess");
-					
+
 					// On windows there is a risk that closing stream command takes a long
 					// time to return or blocks - therefore do it in a separate thread
-					
+
 					// Even better - Dont close streams - it might block on windows
-					
-//					Thread thread = new Thread(new Runnable(){
-//						public void run(){
-//								try {
-//									subProcess.getInputStream().close();
-//									subProcess.getOutputStream().close();
-//								} catch (IOException e) {
-//									// TODO Auto-generated catch block
-//									e.printStackTrace();
-//								}	
-//							}
-//					});
-//					thread.start();
-					
-							
+
+					//					Thread thread = new Thread(new Runnable(){
+					//						public void run(){
+					//								try {
+					//									subProcess.getInputStream().close();
+					//									subProcess.getOutputStream().close();
+					//								} catch (IOException e) {
+					//									// TODO Auto-generated catch block
+					//									e.printStackTrace();
+					//								}	
+					//							}
+					//					});
+					//					thread.start();
+
+
 					logger.info("before destroy");
 					subProcessDestrouedByUser = true;
 					subProcess.destroy();		
@@ -110,30 +110,30 @@ public class SubProcessWindow{
 				dialog.dispose();
 			}
 		});
-		
+
 		dialog.getContentPane().add(scrollPane, BorderLayout.CENTER);
-		
-		
-		
+
+
+
 		if(withAutocloseBox){
 			closeAutomaticCbx.setHorizontalAlignment(SwingConstants.CENTER);
 			dialog.getContentPane().add(closeAutomaticCbx, BorderLayout.SOUTH);
 		}
-		
-		
+
+
 		dialog.setTitle("Sub Process Window");
 		dialog.setIconImage(AppIcons.getProgramIconImage());
 		dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(SubProcessWindow.class.getResource("/img/alignment_ico_128x128.png")));
-			
+
 	}
 	/*
 	public void init(){
-		
+
 		frame = new JFrame();
-		
+
 		consoleTextArea = new JTextArea();
 		JScrollPane scrollPane = new JScrollPane(consoleTextArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		
+
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frame.addWindowListener(new WindowAdapter() {		
 			public void windowClosing(WindowEvent e) {
@@ -146,21 +146,21 @@ public class SubProcessWindow{
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-					
+
 					subProcess.destroy();
 					subProcessDestrouedByUser = true;
 				}
 				frame.dispose();
 			}
 		});
-		
+
 		frame.getContentPane().add(scrollPane, BorderLayout.CENTER);
 		frame.setTitle("Sub Process Window");
 		frame.setIconImage(AppIcons.getProgramIconImage());
 		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(SubProcessWindow.class.getResource("/img/alignment_ico_128x128.png")));
 	}
-	*/
-	
+	 */
+
 	public void show(){
 		dialog.setPreferredSize(this.preferredSize);
 		dialog.pack();
@@ -172,11 +172,11 @@ public class SubProcessWindow{
 		}
 		dialog.setVisible(true);
 	}
-	
+
 	public void setPreferredSize(Dimension prefSize){
 		this.preferredSize = prefSize;
 	}	
-	
+
 	public SubProcessWindow(Process subprocess) {
 		super();
 		this.subProcess = subprocess;
@@ -189,7 +189,7 @@ public class SubProcessWindow{
 	public void setActiveProcess(Process subProcess){
 		this.subProcess = subProcess;	
 	}	
-	
+
 	/*
 	public void centerLocationToThisComponent(Component parent){
 		// align to middle of parent window
@@ -199,8 +199,8 @@ public class SubProcessWindow{
 			dialog.setLocation(newX, newY);
 		}
 	}
-	*/
-	
+	 */
+
 	public void placeFrameupperLeftLocationOfThis(Component parent){
 		if(parent != null){
 			int newX = parent.getX() + 100;
@@ -208,41 +208,41 @@ public class SubProcessWindow{
 			dialog.setLocation(newX, newY);
 		}
 	}	
-	
-	
+
+
 	public void appendOutput(final String output){
 		SwingUtilities.invokeLater(new Runnable() {
-		    public void run() {
-			    consoleTextArea.append(output);
+			public void run() {
+				consoleTextArea.append(output);
 				// Make it scroll to end
 				consoleTextArea.setCaretPosition(consoleTextArea.getDocument().getLength());
-			    }
-		  });
+			}
+		});
 	}
-	
+
 	public void setMessage(final String output){
 		setOutput(output);
 	}
-	
+
 	public void setOutput(final String output){
 		SwingUtilities.invokeLater(new Runnable() {
-		    public void run() {
-			    consoleTextArea.setText(output);
+			public void run() {
+				consoleTextArea.setText(output);
 				// Make it scroll to end
 				consoleTextArea.setCaretPosition(consoleTextArea.getDocument().getLength());
-			    }
-		  });
+			}
+		});
 	}
-		
+
 
 	public void setTitle(String title) {
 		dialog.setTitle(title);
-		
+
 	}
 
 	public void setAlwaysOnTop(boolean alwaysOnTop) {
 		dialog.setAlwaysOnTop(alwaysOnTop);
-		
+
 	}
 
 	public void dispose() {
@@ -272,11 +272,11 @@ public class SubProcessWindow{
 			closeAutomaticCbx.setSelected(booleanValue);
 		}
 	}
-	
+
 	public void setCloseWhenDoneCbxText(String text) {
 		if(closeAutomaticCbx != null){
 			closeAutomaticCbx.setText(text);
 		}
 	}
-	
+
 }

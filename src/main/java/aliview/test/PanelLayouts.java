@@ -35,15 +35,15 @@ public class PanelLayouts extends JFrame{
 	private JTextArea tarea2;
 	private JTextField txtfilemafft;
 	public PanelLayouts() {
-		
+
 		getContentPane().setLayout(new GridLayout(3, 1, 0, 0));		
 		AliItemPanel aliItemPanel = new AliItemPanel(new CommandItem("name", "path", "aligm", true, true));
 		getContentPane().add(aliItemPanel);	
-		
-	//	this.setPreferredSize(new Dimension(600,600));
-		
+
+		//	this.setPreferredSize(new Dimension(600,600));
+
 	}
-	
+
 	public static void main(String[] args) {
 		PanelLayouts pl = new PanelLayouts();
 		pl.pack();

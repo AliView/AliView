@@ -83,14 +83,14 @@ public class DefaultSequenceSelectionModel implements SequenceSelectionModel {
 		}
 		int[] pos = new int[countSelectedPositions(startIndex, endIndex)];
 		int index = 0;
-		 for(int i = bitSelection.nextSetBit(startIndex); i >= 0 && i <= endIndex; i = bitSelection.nextSetBit(i+1)) {
-			 pos[index] = i;
-			 index++;
-		 }
-		
+		for(int i = bitSelection.nextSetBit(startIndex); i >= 0 && i <= endIndex; i = bitSelection.nextSetBit(i+1)) {
+			pos[index] = i;
+			index++;
+		}
+
 		return pos;	
 	}
-	
+
 	public int countPositionsUntilSelectedCount(int selectedCount) {
 		if(allSelected){
 			return selectedCount-1;
@@ -101,14 +101,14 @@ public class DefaultSequenceSelectionModel implements SequenceSelectionModel {
 		}else{
 			int index = -1;
 			int nCount = 0;
-			 for (int i = bitSelection.nextSetBit(0); i >= 0 && i <= bitSelection.length(); i = bitSelection.nextSetBit(i+1)) {
-//			    logger.info("i" + i);
+			for (int i = bitSelection.nextSetBit(0); i >= 0 && i <= bitSelection.length(); i = bitSelection.nextSetBit(i+1)) {
+				//			    logger.info("i" + i);
 				nCount ++;
-			    if(nCount == selectedCount){
-			    	index = i;
-			    	break;
-			    }
-			 }
+				if(nCount == selectedCount){
+					index = i;
+					break;
+				}
+			}
 			return index;
 		}	
 	}
@@ -122,17 +122,17 @@ public class DefaultSequenceSelectionModel implements SequenceSelectionModel {
 			return 0;
 		}else{
 			int nCount = 0;
-			 for (int i = bitSelection.nextSetBit(startIndex); i >= 0 && i <= endIndex; i = bitSelection.nextSetBit(i+1)) {
-			    nCount ++;
-			 }
+			for (int i = bitSelection.nextSetBit(startIndex); i >= 0 && i <= endIndex; i = bitSelection.nextSetBit(i+1)) {
+				nCount ++;
+			}
 			return nCount;
 		}	
 	}
-	
+
 	public void clearSelectionAt(int n) {
 		clearSelection(n, n, false);
 	}
-	
+
 	public void clearSelection(int startIndex, int endIndex, boolean clearFirst){
 		if(clearFirst){
 			clearAll();
@@ -142,7 +142,7 @@ public class DefaultSequenceSelectionModel implements SequenceSelectionModel {
 		}	
 		bitSelection.set(startIndex, endIndex + 1, false); // bitselection end index is exclusive
 	}
-	
+
 	public void setSelectionAt(int n){
 		setSelection(n, n, false);
 	}
@@ -155,13 +155,13 @@ public class DefaultSequenceSelectionModel implements SequenceSelectionModel {
 			bitSelection = createNewSelection();
 		}
 		bitSelection.set(startIndex, endIndex + 1, true); // bitselection end index is exclusive
-		
+
 	}
 
 	public void rightPad(int length) {
 		// nothing need to be done	
 	}
-	
+
 	public void leftPad(int length) {
 		if(hasSelection() && allSelected == false){	
 			for(int n = 0; n < length; n++){
@@ -169,7 +169,7 @@ public class DefaultSequenceSelectionModel implements SequenceSelectionModel {
 			}
 		}
 	}
-	
+
 	public void removePosition(int index) {
 		if(hasSelection() && allSelected == false){	
 			for(int n = index; n < bitSelection.length(); n++){
@@ -199,7 +199,7 @@ public class DefaultSequenceSelectionModel implements SequenceSelectionModel {
 		}else if(hasSelection() == false){
 			selectAll();
 		}
-		
+
 		// partial selection
 		if(hasSelection() && allSelected != true){
 			logger.info("partial");

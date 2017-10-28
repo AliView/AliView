@@ -45,7 +45,7 @@ public class MSFFileIndexer {
 		long startTime = System.currentTimeMillis();
 		logger.info("inside MSF importer");
 		ByteBufferInpStream mappedBuff = sequencesFile.getMappedBuff();
-		
+
 		ArrayList<Sequence> sequences = new ArrayList<Sequence>();
 		try{
 			long fileSize = mappedBuff.length();
@@ -74,7 +74,7 @@ public class MSFFileIndexer {
 			String firstName = StringUtils.substringBetween(firstNameLine, "Name:", "Len:");
 			firstName = firstName.trim();
 			logger.info(firstName);
-			
+
 			int formatType = INTERLEAVED_OR_SINGLELINE_SEQUENTIAL;
 			if(formatType == INTERLEAVED_OR_SINGLELINE_SEQUENTIAL){
 
@@ -87,7 +87,7 @@ public class MSFFileIndexer {
 					firstNameLine = readerHelper.skipUntilLineContains(firstName);			
 					long nameStartPointer = readerHelper.position();
 					readerHelper.setPosition(nameStartPointer);
-					
+
 					int lineCount = 0; // only for display
 					int seqCount = 0;
 					int seqPos = 0;
@@ -105,7 +105,7 @@ public class MSFFileIndexer {
 						name = name.trim();
 						seq.setName(name);
 
-	//					logger.info("name=" + name);
+						//					logger.info("name=" + name);
 
 
 						int seqSeqmentLen = (int) (seqEndPointer - seqStartPointer + 1);	
@@ -124,7 +124,7 @@ public class MSFFileIndexer {
 
 						// if the next name is after more than one linebreak - should be EOF or a round of interleaved sequence parts
 						int linebreaks = readerHelper.skipUntilNextNonWhiteCharOnNextLine();
-	//					logger.info("linebreaks" + linebreaks);
+						//					logger.info("linebreaks" + linebreaks);
 						nameStartPointer = readerHelper.position();
 						if(linebreaks > 1){
 							// skip to name line - there might be a positions line on top
@@ -140,7 +140,7 @@ public class MSFFileIndexer {
 
 						for(int n = 0; n < seqCount; n++){
 
-	//						logger.info("n =" + n );
+							//						logger.info("n =" + n );
 
 							// position sequence start (also name endpos)
 							readerHelper.setPosition(nameStartPointer);
@@ -153,14 +153,14 @@ public class MSFFileIndexer {
 
 							mappedBuff.position(interleavedEndPointer);
 
-						//	logger.info("char=" + (char)mappedBuff.read());
+							//	logger.info("char=" + (char)mappedBuff.read());
 
 
 							int seqSeqmentLen = (int) (interleavedEndPointer - interleavedStartPointer +1);
 							//logger.info("seqSeqmentLen" + seqSeqmentLen);
 
 							MSFFileSequence appendSeq = (MSFFileSequence) sequences.get(n);
-					//		logger.info("getSeq" + n);
+							//		logger.info("getSeq" + n);
 
 							int appendSeqPosition = appendSeq.getLength();
 							appendSeq.add(new PositionToPointer(appendSeqPosition, interleavedStartPointer, interleavedEndPointer));
@@ -177,7 +177,7 @@ public class MSFFileIndexer {
 									break;
 								}
 							}
-							
+
 							// if the next name is after more than one linebreak - should be next round of interleaved sequence parts
 							if(linebreaks > 1){
 								// skip to name line - there might be a positions line on top
@@ -192,9 +192,9 @@ public class MSFFileIndexer {
 				}catch(EOFException eof){
 					logger.info("hit EOF hopefully file is read OK");
 					// only log output
-//					for(Sequence seq: sequences){
-//						logger.info(seq.getName() + " " + seq.getBasesAsString());
-//					}
+					//					for(Sequence seq: sequences){
+					//						logger.info(seq.getName() + " " + seq.getBasesAsString());
+					//					}
 				}
 
 

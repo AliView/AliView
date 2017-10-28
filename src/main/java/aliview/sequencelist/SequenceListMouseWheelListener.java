@@ -26,8 +26,8 @@ public class SequenceListMouseWheelListener implements MouseWheelListener{
 	private static final Logger logger = Logger.getLogger(SequenceListMouseWheelListener.class);
 
 	private AliViewWindow aliViewWin;
-	
-	
+
+
 	public SequenceListMouseWheelListener(AliViewWindow aliViewWindow) {
 		this.aliViewWin = aliViewWindow;
 	}
@@ -40,13 +40,13 @@ public class SequenceListMouseWheelListener implements MouseWheelListener{
 				AliView.getActiveWindow().zoomOutAt(e.getPoint());
 			}
 			else if(e.getWheelRotation() < 0){		
-			    AliView.getActiveWindow().zoomInAt(e.getPoint());
+				AliView.getActiveWindow().zoomInAt(e.getPoint());
 			}
-			
+
 			return;
 			//e.consume();
 		}
-/*
+		/*
 					else if(e.isShiftDown()){
 						int wheelRotation = e.getWheelRotation();
 						if(aliViewWindow.isReverseHorizontalRotation()){
@@ -68,41 +68,41 @@ public class SequenceListMouseWheelListener implements MouseWheelListener{
 							// break to avoid diagonal moves
 							return;
 						}
-*/
-		
+		 */
+
 		// Else scroll pane up or down				
 		else{
-				
-						int wheelRotation = e.getWheelRotation();
-						if(aliViewWin.isReverseVerticalRotation()){							
-							wheelRotation = wheelRotation * -1;
-						}
-						
-						JList list = (JList) e.getSource();
-						
-						if(wheelRotation > 0){
-							
-							
-							
-							Rectangle preferedVisible = list.getVisibleRect();
-							preferedVisible.setLocation(preferedVisible.x, (int) (preferedVisible.y + (double)Settings.getVerticalScrollModifier().getIntValue()/200 * preferedVisible.getHeight()));
-							list.scrollRectToVisible(preferedVisible);
-							
-							return;
-						}
-						else if(wheelRotation < 0){	
-							Rectangle preferedVisible = list.getVisibleRect();
-							preferedVisible.setLocation(preferedVisible.x, (int) (preferedVisible.y - (double)Settings.getVerticalScrollModifier().getIntValue()/200 * preferedVisible.getHeight()));
-							list.scrollRectToVisible(preferedVisible);
 
-						}
-						
-						
+			int wheelRotation = e.getWheelRotation();
+			if(aliViewWin.isReverseVerticalRotation()){							
+				wheelRotation = wheelRotation * -1;
 			}
-					
+
+			JList list = (JList) e.getSource();
+
+			if(wheelRotation > 0){
+
+
+
+				Rectangle preferedVisible = list.getVisibleRect();
+				preferedVisible.setLocation(preferedVisible.x, (int) (preferedVisible.y + (double)Settings.getVerticalScrollModifier().getIntValue()/200 * preferedVisible.getHeight()));
+				list.scrollRectToVisible(preferedVisible);
+
+				return;
+			}
+			else if(wheelRotation < 0){	
+				Rectangle preferedVisible = list.getVisibleRect();
+				preferedVisible.setLocation(preferedVisible.x, (int) (preferedVisible.y - (double)Settings.getVerticalScrollModifier().getIntValue()/200 * preferedVisible.getHeight()));
+				list.scrollRectToVisible(preferedVisible);
+
+			}
+
+
+		}
+
 
 	}	
-	
+
 }
 
 

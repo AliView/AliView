@@ -23,19 +23,19 @@ public class SettingsFrame extends JFrame {
 	public static final String TAB_ALIGN_ALL = "Align ALL program";
 	public static final String TAB_ALIGN_ADD =  "Align ADD program";
 	public static final String TAB_MEMORY = "Memory";
-	
+
 	public SettingsFrame(Component parent){
 		init();
-//		this.setSize(new Dimension(650,500));
-//		this.setMaximumSize(new Dimension(650,500));
+		//		this.setSize(new Dimension(650,500));
+		//		this.setMaximumSize(new Dimension(650,500));
 		this.setAlwaysOnTop(true);
 		this.pack();
 		this.centerLocationToThisComponent(parent);
 	}
-	
+
 	private void init(){
 		tabbedPane = new JTabbedPane();
-//		tabbedPane.setPreferredSize(new Dimension(650,500));
+		//		tabbedPane.setPreferredSize(new Dimension(650,500));
 		tabbedPane.add(TAB_GENERAL, new GeneralSettingsPanel(this));
 		tabbedPane.add(TAB_PRIMER, new PrimerSettingsPanel(this));
 		tabbedPane.add(TAB_ALIGN_ALL, new AlignerALLItemsPanel(this));
@@ -47,8 +47,8 @@ public class SettingsFrame extends JFrame {
 		this.setTitle("Settings");
 		this.setPreferredSize(new Dimension(750,600));
 	}
-	
-	
+
+
 	public void reload(){
 		int index = tabbedPane.getSelectedIndex();
 		this.getContentPane().remove(tabbedPane);
@@ -56,7 +56,7 @@ public class SettingsFrame extends JFrame {
 		tabbedPane.setSelectedIndex(index);
 		validate();		
 	}
-	
+
 	public void selectTab(String name){
 		int tabIndex = 0;
 		for(int n = 0; n < tabbedPane.getTabCount(); n++){
@@ -66,7 +66,7 @@ public class SettingsFrame extends JFrame {
 		}
 		tabbedPane.setSelectedIndex(tabIndex);
 	}
-	
+
 	public void centerLocationToThisComponent(Component parent){
 		// align to middle of parent window
 		if(parent != null){

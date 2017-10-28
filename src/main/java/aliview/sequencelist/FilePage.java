@@ -7,7 +7,7 @@ import java.util.List;
 import aliview.sequences.Sequence;
 
 public class FilePage {
-	
+
 	public File aliFile;
 	public int startIndex;
 	public int endIndex;

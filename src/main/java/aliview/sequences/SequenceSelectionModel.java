@@ -15,7 +15,7 @@ public interface SequenceSelectionModel extends Cloneable {
 	public abstract boolean hasSelection();
 
 	public abstract void setSelectionAt(int i);
-	
+
 	public abstract void clearSelectionAt(int i);
 
 	public abstract int[] getSelectedPositions(int startIndex, int endIndex);
@@ -23,9 +23,9 @@ public interface SequenceSelectionModel extends Cloneable {
 	public abstract int countSelectedPositions(int startIndex, int endIndex);
 
 	public abstract void setSelection(int startIndex, int endIndex, boolean clearFirst);
-	
+
 	public abstract void clearSelection(int startIndex, int endIndex, boolean clearFirst);
-	
+
 	/*
 	 * 
 	 * TODO these two methods could be one and instead tabe care of selection movement

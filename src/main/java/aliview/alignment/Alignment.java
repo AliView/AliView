@@ -87,7 +87,7 @@ public class Alignment implements FileSequenceLoadListener {
 	public Alignment(AlignmentListModel sequences) {
 		this(null, sequences, new AlignmentMeta());
 	}
-	
+
 	public Alignment(File file, AlignmentListModel sequences, AlignmentMeta aliMeta) {
 		setAlignmentFile(file);
 		this.sequences = sequences;
@@ -97,7 +97,7 @@ public class Alignment implements FileSequenceLoadListener {
 		setEditedAfterLastSave(false);
 		fireAllSequencesAreNew();
 	}
-	
+
 	public void setNewSequencesFromUndo(AlignmentListModel seqs){
 		this.sequences.setSequences(seqs.getDelegateSequences());
 		// TODO this should also be read from file
@@ -105,39 +105,39 @@ public class Alignment implements FileSequenceLoadListener {
 		//setEditedAfterLastSave(false);
 		fireAllSequencesAreNew();
 	}
-	
-	
+
+
 	public double getApproximateMemorySizeMB(){
 		double seqSize = sequences.getSize() * sequences.getLongestSequenceLength();
 		double MB = 1000 * 1000;
 		return seqSize /MB;
 	}
-	
+
 	public void addAlignmentListener(AlignmentListener l){
 		alignmentListeners.add(l);
 	}
-	
+
 	public void addAlignmentDataListener(AlignmentDataListener l){
 		sequences.addAlignmentDataListener(l);
 	}
-	
+
 	public void addAlignmentSelectionListener(AlignmentSelectionListener l){
 		sequences.addAlignmentSelectionListener(l);
 	}
-	
+
 	private void fireAlignmentMetaOnlyChanged(){
 		for(AlignmentListener listener: alignmentListeners){
-		//	listener.alignmentMetaChanged(new AlignmentEvent(this));
+			//	listener.alignmentMetaChanged(new AlignmentEvent(this));
 		}
 	}
-	
+
 	// instead listen to sequence change and then set cached histogram
 	private void fireAllSequencesAreNew(){
 		for(AlignmentListener listener: alignmentListeners){
 			listener.newSequences(new AlignmentEvent(this));
 		}
 	}
-	
+
 	public int getMaxY() {
 		return sequences.getSize();
 	}
@@ -149,12 +149,12 @@ public class Alignment implements FileSequenceLoadListener {
 	public AminoAcid getTranslatedAminoAcidAtNucleotidePos(int x, int y) {
 		return sequences.getTranslatedAminoAcidAtNucleotidePos(x,y);
 	}
-	
+
 	public int getLengthAt(int y) {
 		return sequences.getLengthAt(y);
 	}
 
-	
+
 	// TODO this is the only place where sequences are checked for modification when they are "outside"
 	public AlignmentListModel getSequences() {
 		return sequences;
@@ -163,11 +163,11 @@ public class Alignment implements FileSequenceLoadListener {
 	public int getMaxX() {
 		return sequences.getLongestSequenceLength();
 	}
-	
+
 	public int getMaximumSequenceLength() {
 		return getMaxX();
 	}
-	
+
 	public int getLongestSequenceLength() {
 		return getMaxX();
 	}
@@ -184,7 +184,7 @@ public class Alignment implements FileSequenceLoadListener {
 	public int getSequenceIndex(Sequence seq) {
 		return sequences.indexOf(seq);
 	}
-	
+
 	public AlignmentFile getAlignmentFile() {
 		return this.alignmentFile;
 	}
@@ -201,52 +201,52 @@ public class Alignment implements FileSequenceLoadListener {
 			this.alignmentFile = new AlignmentFile(alignmentFile);
 		}
 	}
-	
+
 	public void storeAlignmetAsFasta(Writer out) throws IOException{
 		int longest = sequences.getLongestSequenceLength();
 		for(Sequence seq: sequences){
 			String name = seq.getName();
-		
+
 			out.write('>');
 			out.write(seq.getName());
 			out.write(LF);
 			seq.writeBases(out);
-					
+
 			out.write(LF);
 
 		}		
 		out.flush();
 		out.close();
 	}
-	
+
 	private void storeAlignmetAsClustal(Writer out) throws IOException {
-		
+
 		// First write meta
 		out.write("CLUSTAL W (1.99) multiple sequence alignment" + LF);
 		out.write(LF);
 		out.write(LF);
-		
+
 		int longSeq = sequences.getLongestSequenceLength();
 		int namePadSize = sequences.getLongestSequenceName() + 1;
-		
-	    //  Clustal uses up to 60 residues per line
+
+		//  Clustal uses up to 60 residues per line
 		for(int pos = 0; pos < longSeq; pos += 60){
-			
+
 			int endPos = pos + 59; // end is inclusive
 			endPos = Math.min(endPos, longSeq);
-			
+
 			for(int n = 0; n < sequences.getSize(); n++){		
 				// Write name space and up to 60 residues
 				Sequence seq = sequences.get(n);
 				String paddedName = StringUtils.rightPad(seq.getName(), namePadSize);
-			//	byte[] bases = seq.getBasesBetween(pos,  endPos);
+				//	byte[] bases = seq.getBasesBetween(pos,  endPos);
 
 				out.write(paddedName);
 				seq.writeBasesBetween(pos, endPos, out);
 				out.write(LF);
-			//	out.flush();
+				//	out.flush();
 			}
-			
+
 			// add two blank lines
 			out.write(LF);
 			out.write(LF);
@@ -255,12 +255,12 @@ public class Alignment implements FileSequenceLoadListener {
 		out.flush();
 		out.close();
 	}
-	
+
 	private void storeAlignmetAsMSF(Writer out) throws IOException {
-		
+
 		int longSeq = sequences.getLongestSequenceLength();
 		int namePadSize = sequences.getLongestSequenceName() + 1;
-			
+
 		// first write alignment meta
 		String type = "P";
 		String type2 = "!!AA";
@@ -268,15 +268,15 @@ public class Alignment implements FileSequenceLoadListener {
 			type = "N";
 			type2 = "!!NA";
 		}
-		
+
 		out.write("" + type2 + "_MULTIPLE_ALIGNMENT" + LF);
 		out.write(LF);
 		out.write(LF);
-		
-		
-	//	 checksumTotal += check;
-	//	 checksumTotal %= 10000;
-		
+
+
+		//	 checksumTotal += check;
+		//	 checksumTotal %= 10000;
+
 		int checkTotal = 0;
 		for(int n = 0; n < sequences.getSize(); n++){
 			Sequence seq = sequences.get(n);
@@ -286,13 +286,13 @@ public class Alignment implements FileSequenceLoadListener {
 			checkTotal %= 10000;
 		}
 
-		
+
 		String totalMeta = "   MSF: " + longSeq + "  Type: " + type + "  Check: "  + checkTotal + "  ..";
 		out.write(totalMeta);
 		out.write(LF);
-		
+
 		out.write(LF);
-		
+
 		// then write names and checksums
 		for(int n = 0; n < sequences.getSize(); n++){
 			Sequence seq = sequences.get(n);
@@ -301,9 +301,9 @@ public class Alignment implements FileSequenceLoadListener {
 			String seqMeta = " Name: " + paddedName + "  Len: " + seq.getLength() + "  Check: "  + check + "  Weight: 1.00";
 			out.write(seqMeta);
 			out.write(LF);
-			
+
 		}
-		
+
 		// start sequences
 		out.write(LF);
 		out.write(LF);
@@ -311,40 +311,40 @@ public class Alignment implements FileSequenceLoadListener {
 		out.write(LF);
 		out.write(LF);
 		// then write 
-		
-		
-	    // MSF uses up to 50 residues per line
+
+
+		// MSF uses up to 50 residues per line
 		for(int pos = 0; pos < longSeq; pos += 50){
-			
+
 			int endPos = pos + 50;
 			endPos = Math.min(endPos, longSeq);
-			
+
 			for(int n = 0; n < sequences.getSize(); n++){		
 				// Write name space and up to 50 residues
 				Sequence seq = sequences.get(n);
 				String paddedName = StringUtils.rightPad(seq.getName(), namePadSize);
-				
+
 				out.write(paddedName);
-				
+
 				byte[] bases = seq.getBasesBetween(pos,  endPos - 1);
 				// replace gaps to MSF notation
 				bases = ArrayUtilities.replaceAll(bases, '-', (byte) '.');			
-				
+
 				// write bases with space every 10 pos
 				for(int delPos = 0; delPos < bases.length; delPos += 10){
 					int maxLen = 10;
 					maxLen = Math.min(maxLen, bases.length - delPos);
 					out.write(new String(bases, delPos, maxLen));
-					
+
 					// add space, but not at last
 					if(delPos+10 < bases.length){
 						out.write(' ');
 					}
 				}
-					
+
 				out.write(LF);
 			}
-			
+
 			// add two blank lines
 			out.write(LF);
 			out.write(LF);
@@ -358,7 +358,7 @@ public class Alignment implements FileSequenceLoadListener {
 		// First line number of seq + seqLen
 		out.write("" + sequences.getSize() + " " + this.getMaximumSequenceLength() + LF);
 
-		
+
 		// Interleaved
 		if(fileFormat == FileFormat.PHYLIP_RELAXED_PADDED_INTERLEAVED_AKA_LONG_NAME_INTERLEAVED){
 			int longSeq = sequences.getLongestSequenceLength();
@@ -372,45 +372,45 @@ public class Alignment implements FileSequenceLoadListener {
 				Sequence seq = sequences.get(n);
 				String seqName = seq.getName();
 				seqName = escapeSeqName(seqName);
-				
+
 				String paddedName = StringUtils.rightPad(seqName, namePadSize);
-				
+
 				out.write(paddedName);
-				
+
 				//byte[] bases = seq.;
-				
+
 				seq.writeBasesBetween(0,  residuesPerLine - 1, out);
-					
+
 				out.write(LF);
 			}
-			
-			out.write(LF);
-			out.write(LF);
-			
 
-			
+			out.write(LF);
+			out.write(LF);
+
+
+
 			for(int pos = residuesPerLine; pos < longSeq; pos += residuesPerLine){
 				int endPos = pos + residuesPerLine;
 				endPos = Math.min(endPos, longSeq);
-				
+
 				for(int n = 0; n < sequences.getSize(); n++){		
 					// Write name space and up to xx residues
 					Sequence seq = sequences.get(n);
-//					String seqName = seq.getName();
-//					seqName = escapeSeqName(seqName);
-//					
-//					String paddedName = StringUtils.rightPad(seqName, namePadSize);
-//					
-//					out.write(paddedName);
-					
+					//					String seqName = seq.getName();
+					//					seqName = escapeSeqName(seqName);
+					//					
+					//					String paddedName = StringUtils.rightPad(seqName, namePadSize);
+					//					
+					//					out.write(paddedName);
+
 					//byte[] bases = seq.getBasesBetween;
-					
+
 					// ((out.write(new String(bases));
 					seq.writeBasesBetween(pos,  endPos - 1, out);	
-					
+
 					out.write(LF);
 				}
-				
+
 				// add two blank lines before next "interleave"
 				out.write(LF);
 				out.write(LF);
@@ -422,7 +422,7 @@ public class Alignment implements FileSequenceLoadListener {
 				String seqName = seq.getName();
 				seqName = escapeSeqName(seqName);
 
-				
+
 				if(fileFormat == FileFormat.PHYLIP_RELAXED){
 					int longSeqName = sequences.getLongestSequenceName();
 					seqName += ' '; // + one space
@@ -439,7 +439,7 @@ public class Alignment implements FileSequenceLoadListener {
 					int longSeqName = sequences.getLongestSequenceName();
 					seqName = StringUtils.rightPad(seqName , longSeqName + 1); // + one space
 				}
-				
+
 				out.write(seqName); // no space after name that is added on name already (but not on strict)
 				seq.writeBases(out);
 				out.write(LF);
@@ -457,17 +457,17 @@ public class Alignment implements FileSequenceLoadListener {
 		}
 		return name;
 	}
-/*
+	/*
 	private void storeAlignmetAsPhyTranslatedAminoAcidFile(Writer out) throws IOException{
 		// First line number of seq + seqLen
 		out.write("" + sequences.getSize() + " " + alignmentMeta.getCodonPositions().getAminoAcidPosFromNucleotidePos(sequences.getLongestSequenceLength()) + LF);
 
 		// int longSeqName = sequences.getLongestSequenceName();
-		
+
 		AATranslator aaTransSeq = new AATranslator(getAlignmentMeta().getCodonPositions(),getGeneticCode());
 		for(Sequence seq: sequences){
 			aaTransSeq.setSequence(seq);
-		
+
 			out.write(escapeSeqName(seq.getName()) + " ");
 			aaTransSeq.writeTranslation(out);
 			out.write(LF);
@@ -477,12 +477,12 @@ public class Alignment implements FileSequenceLoadListener {
 		out.close();	
 
 	}
-	
+
 	private void storeAlignmetAsFastaTranslatedAminoAcidFile(Writer out) throws IOException{
 		// make sure it is translated
 		boolean wasTranslated = isTranslatedOnePos();
 		setTranslationOnePos(true);
-		
+
 		for(Sequence seq: sequences){
 
 			String name = seq.getName();
@@ -494,10 +494,10 @@ public class Alignment implements FileSequenceLoadListener {
 		}		
 		out.flush();
 		out.close();
-		
+
 		setTranslationOnePos(wasTranslated);
 	}
-	*/
+	 */
 
 	private void storeMetaData(BufferedWriter outMeta) throws IOException {
 		outMeta.write("" + NexusUtilities.getExcludesAsNexusBlock(alignmentMeta.getExcludes()));
@@ -522,7 +522,7 @@ public class Alignment implements FileSequenceLoadListener {
 	}
 
 	public void saveSelectionAsFastaFile(File selectedFile){
-		
+
 		try {
 			BufferedWriter buffOut = new BufferedWriter(new FileWriter(selectedFile));
 			sequences.writeSelectionAsFasta(buffOut);
@@ -533,36 +533,36 @@ public class Alignment implements FileSequenceLoadListener {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void saveAlignmentAsFile(File outFile) throws IOException{	
-		
+
 		// save as current format
 		saveAlignmentAsFile(outFile,getFileFormat());	
 	}
-	
+
 	public void exportPartitionsFileRaxMLFormat(File outFile)  throws IOException{
 
-//		DNA,p1=1-1194
-//		DNA,p2=1195-3029
-//		DNA,p3=3030-4345
-//		DNA,p4=4346-5697
-//		DNA,p5=5698-6997
-		
-		
+		//		DNA,p1=1-1194
+		//		DNA,p2=1195-3029
+		//		DNA,p3=3030-4345
+		//		DNA,p4=4346-5697
+		//		DNA,p5=5698-6997
+
+
 		String datatypeModel = "";
-		
+
 		if(isAAAlignment()){
 			datatypeModel = "JTT";
 		}
 		else{
 			datatypeModel = "DNA";
 		}
-		
-		
+
+
 		String partitionsAsText = "";
 		CharSets charsets = getAlignmentMeta().getCharsets();
 		for(CharSet charSet: charsets){
-			
+
 			String charsetRangeText = "";
 			ArrayList<NexusRange> ranges = charSet.getAsContinousNexusRanges();
 			int rangeCount = 0;
@@ -570,26 +570,26 @@ public class Alignment implements FileSequenceLoadListener {
 				charsetRangeText += range.toString() + ",";		
 				rangeCount ++;
 			}
-			
+
 			// remove last ,
 			if(rangeCount > 0){
 				charsetRangeText = StringUtils.removeEnd(charsetRangeText, ",");
 			}
-			
+
 			partitionsAsText += datatypeModel + "," + charSet.getName() + " = " + charsetRangeText + LF;
 
 		}
-		
+
 		FileUtils.writeStringToFile(outFile, partitionsAsText);
-		
+
 	}
 
 
 	public void saveAlignmentAsFile(File outFile, FileFormat fileFormat) throws IOException{
-		
-		
+
+
 		logger.info("fileFormat" + fileFormat);
-		
+
 		// make sure they are equal length (if editable)
 		if(sequences.isEditable()){
 			sequences.rightPadWithGapUntilEqualLength();
@@ -597,14 +597,14 @@ public class Alignment implements FileSequenceLoadListener {
 		}
 		// store current translation (might be modofied below)
 		boolean wasTranslated = isTranslatedOnePos();
-		
+
 		BufferedWriter out = new BufferedWriter(new FileWriter(outFile));
 
 		int nexusDatatype = AliViewExtraNexusUtilities.DATATYPE_DNA;
 		if(sequences.getSequenceType() == SequenceUtils.TYPE_AMINO_ACID){
 			nexusDatatype = AliViewExtraNexusUtilities.DATATYPE_PROTEIN;
 		}
-		
+
 		if(fileFormat == FileFormat.FASTA){
 			setTranslationOnePos(false);
 			storeAlignmetAsFasta(out);
@@ -614,8 +614,8 @@ public class Alignment implements FileSequenceLoadListener {
 				storeMetaData(outMeta);
 			}
 		}else if(fileFormat == FileFormat.PHYLIP || fileFormat == FileFormat.PHYLIP_RELAXED ||
-				 fileFormat == FileFormat.PHYLIP_RELAXED_PADDED_AKA_LONG_NAME_SEQUENTIAL || fileFormat == FileFormat.PHYLIP_STRICT_SEQUENTIAL_AKA_SHORT_NAME_SEQUENTIAL ||
-				 fileFormat == FileFormat.PHYLIP_RELAXED_PADDED_INTERLEAVED_AKA_LONG_NAME_INTERLEAVED){
+				fileFormat == FileFormat.PHYLIP_RELAXED_PADDED_AKA_LONG_NAME_SEQUENTIAL || fileFormat == FileFormat.PHYLIP_STRICT_SEQUENTIAL_AKA_SHORT_NAME_SEQUENTIAL ||
+				fileFormat == FileFormat.PHYLIP_RELAXED_PADDED_INTERLEAVED_AKA_LONG_NAME_INTERLEAVED){
 			setTranslationOnePos(false);
 			storeAlignmetAsPhyFile(out, fileFormat);
 			// save meta if exset it is set
@@ -623,8 +623,8 @@ public class Alignment implements FileSequenceLoadListener {
 				BufferedWriter outMeta = new BufferedWriter(new FileWriter(new File(outFile.getAbsoluteFile() + ".meta")));
 				storeMetaData(outMeta);
 			}
-			
-		
+
+
 		}else if(fileFormat == FileFormat.PHYLIP_TRANSLATED_AMINO_ACID){
 			setTranslationOnePos(true);
 			storeAlignmetAsPhyFile(out, FileFormat.PHYLIP_RELAXED_PADDED_AKA_LONG_NAME_SEQUENTIAL);
@@ -632,7 +632,7 @@ public class Alignment implements FileSequenceLoadListener {
 			if(this.alignmentMeta.isMetaOutputNeeded()){
 				//AlignmentMeta translatedMeta = getTranslatedMeta();
 				BufferedWriter outMeta = new BufferedWriter(new FileWriter(new File(outFile.getAbsoluteFile() + ".meta")));
-			//	storeTranslatedMetaData(outMeta, translatedMeta);
+				//	storeTranslatedMetaData(outMeta, translatedMeta);
 			}
 		}else if(fileFormat == FileFormat.FASTA_TRANSLATED_AMINO_ACID){		
 			setTranslationOnePos(true);
@@ -683,8 +683,8 @@ public class Alignment implements FileSequenceLoadListener {
 		Alignment translatedAlignment = new Alignment(null, null, transSeq, transMeta);
 		return translatedAlignment;
 	}
-	*/
-	
+	 */
+
 	//
 	//  TODO this is not working for fileSequences
 	//
@@ -696,45 +696,45 @@ public class Alignment implements FileSequenceLoadListener {
 		}
 		return transSeqs;
 	}
-	*/
+	 */
 
 
 	// TODO this might get wrong if translating sequence and sequence order in alignment not is same, or sequence 
 	// has x offset in alignment
-//	private AlignmentMeta getTranslatedMeta(){	
-//		CharSets charsetsTrans = new CharSets();
-//		Excludes excludesTrans = new Excludes();
-//		AlignmentMeta metaTrans = new AlignmentMeta(excludesTrans,null,charsetsTrans,alignmentMeta.getGeneticCode());
-//		
-//		// This is the translation of the Charsets
-//		for(CharSet charset: alignmentMeta.getCharsets()){
-//			ArrayList<NexusRange> nexusRanges = charset.getAsContinousNexusRanges();
-//			if(nexusRanges != null){
-//				logger.info("rangesSize" + nexusRanges.size());
-//				
-//				CharSet translatedSet = new CharSet(charset.getName());
-//				for(NexusRange range: nexusRanges){	
-//					NexusRange translatedRange = new NexusRange(alignmentMeta.getCodonPositions().getAminoAcidPosFromNucleotidePos(range.getMinimumInt()) + 1, // +1 för Nexus ranges börjar på 1
-//							                                         alignmentMeta.getCodonPositions().getAminoAcidPosFromNucleotidePos(range.getMaximumInt()) + 1, // +1 för Nexus ranges börjar på 1
-//							                                           range.getPositionVal(), range.getSteps()); 
-//					logger.info(translatedRange);
-//					translatedSet.addNexusRange(translatedRange);
-//				}
-//				charsetsTrans.add(translatedSet);
-//			}
-//		}
-//		
-//		// This is the translaiton of the excludes
-//		for(NexusRange range: alignmentMeta.getExcludes().getAsContinousNexusRanges()){
-//			NexusRange translatedRange = new NexusRange(alignmentMeta.getCodonPositions().getAminoAcidPosFromNucleotidePos(range.getMinimumInt()),
-//					                                         alignmentMeta.getCodonPositions().getAminoAcidPosFromNucleotidePos(range.getMaximumInt()),
-//					                                         range.getPositionVal(), range.getSteps());
-//			excludesTrans.addNexusRange(translatedRange);
-//		}
-//		return metaTrans;
-//	}
-		
-	
+	//	private AlignmentMeta getTranslatedMeta(){	
+	//		CharSets charsetsTrans = new CharSets();
+	//		Excludes excludesTrans = new Excludes();
+	//		AlignmentMeta metaTrans = new AlignmentMeta(excludesTrans,null,charsetsTrans,alignmentMeta.getGeneticCode());
+	//		
+	//		// This is the translation of the Charsets
+	//		for(CharSet charset: alignmentMeta.getCharsets()){
+	//			ArrayList<NexusRange> nexusRanges = charset.getAsContinousNexusRanges();
+	//			if(nexusRanges != null){
+	//				logger.info("rangesSize" + nexusRanges.size());
+	//				
+	//				CharSet translatedSet = new CharSet(charset.getName());
+	//				for(NexusRange range: nexusRanges){	
+	//					NexusRange translatedRange = new NexusRange(alignmentMeta.getCodonPositions().getAminoAcidPosFromNucleotidePos(range.getMinimumInt()) + 1, // +1 för Nexus ranges börjar på 1
+	//							                                         alignmentMeta.getCodonPositions().getAminoAcidPosFromNucleotidePos(range.getMaximumInt()) + 1, // +1 för Nexus ranges börjar på 1
+	//							                                           range.getPositionVal(), range.getSteps()); 
+	//					logger.info(translatedRange);
+	//					translatedSet.addNexusRange(translatedRange);
+	//				}
+	//				charsetsTrans.add(translatedSet);
+	//			}
+	//		}
+	//		
+	//		// This is the translaiton of the excludes
+	//		for(NexusRange range: alignmentMeta.getExcludes().getAsContinousNexusRanges()){
+	//			NexusRange translatedRange = new NexusRange(alignmentMeta.getCodonPositions().getAminoAcidPosFromNucleotidePos(range.getMinimumInt()),
+	//					                                         alignmentMeta.getCodonPositions().getAminoAcidPosFromNucleotidePos(range.getMaximumInt()),
+	//					                                         range.getPositionVal(), range.getSteps());
+	//			excludesTrans.addNexusRange(translatedRange);
+	//		}
+	//		return metaTrans;
+	//	}
+
+
 	/*
 	 * Alternate method
 	 */
@@ -745,7 +745,7 @@ public class Alignment implements FileSequenceLoadListener {
 		}
 		return isMerged;
 	}
-	
+
 
 	public boolean mergeTwoSequences(Sequence seq1, Sequence seq2, boolean allowOverlap){
 		if(seq1 instanceof InMemorySequence && seq2 instanceof InMemorySequence){
@@ -769,7 +769,7 @@ public class Alignment implements FileSequenceLoadListener {
 		sequences.deleteBasesInAllSequencesFromMask(deleteMask);
 		//and finally remove in AlignmentMeta(excludes, codonpos & charset)
 		alignmentMeta.deleteFromMask(deleteMask);
-//		sequencesChanged();
+		//		sequencesChanged();
 	}
 
 	public ArrayList<Primer> findPrimerInSelection(){
@@ -779,11 +779,11 @@ public class Alignment implements FileSequenceLoadListener {
 		if(! sequences.hasSelection()){
 			return allPrimers;
 		}
-		
+
 		String selection = getSelectionAsNucleotides();
-		
-//		logger.info(selection);
-		
+
+		//		logger.info(selection);
+
 		String[] selectionSeq = selection.split("\\n");
 
 		// Start with a prototype as consensus
@@ -805,7 +805,7 @@ public class Alignment implements FileSequenceLoadListener {
 		String consensus = consensusBuilder.toString();
 
 		logger.info(consensus.length());
-		
+
 		// remove gaps in consensus
 		consensus = consensus.replaceAll("\\-", "");
 
@@ -816,7 +816,7 @@ public class Alignment implements FileSequenceLoadListener {
 		int primerMinTM = Settings.getPrimerMinTM().getIntValue();
 		int primerMaxTM = Settings.getPrimerMaxTM().getIntValue();
 		Dimer.setDimerLengthThreashold(Settings.getDimerReportThreashold().getIntValue());
-		
+
 		long nCount = 0;
 		int selectionStartPos = getFirstSelectedPositionX();
 		for(int winSize = primerMinLen; winSize <= primerMaxLen; winSize ++){
@@ -855,7 +855,7 @@ public class Alignment implements FileSequenceLoadListener {
 		// https://ecom.mwgdna.com/services/webgist/mops.tcl?ot=OLIGO_ALC_UNMOD&oligoSequence=RTTGCTYRAKACTCGGTRA&ShowModiTables=OFF&oligo_name=&mod3=&mod5=&modx=&modz=&ot=OLIGO_ALC_UNMOD&oligo_name=&oligoSequence=RTT+GCT+YYY+RAK+ACT+CGG+TRA&action=properties&next_url=
 
 	}
-	
+
 	/*
 	 * 
 	 * 	Selection section
@@ -874,13 +874,13 @@ public class Alignment implements FileSequenceLoadListener {
 		StringSelection ss = new StringSelection(writer.toString());
 		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, null);
 	}
-	
+
 	public void copySelectionToClipboardAsNucleotides(){
 		// Set to clipboard
 		StringSelection ss = new StringSelection(getSelectionAsNucleotides());
 		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, null);
 	}
-	
+
 	public void copySelectionNames() {
 		// Set to clipboard
 		logger.info("copy sel names");
@@ -889,7 +889,7 @@ public class Alignment implements FileSequenceLoadListener {
 		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, null);
 		Toolkit.getDefaultToolkit().getSystemSelection().setContents(ss, null);
 	}
-	
+
 
 
 	public boolean isBaseSelected(int x, int y) {
@@ -905,7 +905,7 @@ public class Alignment implements FileSequenceLoadListener {
 		sequences.setSelectionAt(xPos, yPos, clearFirst);
 		//fireSelectionChanged();
 	}
-	
+
 	public void setSelectionWithin(Rectangle bounds) {
 		sequences.setSelectionWithin(bounds);
 		//fireSelectionChanged();
@@ -915,7 +915,7 @@ public class Alignment implements FileSequenceLoadListener {
 		sequences.reverseComplement();
 		alignmentMeta.reverse(getMaximumSequenceLength());
 	}
-	
+
 	public void reverseComplementFullySelectedSequences(){
 		sequences.reverseComplementFullySelectedSequences();
 	}
@@ -927,26 +927,26 @@ public class Alignment implements FileSequenceLoadListener {
 		findObj = sequences.findInNames(findObj);
 		return findObj;
 	}
-	
+
 	public void clearFindLastPos() {
 		nextFindSequenceNumber = 0;
 		nextFindStartPos = 0;
 	}
-	
+
 	public FindObject findAndSelectInSequences(FindObject findObj){
 		findObj = sequences.findAndSelect(findObj);
 		return findObj;
 	}
-	
+
 	public Sequence getSequenceByName(String name){
 		return sequences.getSequenceByName(name);
 	}
-	
+
 	public Sequence getSequenceByID(int id){
 		return sequences.getSequenceByID(id);
 	}
 
-	
+
 	public void incReadingFrame() {
 		int newReadFrame = this.getReadingFrame();
 		newReadFrame ++;
@@ -978,18 +978,18 @@ public class Alignment implements FileSequenceLoadListener {
 	public void deleteFullySelectedSequences(){
 		sequences.deleteFullySelectedSequences();
 	}
-	
+
 	public void deleteSelectedBases() {
-		
+
 		int first = sequences.getFirstSelectedWholeColumn();
 		// If whole column is selected do a bit different since we also want to delete
 		// in meta
 		if(first != -1){
 			int last = sequences.getLastSelectedWholeColumn();
-			
+
 			logger.info("first" + first);
 			logger.info("last" + last);
-			
+
 			// create a bit-mask with pos to delete
 			boolean[] deleteMask = new boolean[getMaxX()];
 			for(int n = first; n <= last; n++){
@@ -1014,16 +1014,16 @@ public class Alignment implements FileSequenceLoadListener {
 
 	public void deleteVerticalGaps(){
 		String cons = getConsensus();
-		
+
 		logger.info("done cons" + cons);
-		
+
 		//logger.info('-' == cons.charAt(0));
-		
+
 		// if there is a gap
 		if(cons.indexOf(SequenceUtils.GAP_SYMBOL) >= 0){		
-			
+
 			logger.info("there is a gap in cons");
-			
+
 			// create a bit-mask with pos to delete
 			boolean[] deleteMask = new boolean[cons.length()];
 			for(int n = 0; n < deleteMask.length; n++){
@@ -1048,41 +1048,41 @@ public class Alignment implements FileSequenceLoadListener {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void addNewSequence() {
-			int minLen = sequences.getShortestSequenceLength();
-			int maxLen = sequences.getLongestSequenceLength();
-			int len;
-			if(maxLen == minLen){
-				len = maxLen;
-			}else{
-				len = 1;
-			}
-			String seqName = "New_sequence";
-			
-			byte[] bases = new byte[len];
-			Arrays.fill(bases,(byte)'-');
-			
-			// TODO this is not working on file sequences 
-			Sequence newSeq = new InMemorySequence(seqName, bases);
-			
-			Point lastSel = sequences.getLastSelectedPos();
-			
-//			logger.info("lastSel.y" + lastSel.y);
-//			logger.info("sequences.getSize()" + sequences.getSize());
-			
-			if(lastSel != null && lastSel.y + 1 <  sequences.getSize()){
-				sequences.add(lastSel.y +1, newSeq);
-			}else{
-				sequences.add(newSeq);
-			}
+		int minLen = sequences.getShortestSequenceLength();
+		int maxLen = sequences.getLongestSequenceLength();
+		int len;
+		if(maxLen == minLen){
+			len = maxLen;
+		}else{
+			len = 1;
+		}
+		String seqName = "New_sequence";
+
+		byte[] bases = new byte[len];
+		Arrays.fill(bases,(byte)'-');
+
+		// TODO this is not working on file sequences 
+		Sequence newSeq = new InMemorySequence(seqName, bases);
+
+		Point lastSel = sequences.getLastSelectedPos();
+
+		//			logger.info("lastSel.y" + lastSel.y);
+		//			logger.info("sequences.getSize()" + sequences.getSize());
+
+		if(lastSel != null && lastSel.y + 1 <  sequences.getSize()){
+			sequences.add(lastSel.y +1, newSeq);
+		}else{
+			sequences.add(newSeq);
+		}
 	}
-	
-	
+
+
 	public void addSequences(File additionalFile) {
 		addSequences(additionalFile, 0);
 	}
-	
+
 	public void addSequences(File additionalFile, int index) {
 		try {
 			AlignmentListModel additionalSequences = seqFactory.createSequences(additionalFile);
@@ -1094,7 +1094,7 @@ public class Alignment implements FileSequenceLoadListener {
 		}
 	}
 
-	
+
 	/*
 	 * 
 	 * 
@@ -1106,7 +1106,7 @@ public class Alignment implements FileSequenceLoadListener {
 	public void clearSelectionOffset() {
 		sequences.setSelectionOffset(0);
 	}
-	
+
 	public List<Sequence> moveSelectionRight(boolean undoable){
 		logger.info("move");
 		List<Sequence> previousState = sequences.moveSelectedResiduesRightIfGapIsPresent(undoable);
@@ -1128,7 +1128,7 @@ public class Alignment implements FileSequenceLoadListener {
 	public boolean isMoveSelectionRightPossible() {
 		return sequences.isGapPresentRightOfSelection();
 	}
-	
+
 	public List<Sequence> deleteGapMoveLeft(boolean undoable) {
 		List<Sequence> previousState = sequences.deleteGapMoveLeft(undoable);
 		if(previousState.size()> 0){
@@ -1136,7 +1136,7 @@ public class Alignment implements FileSequenceLoadListener {
 		}
 		return previousState;
 	}
-	
+
 	public List<Sequence> deleteGapMoveRight(boolean undoable) {
 		List<Sequence> previousState = sequences.deleteGapMoveRight(undoable);
 		if(previousState.size()> 0){
@@ -1152,7 +1152,7 @@ public class Alignment implements FileSequenceLoadListener {
 		}
 		return previousState;
 	}
-	
+
 	public List<Sequence> insertGapRightOfSelectionMoveLeft(boolean undoable) {
 		List<Sequence> previousState = sequences.insertGapRightOfSelectedBase(undoable);
 		if(previousState.size()> 0){
@@ -1161,21 +1161,21 @@ public class Alignment implements FileSequenceLoadListener {
 		return previousState;
 	}
 
-	
+
 	public boolean rightPadSequencesWithGapUntilEqualLength(){
 		boolean wasPadded = sequences.rightPadWithGapUntilEqualLength();
-//		if(wasPadded){
-//			alignmentMeta.verifyLength(sequences.getLongestSequenceLength());
-//		}
+		//		if(wasPadded){
+		//			alignmentMeta.verifyLength(sequences.getLongestSequenceLength());
+		//		}
 		return wasPadded;
-		
+
 	}
-	
+
 	public boolean leftPadSequencesWithGapUntilEqualLength() {
 		boolean wasPadded = sequences.leftPadWithGapUntilEqualLength();
-//		if(wasPadded){
-//			alignmentMeta.verifyLength(sequences.getLongestSequenceLength());
-//		}
+		//		if(wasPadded){
+		//			alignmentMeta.verifyLength(sequences.getLongestSequenceLength());
+		//		}
 		return wasPadded;
 	}
 
@@ -1217,60 +1217,60 @@ public class Alignment implements FileSequenceLoadListener {
 		// check if anythin is excluded already - then remove
 		// otherwise add
 		Rectangle selection = getSelectionAsMinRect();
-		
+
 		if(isTranslatedOnePos()){
 			selection = getAlignmentMeta().reTranslatePositions(selection);
 		}
-		
+
 		boolean containsExcludedAlready = getAlignmentMeta().excludesIntersectsPositions(selection.x, selection.x + selection.width);
-		
+
 		logger.info("containsExcludedAlready" + containsExcludedAlready);
-		
+
 		if(containsExcludedAlready){
 			removeSelectionFromExcludes();
 		}else{
 			addSelectionToExcludes();
 		}
 	}
-	
+
 	public void addSelectionToExcludes() {
-		
-	
+
+
 		Rectangle selection = getSelectionAsMinRect();
-		
+
 		if(isTranslatedOnePos()){
 			selection = getAlignmentMeta().reTranslatePositions(selection);
 		}
-			
+
 		getAlignmentMeta().excludeRange(selection.x, selection.x + selection.width);	
-		
-	//	getAlignmentMeta().excludePositions(selection.x, selection.x + selection.width);	
-			
+
+		//	getAlignmentMeta().excludePositions(selection.x, selection.x + selection.width);	
+
 		//fireAlignmentMetaOnlyChanged();
-		
+
 	}
 
 	public void removeSelectionFromExcludes() {
 		Rectangle selection = getSelectionAsMinRect();
-		
+
 		if(isTranslatedOnePos()){
 			selection = getAlignmentMeta().reTranslatePositions(selection);
 		}
-			
+
 		getAlignmentMeta().removeExcludeRange(selection.x, selection.x + selection.width);	
-		
+
 		//getAlignmentMeta().excludesRemovePositions(selection.x, selection.x + selection.width);	
 	}
 
 	public void setSelectionAsCoding(int startOffset) {
 		Rectangle bounds = sequences.getSelectionBounds();
-		
+
 		if(sequences.isTranslated()){
 			bounds = getAlignmentMeta().reTranslatePositions(bounds);
 		}
-		
+
 		// TODO check that selection is continous
-		
+
 		if(bounds != null){
 			this.alignmentMeta.getCodonPositions().addRange(bounds.x, bounds.x + bounds.width, startOffset);
 		}
@@ -1294,11 +1294,11 @@ public class Alignment implements FileSequenceLoadListener {
 		this.isEditedAfterLastSave = isEditedAfterLastSave;
 	}
 
-/*
+	/*
 	public boolean isAllCharactersValid() {
 		return getFirstMuscleInvalidCharacter().length() == 0;
 	}
-*/
+	 */
 
 	// TODO should be different depending on alignment class nuc or protein
 	public String getFirstAlignmentProgInvalidCharacter() {
@@ -1337,7 +1337,7 @@ public class Alignment implements FileSequenceLoadListener {
 		if(readingFrame > 0 && readingFrame <=3){
 			this.readingFrame = readingFrame;
 			alignmentMeta.setReadingFrame(readingFrame);
-		//	fireAlignmentMetaOnlyChanged();
+			//	fireAlignmentMetaOnlyChanged();
 		}
 	}
 
@@ -1372,7 +1372,7 @@ public class Alignment implements FileSequenceLoadListener {
 	public void selectDuplicates(){
 		sequences.findAndSelectDuplicates();
 	}
-	
+
 	public ArrayList<String> findDuplicateNames(){
 		if(sequences != null){
 			return sequences.findDuplicateNames();
@@ -1380,11 +1380,11 @@ public class Alignment implements FileSequenceLoadListener {
 			return null;
 		}
 	}
-	
+
 	public void selectDuplicateNamesSequences(){
 		sequences.selectDuplicateNamesSequences();
 	}
-	
+
 
 	/*
 	 * 
@@ -1392,68 +1392,68 @@ public class Alignment implements FileSequenceLoadListener {
 	 * 
 	 */
 	public void getStats() {
-		
-			// TODO might not work if no charset
-			for(CharSet charSet: alignmentMeta.getCharsets()){
-				
-				// Start with a prototype as consensus
-				int consensusVal[] = new int[sequences.getLongestSequenceLength()];
-				int missingCount = 0;
-				int nonemptySeqCount = 0;
-				
-				for(Sequence seq: sequences){
-					boolean sequenceIsAllEmpty = true;
-					int sequenceMissingCount = 0;
-					for(int n = 0; n <consensusVal.length; n++){
-						
-						if(charSet.contains(n)){
-							
-							int baseVal = NucleotideUtilities.baseValFromBase(seq.getBaseAtPos(n));
-							// Create consensus by bitwise OR of the bases in the same column
-							// Skip if n or unknown
-							if(baseVal == NucleotideUtilities.N || baseVal == NucleotideUtilities.UNKNOWN || baseVal == NucleotideUtilities.GAP){
-								sequenceMissingCount ++;
-							}else{
-								consensusVal[n] = consensusVal[n] | baseVal;
-								sequenceIsAllEmpty = false;
-							}
-							
-						}
-					}
-					if(! sequenceIsAllEmpty){
-						nonemptySeqCount ++;
-						missingCount += sequenceMissingCount;
-					}
-				}
-				
-				// Create consensus from baseValues
-				StringBuilder consensusBuilder = new StringBuilder();
-				int invaribleCount = 0;
-				int varibleCount = 0;
-				for(int n = 0; n < consensusVal.length; n++){
+
+		// TODO might not work if no charset
+		for(CharSet charSet: alignmentMeta.getCharsets()){
+
+			// Start with a prototype as consensus
+			int consensusVal[] = new int[sequences.getLongestSequenceLength()];
+			int missingCount = 0;
+			int nonemptySeqCount = 0;
+
+			for(Sequence seq: sequences){
+				boolean sequenceIsAllEmpty = true;
+				int sequenceMissingCount = 0;
+				for(int n = 0; n <consensusVal.length; n++){
+
 					if(charSet.contains(n)){
-						consensusBuilder.append(NucleotideUtilities.charFromBaseVal(consensusVal[n]));
-						if(consensusVal[n] == NucleotideUtilities.A || consensusVal[n] == NucleotideUtilities.C || consensusVal[n] == NucleotideUtilities.G || consensusVal[n] == NucleotideUtilities.T){
-							invaribleCount ++;
+
+						int baseVal = NucleotideUtilities.baseValFromBase(seq.getBaseAtPos(n));
+						// Create consensus by bitwise OR of the bases in the same column
+						// Skip if n or unknown
+						if(baseVal == NucleotideUtilities.N || baseVal == NucleotideUtilities.UNKNOWN || baseVal == NucleotideUtilities.GAP){
+							sequenceMissingCount ++;
+						}else{
+							consensusVal[n] = consensusVal[n] | baseVal;
+							sequenceIsAllEmpty = false;
 						}
-						else{
-							varibleCount ++;
-						}
+
 					}
 				}
-				String consensus = consensusBuilder.toString();	
-				
-				logger.info(charSet.getName());
-				logger.info("consensus" + consensus);
-				logger.info("invaribleCount" + invaribleCount);
-				logger.info("variableCount" + varibleCount);
-				logger.info("totalCount" + (invaribleCount + varibleCount));
-				logger.info("missingCount" + missingCount);
-				logger.info("nonemptySeqCount" + nonemptySeqCount);
-				double totalBases = (invaribleCount + varibleCount) * nonemptySeqCount;
-				double missingPercent = missingCount/totalBases;
-				logger.info("missingPercent" + missingPercent);
+				if(! sequenceIsAllEmpty){
+					nonemptySeqCount ++;
+					missingCount += sequenceMissingCount;
+				}
 			}
+
+			// Create consensus from baseValues
+			StringBuilder consensusBuilder = new StringBuilder();
+			int invaribleCount = 0;
+			int varibleCount = 0;
+			for(int n = 0; n < consensusVal.length; n++){
+				if(charSet.contains(n)){
+					consensusBuilder.append(NucleotideUtilities.charFromBaseVal(consensusVal[n]));
+					if(consensusVal[n] == NucleotideUtilities.A || consensusVal[n] == NucleotideUtilities.C || consensusVal[n] == NucleotideUtilities.G || consensusVal[n] == NucleotideUtilities.T){
+						invaribleCount ++;
+					}
+					else{
+						varibleCount ++;
+					}
+				}
+			}
+			String consensus = consensusBuilder.toString();	
+
+			logger.info(charSet.getName());
+			logger.info("consensus" + consensus);
+			logger.info("invaribleCount" + invaribleCount);
+			logger.info("variableCount" + varibleCount);
+			logger.info("totalCount" + (invaribleCount + varibleCount));
+			logger.info("missingCount" + missingCount);
+			logger.info("nonemptySeqCount" + nonemptySeqCount);
+			double totalBases = (invaribleCount + varibleCount) * nonemptySeqCount;
+			double missingPercent = missingCount/totalBases;
+			logger.info("missingPercent" + missingPercent);
+		}
 	}
 
 
@@ -1482,7 +1482,7 @@ public class Alignment implements FileSequenceLoadListener {
 	public void selectSequencesWithIndex(List<Integer> selectedIndex) {
 		sequences.selectSequencesWithIndex(selectedIndex);
 	}
-	
+
 	public void selectSequencesWithIndex(int[] selectedIndex) {
 		sequences.selectSequencesWithIndex(selectedIndex);
 	}
@@ -1490,7 +1490,7 @@ public class Alignment implements FileSequenceLoadListener {
 	public GeneticCode getGeneticCode() {
 		return alignmentMeta.getGeneticCode();
 	}
-	
+
 	public void setGeneticCode(GeneticCode genCode) {
 		alignmentMeta.setGeneticCode(genCode);
 		//fireAlignmentMetaOnlyChanged();
@@ -1509,11 +1509,11 @@ public class Alignment implements FileSequenceLoadListener {
 	public boolean isNucleotideAlignment() {
 		return (sequences.getSequenceType() == SequenceUtils.TYPE_NUCLEIC_ACID);
 	}
-	
+
 	public boolean isAAAlignment() {
 		return (sequences.getSequenceType() == SequenceUtils.TYPE_AMINO_ACID);
 	}
-	
+
 	public boolean isUnknownAlignment() {
 		return (sequences.getSequenceType() == SequenceUtils.TYPE_UNKNOWN);
 	}
@@ -1543,7 +1543,7 @@ public class Alignment implements FileSequenceLoadListener {
 		boolean wasPadded = sequences.rightPadWithGapUntilEqualLength();
 		boolean wasTrimed = sequences.rightTrimSequencesRemoveGapsUntilEqualLength();
 	}
-	
+
 	public void trimSequences(){
 		boolean wasTrimed = sequences.rightTrimSequencesRemoveGapsUntilEqualLength();
 	}
@@ -1551,15 +1551,15 @@ public class Alignment implements FileSequenceLoadListener {
 	public void selectAll(){
 		sequences.selectAll();
 	}
-	
+
 	public void selectionExtendRight() {
 		sequences.selectionExtendRight();
 	}
-	
+
 	public void selectionExtendLeft() {
 		sequences.selectionExtendLeft();
 	}
-	
+
 	public void invertSelection() {
 		long startTime = System.currentTimeMillis();
 		sequences.invertSelection();
@@ -1586,13 +1586,13 @@ public class Alignment implements FileSequenceLoadListener {
 	public void copySelectionFromSequenceTo(int indexFrom, int indexTo) {
 		sequences.copySelectionFromInto(indexFrom,indexTo);
 		//fireSelectionChanged();
-		
+
 	}
 
 	public void selectColumn(int columnIndex) {
 		sequences.selectColumn(columnIndex);
 	}
-	
+
 	public void clearColumnSelection(int columnIndex) {
 		sequences.clearColumnSelection(columnIndex);
 		//fireSelectionChanged();
@@ -1606,7 +1606,7 @@ public class Alignment implements FileSequenceLoadListener {
 	public void setEditMode(boolean editMode) {
 		this.editMode = editMode;
 	}
-	
+
 	public boolean isEditMode() {
 		return editMode;
 	}
@@ -1614,7 +1614,7 @@ public class Alignment implements FileSequenceLoadListener {
 	public Point getFirstSelectedPosition() {
 		return sequences.getFirstSelectedPos();
 	}
-	
+
 	public int getFirstSelectedPositionX() {
 		Point pos = sequences.getFirstSelectedPos();
 		if(pos == null){
@@ -1623,7 +1623,7 @@ public class Alignment implements FileSequenceLoadListener {
 			return pos.x;
 		}
 	}
-	
+
 	public int getFirstSelectedUngapedPositionX() {
 		Point pos = sequences.getFirstSelectedUngapedPos();
 		if(pos == null){
@@ -1638,7 +1638,7 @@ public class Alignment implements FileSequenceLoadListener {
 	public void sortSequencesByName() {
 		sequences.sortSequencesByName();
 	}
-	
+
 	public void sortSequencesByCharInSelectedColumn() {
 		sequences.sortSequencesByCharInSelectedColumn(getHistogram());
 	}
@@ -1663,7 +1663,7 @@ public class Alignment implements FileSequenceLoadListener {
 		buffWriter.flush();
 		buffWriter.close();
 	}
-	
+
 	public void saveUnSelectedSequencesAsFastaFile(File outFile, boolean useIDAsName) throws IOException {
 		BufferedWriter buffWriter = new BufferedWriter(new FileWriter(outFile));
 		sequences.writeUnSelectedSequencesAsFasta(buffWriter, useIDAsName);
@@ -1676,12 +1676,12 @@ public class Alignment implements FileSequenceLoadListener {
 		if(sequences != null){
 			isEditable = sequences.isEditable();
 		}
-//		if(sequences.isTranslated()){
-//			isEditable = false;
-//		}
+		//		if(sequences.isTranslated()){
+		//			isEditable = false;
+		//		}
 		return isEditable;
 	}
-	
+
 	public boolean isSelectable(){
 		return isSelectable;
 	}
@@ -1692,10 +1692,10 @@ public class Alignment implements FileSequenceLoadListener {
 
 	public void fileSequenceContentsChanged() {
 		logger.info("fileSequenceContChanged");
-//		if(alignmentMeta.getCodonPositions().size()getLength() == 0){
-//			//logger.info("sequences.getLongestSequenceLength()" + sequences.getLongestSequenceLength());
-//			alignmentMeta = new AlignmentMeta(this.geneticCode);
-//		}
+		//		if(alignmentMeta.getCodonPositions().size()getLength() == 0){
+		//			//logger.info("sequences.getLongestSequenceLength()" + sequences.getLongestSequenceLength());
+		//			alignmentMeta = new AlignmentMeta(this.geneticCode);
+		//		}
 	}
 
 	public void setTranslationOnePos(boolean showTranslationOnePos){
@@ -1704,11 +1704,11 @@ public class Alignment implements FileSequenceLoadListener {
 			alignmentMeta.setTranslation(showTranslationOnePos);
 		}
 	}
-	
+
 	public boolean isTranslatedOnePos(){
 		return sequences.isTranslated();
 	}
-	
+
 	public boolean hasFullySelectedSequences() {
 		return sequences.hasFullySelectedSequences();
 	}
@@ -1724,7 +1724,7 @@ public class Alignment implements FileSequenceLoadListener {
 	public int getSelectedSequencesCount() {
 		return sequences.getSelectedSequencesCount();
 	}
-	
+
 	public List<Sequence> getSelectedSequences() {
 		return sequences.getSelectedSequences();
 	}
@@ -1737,7 +1737,7 @@ public class Alignment implements FileSequenceLoadListener {
 		List<Sequence> previous = sequences.setFirstSelectedName(newName);
 		return previous;
 	}
-	
+
 	public ArrayList<CharSet> getSelectedCharsets() {
 		Rectangle selection = sequences.getSelectionBounds();
 		if(selection == null){
@@ -1767,22 +1767,22 @@ public class Alignment implements FileSequenceLoadListener {
 
 	public void saveFastaIndex() {
 		logger.info("this.fileFormat");
-		
+
 		if(getFileFormat() == FileFormat.FASTA && sequences instanceof FileSequenceAlignmentListModel){
 			FileSequenceAlignmentListModel model = (FileSequenceAlignmentListModel) getSequences();
-			
+
 			//String indexName = FileFormat.stripFileSuffixFromName(this.getAlignmentFile().getAbsolutePath());
 			String indexName = this.getAlignmentFile().getAbsolutePath();
 			indexName += ".fai";
-			
+
 			File indexFile = new File(indexName);
-			
+
 			try {
 				BufferedWriter out = new BufferedWriter(new FileWriter(indexFile));
-			
+
 				Sequence firstSeq = sequences.get(0);
-				
-				
+
+
 				int charsPerLine = 0;
 				int newlinePos = firstSeq.indexOf('\n');
 				if(newlinePos == -1){
@@ -1790,38 +1790,38 @@ public class Alignment implements FileSequenceLoadListener {
 				}else{
 					charsPerLine = newlinePos + 1 + 1; // +1 because of 0f index,  +1 because of LF;
 				}
-				
+
 				int spacePerLine =  firstSeq.countChar(' ', 0, newlinePos);
-				
+
 				logger.info("newlinePos" + newlinePos);
 				logger.info("spacePerLine" + spacePerLine);
-				
-				
-				
+
+
+
 				spacePerLine += 1; // +1 because of LF 
 				int residuesPerLine = charsPerLine - spacePerLine;
-				
-//				int returnCount = firstSeq.countChar('\r');
-//				int tabCount = firstSeq.countChar('\t');
-//				int spaceCount = firstSeq.countChar(' ');
-				
-			//	int totalLen = firstSeq.getLength();
+
+				//				int returnCount = firstSeq.countChar('\r');
+				//				int tabCount = firstSeq.countChar('\t');
+				//				int spaceCount = firstSeq.countChar(' ');
+
+				//	int totalLen = firstSeq.getLength();
 				//int lenWithoutWhite = totalLen - newlineCount - returnCount - tabCount - spaceCount;
-				
-			//	logger.info("lenWithoutWhite" + lenWithoutWhite);
-				
-				
+
+				//	logger.info("lenWithoutWhite" + lenWithoutWhite);
+
+
 				for(Sequence seq: sequences){
-								
+
 					FastaFileSequence fileSeq = (FastaFileSequence) seq;
-					
+
 					//String name = StringUtils.substring(fileSeq.getName(), 0, 50);
 					String name = fileSeq.getName();
 
 					out.write(name);
-					
+
 					out.write('\t');
-					
+
 					int length = fileSeq.getLength();
 					logger.info("length" + length);
 					int fullRows = length/charsPerLine;
@@ -1833,38 +1833,38 @@ public class Alignment implements FileSequenceLoadListener {
 					logger.info("remindDiff" + remindDiff);
 					diff = diff * fullRows;
 					diff = diff + remindDiff;
-					
+
 					logger.info("diff" + diff);
-					
+
 					int lengthWithoutWhite = length - diff + 1; // don't know exactly why +1
-					
+
 					out.write("" + lengthWithoutWhite);
-					
+
 					out.write('\t');
-					
+
 					out.write("" + (fileSeq.getSequenceAfterNameStartPointer() -1));
-					
+
 					out.write('\t');
-					
+
 					out.write("" + residuesPerLine);
-							
+
 					out.write('\t');
-					
+
 					out.write("" + charsPerLine);
-					
+
 					out.write(LF);
-								
+
 				}	
-				
+
 				out.flush();
 				out.close();
-			
-			
+
+
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 		}else{
 			Messenger.showOKOnlyMessage(Messenger.NO_FASTA_INDEX_COULD_BE_SAVED);
 		}
@@ -1872,7 +1872,7 @@ public class Alignment implements FileSequenceLoadListener {
 
 	public void setTempSelection(Rectangle selectRectMatrixCoords) {
 		getSequences().setTempSelection(selectRectMatrixCoords);
-		
+
 	}
 
 	public Rectangle getTempSelection() {
@@ -1881,27 +1881,27 @@ public class Alignment implements FileSequenceLoadListener {
 
 	public void clearTempSelection() {
 		getSequences().clearTempSelection();
-		
+
 	}
 
 	public void moveSelectedSequencesToBottom() {
 		getSequences().moveSelectedSequencesToBottom();
-		
+
 	}
 
 	public void moveSelectedSequencesToTop() {
 		getSequences().moveSelectedSequencesToTop();
-		
+
 	}
-	
+
 	public void moveSelectedSequencesUp() {
 		getSequences().moveSelectedSequencesUp();
-		
+
 	}
-	
+
 	public void moveSelectedSequencesDown() {
 		getSequences().moveSelectedSequencesDown();
-		
+
 	}
 
 	public void moveSelectedSequencesTo(int index) {
@@ -1925,5 +1925,5 @@ public class Alignment implements FileSequenceLoadListener {
 		}
 		return false;
 	}	
-	
+
 }

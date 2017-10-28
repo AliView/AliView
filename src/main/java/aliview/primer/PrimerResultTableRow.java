@@ -25,7 +25,7 @@ public class PrimerResultTableRow {
 
 	public static final ArrayList<Object> getColumnHeaders(){
 		ArrayList<Object> headers = new ArrayList<Object>();
-		
+
 		headers.add("Degen-fold");
 		headers.add("Pos");
 		headers.add("Len");
@@ -35,13 +35,13 @@ public class PrimerResultTableRow {
 		headers.add("3-end-dimer-len");
 		headers.add("dimer-len");
 		headers.add("Sequence");
-			
+
 		return headers;
 	}
-	
+
 	public static final ArrayList<Integer> getColumnSizes(){
 		ArrayList<Integer> sizes = new ArrayList<Integer>();
-		
+
 		sizes.add(new Integer(30));
 		sizes.add(new Integer(30));
 		sizes.add(new Integer(30));
@@ -51,11 +51,11 @@ public class PrimerResultTableRow {
 		sizes.add(new Integer(30));
 		sizes.add(new Integer(30));
 		sizes.add(new Integer(100));
-			
+
 		return sizes;
 	}
-	
-	
+
+
 	public ArrayList<Object> getRow(){
 		//this.setFont(baseFont);
 
@@ -100,7 +100,7 @@ public class PrimerResultTableRow {
 		JLabel lblDimer = new JLabel("" + primer.getDimerMaxLength());
 		lblDimer.setFont(baseFont);
 		row.add(lblDimer);
-		
+
 		JLabel lblSequence = new JLabel(primer.getSequence());
 		lblSequence.setFont(baseFont);
 		row.add(lblSequence);
@@ -108,7 +108,7 @@ public class PrimerResultTableRow {
 		return row;
 
 	}
-	
-	
-	
+
+
+
 }

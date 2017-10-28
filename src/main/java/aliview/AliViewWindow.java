@@ -2645,7 +2645,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		// first confirm
 		boolean hideMessage = Settings.getHideDeleteVerticalGapsMessage().getBooleanValue();
 		if(! hideMessage){
-			boolean hideMessageNextTime = Messenger.showOKCancelMessageWithCbx(Messenger.DELETE_VERTICAL_GAPS, true, aliViewWindow);
+			boolean hideMessageNextTime = Messenger.showOKCancelMessageWithCbx(Messenger.DELETE_VERTICAL_GAPS, false, aliViewWindow);
 			Settings.getHideDeleteVerticalGapsMessage().putBooleanValue(hideMessageNextTime);
 			int choise = Messenger.getLastSelectedOption();
 			if(choise == JOptionPane.CANCEL_OPTION){

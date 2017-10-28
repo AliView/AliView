@@ -16,7 +16,7 @@ public class ImageExporter {
 		ImageIO.write(getBufferedImageFromComponent(comp), fileFormat, outFile);
 	}
 
-	
+
 	/**
 	 * 
 	 */

@@ -62,7 +62,7 @@ public class TextEditPanelCharsets extends JPanel{
 				HelpUtils.display(HelpUtils.EDIT_CHARSETS_DIALOG, parentFrame);
 			}
 		});
-		
+
 		JButton btnCancel = new JButton("Cancel");
 		btnCancel.setPreferredSize(new Dimension(100, 30));
 		btnCancel.addActionListener(new ActionListener() {
@@ -72,7 +72,7 @@ public class TextEditPanelCharsets extends JPanel{
 				parentFrame.dispose();
 			}
 		});
-		
+
 		JButton btnApply = new JButton("Apply");
 		btnApply.setPreferredSize(new Dimension(100, 30));
 		btnApply.addActionListener(new ActionListener() {
@@ -80,7 +80,7 @@ public class TextEditPanelCharsets extends JPanel{
 				applyText();
 			}
 		});
-		
+
 		JButton btnOk = new JButton("OK");
 		btnOk.setPreferredSize(new Dimension(100, 30));
 		btnOk.addActionListener(new ActionListener() {
@@ -89,14 +89,14 @@ public class TextEditPanelCharsets extends JPanel{
 				parentFrame.dispose();
 			}
 		});
-			
+
 		JTextArea exampleMessage = new JTextArea();
 		String exampleText =
-		"Example charset definitions (for more details see Help):" + LF + LF + 
-		"charset WOODSIA_TRNGR = 1-1194;" + LF + 
-		"charset WOODSIA_ATPA = 1195-3029;" + LF + 
-		"charset Pos1_andPos2_Charset = 1-3029\\3 2-3029\\3;" + LF + 
-		"charset Pos3_Charset = 3-3029\\3;" + LF;
+				"Example charset definitions (for more details see Help):" + LF + LF + 
+				"charset WOODSIA_TRNGR = 1-1194;" + LF + 
+				"charset WOODSIA_ATPA = 1195-3029;" + LF + 
+				"charset Pos1_andPos2_Charset = 1-3029\\3 2-3029\\3;" + LF + 
+				"charset Pos3_Charset = 3-3029\\3;" + LF;
 		exampleMessage.setText(exampleText);
 		exampleMessage.setEditable(false);
 		// this is needed to get right background color
@@ -104,21 +104,21 @@ public class TextEditPanelCharsets extends JPanel{
 		exampleMessage.setBackground(bgCol);
 		exampleMessage.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		//exampleMessage.setFocusable(false);
-		
+
 		editTextArea = new JTextArea();
 		editTextArea.setFont(MONOSPACED_FONT);
-		
+
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setOpaque(false);
 		scrollPane.setViewportView(editTextArea);
-					
+
 		GridBagConstraints gbc_textArea = new GridBagConstraints();
 		gbc_textArea.gridwidth = 4;
 		gbc_textArea.fill = GridBagConstraints.BOTH;
 		gbc_textArea.gridx = 0;
 		gbc_textArea.gridy = 0;
 		add(exampleMessage, gbc_textArea);
-		
+
 		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
 		gbc_scrollPane.gridwidth = 4;
 		gbc_scrollPane.fill = GridBagConstraints.BOTH;
@@ -126,14 +126,14 @@ public class TextEditPanelCharsets extends JPanel{
 		gbc_scrollPane.gridx = 0;
 		gbc_scrollPane.gridy = 1;
 		add(scrollPane, gbc_scrollPane);
-		
+
 		GridBagConstraints gbc_btnHelp = new GridBagConstraints();
 		gbc_btnHelp.anchor = GridBagConstraints.WEST;
 		gbc_btnHelp.insets = new Insets(0, 0, 0, 5);
 		gbc_btnHelp.gridx = 0;
 		gbc_btnHelp.gridy = 2;
 		add(btnHelp, gbc_btnHelp);
-			
+
 		GridBagConstraints gbc_btnApply = new GridBagConstraints();
 		gbc_btnApply.anchor = GridBagConstraints.EAST;
 		gbc_btnApply.insets = new Insets(0, 0, 0, 5);
@@ -153,10 +153,10 @@ public class TextEditPanelCharsets extends JPanel{
 		gbc_btnCancel.gridx = 2;
 		gbc_btnCancel.gridy = 2;
 		add(btnCancel, gbc_btnCancel);
-				
+
 		setAlignment(aliWindow);
 	}
-	
+
 	private void setAlignment(AliViewWindow aliWin) {
 		this.aliWin = aliWin;
 		this.originalCharsets = aliWin.getAlignment().getAlignmentMeta().getCharsets();
@@ -172,11 +172,11 @@ public class TextEditPanelCharsets extends JPanel{
 		} catch (Exception e) {
 			Messenger.showEditCharsetExceptionMessage(e, parentFrame);
 		}
-		
+
 		logger.info("debug:");
 		aliWin.getAlignment().getAlignmentMeta().getCharsets().debug();
 		logger.info("end debug:");
 		aliWin.requestRepaintAndRevalidateALL();
 	}
-		
+
 }

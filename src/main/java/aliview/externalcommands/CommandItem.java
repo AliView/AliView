@@ -43,7 +43,7 @@ public class CommandItem{
 	private boolean showCommandWindow;
 
 	private ArrayList<String[]> parsedCommand =  new ArrayList<String[]>();
-	
+
 
 	public CommandItem(String name, String programPath, String command, boolean isActivated, boolean showCommandWindow) {
 		setName(name);
@@ -60,7 +60,7 @@ public class CommandItem{
 	public String getProgramPath() {
 		return programPath;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
@@ -95,7 +95,7 @@ public class CommandItem{
 	}
 
 	public FileFormat getCurrentAlignmentFileFormat() {
-		
+
 		if(getCommand().contains(CURRENT_ALIGNMENT_TEMP)){
 			return FileFormat.FASTA;
 		}
@@ -112,23 +112,23 @@ public class CommandItem{
 			return FileFormat.FASTA;
 		}
 	}
-	
+
 	public void reParseCommand(){
 		parseCommand();
 	}
-	
+
 	public void parseCommand(){
 		parseCommandIncludingProgramAsFirstParameter();
 	}
-	
+
 	private void parseCommandIncludingProgramAsFirstParameter(){
 		if(getCommand() == null){
 			return;
 		}
-		
+
 		parsedCommand = new ArrayList<String[]>();
-		
-		
+
+
 		String commandInclProgram = "";
 		if(getProgramPath() != null && getProgramPath().length() > 0){
 			// strip remaining " or ' from argument
@@ -137,10 +137,10 @@ public class CommandItem{
 		}else{
 			commandInclProgram = getCommand();
 		}
- 		
+
 		// split lines
 		String[] splitted = commandInclProgram.split("[\r\n]+");
-		
+
 		// create a command per line
 		for(int n = 0; n < splitted.length; n++){
 
@@ -157,8 +157,8 @@ public class CommandItem{
 			parsedCommand.add(splitline);
 		}
 	}
-		
-	
+
+
 	public void replaceInCommand(String find, String replace){
 		for(String[] line: parsedCommand){
 			for(int i = 0; i < line.length; i++){
@@ -166,16 +166,16 @@ public class CommandItem{
 			}
 		}
 	}
-	
+
 	public void replaceParametersInCommand(){
 		replaceInCommand("LOCAL_ALIVIEW_DIR",MuscleWrapper.getAliViewUserDataDirectory());
 	}
-	
+
 	public void setParameterSecondFile(File secondFile) {
 		replaceInCommand(CommandItem.SECOND_FILE, secondFile.getAbsolutePath());
 		replaceInCommand(CommandItem.SECOND_SEQUENCES, secondFile.getAbsolutePath());
 	}
-	
+
 	public void setParameterCurrentFile(File currentFile) {
 		replaceInCommand(CommandItem.CURRENT_ALIGNMENT_TEMP, currentFile.getAbsolutePath());
 		replaceInCommand(CommandItem.CURRENT_ALIGNMENT_FASTA, currentFile.getAbsolutePath());
@@ -183,7 +183,7 @@ public class CommandItem{
 		replaceInCommand(CommandItem.CURRENT_ALIGNMENT_FASTA_TRANSLATED_AA, currentFile.getAbsolutePath());
 		replaceInCommand(CommandItem.CURRENT_ALIGNMENT, currentFile.getAbsolutePath());
 	}
-	
+
 	public void setParameterOutputFile(File outputFile) {
 		replaceInCommand(CommandItem.OUTPUT_FILE, outputFile.getAbsolutePath());
 	}
@@ -195,6 +195,6 @@ public class CommandItem{
 	public ArrayList<String[]> getParsedCommands() {
 		return parsedCommand;
 	}
-	
-	
+
+
 }

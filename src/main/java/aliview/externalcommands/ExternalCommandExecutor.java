@@ -34,7 +34,7 @@ public class ExternalCommandExecutor {
 
 		boolean wasProcessInterrupted = false;
 		for(String[] commandLine: cmdItem.getParsedCommands()){
-			
+
 			if(StringUtils.startsWith(commandLine[0], "ALIVIEW_")){
 				executeInternalCommand(commandLine, subProcessWin);
 			}
@@ -53,7 +53,7 @@ public class ExternalCommandExecutor {
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run(){
-					
+
 					if(commandLine[0].equals("ALIVIEW_OPEN")){	
 						AliView.openAlignmentFile(new File(commandLine[1]));
 					}
@@ -90,69 +90,69 @@ public class ExternalCommandExecutor {
 			cmdAsString += " " + part;
 		}
 		logger.info(cmdAsString);
-		
+
 		ProcessBuilder probuilder = new ProcessBuilder( commandArray );
-		
+
 		probuilder.redirectErrorStream(true);
-		
+
 		Process subprocess = probuilder.start();
-			
+
 		// so that process gets killed when window destroys
 		subProcessWin.setActiveProcess(subprocess);
-		
+
 		subProcessWin.appendOutput("command:" + LF + cmdAsString + LF);
 
 		final Scanner sc = new Scanner(subprocess.getInputStream());
-	//	final Scanner errorSc = new Scanner(subprocess.getErrorStream());
+		//	final Scanner errorSc = new Scanner(subprocess.getErrorStream());
 
-//		
-//		final File finalPipedOut = pipedOut;
-//		
-//		// read output in separate thread so nothing gets blocked
-//		Thread pipedOutThread = new Thread(new Runnable(){
-//			public void run(){
-//			
-//			// if pipped out then read output into file
-//			if(finalPipedOut != null){
-//				try {
-//					logger.info("piped out");
-//					BufferedWriter buffOut = new BufferedWriter(new FileWriter(finalPipedOut));	
-//					while (sc.hasNext()){
-//						logger.info("beforeNextLine");
-//						String nextLine = sc.nextLine();
-//						logger.info("afterNextLine");
-//						buffOut.append(nextLine + LF);
-//						//logger.info((nextLine));
-//					}
-//					sc.close();
-//					buffOut.close();
-//					logger.info(("done with piped out"));
-//				} catch (IOException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//			}
-//			// else just dump output to screen
-//			else{
-//				try {
-//					logger.info(("going into scanner loop"));
-//					while (sc.hasNext()){
-//						logger.info("wait for");
-//						String nextLine = sc.nextLine();
-//						subProcessWin.appendOutput(nextLine + LF);
-//						logger.info((nextLine));
-//					}
-//					sc.close();
-//				} catch (Exception e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//			}
-//			logger.info("outthreaddone");
-//			}
-//		});
-//		pipedOutThread.start();
-//		
+		//		
+		//		final File finalPipedOut = pipedOut;
+		//		
+		//		// read output in separate thread so nothing gets blocked
+		//		Thread pipedOutThread = new Thread(new Runnable(){
+		//			public void run(){
+		//			
+		//			// if pipped out then read output into file
+		//			if(finalPipedOut != null){
+		//				try {
+		//					logger.info("piped out");
+		//					BufferedWriter buffOut = new BufferedWriter(new FileWriter(finalPipedOut));	
+		//					while (sc.hasNext()){
+		//						logger.info("beforeNextLine");
+		//						String nextLine = sc.nextLine();
+		//						logger.info("afterNextLine");
+		//						buffOut.append(nextLine + LF);
+		//						//logger.info((nextLine));
+		//					}
+		//					sc.close();
+		//					buffOut.close();
+		//					logger.info(("done with piped out"));
+		//				} catch (IOException e) {
+		//					// TODO Auto-generated catch block
+		//					e.printStackTrace();
+		//				}
+		//			}
+		//			// else just dump output to screen
+		//			else{
+		//				try {
+		//					logger.info(("going into scanner loop"));
+		//					while (sc.hasNext()){
+		//						logger.info("wait for");
+		//						String nextLine = sc.nextLine();
+		//						subProcessWin.appendOutput(nextLine + LF);
+		//						logger.info((nextLine));
+		//					}
+		//					sc.close();
+		//				} catch (Exception e) {
+		//					// TODO Auto-generated catch block
+		//					e.printStackTrace();
+		//				}
+		//			}
+		//			logger.info("outthreaddone");
+		//			}
+		//		});
+		//		pipedOutThread.start();
+		//		
 		while (sc.hasNext()){
 			//logger.info(errorSc.nextLine());
 			String nextLine = sc.nextLine();
@@ -162,19 +162,19 @@ public class ExternalCommandExecutor {
 		sc.close();
 		logger.info("errorReaderThread-finished");
 		logger.info("before wait for subprocess");
-		
+
 		// kill output thread if this was interrupted
-		
-		
+
+
 		// Dont close streams - it might block on windows		
 		//		if(subProcessWin.wasSubProcessDestrouedByUser()){
 		//			subprocess.getInputStream().close();
 		//			subprocess.getOutputStream().close();
 		//		}
-		
+
 		// close streams
-		
-		
+
+
 		// clean up external process
 		/*
 		try {
@@ -183,8 +183,8 @@ public class ExternalCommandExecutor {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		*/
-		
+		 */
+
 		subprocess.destroy();
 
 		logger.info("done");
@@ -192,7 +192,7 @@ public class ExternalCommandExecutor {
 		return wasProcessInterrupted;
 
 	}
-	
+
 	/*
 	 private static boolean executeCommand(String[] commandArray, final SubProcessWindow subProcessWin) throws IOException{
 
@@ -216,11 +216,11 @@ public class ExternalCommandExecutor {
 			cmdAsString += " " + part;
 		}
 		logger.info(cmdAsString);
-		
+
 		ProcessBuilder probuilder = new ProcessBuilder( commandArray );
 		Process subprocess = probuilder.start();
 
-				
+
 		// so that process gets killed when window destroys
 		subProcessWin.setActiveProcess(subprocess);
 
@@ -228,13 +228,13 @@ public class ExternalCommandExecutor {
 		final Scanner sc = new Scanner(subprocess.getInputStream());
 		final Scanner errorSc = new Scanner(subprocess.getErrorStream());
 
-		
+
 		final File finalPipedOut = pipedOut;
-		
+
 		// read output in separate thread so nothing gets blocked
 		Thread pipedOutThread = new Thread(new Runnable(){
 			public void run(){
-			
+
 			// if pipped out then read output into file
 			if(finalPipedOut != null){
 				try {
@@ -275,7 +275,7 @@ public class ExternalCommandExecutor {
 			}
 		});
 		pipedOutThread.start();
-		
+
 		while (errorSc.hasNext()){
 			//logger.info(errorSc.nextLine());
 			String nextLine = errorSc.nextLine();
@@ -285,14 +285,14 @@ public class ExternalCommandExecutor {
 		errorSc.close();
 		logger.info("errorReaderThread-finished");
 		logger.info("before wait for subprocess");
-		
+
 		// kill output thread if this was interrupted
 		if(subProcessWin.wasSubProcessDestrouedByUser()){
 			pipedOutThread.interrupt();
 			subprocess.getInputStream().close();
 			subprocess.getOutputStream().close();
 		}
-		
+
 		// clean up external process
 		try {
 			subprocess.waitFor();
@@ -309,6 +309,6 @@ public class ExternalCommandExecutor {
 		return wasProcessInterrupted;
 
 	}
-	*/
+	 */
 
 }

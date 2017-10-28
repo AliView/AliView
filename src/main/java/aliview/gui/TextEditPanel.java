@@ -47,7 +47,7 @@ public class TextEditPanel extends JPanel{
 				HelpUtils.display(HelpUtils.EDIT_CHARSETS_DIALOG, parentFrame);
 			}
 		});
-		
+
 		JButton btnCancel = new JButton("Cancel");
 		btnCancel.setPreferredSize(new Dimension(100, 30));
 		btnCancel.addActionListener(new ActionListener() {
@@ -55,7 +55,7 @@ public class TextEditPanel extends JPanel{
 				parentFrame.dispose();
 			}
 		});
-		
+
 		JButton btnApply = new JButton("Apply");
 		btnApply.setPreferredSize(new Dimension(100, 30));
 		btnApply.addActionListener(new ActionListener() {
@@ -63,7 +63,7 @@ public class TextEditPanel extends JPanel{
 				applyText();
 			}
 		});
-		
+
 		JButton btnOk = new JButton("OK");
 		btnOk.setPreferredSize(new Dimension(100, 30));
 		btnOk.addActionListener(new ActionListener() {
@@ -72,24 +72,24 @@ public class TextEditPanel extends JPanel{
 				parentFrame.dispose();
 			}
 		});
-			
+
 		JTextArea exampleMessage = new JTextArea();
 		exampleMessage.setEditable(false);
 		exampleMessage.setOpaque(false);
-		
+
 		JTextArea editTextArea = new JTextArea();
 		editTextArea.setFont(MONOSPACED_FONT);
-		
+
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setViewportView(editTextArea);
-					
+
 		GridBagConstraints gbc_textArea = new GridBagConstraints();
 		gbc_textArea.gridwidth = 4;
 		gbc_textArea.fill = GridBagConstraints.BOTH;
 		gbc_textArea.gridx = 0;
 		gbc_textArea.gridy = 0;
 		add(exampleMessage, gbc_textArea);
-		
+
 		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
 		gbc_scrollPane.gridwidth = 4;
 		gbc_scrollPane.fill = GridBagConstraints.BOTH;
@@ -97,14 +97,14 @@ public class TextEditPanel extends JPanel{
 		gbc_scrollPane.gridx = 0;
 		gbc_scrollPane.gridy = 1;
 		add(scrollPane, gbc_scrollPane);
-		
+
 		GridBagConstraints gbc_btnHelp = new GridBagConstraints();
 		gbc_btnHelp.anchor = GridBagConstraints.WEST;
 		gbc_btnHelp.insets = new Insets(0, 0, 0, 5);
 		gbc_btnHelp.gridx = 0;
 		gbc_btnHelp.gridy = 2;
 		add(btnHelp, gbc_btnHelp);
-			
+
 		GridBagConstraints gbc_btnApply = new GridBagConstraints();
 		gbc_btnApply.anchor = GridBagConstraints.EAST;
 		gbc_btnApply.insets = new Insets(0, 0, 0, 5);
@@ -130,8 +130,8 @@ public class TextEditPanel extends JPanel{
 
 	public void applyText(){
 
-		
-		
+
+
 	}
-		
+
 }

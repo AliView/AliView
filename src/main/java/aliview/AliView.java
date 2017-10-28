@@ -77,8 +77,8 @@ public class AliView implements ApplicationListener{
 
 		Logger.getRootLogger().setLevel(Level.ALL);
 		logAllLogs();
-		
-		
+
+
 		logger.info("version " + AliView.getVersion());
 		long time = AliView.getTime(AliView.class);
 		logger.info("version time " + new Date(time));
@@ -89,9 +89,9 @@ public class AliView implements ApplicationListener{
 		Properties props = System.getProperties();
 		Enumeration keys = props.keys();
 		while (keys.hasMoreElements()) {
-		  String key = (String)keys.nextElement();
-		  String value = (String)props.get(key);
-		  logger.debug(key + "=" + value);
+			String key = (String)keys.nextElement();
+			String value = (String)props.get(key);
+			logger.debug(key + "=" + value);
 		}
 
 		try{
@@ -105,7 +105,7 @@ public class AliView implements ApplicationListener{
 					}
 				}
 			}
-			
+
 			// check if debug in user environ
 			String debugEnv = System.getenv("ALIVIEW_DEBUG");
 			logger.info("debugEnv" + debugEnv);
@@ -243,10 +243,10 @@ public class AliView implements ApplicationListener{
 					e.printStackTrace();
 				}
 			}
-			
-			
-		    
-		    
+
+
+
+
 			// debugUIDefaults();
 
 			if(Settings.getUseCustomFontSize().getBooleanValue()){
@@ -261,7 +261,7 @@ public class AliView implements ApplicationListener{
 				// and some more keys
 				setUIFontSize(userSize);
 			}
-			
+
 			// On other system than windows (mac and linux) use smaller default font label size
 			if(!Settings.getUseCustomFontSize().getBooleanValue()){
 				if(! OSNativeUtils.isWindows()){
@@ -272,8 +272,8 @@ public class AliView implements ApplicationListener{
 					}
 				}
 			}
-			
-			
+
+
 
 			aliView = new AliView();
 
@@ -320,12 +320,12 @@ public class AliView implements ApplicationListener{
 				//	alignmentFile = new File("/home/anders/projekt/alignments/Woodsia_chloroplast_min4_20131109_v2.excluded.nexus");
 
 				//alignmentFile = new File("/home/anders/projekt/alignments/Woodsia_chloroplast_min1_20131029.nexus");
-							
+
 				//alignmentFile = new File("/home/anders/projekt/alignments/sandies/Grp4+_GBank+208_trim3.phy");
-				
+
 				alignmentFile = new File("/home/anders/projekt/alignments/Woodsia_chloroplast_min1_20131029.nexus");
 				//alignmentFile = new File("/home/anders/projekt/alignments/john/HEV_more.than.1400bp.sequence.MafftE_trim.no.gapseq.CUT.6260_7490.nexus");
-							
+
 				//	alignmentFile = new File("/vol2/big_data/test.nexus");
 
 				//			  alignmentFile = new File("/vol2/johns_454/SSURef_108_full_align_tax_silva_trunc.fasta");
@@ -369,7 +369,7 @@ public class AliView implements ApplicationListener{
 				if(! alignmentFile.exists()){
 					alignmentFile = null;
 				}
-				
+
 			}
 			logger.info("6");
 
@@ -389,19 +389,19 @@ public class AliView implements ApplicationListener{
 			// for all non mac systems start here
 			if(! OSNativeUtils.isMac()){	
 				AliView.createNewAliViewWindow(alignmentFile);
-			// Nowadays mac is started same way
+				// Nowadays mac is started same way
 			}else if(OSNativeUtils.isMac()){	
 				AliView.createNewAliViewWindow(alignmentFile);
 			}
-		
+
 			// Create Application Adapter (only needed for OsX and register this AliView as listener of Application events (interface below)
 			if(OSNativeUtils.isMac()){
-			
+
 				// first try latest version
 				boolean regAdapterOK = OSNativeUtils.registerMacAdapter(aliView);
 
 				logger.info("boolean regAdapterOK =" + regAdapterOK);
-				
+
 				// if not try old version
 				if(!regAdapterOK){
 					logger.info("doing old version of Mac eawt");
@@ -427,9 +427,9 @@ public class AliView implements ApplicationListener{
 		else{
 			Logger.getRootLogger().setLevel(Level.ERROR);
 		}
-		
+
 		//Logger.getRootLogger().setLevel(Level.ERROR);
-		
+
 		logger.info("done with main method");
 
 	}
@@ -571,6 +571,19 @@ public class AliView implements ApplicationListener{
 					AliView.closeWindow(thisWin);
 				}
 
+				public void windowOpened(WindowEvent e) {
+					AliViewWindow thisWin = (AliViewWindow) e.getWindow();
+					
+					// Show dialog if sequence type was not detected
+					if(thisWin.getAlignment() != null && !thisWin.getAlignment().isEmptyAlignment() &&  thisWin.getAlignment().isUnknownAlignment()){
+						boolean hideMessage = Settings.getHideUnknownAlignmentType().getBooleanValue();
+						if(! hideMessage){
+							boolean hideMessageNextTime = Messenger.showOKOnlyMessageWithCbx(Messenger.FAILED_SEQUENCE_DETECTION, false, thisWin);
+							Settings.getHideUnknownAlignmentType().putBooleanValue(hideMessageNextTime);
+						}
+					}
+				}
+
 			}); // end WindowAdapter
 
 
@@ -621,7 +634,7 @@ public class AliView implements ApplicationListener{
 		else{
 			// do nothing
 		}
-		
+
 	}
 
 	public static void setUIFontSize (float newSize){
@@ -812,14 +825,14 @@ public class AliView implements ApplicationListener{
 				activeWinIndex = n;
 			}
 		}
-		
+
 		int nextWin = activeWinIndex +1;
 		if(nextWin >= aliViewWindows.size()){
 			nextWin = 0;
 		}
-		
+
 		aliViewWindows.get(nextWin).requestFocus();
-		
+
 	}
 
 

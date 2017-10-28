@@ -83,6 +83,7 @@ public class Settings {
 	private static SettingValue hideDeleteAllGapsMessage = new SettingValue("hideDeleteAllGapsMessage", false);
 	private static SettingValue hideDeleteAllSelectedSequences = new SettingValue("hideDeleteAllSelectedSequences", false);
 	private static SettingValue hideDeleteAllSelectedBases = new SettingValue("hideDeleteAllSelectedBases", false);
+	private static SettingValue hideUnknownAlignmentType = new SettingValue("hideUnknownAlignmentType", false);
 	
 	public static SettingValue getMinPrimerLength(){
 		return minPrimerLength;
@@ -606,6 +607,10 @@ public class Settings {
 	
 	public static SettingValue getHideAskBeforeEditMode() {
 		return hideAskBeforeEditMode;
+	}
+	
+	public static SettingValue getHideUnknownAlignmentType() {
+		return hideUnknownAlignmentType;
 	}
 	
 	public static void clearAllHideThisDialogCheckboxes() {

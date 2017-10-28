@@ -33,13 +33,18 @@ public class AlignmentFactory {
 	private static final SequencesFactory seqFactory = new SequencesFactory();
 	// TODO change so it also reads from buffer
 	
+	
+	
 	/*
 	 * Create alignment in factory since we dont know until we have read file if it is a nucleotide
 	 * or a protein alignment
 	 * 
 	 */
-	
 	public static Alignment createNewAlignment(File alignmentFile){
+		return createNewAlignment(alignmentFile, SequenceUtils.TYPE_UNKNOWN);
+	}
+	
+	public static Alignment createNewAlignment(File alignmentFile, int sequenceType){
 		
 			logger.info("inside createNewAlignment");
 			
@@ -47,8 +52,7 @@ public class AlignmentFactory {
 			startTime = System.currentTimeMillis();
 			Alignment alignment = null;
 			try {
-				
-				
+								
 				AlignmentListModel sequences = seqFactory.createSequences(alignmentFile);			
 				Excludes excludes = new Excludes();
 				CodonPositions codonPositions = new CodonPositions();
@@ -83,12 +87,14 @@ public class AlignmentFactory {
 				
 				MemoryUtils.logMem();
 				AlignmentMeta aliMeta = new AlignmentMeta(excludes, codonPositions, charsets, GeneticCode.DEFAULT);
-				if(sequences.getSequenceType() == SequenceUtils.TYPE_AMINO_ACID){
-					alignment = new Alignment(alignmentFile, sequences, aliMeta);
+				
+				// Set sequence type if specified
+				if(sequenceType != SequenceUtils.TYPE_UNKNOWN){
+					sequences.setSequenceType(sequenceType);
 				}
-				else{
-					alignment = new Alignment(alignmentFile, sequences, aliMeta);
-				}
+				
+				// Create alignment
+				alignment = new Alignment(alignmentFile, sequences, aliMeta);
 				MemoryUtils.logMem();
 				
 				
@@ -114,7 +120,6 @@ public class AlignmentFactory {
 				}
 			}
 			
-		
 			long endTime = System.currentTimeMillis();
 			System.out.println("Importing sequences took " + (endTime - startTime) + " milliseconds");
 			

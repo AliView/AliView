@@ -87,6 +87,9 @@ public class Messenger {
 	public static final Message PHENOTYPE_IMAGE_OPEN_ERROR = new Message("Could not create Phenotype from Image file. Wrong file type? (png,jpg)", "Wrong file");
 	public static final Message SUGGEST_ALIGN_AS_TRANSLATED = new Message("If you want to align Nucleotides as translated Amino Acids, please use function:" + LF +			                                                              "Realign everything as Translated Amino Acids", "Can not realign");
 	public static final Message MULTI_FILE_DROP_WARNING = new Message("More than 10 files dropped at once - Is this what you intended? " , "Multiple files dropped");
+	public static final Message FAILED_SEQUENCE_DETECTION = new Message("Sequence type could not be automatically detected for" + LF +
+                                                                        "this alignment file. Please set sequence type manually:" + LF +
+			                                                            "Menu \"Edit\" -> \"Set Alignment Sequence Type\"", "Unknown sequence type");
 
 	private static int lastSelectedOption = -1;
 	private static boolean showedMaxJPanelSizeMessageOnceThisSession;
@@ -178,7 +181,7 @@ public class Messenger {
 		final JDialog dialog = new JDialog(aliViewWindow);
 		dialog.setTitle(message.title);
 		// OBS DO NOT MODAL - Then there is problem in MAC when executed from error thread
-		dialog.setModal(true);
+		dialog.setModal(false);
 		dialog.setAlwaysOnTop(true);
 
 		
@@ -209,7 +212,7 @@ public class Messenger {
 		dialog.setContentPane(optPane);
 		// TODO make sure dialogs does not become larger than screen size
 		dialog.setMaximumSize(new Dimension(800,600));
-		dialog.setPreferredSize(new Dimension(800,600));
+		//dialog.setPreferredSize(new Dimension(800,600));
 		
 		dialog.pack();
 		logger.debug("dialog.getPreferredSize()" + dialog.getPreferredSize());

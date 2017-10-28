@@ -14,8 +14,6 @@ public final class SequenceUtils {
 	public static int TYPE_NUCLEIC_ACID = 1;
 	public static int TYPE_UNKNOWN = 2;
 	
-	
-	
 	public static int id_counter;
 	
 	

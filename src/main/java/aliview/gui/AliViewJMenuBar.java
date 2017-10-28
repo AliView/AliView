@@ -585,7 +585,6 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 		mnEdit.add(mntmDeleteSelectedItem);
 		reorderAndDeleteFunctions.add(mntmDeleteSelectedItem);
 
-
 		JMenuItem mntmRemoveVerticalGaps = new JMenuItem("Delete gap-only columns");
 		mntmRemoveVerticalGaps.addActionListener(new ActionListener() {
 
@@ -1090,6 +1089,19 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 		mnViewMenu.add(mntmSortSequencesByCharColumn);
 		reorderAndDeleteFunctions.add(mntmSortSequencesByCharColumn);
 		loadedAlignmentFunctions.add(mntmSortSequencesByCharColumn);
+
+
+		mnViewMenu.add(new JSeparator());
+		
+		JMenuItem mntmGoToPos = new JMenuItem("Goto sequence position");
+		mntmGoToPos.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				aliViewWindow.goToPos();
+			}
+		});
+		mntmGoToPos.setAccelerator(OSNativeUtils.getGoToPosKeyAccelerator());
+		mnViewMenu.add(mntmGoToPos);
+		loadedAlignmentFunctions.add(mntmGoToPos);
 
 
 		mnViewMenu.add(new JSeparator());

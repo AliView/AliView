@@ -139,6 +139,7 @@ import aliview.gui.AlignmentPopupMenu;
 import aliview.gui.AppIcons;
 import aliview.gui.GlassPaneKeyListener;
 import aliview.gui.GlassPaneMouseListener;
+import aliview.gui.GoToPosDialog;
 import aliview.gui.ListTopOffsetJPanel;
 import aliview.gui.MessageLogFrame;
 import aliview.gui.ScrollBarModelSyncChangeListener;
@@ -2552,7 +2553,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 			pos.translate(130, -60);
 			//logger.info("pos" + pos);
 			TextEditDialog txtEdit = new TextEditDialog(pos);
-			txtEdit.showOKCancelTextEditor(name, TextEditDialog.EDIT_SEQUENCE_NAME_TEXT, this);
+			txtEdit.showOKCancelTextEditor(name, TextEditDialog.TITLE_EDIT_SEQUENCE_NAME, this);
 			if(txtEdit.getSelectedValue() == JOptionPane.OK_OPTION){
 				String newName = txtEdit.getEditText();
 
@@ -3785,6 +3786,10 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		return Settings.getReverseVerticalMouseWheel().getBooleanValue();
 	}
 
+	public void scrollToPos(Point matrixPos) {
+		alignmentPane.scrollToPos(matrixPos);
+	}
+	
 	public void scrollToCursor(int keyDirection) {
 
 		AliCursor aliCursor = getAliCursor();
@@ -4080,20 +4085,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 
 	public boolean requestEditMode(){	
 		if(isEditMode() == false){
-			// optionpane
-			/*				
-				String message = "Edit key/menu pressed (or mouse edit), " + LF + "do you want to allow edits?";
-				int retVal = JOptionPane.showConfirmDialog(aliViewWindow, message, "Edit mode?", JOptionPane.OK_CANCEL_OPTION);
-				if(retVal == JOptionPane.OK_OPTION){
-					aliViewWindow.setEditMode(true);	
-				}else{
-					// do nothing
-				}
 
-				// return false after question always
-				// return false;
-
-			 */
 			boolean allowEdit = Messenger.askAllowEditMode();
 			if(allowEdit){
 				aliViewWindow.setEditMode(true);
@@ -4101,30 +4093,6 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 				// do nothing
 			}
 
-
-			/*
-			// Skip asking if checkbox "hide this message"
-			if(Settings.getHideEditModeMessage().getBooleanValue() == true){
-				aliViewWindow.setEditMode(true);
-			// Ask user
-			}else{
-				logger.info("ask user");
-				Messenger.showOKOnlyMessage(Messenger.EDIT_MODE_QUESTION, this);
-				//boolean hideNextTimeSelected = Messenger.showOKCancelMessageWithCbx(Messenger.EDIT_MODE_QUESTION, false, this);
-				//Settings.getHideEditModeMessage().putBooleanValue(false);
-				int retVal = Messenger.getLastSelectedOption();
-				logger.info("retval=" + retVal);
-				if(retVal == JOptionPane.OK_OPTION){
-					logger.info("set edit mode");
-					aliViewWindow.setEditMode(true);	
-				}else{
-					// do nothing
-				}
-			}
-			 */
-
-			// return false after question always
-			// return false;
 		}
 		return isEditMode();
 	}
@@ -4425,6 +4393,37 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		TextEditPanelCharsets panel = new TextEditPanelCharsets(frame, this);
 		frame.init(panel);
 		frame.setVisible(true);
+	}
+
+	private String goToPosTextFieldValue = "";
+	public void goToPos() {
+		TextEditDialog goToPosDlg = new TextEditDialog();
+		goToPosDlg.showOKCancelTextEditor(goToPosTextFieldValue, TextEditDialog.TITLE_GO_TO_POS, this);
+		
+		if(goToPosDlg.getSelectedValue() == JOptionPane.OK_OPTION){
+			String posText = goToPosDlg.getEditText();
+			goToPosTextFieldValue=posText;
+			
+			Point currentPos = alignmentPane.getVisibleCenterMatrixPos();
+			int newX = currentPos.x;
+			int newY = currentPos.y;
+			try {
+				String xPos = StringUtils.substringBefore(posText, ",");
+				newX = Integer.parseInt(xPos);
+		    } catch (NumberFormatException e) {
+		    	// TODO maybe err handling
+		    }
+			try {
+				String yPos = StringUtils.substringAfter(posText, ",");
+				newY = Integer.parseInt(yPos);
+		    } catch (NumberFormatException e) {
+		    	// TODO maybe err handling
+		    }
+			
+			Point newPos = new Point(newX,newY);
+			scrollToPos(newPos);
+		}
+		
 	}
 
 }

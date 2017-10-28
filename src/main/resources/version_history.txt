@@ -4,9 +4,10 @@ Version history
 - Better automatic detection wether alignment is Nucleotide or Amino-Acid
 - Menu alternative to manually change alignment to Nucleotide or AminoAcid
 - Confirmation box when deleting all gaps in all sequences
+- Go to position function
 - Courier font on OS X regardless of Java VM
 - Some changes on OS X retina screens when using Oracle Java
-- Go to position in alignment
+- Fixed hide checkboxes issue where "clear all" in settings didn't clear all
 
 1.18.1
 

@@ -1218,6 +1218,13 @@ public class AlignmentPane extends JPanel{
 		Point ulMatrixPos = paneCoordToMatrixCoord(ulPanePos);
 		return ulMatrixPos;
 	}
+	
+	public Point getVisibleCenterMatrixPos() {
+		Rectangle rect = this.getVisibleRect();
+		Point centerPanePos = new Point((int)rect.getCenterX(),(int)rect.getCenterY());
+		Point centerMatrixPos = paneCoordToMatrixCoord(centerPanePos);
+		return centerMatrixPos;
+	}
 
 	public void scrollToVisibleUpperLeftMatrixPos(Point ulPos) {
 		Point ulPanePos = matrixCoordToPaneCoord(ulPos);
@@ -1264,20 +1271,28 @@ public class AlignmentPane extends JPanel{
 			}
 		}
 	}
-
+	
 	public void scrollRectToSelectionCenter() {
 		Rectangle selectRect = alignment.getSelectionAsMinRect();
 		if(selectRect != null){
-			Rectangle paneCoord = matrixCoordToPaneCoord(selectRect);
+			Rectangle grown1xtra = new Rectangle(selectRect.x - 1, selectRect.y - 1, selectRect.width + 3, selectRect.height + 3);
+			Rectangle paneCoord = matrixCoordToPaneCoord(grown1xtra);
 			if(! getVisibleRect().contains(selectRect)){
 				logger.info("not visible");
-				Rectangle newVisible = new Rectangle(paneCoord);
-				//logger.info("new visible" + newVisible);
-				newVisible.grow(getVisibleRect().width/2,getVisibleRect().height/2);
-				//logger.info("newVisible" + newVisible);
-				scrollRectToVisible(newVisible);
+				scrollRectToVisible(paneCoord);
 			}
 		}
+	}
+
+	public void scrollToPos(Point matrixPos) {
+		
+		logger.info("newMatrixPos" + matrixPos);
+		
+		Point paneCoord = matrixCoordToPaneCoord(matrixPos);
+		Rectangle newVisible = new Rectangle(paneCoord);
+		// We need to grow to half the width and height to center it
+		newVisible.grow(getVisibleRect().width/2,getVisibleRect().height/2);
+		scrollRectToVisible(newVisible);
 	}
 
 	public boolean getShowTranslationAndNuc() {

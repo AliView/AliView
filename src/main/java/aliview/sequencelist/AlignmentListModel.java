@@ -392,7 +392,6 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 				int nucleotideCount = 0;
 				int otherCount = 0;
 				
-				int 
 				// Loop through 1000 bases
 				mainLoop:
 				for(Sequence seq: delegateSequences){
@@ -412,7 +411,6 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 					}		
 				}
 				
-			
 				// First check low or nucleotide count to avoid div by zero 
                 if(nucleotideCount < 4){
                 	this.sequenceType = SequenceUtils.TYPE_UNKNOWN;

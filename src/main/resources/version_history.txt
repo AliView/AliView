@@ -1,5 +1,13 @@
 Version history
 
+1.19
+- Better automatic detection wether alignment is Nucleotide or Amino-Acid
+- Menu alternative to manually change alignment to Nucleotide or AminoAcid
+- Confirmation box when deleting all gaps in all sequences
+- Courier font on OS X regardless of Java VM
+- Some changes on OS X retina screens when using Oracle Java
+- Go to position in alignment
+
 1.18.1
 
 - Fixed bug in complement translation. IUPAC-K is now translated into M instead of previously S
@@ -19,7 +27,7 @@ Version history
 - Quicker scroll when dragging sequences outside visible part of list
 - Big rewrite of code handling large files (> 1GB)
 - Improved multithreading in some sections of program makes it even more responsive.
-- Fixed bug on Mac where sequences sometimes were saved in temp directory without asking user 
+- Fixed bug on Mac where sequences sometimes were saved in temp directory without asking user
 
 1.17.1
 
@@ -49,7 +57,7 @@ Version history
 
 - Fixed bug in "count stop codons" function
 - Fixed bug where translation into Aminoacids sometimes not included the end of the alignment
-- Fixed bug on Mac OS X Yosemite and Mavericks and latest java JRE that caused program not to start 
+- Fixed bug on Mac OS X Yosemite and Mavericks and latest java JRE that caused program not to start
 - Unwanted blanks are trimmed away at start and end of text pasted into the search field
 - Unwanted blanks are trimmed away at start and end of clipboard text in function "Reverse complement clipboard"
 - Removed function "Invert selection"
@@ -65,7 +73,7 @@ Version history
 - Fixed bug on Windows that caused message window always to be on top when running external commands
 - Changed message window not to be on top of other programs when running alignment programs on Linux
 - Now possible to hide "Allow edit" dialog
-- Info message if alignment contains duplicate sequence names 
+- Info message if alignment contains duplicate sequence names
 - Adjusted status panel, selected position is now zero before first non gap residue
 - Changed header slightly when saving in Clustal format
 
@@ -81,7 +89,7 @@ Version history
 
 1.11
 
-- Drawing speed improvements on Windows associated with the List of sequence names 
+- Drawing speed improvements on Windows associated with the List of sequence names
 - Fixed problem when translating some alignments to AminoAcid one pos
 - Added last saved file to "Recent files" menu
 - Added "Save as Phylip (relaxed, padded & interleaved)" option
@@ -136,7 +144,7 @@ Version history
  resources on very large files. Now Undo functionality is turned of before memory error and user is notified
 -New dialog that notifies user about low possible memory problem if keeping to many large alignments opened at the same time.
 -New menu item "Check version history" in Help menu
-  
+
 1.06
 
 -Error handling and error message if you are using 32bit Operating system and

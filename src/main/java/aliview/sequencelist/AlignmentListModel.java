@@ -75,12 +75,12 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 	private volatile int cachedLongestSequenceLength = -1;
 	private boolean isTranslated;
 	private Alignment alignment;
-	
-	
+
+
 	public AlignmentListModel() {
 		this.delegateSequences = new ArrayList<Sequence>();
 	}
-	
+
 	public AlignmentListModel(List<Sequence> seqs) {
 		for(Sequence seq: seqs){
 			seq.setAlignmentModel(this);
@@ -88,7 +88,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		this.delegateSequences = seqs;
 		fireSequenceIntervalAdded(0, seqs.size() - 1);
 	}
-	
+
 	public AlignmentListModel(List<Sequence> seqs, FileFormat foundFormat) {
 		this.fileFormat = foundFormat;
 		for(Sequence seq: seqs){
@@ -97,57 +97,57 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		this.delegateSequences = seqs;
 		fireSequenceIntervalAdded(0, seqs.size() - 1);
 	}
-	
+
 	public AlignmentListModel(AlignmentListModel template){
 		ArrayList<Sequence> seqClone = new ArrayList<Sequence>();
 		for (Sequence seq: template.delegateSequences) {
-	        seqClone.add(seq.getCopy());
+			seqClone.add(seq.getCopy());
 		}
-		
+
 		this.fileFormat = template.fileFormat;
 		this.delegateSequences = seqClone;
 		this.sequenceType = template.sequenceType;
 		fireSequencesChangedAllNew();
 	}
-	
-	
+
+
 	// ***************************************
 	// ListModel interface
 	// ***************************************
-	
+
 	public int getSize() {
 		return delegateSequences.size();
 	}
-	
+
 	public Sequence getElementAt(int index){
 		return delegateSequences.get(index);
 	}
-	
+
 	public void addListDataListener(ListDataListener l) {
 		listenerList.add(ListDataListener.class, l);
 	}
-		
-	
+
+
 	public void removeListDataListener(ListDataListener l) {
 		listenerList.remove(ListDataListener.class, l);
 	}
-	
+
 	// ***************************************
 	// End List model interface
 	// ***************************************
-	
-	
+
+
 	public void addAlignmentDataListener(AlignmentDataListener l) {
 		listenerList.add(AlignmentDataListener.class, l);
 	}
-		
-	
+
+
 	public void removeAlignmentDataListener(AlignmentDataListener l) {
 		listenerList.remove(AlignmentDataListener.class, l);
 	}
-	
-	
-	
+
+
+
 	// ***************************************
 	// AbstractListModel 
 	// ***************************************
@@ -157,65 +157,65 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		// TODO Auto-generated method stub
 		super.addListDataListener(l);
 	}
-	
+
 	@Override
 	public void addListDataListener(ListDataListener l) {
 		// TODO Auto-generated method stub
 		super.addListDataListener(l);
 	}
-	
+
 	@Override
 	public void removeListDataListener(ListDataListener l) {
 		// TODO Auto-generated method stub
 		super.removeListDataListener(l);
 	}
-	
+
 	@Override
 	public ListDataListener[] getListDataListeners() {
 		// TODO Auto-generated method stub
 		return super.getListDataListeners();
 	}
-	
+
 	@Override
 	protected void fireContentsChanged(Object source, int index0, int index1) {
 		// TODO Auto-generated method stub
 		super.fireContentsChanged(source, index0, index1);
 	}
-		
+
 	@Override
 	protected void fireIntervalAdded(Object source, int index0, int index1) {
 		// TODO Auto-generated method stub
 		super.fireIntervalAdded(source, index0, index1);
 	}
-	
+
 	@Override
 	protected void fireIntervalRemoved(Object source, int index0, int index1) {
 		// TODO Auto-generated method stub
 		super.fireIntervalRemoved(source, index0, index1);
 	}
-	
-	
+
+
 	@Override
 	public <T extends EventListener> T[] getListeners(Class<T> listenerType) {
 		// TODO Auto-generated method stub
 		return super.getListeners(listenerType);
 	}
-	*/
+	 */
 
 	// ***************************************
 	// End AbstractList model
 	// ***************************************
-		
-		
-	
+
+
+
 	// ***************************************
 	// Iterableinterface
 	// ***************************************
-	
+
 	public Iterator<Sequence> iterator() {
 		return delegateSequences.listIterator();
 	}
-	
+
 	// ***************************************
 	// End Iterableinterface
 	// ***************************************
@@ -225,50 +225,50 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 			for(Sequence seq: list){
 				seq.setAlignmentModel(this);
 			}
-			
+
 			this.delegateSequences = list;
 			fireSequencesChangedAllNew();
 		}
 	}
-	
+
 	public List<Sequence> getDelegateSequences() {
 		return delegateSequences;
 	}
-	
+
 	public AlignmentListModel getCopy(){
 		return new AlignmentListModel(this);
 	}
-	
+
 	public AlignmentListModel getCopyShallow(){
 		AlignmentListModel copy = new AlignmentListModel();	
-		
-	    copy.delegateSequences.addAll(this.delegateSequences);
+
+		copy.delegateSequences.addAll(this.delegateSequences);
 		copy.fileFormat = fileFormat;
 		copy.sequenceType = sequenceType;
 		return copy;
 	}
-	
+
 	public Sequence get(int index) {
 		if(index >= delegateSequences.size()){
 			return null;
 		}
 		return delegateSequences.get(index);
 	}
-/*
+	/*
 	public void add(int index, Sequence seq) {
 		logger.info("add at=" + index);
 		delegateSequences.add(index, seq);
 		fireSequenceIntervalAdded(index, index);
 	}
-	
-	
-	
+
+
+
 	public Sequence set(int index, Sequence element){
 		Sequence previous = sequences.set(index, element);
 		fireSequencesChanged(index, index);
 		return previous;
 	}
-	
+
 	public void removeAt(int index) {
 		sequences.remove(index);
 		fireSequenceIntervalRemoved(index, index);	
@@ -278,9 +278,9 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		sequences.add(index, seq);
 		fireSequenceIntervalAdded(index, index);
 	}
-	
-	*/
-	
+
+	 */
+
 	// TODO these three set and add methods might give problems if there is no 
 	// is adjusting method
 	public Sequence set(int index, Sequence sequence){
@@ -290,24 +290,24 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		fireSequencesChanged(index, index);
 		return previous;
 	}
-	
+
 	public void add(Sequence sequence) {
 		sequence.setAlignmentModel(this);
 		delegateSequences.add(sequence);
 		fireSequenceIntervalAdded(this.size() -1, this.size() - 1);
 	}
-	
+
 	public void add(int index, Sequence seq) {
 		seq.setAlignmentModel(this);
 		delegateSequences.add(index, seq);
 		// TODO Maybe add an adjusting parameter...
 		fireSequenceIntervalAdded(index, index);
 	}
-	
+
 	public void addAll(AlignmentListModel otherSeqModel, boolean setSelected) {
 		addAll(otherSeqModel.getDelegateSequencesCopy(), setSelected);
 	}
-	
+
 	public void addAll(int index, AlignmentListModel otherSeqModel) {
 		for(Sequence seq: otherSeqModel.getDelegateSequencesCopy()){
 			seq.setAlignmentModel(this);
@@ -315,7 +315,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		delegateSequences.addAll(index, otherSeqModel.getDelegateSequencesCopy());
 		fireSequenceIntervalAdded(index, index + otherSeqModel.getDelegateSequencesCopy().size());
 	}
-	
+
 	public void addAll(List<Sequence> moreSeqs, boolean setSelected) {
 		for(Sequence seq: moreSeqs){
 			seq.setAlignmentModel(this);
@@ -328,19 +328,19 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		//fireSequencesChangedAll();
 		fireSequenceIntervalAdded(this.size() - moreSeqs.size(), this.size() - 1);
 	}
-	
-	
+
+
 	public List<Sequence> getDelegateSequencesCopy(){
 		return new ArrayList<Sequence>(delegateSequences);
 	}
-	
-		
+
+
 	protected List<Sequence> getSequences() {
 		return delegateSequences;
 	}
-	
+
 	public int getLongestSequenceLength(){
-		
+
 		if(cachedLongestSequenceLength <= 0){
 			// this is double locked to avoid synchronized block after the cached initialization of variacle
 			// cached variable has to be declared volatile above
@@ -360,20 +360,20 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		}
 		return cachedLongestSequenceLength;
 	}
-	
+
 	public int getShortestSequenceLength() {
-			int minLen = getLongestSequenceLength();
-			for(int n = 0; n < delegateSequences.size(); n++){
-				int len = delegateSequences.get(n).getLength();
-				if(len < minLen){
-					minLen = len;
-				}
+		int minLen = getLongestSequenceLength();
+		for(int n = 0; n < delegateSequences.size(); n++){
+			int len = delegateSequences.get(n).getLength();
+			if(len < minLen){
+				minLen = len;
 			}
-		
+		}
+
 		return minLen;
-		
+
 	}
-	
+
 	public FileFormat getFileFormat() {
 		return this.fileFormat;
 	}
@@ -382,17 +382,17 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		this.fileFormat = fileFormat;
 	}
 
-		public int getSequenceType() {
+	public int getSequenceType() {
 
-			// Lazy initialization of sequence type field
-			if(delegateSequences.size() > 0 && sequenceType == SequenceUtils.TYPE_UNKNOWN){
-				// TODO could figure out if not a sequence
-				int gapCount = 0;
-				int nucleotideCount = 0;
-				int otherCount = 0;
-				
-				// Loop through 1000 bases
-				mainLoop:
+		// Lazy initialization of sequence type field
+		if(delegateSequences.size() > 0 && sequenceType == SequenceUtils.TYPE_UNKNOWN){
+			// TODO could figure out if not a sequence
+			int gapCount = 0;
+			int nucleotideCount = 0;
+			int otherCount = 0;
+
+			// Loop through 1000 bases
+			mainLoop:
 				for(Sequence seq: delegateSequences){
 					for(int pos = 0; pos < seq.getLength(); pos ++){
 						byte base = seq.getBaseAtPos(pos); 
@@ -409,47 +409,47 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 						}
 					}		
 				}
-				
-				// First check low or nucleotide count to avoid div by zero 
-                if(nucleotideCount < 4){
-                	this.sequenceType = SequenceUtils.TYPE_UNKNOWN;
-                }
-				else{
-					double ratio = (double)otherCount/(double)nucleotideCount;
-					
-					if(ratio == 0){
-						this.sequenceType = SequenceUtils.TYPE_NUCLEIC_ACID;
-					}
-					else if(ratio > 0.2){
-						this.sequenceType = SequenceUtils.TYPE_AMINO_ACID;
-					}
-					else{
-						this.sequenceType = SequenceUtils.TYPE_UNKNOWN;
-					}
+
+			// First check low or nucleotide count to avoid div by zero 
+			if(nucleotideCount < 4){
+				this.sequenceType = SequenceUtils.TYPE_UNKNOWN;
+			}
+			else{
+				double ratio = (double)otherCount/(double)nucleotideCount;
+
+				if(ratio == 0){
+					this.sequenceType = SequenceUtils.TYPE_NUCLEIC_ACID;
 				}
-                
-                if(this.sequenceType == SequenceUtils.TYPE_UNKNOWN){
-                	
-                	// Dialog set Alignment type
-                	// No good idéa, better just start as SequenceUtils.TYPE_UNKNOWN
-                	
-                }
-                
+				else if(ratio > 0.2){
+					this.sequenceType = SequenceUtils.TYPE_AMINO_ACID;
+				}
+				else{
+					this.sequenceType = SequenceUtils.TYPE_UNKNOWN;
+				}
+			}
 
-			}	
+			if(this.sequenceType == SequenceUtils.TYPE_UNKNOWN){
 
-			return sequenceType;	
+				// Dialog set Alignment type
+				// No good idéa, better just start as SequenceUtils.TYPE_UNKNOWN
+
+			}
+
+
+		}	
+
+		return sequenceType;	
 	}
 
 
 	public void reverseComplement(List<Sequence> seqs) {
-  
-			for(Sequence seq : seqs){
-				seq.reverseComplement();
-			}
-			if(seqs.size() > 0){
-				fireSequencesChanged(seqs);
-			}
+
+		for(Sequence seq : seqs){
+			seq.reverseComplement();
+		}
+		if(seqs.size() > 0){
+			fireSequencesChanged(seqs);
+		}
 
 	}
 
@@ -457,20 +457,20 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		delegateSequences.remove(seq);	
 		fireSequencesChangedAll();
 	}
-	
+
 	public void deleteSequences(List<Sequence> toDelete) {
 		for(Sequence seq: toDelete){
 			delegateSequences.remove(seq);
 		}	
 		fireSequencesChangedAll();
 	}
-	
+
 	public List<Sequence> deleteFullySelectedSequences() {
 		List<Sequence> toDelete = getFullySelectedSequences();
 		deleteSequences(toDelete);
 		return toDelete;		
 	}
-	
+
 	public List<Sequence> getFullySelectedSequences(){
 		List<Sequence> fullySelected = new ArrayList<Sequence>();
 		for(Sequence seq: delegateSequences){
@@ -481,7 +481,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		return fullySelected;
 	}
 
-	
+
 	public ArrayList<Sequence> deleteEmptySequences(){
 		ArrayList<Sequence> toDelete = new ArrayList<Sequence>();
 		for(Sequence seq: delegateSequences){
@@ -493,24 +493,24 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 
 		return toDelete;
 	}
-	
-	
-	
+
+
+
 	public void moveSelectedSequencesToBottom() {
 		List<Sequence> selected = selectionModel.getSelectedSequences();
 		moveSequencesToBottom(selected);
 	}
-	
+
 	public void moveSelectedSequencesToTop() {
 		List<Sequence> selected = selectionModel.getSelectedSequences();
 		moveSequencesToTop(selected);
 	}
-	
+
 	public void moveSelectedSequencesUp() {
 		List<Sequence> selected = selectionModel.getSelectedSequences();
 		moveSequencesUp(selected);
 	}
-	
+
 	public void moveSelectedSequencesDown() {
 		List<Sequence> selected = selectionModel.getSelectedSequences();
 		moveSequencesDown(selected);
@@ -520,7 +520,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		List<Sequence> selected = selectionModel.getSelectedSequences();
 		moveSequencesTo(index, selected);
 	}
-	
+
 	public void moveSequencesToBottom(List<Sequence> seqs) {
 		logger.info("removeAll");
 		delegateSequences.removeAll(seqs);
@@ -532,7 +532,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		}
 
 	}
-	
+
 
 	public void moveSequencesToTop(List<Sequence> seqs) {
 		delegateSequences.removeAll(seqs);
@@ -542,7 +542,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		}
 
 	}
-	
+
 	public void moveSequencesTo(int index, List<Sequence> seqs) {
 		if(index >= delegateSequences.size()){
 			index = delegateSequences.size() - 1;
@@ -550,17 +550,17 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		if(index < 0){
 			index = 0;
 		}
-		
+
 		// get current pos
 		int current = delegateSequences.indexOf(seqs.get(0));
-		
+
 		int diff = current - index;
-		
+
 		logger.info("diff" + diff);
-		
+
 		// loop sequences up or down
 		if(diff > 0){
-			
+
 			for(int n = 0; n < diff; n++){
 				moveSequencesUp(seqs);
 			}
@@ -574,7 +574,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 
 	}
 
-	
+
 
 	public void moveSequencesUp(List<Sequence> seqs){
 		logger.info("move seq up");
@@ -591,9 +591,9 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 			delegateSequences.set(index,previous);
 
 		}
-		
+
 		logger.info("seqs.size()" + seqs.size());
-		
+
 		if(seqs.size() > 0){
 			fireSequencesChangedAll();
 		}
@@ -615,19 +615,19 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 			Sequence previous = (Sequence) delegateSequences.set(index + 1, seq);
 			delegateSequences.set(index, previous);
 
-			
+
 		}
-		
+
 		logger.info("seqs.size()" + seqs.size());
-		
+
 		if(seqs.size() > 0){
 			fireSequencesChangedAll();
 		}
-			
+
 	}
 
 
-	
+
 	public void writeSelectionAsFasta(Writer out) {
 
 		List <Sequence> selectedSequences = selectionModel.getSelectedSequences();
@@ -646,7 +646,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 				e.printStackTrace();
 			}
 
-		    //logger.info("WroteSeq=" + n);
+			//logger.info("WroteSeq=" + n);
 		}
 
 		logger.info("Write done");
@@ -655,7 +655,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 	public void writeSelectedSequencesAsFasta(Writer out) {
 		writeSelectedSequencesAsFasta(out, false);
 	}
-	
+
 	public void writeSelectedSequencesAsFasta(Writer out, boolean useIDAsName) {
 		List <Sequence> selectedSequences = selectionModel.getSelectedSequences();
 		for(Sequence sequence : selectedSequences){
@@ -664,7 +664,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		}
 		logger.info("Write done");
 	}
-	
+
 	private void writeSequenceAsFasta(Sequence sequence, Writer out, boolean useIDAsName){
 		try {
 			//TODO maybe format fasta better
@@ -675,20 +675,20 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 				out.append(sequence.getName());
 			}
 			out.append(LF);
-			
+
 			sequence.writeBases(out);
-			
+
 			out.append(LF);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void writeUnSelectedSequencesAsFasta(Writer out) {
 		writeUnSelectedSequencesAsFasta(out, false);
 	}
-	
+
 	public void writeUnSelectedSequencesAsFasta(Writer out, boolean useIDAsName) {
 		List <Sequence> unSelectedSequences = selectionModel.getUnSelectedSequences();
 		for(Sequence sequence : unSelectedSequences){
@@ -700,7 +700,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 	public byte getBaseAt(int x, int y) {
 		return delegateSequences.get(y).getBaseAtPos(x);
 	}
-	
+
 	public AminoAcid getTranslatedAminoAcidAtNucleotidePos(int x, int y) {
 		return delegateSequences.get(y).getTranslatedAminoAcidAtNucleotidePos(x);
 	}
@@ -708,7 +708,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 	public int getLengthAt(int y) {
 		return delegateSequences.get(y).getLength();
 	}
-	
+
 	public int indexOf(Sequence seq) {
 		return delegateSequences.indexOf(seq);
 	}
@@ -721,10 +721,10 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 			return findAndSelectInNucleotideSequences(findObject);
 		}
 	}
-	
+
 	public FindObject findAndSelectALLInAASequences(FindObject findObj){
 		String regex = findObj.getRegexSearchTerm();
-		
+
 		// Identical for AA and NUC search
 		Pattern pattern = Pattern.compile(regex,Pattern.CASE_INSENSITIVE);
 		findObj.setIsFound(false);
@@ -750,10 +750,10 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		//findObj.setIsFound(false);
 		return findObj;
 	}
-	
+
 	public FindObject findAndSelectInAASequences(FindObject findObj){
 		String regex = findObj.getRegexSearchTerm();
-		
+
 		// Identical for AA and NUC search
 		Pattern pattern = Pattern.compile(regex,Pattern.CASE_INSENSITIVE);
 		findObj.setIsFound(false);
@@ -801,32 +801,32 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		regex = regex.replaceAll("n", "\\[agctu\\]");
 
 		// Identical for AA and NUC search
-				Pattern pattern = Pattern.compile(regex,Pattern.CASE_INSENSITIVE);
-				
-				logger.info("startpos = " + findObj.getNextFindStartPos());
-				findObj.setIsFound(false);
-				for(int n = findObj.getNextFindSeqNumber(); n < this.getSize(); n++){
-					Sequence seq = delegateSequences.get(n);
-					Interval foundPos = seq.find(pattern, findObj.getNextFindStartPos());
-					if(foundPos != null){
-						selectionModel.selectBases(seq, foundPos);
-						findObj.setNextFindSeqNumber(n);	
-						// make sure it is not out of index
-						findObj.setNextFindStartPos(Math.min(foundPos.getStartPos() + 1, getLongestSequenceLength() - 1));
-						findObj.setFoundPos(foundPos.getStartPos(),n);
-						findObj.setIsFound(true);
-						// without this one it will find all positions
-						return findObj;
-					}
-					// not found in this seq - start again from 0
-					findObj.setNextFindSeqNumber(n + 1);
-					findObj.setNextFindStartPos(0);
-				}
-				logger.info("beforereset = " + findObj.getNextFindStartPos());
-				// nothing found reset everything
-				findObj.setNextFindSeqNumber(0);
-				findObj.setNextFindStartPos(0);	
+		Pattern pattern = Pattern.compile(regex,Pattern.CASE_INSENSITIVE);
+
+		logger.info("startpos = " + findObj.getNextFindStartPos());
+		findObj.setIsFound(false);
+		for(int n = findObj.getNextFindSeqNumber(); n < this.getSize(); n++){
+			Sequence seq = delegateSequences.get(n);
+			Interval foundPos = seq.find(pattern, findObj.getNextFindStartPos());
+			if(foundPos != null){
+				selectionModel.selectBases(seq, foundPos);
+				findObj.setNextFindSeqNumber(n);	
+				// make sure it is not out of index
+				findObj.setNextFindStartPos(Math.min(foundPos.getStartPos() + 1, getLongestSequenceLength() - 1));
+				findObj.setFoundPos(foundPos.getStartPos(),n);
+				findObj.setIsFound(true);
+				// without this one it will find all positions
 				return findObj;
+			}
+			// not found in this seq - start again from 0
+			findObj.setNextFindSeqNumber(n + 1);
+			findObj.setNextFindStartPos(0);
+		}
+		logger.info("beforereset = " + findObj.getNextFindStartPos());
+		// nothing found reset everything
+		findObj.setNextFindSeqNumber(0);
+		findObj.setNextFindStartPos(0);	
+		return findObj;
 	}
 
 	public FindObject findInNames(FindObject findObj) {
@@ -860,15 +860,15 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 				}		
 			}	
 		}
-		
+
 		return findObj;
-		
+
 	}
-	
+
 	public boolean isEditable(){
 		return true;
 	}
-	
+
 	public List<Sequence> insertGapRightOfSelectedBase(boolean undoable) {
 		List<Sequence> editedSequences = new ArrayList<Sequence>();
 		List<Sequence> selectedSeqs = selectionModel.getSelectedSequences(); 
@@ -879,19 +879,19 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 			}
 			seq.insertGapRightOfSelectedBase();
 		}
-		
+
 		if(selectedSeqs.size() == delegateSequences.size()){
 			int posToAdd = (int) (selectionBounds.getBounds().getMaxX() + 1);
 			getAlignmentMeta().insertPosition(posToAdd);
 		}
-		
+
 		if(selectedSeqs.size() > 0){
 			fireSequencesChanged(selectedSeqs);
 		}
 
 		return editedSequences;	
 	}
-	
+
 	public List<Sequence> insertGapLeftOfSelectedBase(boolean undoable) {
 		List<Sequence> editedSequences = new ArrayList<Sequence>();
 		List<Sequence> selectedSeqs = selectionModel.getSelectedSequences(); 
@@ -903,19 +903,19 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 			}
 			seq.insertGapLeftOfSelectedBase();
 		}
-		
+
 		if(selectedSeqs.size() > 0 && selectedSeqs.size() == delegateSequences.size()){
 			int posToAdd = (int) (selectionBounds.getBounds().getMaxX() - 1);
 			getAlignmentMeta().insertPosition(posToAdd);
 		}
-		
+
 		if(selectedSeqs.size() > 0){
 			fireSequencesChanged(selectedSeqs);
 		}
-		
+
 		return editedSequences;
 	}
-	
+
 	public List<Sequence> deleteGapMoveLeft(boolean undoable) {
 		boolean gapPresentInAll = true;
 		List<Sequence> editedSequences = new ArrayList<Sequence>();
@@ -942,14 +942,14 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 			int posToDelete = (int) (selectionBounds.getBounds().getMaxX() - 1);
 			getAlignmentMeta().deletePosition(posToDelete);
 		}
-		
+
 		if(gapPresentInAll){
 			fireSequencesChanged(selectedSeqs);
 		}
 
 		return editedSequences;	
 	}
-	
+
 	public List<Sequence> deleteGapMoveRight(boolean undoable) {
 		boolean gapPresentInAll = true;
 		List<Sequence> editedSequences = new ArrayList<Sequence>();
@@ -981,7 +981,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		}
 
 		return editedSequences;
-		
+
 	}	
 
 	public boolean isGapPresentRightOfSelection() {
@@ -995,7 +995,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		}
 		return gapPresentInAll;
 	}
-	
+
 	public boolean isGapOrEndPresentRightOfSelection() {
 		boolean gapOrEndPresentInAll = true;
 		List<Sequence> selectedSeqs = selectionModel.getSelectedSequences(); 
@@ -1007,10 +1007,10 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		}
 		return gapOrEndPresentInAll;
 	}
-	
+
 	public List<Sequence> moveSelectedResiduesRightIfGapIsPresent(boolean undoable) {
 		Rectangle oldSelectRectangle = selectionModel.getSelectionBounds();
-		
+
 		List<Sequence> editedSequences = new ArrayList<Sequence>();
 		boolean wasEndRightOfSelection = false;
 		if(isGapOrEndPresentRightOfSelection()){
@@ -1039,7 +1039,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 
 		return editedSequences;
 	}
-	
+
 	public boolean isGapPresentLeftOfSelection() {
 		boolean gapPresentInAll = true;
 		List<Sequence> selectedSeqs = selectionModel.getSelectedSequences(); 
@@ -1051,7 +1051,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		}
 		return gapPresentInAll;
 	}
-	
+
 	public List<Sequence> moveSelectedResiduesLeftIfGapIsPresent(boolean undoable){
 		Rectangle oldSelectRectangle = selectionModel.getSelectionBounds();
 		List<Sequence> editedSequences = new ArrayList<Sequence>();
@@ -1067,20 +1067,20 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 			}
 		}
 
-			Rectangle newSelect = selectionModel.getSelectionBounds();
-			if(oldSelectRectangle == null){
-				// nothing can have changed
-			}else{
-				newSelect.add(oldSelectRectangle);
-				fireSequencesChanged(newSelect);
-			}
-			
+		Rectangle newSelect = selectionModel.getSelectionBounds();
+		if(oldSelectRectangle == null){
+			// nothing can have changed
+		}else{
+			newSelect.add(oldSelectRectangle);
+			fireSequencesChanged(newSelect);
+		}
+
 
 		return editedSequences;
 	}
 
 	// TODO break this into two (is gap present) and move
-	
+
 	public List<Sequence> moveSelectedResiduesIfGapIsPresent(int diff, boolean undoable){
 		List<Sequence> editedSequences = new ArrayList<Sequence>();
 		// TODO this is moving and remembering startpos
@@ -1114,48 +1114,48 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		selectionOffset = diff;
 		return editedSequences;
 	}
-	
+
 	public void realignNucleotidesUseTheseAASequenceAsTemplate(AlignmentListModel templateSeqs) throws Exception{
-		
+
 		// make sure this alignment is translated
 		setTranslation(true);
-		
+
 		for(Sequence templateSeq: templateSeqs.getDelegateSequencesCopy()){
-			
+
 			// do partial name since it if being cut by some programs....
 			Sequence nucSeq =  this.getSequenceByName(templateSeq.getName());
 			logger.info("nucSeq=" + nucSeq.getName() + nucSeq.getBasesAsString());
 			logger.info("templateSeq=" + templateSeq.getName() + templateSeq.getBasesAsString());
-			
+
 			realignNucleotidesUseThisAASequenceAsTemplate(nucSeq, templateSeq);
-							
-			
+
+
 		}
 		// show result as nucleotides
 		setTranslation(false);
-		
+
 		fireSequencesChangedAll();
 	}
 
 	private void realignNucleotidesUseThisAASequenceAsTemplate(Sequence nucSeq, Sequence template) throws Exception {
-		
+
 		if(nucSeq instanceof InMemorySequence){
-		
+
 			StringBuilder newSeq = new StringBuilder(nucSeq.getLength());
 			int nextFindStartPos = 0;
 			for(int n = 0; n < template.getLength(); n++){
 				byte nextAAByte = template.getBaseAtPos(n);
 				AminoAcid aaTemplate = AminoAcid.getAminoAcidFromByte(nextAAByte);
-				
-							
-	//			logger.info("aaTemplate.getCodeCharVal()" + aaTemplate.getCodeCharVal());
+
+
+				//			logger.info("aaTemplate.getCodeCharVal()" + aaTemplate.getCodeCharVal());
 				if(aaTemplate.getCodeCharVal() == AminoAcid.GAP.getCodeCharVal()){
 					newSeq.append((char)SequenceUtils.GAP_SYMBOL);
 					newSeq.append((char)SequenceUtils.GAP_SYMBOL);
 					newSeq.append((char)SequenceUtils.GAP_SYMBOL);
 				}else{
-		
-	//				logger.info("search for " + aaTemplate.getCodeCharVal() + " in seq " + nucSeq.getName() + " from pos " + nextFindStartPos);
+
+					//				logger.info("search for " + aaTemplate.getCodeCharVal() + " in seq " + nucSeq.getName() + " from pos " + nextFindStartPos);
 					int posFound = nucSeq.find(aaTemplate.getCodeByteVal(), nextFindStartPos); 
 					if(posFound == -1){
 						logger.info("posnotfound");
@@ -1167,30 +1167,30 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 				}
 			}
 			logger.info("newSeq.length()" + newSeq.length());
-			
+
 			((InMemorySequence) nucSeq).setBases(newSeq.toString().getBytes());
 			fireSequencesChanged(nucSeq);
 		}
 	}
 	/*
 	private void realignNucleotidesUseThisAASequenceAsTemplate(Sequence nucSeq, Sequence template) throws Exception {
-		
+
 		StringBuilder newSeq = new StringBuilder(nucSeq.getLength());
-		
+
 		int nextPos = 0;
 		for(int n = 0; n < template.getLength(); n++){
-			
+
 			byte nextAAByte = template.getBaseAtPos(n);
 			AminoAcid aaTemplate = AminoAcid.getAminoAcidFromByte(nextAAByte);
-			
-			
-			
+
+
+
 			if(aaTemplate.getCodeCharVal() == AminoAcid.GAP.getCodeCharVal()){
 				newSeq.append((char)SequenceUtils.GAP_SYMBOL);
 				newSeq.append((char)SequenceUtils.GAP_SYMBOL);
 				newSeq.append((char)SequenceUtils.GAP_SYMBOL);
 			}else{
-				
+
 				byte nextByte = nucSeq.getBaseAtPos(n);
 				AminoAcid translated = AminoAcid.getAminoAcidFromByte(nextByte);
 				if(translated != aaTemplate){
@@ -1199,12 +1199,12 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 //					throw new Exception("Alignments not matching-exception, when trying to align sequences");
 				}					
 			}
-			
-			
-			
+
+
+
 		}
 	}
-	*/
+	 */
 
 	public Sequence getSequenceByName(String name) {
 		if(name == null){
@@ -1219,7 +1219,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		}
 		return foundSeq;	
 	}
-	
+
 	public ArrayList<Sequence> getSequencesByName(String name) {
 		ArrayList<Sequence> foundSeqs = new ArrayList<Sequence>();
 		if(name == null){
@@ -1232,8 +1232,8 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		}
 		return foundSeqs;	
 	}
-	
-	
+
+
 
 	public void deleteAllGaps() {
 		for(Sequence seq: delegateSequences){
@@ -1268,7 +1268,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 				sequence.leftPadSequenceWithGaps(longLen);
 				paddedSeqs.add(sequence);
 			}
-			
+
 		}
 		if(paddedSeqs.size() > 0){
 			fireSequencesChanged(paddedSeqs);
@@ -1281,7 +1281,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 
 	/*
 	public void rightTrimSequencesRemoveGapsUntilEqualLength(){
-		
+
 		for(int n = sequences.size() - 1 && thisPosHasBase == false; n >=0; n--){
 			boolean thisPosHasBase = false;
 			for(Sequence sequence : sequences){
@@ -1302,9 +1302,9 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 				break;
 			}
 		}
-				
+
 	}
-	*/
+	 */
 	public boolean rightTrimSequencesRemoveGapsUntilEqualLength(){
 		boolean wasTrimmed = false;
 		String cons = getConsensus();	
@@ -1313,7 +1313,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		if(cons.indexOf(SequenceUtils.GAP_SYMBOL) > 0){		
 			// create a bit-mask with pos to delete
 			boolean[] deleteMask = new boolean[cons.length()];
-			
+
 			for(int n = deleteMask.length - 1; n>=0 ;n--){
 				if(cons.charAt(n) == SequenceUtils.GAP_SYMBOL){
 					deleteMask[n] = true;
@@ -1331,15 +1331,15 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		}
 		return wasTrimmed;
 	}
-	
-	
+
+
 	public void deleteBasesInAllSequencesFromMask(boolean[] deleteMask) {
 		for(Sequence sequence : delegateSequences){
 			sequence.deleteBasesFromMask(deleteMask);
 		}
 		fireSequencesChangedAll();
 	}
-	
+
 	public String getConsensus() {
 		if(isTranslated || getSequenceType() == SequenceUtils.TYPE_AMINO_ACID){
 			return getAminoAcidConsensus();
@@ -1348,7 +1348,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 			return getNucleotideConsensus();
 		}
 	}
-		
+
 	private String getAminoAcidConsensus() {
 		byte[] consVals = new byte[getLongestSequenceLength()];
 		Arrays.fill(consVals, AminoAcid.GAP.getCodeByteVal());
@@ -1357,11 +1357,11 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 				consVals[n] = AminoAcid.getConsensusFromByteVal(sequence.getBaseAtPos(n), (byte)consVals[n]);
 			}
 		}
-		
+
 		String consAsString = new String(consVals);
-		
+
 		logger.info(consAsString);
-		
+
 		return consAsString;
 	}
 
@@ -1369,10 +1369,10 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		int[] consVals = new int[getLongestSequenceLength()];
 		for(Sequence sequence : delegateSequences){
 			int[] baseVals = sequence.getSequenceAsBaseVals();
-				// bitwise add everything
-				for(int n = 0; n < baseVals.length; n++){
-					consVals[n] = consVals[n] | baseVals[n];
-				}
+			// bitwise add everything
+			for(int n = 0; n < baseVals.length; n++){
+				consVals[n] = consVals[n] | baseVals[n];
+			}
 		}
 		char[] cons = new char[consVals.length];
 		for(int n = 0; n < cons.length; n++){
@@ -1385,10 +1385,10 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		for(Sequence seq : delegateSequences){
 			seq.reverseComplement();
 		}
-		
+
 		fireSequencesChangedAll();
 	}
-	
+
 	public void reverseComplementFullySelectedSequences() {
 		List<Sequence> fullySelected = getFullySelectedSequences();
 		for(Sequence seq : fullySelected){
@@ -1398,13 +1398,13 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 			fireSequencesChanged(fullySelected);
 		}
 	}
-	
+
 
 	public void complement() {
 		for(Sequence seq : delegateSequences){
 			seq.complement();	
 		}
-		
+
 		fireSequencesChangedAll();
 	}
 
@@ -1442,11 +1442,11 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		}
 		return isValid;
 	}
-	
+
 	private boolean rangeCheck(Point point) {
 		return rangeCheck(point.x, point.y);
 	}
-	
+
 	public Sequence getSequenceByID(int id){
 		for(Sequence seq: delegateSequences){
 			if(seq.getID() == id){
@@ -1460,18 +1460,18 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 	public void sortSequencesByName() {
 		//logger.info(sequences);
 		Collections.sort(delegateSequences);
-		
+
 		fireSequencesOrderChangedAll();
 	}
-	
+
 	public void sortSequencesByCharInSelectedColumn(AliHistogram histogram) {
 		// get first selected column
 		Point selPos = selectionModel.getFirstSelectedPos();
 		Collections.sort(delegateSequences, new SequencePositionComparator(selPos.x, getHistogram()));
-		
+
 		fireSequencesOrderChangedAll();
 	}
-	
+
 	public AliHistogram getHistogram(){
 		if(cachedHistogram == null){
 			// this is double locked to avoid synchronized block after the lazy initialization of Histogram object
@@ -1485,7 +1485,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		}
 		return cachedHistogram;
 	}
-	
+
 
 	private AliHistogram createHistogram(){
 		long startTime = System.currentTimeMillis();
@@ -1495,7 +1495,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		}else{
 			histogram = new NucleotideHistogram(getLongestSequenceLength());
 		}
-		
+
 		for(Sequence seq: delegateSequences){
 			if(sequenceType == SequenceUtils.TYPE_AMINO_ACID || isTranslated){
 				histogram.addSequence(seq);
@@ -1512,43 +1512,43 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		List<Sequence> editedSequences = new ArrayList<Sequence>();
 		List<Sequence> selectedSeqs = selectionModel.getSelectedSequences(); 
 		for(Sequence seq: selectedSeqs){
-				// No partial name that might swich sequences
-				//Sequence realignedSeq = newOnes.getSequenceByPartialName(seq.getName());
-				Sequence realignedSeq = newOnes.getSequenceByName(seq.getName());
-				byte[] realignedBases;
-				// muscle removes empty seq if that is case create an empty bases
-				if(realignedSeq != null){
-					realignedBases = realignedSeq.getAllBasesAsByteArray();
-				}else{
-					realignedBases = SequenceUtils.createGapByteArray(newOnes.getLongestSequenceLength());
-				}
+			// No partial name that might swich sequences
+			//Sequence realignedSeq = newOnes.getSequenceByPartialName(seq.getName());
+			Sequence realignedSeq = newOnes.getSequenceByName(seq.getName());
+			byte[] realignedBases;
+			// muscle removes empty seq if that is case create an empty bases
+			if(realignedSeq != null){
+				realignedBases = realignedSeq.getAllBasesAsByteArray();
+			}else{
+				realignedBases = SequenceUtils.createGapByteArray(newOnes.getLongestSequenceLength());
+			}
 
-				int selPos[] = seq.getSelectedPositions();
-				
-				// if selection is larger than result pad up with gap
-				if(selPos.length > realignedBases.length){
-					byte[] paddedRealigned = Arrays.copyOf(realignedBases, selPos.length);
-					for(int n = realignedBases.length; n < paddedRealigned.length; n++){
-						paddedRealigned[n] = SequenceUtils.GAP_SYMBOL;
-					}
-					realignedBases = paddedRealigned;
-				}		
-				seq.replaceBases(selPos[0],selPos[selPos.length -1],realignedBases);
-				seq.setSelection(selPos[0],selPos[0] + realignedBases.length -1, false);
-				if(undoable){
-					editedSequences.add(seq.getCopy());
+			int selPos[] = seq.getSelectedPositions();
+
+			// if selection is larger than result pad up with gap
+			if(selPos.length > realignedBases.length){
+				byte[] paddedRealigned = Arrays.copyOf(realignedBases, selPos.length);
+				for(int n = realignedBases.length; n < paddedRealigned.length; n++){
+					paddedRealigned[n] = SequenceUtils.GAP_SYMBOL;
 				}
+				realignedBases = paddedRealigned;
+			}		
+			seq.replaceBases(selPos[0],selPos[selPos.length -1],realignedBases);
+			seq.setSelection(selPos[0],selPos[0] + realignedBases.length -1, false);
+			if(undoable){
+				editedSequences.add(seq.getCopy());
+			}
 		}
 		if(selectedSeqs.size() > 0){
 			Rectangle bounds = selectionModel.getSelectionBounds();
 			fireSequencesChanged(bounds);
 		}
-		
+
 		return editedSequences;	
 	}
-	
-	
-	
+
+
+
 	public boolean mergeTwoSequences(InMemorySequence seq1, InMemorySequence seq2, boolean allowOverlap){		
 		if(sequenceType == SequenceUtils.TYPE_NUCLEIC_ACID){
 			return mergeTwoNucleotideSequences(seq1, seq2, allowOverlap);
@@ -1556,14 +1556,14 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		else{
 			return mergeTwoAminoAcidSequences(seq1, seq2, allowOverlap);
 		}
-		
+
 	}
-	
+
 	public boolean mergeTwoAminoAcidSequences(InMemorySequence seq1, InMemorySequence seq2, boolean allowOverlap){
 		boolean isMerged = false;
 		int nExactOverlap = SequenceUtils.countExactAminoAcidOverlap(seq1, seq2);
 		int nDifferentOverlap = SequenceUtils.countDifferentAminoAcidOverlap(seq1, seq2);
-		
+
 		boolean isOverlap = false;
 		boolean isOverlapExactlySame = false;
 		if(nExactOverlap > 0 || nDifferentOverlap > 0){
@@ -1572,7 +1572,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 				isOverlapExactlySame = true;
 			}
 		}
-		
+
 		// Warn
 		if(isOverlap){			
 			String overlapMessage = "";
@@ -1626,100 +1626,100 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 			mergedSeqs.add(seq2);
 			fireSequencesChanged(mergedSeqs);
 		}
-		
+
 		return isMerged;
-}
-	
+	}
+
 
 	public boolean mergeTwoNucleotideSequences(InMemorySequence seq1, InMemorySequence seq2, boolean allowOverlap){
-			boolean isMerged = false;
-			int nExactOverlap = SequenceUtils.countExactNucleotideOverlap(seq1, seq2);
-			int nDifferentOverlap = SequenceUtils.countDifferentNucleotideOverlap(seq1, seq2);
-			
-			boolean isOverlap = false;
-			boolean isOverlapExactlySame = false;
-			if(nExactOverlap > 0 || nDifferentOverlap > 0){
-				isOverlap = true;
-				if(nExactOverlap > 0 && nDifferentOverlap ==0){
-					isOverlapExactlySame = true;
-				}
-			}
-			
-			// Warn
-			if(isOverlap){			
-				String overlapMessage = "";
-				if(isOverlapExactlySame){
-					overlapMessage = "Overlapping parts are identical (" + nExactOverlap +"bases)";
-				}else{
-					overlapMessage = "Overlapping parts are different (" + nDifferentOverlap + "/" + (nDifferentOverlap + nExactOverlap) + ")";
+		boolean isMerged = false;
+		int nExactOverlap = SequenceUtils.countExactNucleotideOverlap(seq1, seq2);
+		int nDifferentOverlap = SequenceUtils.countDifferentNucleotideOverlap(seq1, seq2);
 
-				}
-				String message="Sequences are overlapping - " + overlapMessage + LF +
-						"Do you want to continue?";
+		boolean isOverlap = false;
+		boolean isOverlapExactlySame = false;
+		if(nExactOverlap > 0 || nDifferentOverlap > 0){
+			isOverlap = true;
+			if(nExactOverlap > 0 && nDifferentOverlap ==0){
+				isOverlapExactlySame = true;
+			}
+		}
 
-				// TODO I dont know how to deal with dialogs in a nice pattern way if it is within the alignment class? Maybe it should be splited
-				// and moved into aliview-class (for example to do a temporary merge and then ask and then call alignment again to do join
-				int retVal = JOptionPane.showConfirmDialog(DialogUtils.getDialogParent(), message, "Continue?", JOptionPane.OK_CANCEL_OPTION);
-				if(retVal != JOptionPane.OK_OPTION){
-					return false;
-				}
-			}
-			else{
-				String message= "Sequences are NOT overlapping" + LF +
-						"Do you want to continue?";
-				int retVal = JOptionPane.showConfirmDialog(DialogUtils.getDialogParent(), message, "Continue?", JOptionPane.OK_CANCEL_OPTION);
-				if(retVal != JOptionPane.OK_OPTION){
-					return false;
-				}
-			}
+		// Warn
+		if(isOverlap){			
+			String overlapMessage = "";
+			if(isOverlapExactlySame){
+				overlapMessage = "Overlapping parts are identical (" + nExactOverlap +"bases)";
+			}else{
+				overlapMessage = "Overlapping parts are different (" + nDifferentOverlap + "/" + (nDifferentOverlap + nExactOverlap) + ")";
 
-			//
-			// OK go ahead merge
-			//
-			byte[] merged = new byte[seq1.getLength()];	
-			for(int n = 0; n < seq1.getLength(); n++){
-				merged[n] = NucleotideUtilities.getConsensusFromBases(seq1.getBaseAtPos(n),seq2.getBaseAtPos(n));
 			}
-			if(isOverlap && allowOverlap == false){
-				// skip
+			String message="Sequences are overlapping - " + overlapMessage + LF +
+					"Do you want to continue?";
+
+			// TODO I dont know how to deal with dialogs in a nice pattern way if it is within the alignment class? Maybe it should be splited
+			// and moved into aliview-class (for example to do a temporary merge and then ask and then call alignment again to do join
+			int retVal = JOptionPane.showConfirmDialog(DialogUtils.getDialogParent(), message, "Continue?", JOptionPane.OK_CANCEL_OPTION);
+			if(retVal != JOptionPane.OK_OPTION){
+				return false;
 			}
-			else{
-				// set new merged data - keep selection
-				seq1.setBases(merged);
-				seq1.setName(seq1.getName() + "_merged_" + seq2.getName());
-				seq2.setBases(merged.clone());
-				seq2.setName(seq2.getName() + "_merged_" + seq1.getName());
-				isMerged = true;
+		}
+		else{
+			String message= "Sequences are NOT overlapping" + LF +
+					"Do you want to continue?";
+			int retVal = JOptionPane.showConfirmDialog(DialogUtils.getDialogParent(), message, "Continue?", JOptionPane.OK_CANCEL_OPTION);
+			if(retVal != JOptionPane.OK_OPTION){
+				return false;
 			}
-			
-			if(isMerged){
-				List<Sequence> mergedSeqs = new ArrayList<Sequence>(2);
-				mergedSeqs.add(seq1);
-				mergedSeqs.add(seq2);
-				fireSequencesChanged(mergedSeqs);
-			}
-			
-			
-			return isMerged;
+		}
+
+		//
+		// OK go ahead merge
+		//
+		byte[] merged = new byte[seq1.getLength()];	
+		for(int n = 0; n < seq1.getLength(); n++){
+			merged[n] = NucleotideUtilities.getConsensusFromBases(seq1.getBaseAtPos(n),seq2.getBaseAtPos(n));
+		}
+		if(isOverlap && allowOverlap == false){
+			// skip
+		}
+		else{
+			// set new merged data - keep selection
+			seq1.setBases(merged);
+			seq1.setName(seq1.getName() + "_merged_" + seq2.getName());
+			seq2.setBases(merged.clone());
+			seq2.setName(seq2.getName() + "_merged_" + seq1.getName());
+			isMerged = true;
+		}
+
+		if(isMerged){
+			List<Sequence> mergedSeqs = new ArrayList<Sequence>(2);
+			mergedSeqs.add(seq1);
+			mergedSeqs.add(seq2);
+			fireSequencesChanged(mergedSeqs);
+		}
+
+
+		return isMerged;
 	}
-	
 
-	
 
-	
-	
+
+
+
+
 	public ArrayList<Sequence> findDuplicates(){
-	
+
 		HashSet<Sequence> dupeSequences = new HashSet<Sequence>();
 		for(int n = 0; n < delegateSequences.size(); n++){
 			Sequence testSeq = delegateSequences.get(n);
-			
+
 			boolean isDupe = false;
-			
+
 			for(int m = n + 1; m < delegateSequences.size(); m++){
-				
+
 				Sequence otherSeq = delegateSequences.get(m);
-				
+
 				if(testSeq.getLength() == otherSeq.getLength()){
 					if(SequenceUtils.isSeqResiduesIdentical(testSeq, otherSeq)){
 						// add the dupes (since it is a set they will only be added once
@@ -1731,10 +1731,10 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 					logger.debug("wrong len");
 				}
 			}
-			
-			
+
+
 			logger.info("dupeSequences.size()" + dupeSequences.size());
-			
+
 		}
 		ArrayList<Sequence> dupeList = new ArrayList<Sequence>(dupeSequences);
 		return dupeList;
@@ -1747,36 +1747,36 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		}
 		return cachedTranslatedHistogram;
 	}
-	
-	
-	
+
+
+
 	private AliHistogram createTranslatedHistogram() {
 		long startTime = System.currentTimeMillis();
-		
+
 		boolean wasTranslated = isTranslated;
 		setTranslation(true);
-		
+
 		AAHistogram histogram = new AAHistogram(getLongestSequenceLength());
-		
+
 		for(Sequence seq: delegateSequences){
 			for(int n = 0; n < seq.getLength(); n++){ 
 				histogram.addAminoAcid(n,AminoAcid.getAminoAcidFromByte(seq.getBaseAtPos(n)));
 			}
 		}
-		
+
 		if(wasTranslated == false){
 			setTranslation(false);
 		}
-		
+
 		long endTime = System.currentTimeMillis();
 		logger.info("Create translated histogram took " + (endTime - startTime) + " milliseconds");
 		return histogram;
 	}
-	*/
-	
-	 public int size() {
-	    return delegateSequences.size();
-	 }
+	 */
+
+	public int size() {
+		return delegateSequences.size();
+	}
 
 	public void sortSequencesByThisModel(AlignmentListModel prevSeqOrder){
 		ArrayList<Sequence> seqsInOrder = new ArrayList<Sequence>(prevSeqOrder.size());
@@ -1803,32 +1803,32 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		}
 		return dupes;
 	}
-	
+
 	//
 	// DO something with selected sequences
 	//
-	
+
 	public List<Sequence> replaceSelectedBasesWithGap(boolean undoable) {
 		return replaceSelectedWithChar((char)SequenceUtils.GAP_SYMBOL, undoable);
 	}
-		
+
 	public List<Sequence> replaceSelectedWithChar(char newChar, boolean undoable) {	
 		List<Sequence> editedSequences = new ArrayList<Sequence>();
 		List<Sequence> selectedSeqs = selectionModel.getSelectedSequences();
 		boolean wasReplaced = false;
 		for(Sequence seq: selectedSeqs){
-				if(undoable){
-					editedSequences.add(seq.getCopy());
-				}
-				seq.replaceSelectedBasesWithChar(newChar);
-				wasReplaced = true;
+			if(undoable){
+				editedSequences.add(seq.getCopy());
+			}
+			seq.replaceSelectedBasesWithChar(newChar);
+			wasReplaced = true;
 		}
 		if(wasReplaced){
 			fireSequencesChanged(selectionModel.getSelectionBounds());
 		}
 		return editedSequences;
 	}
-	
+
 	/**
 	 * 
 	 * TODO probably change this into two methods, getSelectedPositions and then deletePositions...
@@ -1846,18 +1846,18 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		}
 		return editedSequences;
 	}
-	
-	
+
+
 	//
 	// ****************** SELECTION
 	//
-	
+
 	public ArrayList<Sequence> findAndSelectDuplicates(){
 		ArrayList<Sequence> dupes = findDuplicates();
 		selectionModel.selectSequences(dupes);
 		return dupes;
 	}
-	
+
 	public void selectDuplicateNamesSequences() {
 		ArrayList<String> dupeNames = findDuplicateNames();
 		List<Sequence> dupeSeqs = new ArrayList<Sequence>();
@@ -1866,7 +1866,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		}
 		selectionModel.selectSequences(dupeSeqs);
 	}
-	
+
 	public void selectEverythingWithinGaps(Point point) {
 		if(!rangeCheck(point)){
 			return;
@@ -1889,7 +1889,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 			selectionModel.selectColumns(columns);
 		}
 	}
-	
+
 	public int getSelectedColumnCount() {
 		return selectionModel.getSelectedColumnCount();
 	}
@@ -1897,11 +1897,11 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 	public int getSelectedSequencesCount() {
 		return selectionModel.getSelectedSequencesCount();
 	}
-	
+
 	public List<Sequence> getSelectedSequences() {
 		return selectionModel.getSelectedSequences();
 	}
-	
+
 	public String getSelectionNames() {
 		return selectionModel.getSelectionNames();
 	}
@@ -1909,11 +1909,11 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 	public int getFirstSelectedWholeColumn() {
 		return selectionModel.getFirstSelectedWholeColumn();	
 	}
-	
+
 	public int getLastSelectedWholeColumn() {
 		return selectionModel.getLastSelectedWholeColumn();
 	}
-	
+
 	//
 	// TODO domething about this one
 	//
@@ -1924,7 +1924,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 	public void expandSelectionDown() {
 		selectionModel.selectionExtendDown();
 	}
-	
+
 	public String getSelectionAsNucleotides() {
 		return selectionModel.getSelectionAsNucleotides();
 	}
@@ -1932,19 +1932,19 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 	public int getFirstSelectedSequenceIndex(){
 		return selectionModel.getFirstSelectedSequenceIndex();
 	}
-	
+
 	public int getLastSelectedSequenceIndex(){
 		return selectionModel.getLastSelectedSequenceIndex();
 	}
-	
+
 	public String getFirstSelectedName() {
 		return selectionModel.getFirstSelectedName();
 	}
-	
+
 	public List<Sequence> setFirstSelectedName(String newName) {
 		return selectionModel.setFirstSelectedName(newName);
 	}
-	
+
 	public Sequence getFirstSelected() {
 		return selectionModel.getFirstSelected();
 	}
@@ -1952,23 +1952,23 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 	public boolean hasSelection() {
 		return selectionModel.hasSelection();
 	}
-	
+
 	public void selectAll() {
 		selectionModel.selectAll();
 	}
-	
+
 	public void selectionExtendRight() {
 		selectionModel.selectionExtendRight();
 	}
-	
+
 	public void selectionExtendLeft() {
 		selectionModel.selectionExtendLeft();
 	}
-	
+
 	public void invertSelection() {
 		selectionModel.invertSelection();
 	}
-	
+
 	public void copySelectionFromInto(int indexFrom, int indexTo) {
 		selectionModel.copySelectionFromInto(indexFrom, indexTo);
 	}
@@ -1976,7 +1976,7 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 	public void selectColumn(int columnIndex) {
 		selectionModel.selectColumn(columnIndex);
 	}
-	
+
 	public void clearColumnSelection(int columnIndex) {
 		selectionModel.clearColumnSelection(columnIndex);
 	}
@@ -1988,32 +1988,32 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 	public Point getFirstSelectedPos() {
 		return selectionModel.getFirstSelectedPos();
 	}
-	
+
 	public Point getLastSelectedPos() {
 		return selectionModel.getLastSelectedPos();
 	}
-	
+
 	public Point getFirstSelectedUngapedPos() {
 		return selectionModel.getFirstSelectedUngapedPos();
 	}
-	
+
 	public void setSelectionWithin(Rectangle bounds) {
 		selectionModel.setSelectionWithin(bounds);
 	}
-	
+
 	public void selectSequencesByName(String name) {
 		ArrayList<Sequence> foundSeqs = getSequencesByName(name);
 		selectionModel.selectSequences(foundSeqs);
 	}
-	
+
 	public ArrayList<Integer> getIndicesOfSequencesWithSelection() {
 		return selectionModel.getIndicesOfSequencesWithSelection();
 	}
-	
+
 	public ArrayList<Integer> getIndicesOfSequencesWithAllSelected() {
 		return selectionModel.getIndicesOfSequencesWithAllSelected();
 	}
-	
+
 	public void selectSequencesWithIndex(List<Integer> listVals){
 		selectionModel.selectSequencesWithIndex(listVals);
 	}
@@ -2021,11 +2021,11 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 	public void selectSequencesWithIndex(int[] selectedIndex){
 		selectionModel.selectSequencesWithIndex(selectedIndex);
 	}
-	
+
 	public void clearSequenceSelection() {
 		selectionModel.clearSequenceSelection();
 	}
-	
+
 	public void selectSequenceWithIndex(int y) {
 		selectionModel.selectSequenceWithIndex(y);	
 	}
@@ -2038,11 +2038,11 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 	public void setSelectionAt(int xPos, int yPos, boolean clearFirst) {
 		selectionModel.setSelectionAt(xPos, yPos, clearFirst);
 	}
-	
+
 	public long getSelectionSize(){
 		return selectionModel.getSelectionSize();
 	}
-	
+
 	public boolean hasFullySelectedSequences() {
 		return selectionModel.hasFullySelectedSequences();
 	}
@@ -2071,23 +2071,23 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 	public void addAlignmentSelectionListener(AlignmentSelectionListener listener) {
 		selectionModel.addAlignmentSelectionListener(listener);
 	}
-	
-	
+
+
 	//
 	// ****************** END SELECTION
 	//
-	
-	
-	
+
+
+
 	//
 	// ****************** SEQUENCES CHANGED EVENTS
 	//
-	
+
 	private void fireSequencesChanged(Sequence seq) {
 		int index = delegateSequences.indexOf(seq);
 		fireSequencesChanged(index, index);
 	}
-	
+
 	private void fireSequencesChanged(List<Sequence> seqs) {
 		int minIndex = delegateSequences.size();
 		int maxIndex = 0;
@@ -2096,68 +2096,68 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 			minIndex = Math.min(index, minIndex);
 			maxIndex = Math.max(index, maxIndex);
 		}
-		
+
 		fireSequencesChanged(minIndex, maxIndex);
-		
+
 	}
-	
+
 	private void fireSequencesChanged(int minIndex, int maxIndex) {
 		// TODO this might be a bit ugly...
 		cachedLongestSequenceLength = -1;
 		Rectangle rect = new Rectangle(0,minIndex, this.getLongestSequenceLength(), maxIndex + 1);
 		fireSequencesChanged(rect);
-		
+
 	}
 
 	private void fireSequencesChanged(Rectangle rect) {
 		sequencesChanged(rect);
-				
+
 	}
-	
+
 	private void sequencesChanged(Rectangle rect) {
 		logger.info("sequencesChanged");
 		// clear cached values
 		cachedLongestSequenceName = -1;
 		cachedLongestSequenceLength = -1;
 		cachedHistogram = null;
-		
-		
+
+
 		Object[] listeners = listenerList.getListenerList();
 		AlignmentDataEvent e = null;
-	    	 
-	         for (int i = listeners.length - 2; i >= 0; i -= 2) {
-	        	 
-	             if (listeners[i] == AlignmentDataListener.class) {
-	                 if (e == null) {
-	                     e = new AlignmentDataEvent(this, ListDataEvent.CONTENTS_CHANGED, rect);
-	                 }
-	                 ((AlignmentDataListener)listeners[i+1]).contentsChanged(e);
-	             }
-	             else if (listeners[i] == ListDataListener.class) {
-	                 if (e == null) {
-	                     e = new AlignmentDataEvent(this, ListDataEvent.CONTENTS_CHANGED, rect);
-	                 }
-	                 ((ListDataListener)listeners[i+1]).contentsChanged(e);
-	             }
-	         }
+
+		for (int i = listeners.length - 2; i >= 0; i -= 2) {
+
+			if (listeners[i] == AlignmentDataListener.class) {
+				if (e == null) {
+					e = new AlignmentDataEvent(this, ListDataEvent.CONTENTS_CHANGED, rect);
+				}
+				((AlignmentDataListener)listeners[i+1]).contentsChanged(e);
+			}
+			else if (listeners[i] == ListDataListener.class) {
+				if (e == null) {
+					e = new AlignmentDataEvent(this, ListDataEvent.CONTENTS_CHANGED, rect);
+				}
+				((ListDataListener)listeners[i+1]).contentsChanged(e);
+			}
+		}
 	}
-	
+
 	private void fireSequencesChangedAll() {
 		fireSequencesChanged(0, this.size() -1);
 	}
-	
+
 	private void fireSequencesOrderChangedAll() {
 		fireSequencesChanged(0, this.size() -1);
 	}
-	
+
 	private void fireSequencesChangedAllNew() {
 		fireSequencesChanged(0, this.size() -1);
 	}
-	
+
 	private void fireSequenceIntervalRemoved(int index0, int index1){
 		fireSequencesChanged(index0, index1);
 	}
-	
+
 	private void fireSequenceIntervalAdded(int index0, int index1) {
 		if(index0 < 0 || index1 < 0){
 			return;
@@ -2173,22 +2173,22 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 				selectionModel.reTranslateSelection(getAlignment().getAlignmentMeta());
 			}
 			isTranslated = shouldTrans;
-			
-			
+
+
 			fireSequencesChangedAll();
 		}
 	}
-	
+
 	public AlignmentMeta getAlignmentMeta(){
 		if(getAlignment() != null){
 			return getAlignment().getAlignmentMeta();
 		}
 		return null;
 	}
-	
+
 	private Alignment getAlignment() {
 		return this.alignment;
-		
+
 	}
 
 	public boolean isTranslated() {

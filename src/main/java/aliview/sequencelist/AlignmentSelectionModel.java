@@ -35,7 +35,7 @@ import aliview.utils.Utils;
  */
 
 public class AlignmentSelectionModel{
-	
+
 	private static final Logger logger = Logger.getLogger(AlignmentSelectionModel.class);
 	private static final String LF = System.getProperty("line.separator");
 	private AlignmentListModel sequences;
@@ -48,12 +48,12 @@ public class AlignmentSelectionModel{
 		this.sequences = sequenceListModel;
 		this.sequenceListSelectionModel = new SequenceListSelectionModel(this);
 	}
-	
-	
+
+
 	public SequenceListSelectionModel getSequenceListSelectionModel() {
 		return sequenceListSelectionModel;
 	}
-	
+
 
 	public ArrayList<Integer> getIndicesOfSequencesWithSelection() {
 		ArrayList<Integer> indices = new ArrayList<Integer>();
@@ -64,7 +64,7 @@ public class AlignmentSelectionModel{
 		}
 		return indices;
 	}
-	
+
 	public ArrayList<Integer> getIndicesOfSequencesWithAllSelected() {
 		ArrayList<Integer> indices = new ArrayList<Integer>();
 		for(int n = 0; n < sequences.size(); n++){
@@ -74,26 +74,26 @@ public class AlignmentSelectionModel{
 		}
 		return indices;
 	}
-	
+
 	public boolean isBaseSelected(int x, int y) {
 		//logger.info("isBaseSel" + sequences.get(y));
 		boolean isSel = sequences.get(y).isBaseSelected(x);
-//		if(isSel){ logger.info("isSel" + sequences.get(y));};
+		//		if(isSel){ logger.info("isSel" + sequences.get(y));};
 		return sequences.get(y).isBaseSelected(x);
 	}
-	
-	
-	
+
+
+
 	public void selectSequenceWithIndex(int index){
 		setSequenceSelection(index, index);
 	}
-	
+
 	public void selectSequencesWithIndex(List<Integer> listVals){
 		Integer[] array = listVals.toArray(new Integer[listVals.size()]);	
 		int[] intVals = ArrayUtils.toPrimitive(array, 0);
 		selectSequencesWithIndex(intVals);
 	}
-	
+
 	public void selectSequencesWithIndex(int[] selectedIndex){
 		List<Sequence> seqs = new ArrayList<Sequence>(selectedIndex.length);
 		for(int index: selectedIndex){
@@ -101,38 +101,38 @@ public class AlignmentSelectionModel{
 		}	
 		changeSelection(seqs, true);
 	}
-	
+
 	public void setSelectionAt(int xPos, int yPos) {
 		setSelectionAt(xPos, yPos, false);
 	}
-	
+
 	public void setSelectionAt(int xPos, int yPos, boolean clearFirst) {
 		//delegateLSM.setAnchorSelectionIndex(yPos);
 		//delegateLSM.setLeadSelectionIndex(yPos);
 		changeSelection(xPos, yPos, xPos, yPos, clearFirst);
 	}
-	
-	
+
+
 	private void changeSelection(int x1, int y1, int x2, int y2, boolean clearFirst){
-		
+
 		Rectangle newRect = new Rectangle(Math.min(x1, x2), Math.min(y1, y2), Math.abs(x1-x2), Math.abs(y1-y2));
-		
+
 		logger.info("newRect" + newRect);
 
 		// Get current selection so we can fire a correct bounding box
 		Rectangle oldSelectRect = getSelectionBounds();
-		
+
 		// value is adjusting true
-		
+
 		for(int n = 0; n < sequences.size(); n++){
-			
+
 			if(n>= newRect.getMinY() && n <= newRect.getMaxY()){
 				sequences.get(n).setSelection(newRect.x, newRect.x + newRect.width, clearFirst);
 			}else{
 				sequences.get(n).clearAllSelection();
 			}
 		}
-		
+
 		// affected area is old selection plus new
 		if(clearFirst && oldSelectRect != null){
 			logger.info("newRect" + newRect);
@@ -152,41 +152,41 @@ public class AlignmentSelectionModel{
 	public void setSequenceSelection(int index0, int index1) {
 		changeSelection(index0, index1, true);
 	}
-	
+
 	public void addSequenceSelection(int index0, int index1) {
 		changeSelection(index0, index1, false);
 	}
-	
+
 	public void removeSequenceSelection(int index0, int index1) {
 		// set value is adjusting true
-		
+
 		int minIndex = Math.min(index0, index1);
 		int maxIndex = Math.max(index0, index1);
-				
-				for(int n = 0; n < sequences.size(); n++){
-					
-					if(n>= minIndex && n<= maxIndex){
-						sequences.get(n).clearAllSelection();
-					}else{
-						// nothing
-					}
-				}
-				
-				// fire all because on insert and delete indexes might change
-				fireSelectionChanged(0, sequences.size());
+
+		for(int n = 0; n < sequences.size(); n++){
+
+			if(n>= minIndex && n<= maxIndex){
+				sequences.get(n).clearAllSelection();
+			}else{
+				// nothing
+			}
+		}
+
+		// fire all because on insert and delete indexes might change
+		fireSelectionChanged(0, sequences.size());
 
 	}
-	
+
 	public void setSequenceSelection(List<Sequence> moreSeqs) {
 		changeSelection(moreSeqs, true);
-		
+
 	}
-	
+
 	private void changeSelection(List<Sequence> toSelect, boolean clearFirst){
 		Rectangle oldSelect = getSelectionBounds();
 		logger.info("toSelect.size()" + toSelect.size());
 		for(Sequence seq: sequences){
-			
+
 			if(toSelect.contains(seq)){
 				logger.debug("select" + seq);
 				seq.selectAllBases();
@@ -194,26 +194,26 @@ public class AlignmentSelectionModel{
 			else if(clearFirst){
 				seq.clearAllSelection();
 			}
-			
+
 		}
 		Rectangle newSelect = getSelectionBounds();
 		logger.info("newSelect" + newSelect);		
 		Rectangle addedSelection = Utils.addRects(oldSelect, newSelect);
-		
+
 		if(addedSelection != null){
 			fireSelectionChanged(addedSelection, false);
 		}
 	}
-		
-	
+
+
 	private void changeSelection(int index0, int index1, boolean clearFirst){
-		
+
 		// set value is adjusting true
 		int minIndex = Math.min(index0, index1);
-        int maxIndex = Math.max(index0, index1);
-		
+		int maxIndex = Math.max(index0, index1);
+
 		for(int n = 0; n < sequences.size(); n++){
-			
+
 			if(n>= minIndex && n<= maxIndex){
 				sequences.get(n).selectAllBases();
 			}else{
@@ -222,19 +222,19 @@ public class AlignmentSelectionModel{
 				}
 			}
 		}
-		
+
 		// Update all
 		fireSelectionChanged(0, sequences.size());
-		
+
 		// set value is adjusting false
-//		if(clearFirst || updateAll){
-//			fireSelectionChanged(0, sequences.size());
-//		}else{
-//			fireSelectionChanged(minIndex, maxIndex);
-//		}
+		//		if(clearFirst || updateAll){
+		//			fireSelectionChanged(0, sequences.size());
+		//		}else{
+		//			fireSelectionChanged(minIndex, maxIndex);
+		//		}
 	}
-		
-	
+
+
 	public long getSelectionSize(){
 		long size = 0;
 		for(Sequence sequence : this.sequences){
@@ -242,7 +242,7 @@ public class AlignmentSelectionModel{
 		}
 		return size;
 	}
-	
+
 	public Rectangle getSelectionBounds(){
 		if(! hasSelection()){
 			return null;
@@ -252,7 +252,7 @@ public class AlignmentSelectionModel{
 		bounds.add(getLastSelectedPos());
 		return bounds;
 	}
-	
+
 	public List<Sequence> getSelectedSequences() {
 		ArrayList<Sequence> selection = new ArrayList<Sequence>();
 		for(Sequence sequence : sequences){
@@ -262,7 +262,7 @@ public class AlignmentSelectionModel{
 		}
 		return selection;
 	}
-	
+
 	public List<Sequence> getUnSelectedSequences() {
 		ArrayList<Sequence> selection = new ArrayList<Sequence>();
 		for(Sequence sequence : sequences){
@@ -272,46 +272,46 @@ public class AlignmentSelectionModel{
 		}
 		return selection;
 	}
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
 	public void selectBases(Sequence seq, Interval foundPos) {
 		seq.setSelection(foundPos.startPos, foundPos.endPos, false);
 		fireSelectionChanged(seq, true);
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 
 	public void selectAllBasesUntilGapInThisSequence(Sequence sequence, int x){
 		sequence.selectAllBasesUntilGap(x);
 		fireSelectionChanged(sequence, false);
 	}
-	
-	
 
-	
+
+
+
 
 	public void selectSequences(List<Sequence> seqs) {
 		changeSelection(seqs, true);
 	}
 
 	public String getSelectionAsNucleotides() {
-			StringBuilder selection = new StringBuilder();
-			for(Sequence sequence : sequences){
-				if(sequence.getSelectedBasesAsString() != null && sequence.getSelectedBasesAsString().length() > 0){
-					selection.append(sequence.getSelectedBasesAsString());
-					selection.append(LF);
-				}
+		StringBuilder selection = new StringBuilder();
+		for(Sequence sequence : sequences){
+			if(sequence.getSelectedBasesAsString() != null && sequence.getSelectedBasesAsString().length() > 0){
+				selection.append(sequence.getSelectedBasesAsString());
+				selection.append(LF);
 			}
-			return selection.toString();
+		}
+		return selection.toString();
 	}
-	
+
 	public String getFirstSelectedName() {
 		String name = null;
 		if(getFirstSelected() != null){
@@ -319,7 +319,7 @@ public class AlignmentSelectionModel{
 		}
 		return name;
 	}
-	
+
 	public List<Sequence> setFirstSelectedName(String newName) {
 		List<Sequence> editedSequences = new ArrayList<Sequence>();
 		if(newName == null){
@@ -331,7 +331,7 @@ public class AlignmentSelectionModel{
 		}
 		return editedSequences;
 	}
-	
+
 	public Sequence getFirstSelected() {
 		for(int n = 0; n < sequences.size(); n++){
 			if(sequences.get(n).hasSelection()){
@@ -340,7 +340,7 @@ public class AlignmentSelectionModel{
 		}
 		return null;
 	}
-	
+
 	public boolean hasSelection() {
 		long startTime = System.currentTimeMillis();
 		for(Sequence sequence : sequences){
@@ -352,14 +352,14 @@ public class AlignmentSelectionModel{
 		logger.info("hasSelection false " + (endTime - startTime) + " milliseconds");
 		return false;
 	}
-	
+
 	public void selectAll() {
 		for(Sequence seq: sequences){
 			seq.selectAllBases();
 		}
 		fireSelectionChangedAll();
 	}
-	
+
 	public void selectionExtendRight(){
 		if(!hasSelection()){
 			return;
@@ -372,7 +372,7 @@ public class AlignmentSelectionModel{
 		newSelect.add(oldSelect);
 		fireSelectionChanged(newSelect, false);
 	}
-	
+
 	public void selectionExtendLeft() {
 		if(!hasSelection()){
 			return;
@@ -385,13 +385,13 @@ public class AlignmentSelectionModel{
 		newSelect.add(oldSelect);
 		fireSelectionChanged(newSelect, false);
 	}
-	
+
 	public void selectionExtendDown() {
 		if(!hasSelection()){
 			return;
 		}
 		Rectangle oldSelect = getSelectionBounds();
-		
+
 		// start one above bottom
 		for(int n = sequences.size()-2; n >= 1; n--){
 			Sequence seq = sequences.get(n);
@@ -406,19 +406,19 @@ public class AlignmentSelectionModel{
 		newSelect.add(oldSelect);
 		fireSelectionChanged(newSelect, false);
 	}
-	
-	
+
+
 	public void invertSelection() {
 		for(Sequence seq: sequences){
 			seq.invertSelection();
 		}
 		fireSelectionChangedAll();
 	}
-	
+
 	public void copySelectionFromInto(int indexFrom, int indexTo) {
 		Sequence seqFrom = sequences.get(indexFrom);
 		Sequence seqTo = sequences.get(indexTo);
-		
+
 		for(int x = 0; x < seqFrom.getLength() || x < seqTo.getLength(); x++){
 			if(seqFrom.isBaseSelected(x)){
 				seqTo.setSelectionAt(x);
@@ -427,9 +427,9 @@ public class AlignmentSelectionModel{
 				seqTo.clearSelectionAt(x);
 			}
 		}
-		
+
 		fireSelectionChanged(indexFrom, indexTo, false);
-		
+
 	}
 
 	public void selectColumn(int columnIndex) {
@@ -438,7 +438,7 @@ public class AlignmentSelectionModel{
 		}
 		fireSelectionChanged(new Rectangle(columnIndex,0,columnIndex,sequences.size()), false);
 	}
-	
+
 	public void selectColumns(List<Integer> columns){
 		int maxIndex = 0;
 		int minIndex = sequences.getLongestSequenceLength();
@@ -451,7 +451,7 @@ public class AlignmentSelectionModel{
 		}
 		fireSelectionChanged(new Rectangle(minIndex,0,maxIndex,sequences.size()), false);
 	}
-	
+
 	public void clearColumnSelection(int columnIndex) {
 		for(Sequence seq: sequences){
 			seq.clearSelectionAt(columnIndex);
@@ -479,7 +479,7 @@ public class AlignmentSelectionModel{
 			return null;
 		}
 	}
-	
+
 	public int getFirstSelectedSequenceIndex() {
 		for(int n = 0; n < sequences.size(); n++){
 			if(sequences.get(n).hasSelection()){
@@ -488,7 +488,7 @@ public class AlignmentSelectionModel{
 		}
 		return -1;
 	}
-	
+
 	public int getLastSelectedSequenceIndex() {
 		for(int n = sequences.size() - 1; n >= 0; n--){
 			if(sequences.get(n).hasSelection()){
@@ -497,7 +497,7 @@ public class AlignmentSelectionModel{
 		}
 		return -1;
 	}
-	
+
 	public Point getLastSelectedPos() {
 		int n = getLastSelectedSequenceIndex();
 		if(n != -1){
@@ -506,7 +506,7 @@ public class AlignmentSelectionModel{
 			return null;
 		}
 	}
-	
+
 	public Point getFirstSelectedUngapedPos() {
 		for(int n = 0; n < sequences.size(); n++){
 			if(sequences.get(n).hasSelection()){
@@ -518,8 +518,8 @@ public class AlignmentSelectionModel{
 		}
 		return null;		
 	}
-	
-	
+
+
 	public void setSelectionWithin(Rectangle bounds) {
 		changeSelection(bounds.x, bounds.y, bounds.x + bounds.width, bounds.y + bounds.height, true);
 	}
@@ -532,7 +532,7 @@ public class AlignmentSelectionModel{
 		}
 		return false;
 	}
-	
+
 	public int getSelectedColumnCount() {
 		BitSet colSelect = new BitSet();
 		for(Sequence seq: sequences){
@@ -555,9 +555,9 @@ public class AlignmentSelectionModel{
 		}
 		return count;
 	}
-	
-	
-	
+
+
+
 	public String getSelectionNames() {
 		String names = "";
 		for(Sequence seq: sequences){
@@ -569,10 +569,10 @@ public class AlignmentSelectionModel{
 		if(names.length() > 0){
 			names = StringUtils.removeEnd(names, LF);
 		}
-		
+
 		return names;
 	}
-	
+
 	public int getFirstSelectedWholeColumn() {
 		Point pos = getFirstSelectedPos();
 		if(pos == null){
@@ -588,7 +588,7 @@ public class AlignmentSelectionModel{
 			return pos.x;
 		}	
 	}
-	
+
 	public int getLastSelectedWholeColumn() {
 		Point pos = getLastSelectedPos();
 		if(pos == null){
@@ -604,186 +604,186 @@ public class AlignmentSelectionModel{
 			return pos.x;
 		}	
 	}
-	
-	
-	
+
+
+
 	public void clearAllSelectionInSequenceWithIndex(int index) {
 		sequences.get(index).clearAllSelection();
 		fireSelectionChanged(index, index);
 	}
-	
+
 	public void clearSequenceSelection() {
 
-			Rectangle oldSelectRectangle = getSelectionBounds();
-			for(Sequence seq: sequences){
-				seq.clearAllSelection();
-			}
-			if(oldSelectRectangle != null){
-				fireSelectionChanged(oldSelectRectangle, false);
-			}
+		Rectangle oldSelectRectangle = getSelectionBounds();
+		for(Sequence seq: sequences){
+			seq.clearAllSelection();
+		}
+		if(oldSelectRectangle != null){
+			fireSelectionChanged(oldSelectRectangle, false);
+		}
 	}
-	
-	
-	
+
+
+
 	/** {@inheritDoc} */
-    public void addAlignmentSelectionListener(AlignmentSelectionListener l) {
-        listenerList.add(AlignmentSelectionListener.class, l);
-    }
+	public void addAlignmentSelectionListener(AlignmentSelectionListener l) {
+		listenerList.add(AlignmentSelectionListener.class, l);
+	}
 
-    /** {@inheritDoc} */
-    public void removeSequenceListSelectionListener(AlignmentSelectionListener l) {
-        listenerList.remove(AlignmentSelectionListener.class, l);
-    }
+	/** {@inheritDoc} */
+	public void removeSequenceListSelectionListener(AlignmentSelectionListener l) {
+		listenerList.remove(AlignmentSelectionListener.class, l);
+	}
 
-    /**
-     * Returns an array of all the list selection listeners
-     * registered on this <code>DefaultListSelectionModel</code>.
-     *
-     * @return all of this model's <code>ListSelectionListener</code>s
-     *         or an empty
-     *         array if no list selection listeners are currently registered
-     *
-     * @see #addListSelectionListener
-     * @see #removeListSelectionListener
-     *
-     * @since 1.4
-     */
-    public AlignmentSelectionListener[] getAlignmentSelectionListeners() {
-        return listenerList.getListeners(AlignmentSelectionListener.class);
-    }
+	/**
+	 * Returns an array of all the list selection listeners
+	 * registered on this <code>DefaultListSelectionModel</code>.
+	 *
+	 * @return all of this model's <code>ListSelectionListener</code>s
+	 *         or an empty
+	 *         array if no list selection listeners are currently registered
+	 *
+	 * @see #addListSelectionListener
+	 * @see #removeListSelectionListener
+	 *
+	 * @since 1.4
+	 */
+	public AlignmentSelectionListener[] getAlignmentSelectionListeners() {
+		return listenerList.getListeners(AlignmentSelectionListener.class);
+	}
 
 
-    /**
-     * Notifies <code>ListSelectionListeners</code> that the value
-     * of the selection, in the closed interval <code>firstIndex</code>,
-     * <code>lastIndex</code>, has changed.
-     */
-    protected void fireSelectionChanged(int firstIndex, int lastIndex) {
-    	fireSelectionChanged(firstIndex, lastIndex, getValueIsAdjusting());
-    }
-    
-    protected void fireSelectionChangedAll() {
-    	fireSelectionChanged(0, sequences.size(), getValueIsAdjusting());
-    }
+	/**
+	 * Notifies <code>ListSelectionListeners</code> that the value
+	 * of the selection, in the closed interval <code>firstIndex</code>,
+	 * <code>lastIndex</code>, has changed.
+	 */
+	protected void fireSelectionChanged(int firstIndex, int lastIndex) {
+		fireSelectionChanged(firstIndex, lastIndex, getValueIsAdjusting());
+	}
 
-    private boolean getValueIsAdjusting() {
+	protected void fireSelectionChangedAll() {
+		fireSelectionChanged(0, sequences.size(), getValueIsAdjusting());
+	}
+
+	private boolean getValueIsAdjusting() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	/**
-     * @param firstIndex the first index in the interval
-     * @param lastIndex the last index in the interval
-     * @param isAdjusting true if this is the final change in a series of
-     *          adjustments
-     * @see EventListenerList
-     */
-    protected void fireSelectionChanged(int index0, int index1, boolean isAdjusting)
-    {
-        Rectangle rect = new Rectangle(0, Math.min(index0, index1), sequences.getLongestSequenceLength(), Math.abs(index0 - index1));
-        fireSelectionChanged(rect, isAdjusting);
-    }
-
-    
-    private void fireSelectionChanged(Sequence sequence, boolean isAdjusting) {
-    	int index = sequences.indexOf(sequence);
-    	fireSelectionChanged(index, index, isAdjusting);
-		
+	 * @param firstIndex the first index in the interval
+	 * @param lastIndex the last index in the interval
+	 * @param isAdjusting true if this is the final change in a series of
+	 *          adjustments
+	 * @see EventListenerList
+	 */
+	protected void fireSelectionChanged(int index0, int index1, boolean isAdjusting)
+	{
+		Rectangle rect = new Rectangle(0, Math.min(index0, index1), sequences.getLongestSequenceLength(), Math.abs(index0 - index1));
+		fireSelectionChanged(rect, isAdjusting);
 	}
-    
-/*
+
+
+	private void fireSelectionChanged(Sequence sequence, boolean isAdjusting) {
+		int index = sequences.indexOf(sequence);
+		fireSelectionChanged(index, index, isAdjusting);
+
+	}
+
+	/*
     private void fireSelectionChanged(int x1, int y1, int x2, int y2, boolean isAdjusting) {
-  */  	
-    	
-    private void fireSelectionChanged(Rectangle rect, boolean isAdjusting) {
-    	logger.info("fire Selection changed + rect" + rect);
-    	 Object[] listeners = listenerList.getListenerList();
-    	 AlignmentSelectionEvent e = null;
-    	 
-         for (int i = listeners.length - 2; i >= 0; i -= 2) {
-             if (listeners[i] == AlignmentSelectionListener.class) {
-                 if (e == null) {
-                     e = new AlignmentSelectionEvent(this, rect, isAdjusting);
-                 }
-                 ((AlignmentSelectionListener)listeners[i+1]).selectionChanged(e);
-             }
-         }
-         
-         // Also let ListView know
-        // delegateLSM.fireValueChanged(rect.y, rect.y + rect.height, isAdjusting);
-         
-         
-        if(AliView.getActiveWindow() != null){
-        	logger.info("Time from last endTim " + (System.currentTimeMillis() - AliView.getActiveWindow().getLastPaneEndTime()) + " milliseconds");
-        }
-		
+	 */  	
+
+	private void fireSelectionChanged(Rectangle rect, boolean isAdjusting) {
+		logger.info("fire Selection changed + rect" + rect);
+		Object[] listeners = listenerList.getListenerList();
+		AlignmentSelectionEvent e = null;
+
+		for (int i = listeners.length - 2; i >= 0; i -= 2) {
+			if (listeners[i] == AlignmentSelectionListener.class) {
+				if (e == null) {
+					e = new AlignmentSelectionEvent(this, rect, isAdjusting);
+				}
+				((AlignmentSelectionListener)listeners[i+1]).selectionChanged(e);
+			}
+		}
+
+		// Also let ListView know
+		// delegateLSM.fireValueChanged(rect.y, rect.y + rect.height, isAdjusting);
+
+
+		if(AliView.getActiveWindow() != null){
+			logger.info("Time from last endTim " + (System.currentTimeMillis() - AliView.getActiveWindow().getLastPaneEndTime()) + " milliseconds");
+		}
+
 	}
 
-    /**
-     * Returns an array of all the objects currently registered as
-     * <code><em>Foo</em>Listener</code>s
-     * upon this model.
-     * <code><em>Foo</em>Listener</code>s
-     * are registered using the <code>add<em>Foo</em>Listener</code> method.
-     * <p>
-     * You can specify the <code>listenerType</code> argument
-     * with a class literal, such as <code><em>Foo</em>Listener.class</code>.
-     * For example, you can query a <code>DefaultListSelectionModel</code>
-     * instance <code>m</code>
-     * for its list selection listeners
-     * with the following code:
-     *
-     * <pre>ListSelectionListener[] lsls = (ListSelectionListener[])(m.getListeners(ListSelectionListener.class));</pre>
-     *
-     * If no such listeners exist,
-     * this method returns an empty array.
-     *
-     * @param listenerType  the type of listeners requested;
-     *          this parameter should specify an interface
-     *          that descends from <code>java.util.EventListener</code>
-     * @return an array of all objects registered as
-     *          <code><em>Foo</em>Listener</code>s
-     *          on this model,
-     *          or an empty array if no such
-     *          listeners have been added
-     * @exception ClassCastException if <code>listenerType</code> doesn't
-     *          specify a class or interface that implements
-     *          <code>java.util.EventListener</code>
-     *
-     * @see #getListSelectionListeners
-     *
-     * @since 1.3
-     */
-    public <T extends EventListener> T[] getListeners(Class<T> listenerType) {
-        return listenerList.getListeners(listenerType);
-    }
+	/**
+	 * Returns an array of all the objects currently registered as
+	 * <code><em>Foo</em>Listener</code>s
+	 * upon this model.
+	 * <code><em>Foo</em>Listener</code>s
+	 * are registered using the <code>add<em>Foo</em>Listener</code> method.
+	 * <p>
+	 * You can specify the <code>listenerType</code> argument
+	 * with a class literal, such as <code><em>Foo</em>Listener.class</code>.
+	 * For example, you can query a <code>DefaultListSelectionModel</code>
+	 * instance <code>m</code>
+	 * for its list selection listeners
+	 * with the following code:
+	 *
+	 * <pre>ListSelectionListener[] lsls = (ListSelectionListener[])(m.getListeners(ListSelectionListener.class));</pre>
+	 *
+	 * If no such listeners exist,
+	 * this method returns an empty array.
+	 *
+	 * @param listenerType  the type of listeners requested;
+	 *          this parameter should specify an interface
+	 *          that descends from <code>java.util.EventListener</code>
+	 * @return an array of all objects registered as
+	 *          <code><em>Foo</em>Listener</code>s
+	 *          on this model,
+	 *          or an empty array if no such
+	 *          listeners have been added
+	 * @exception ClassCastException if <code>listenerType</code> doesn't
+	 *          specify a class or interface that implements
+	 *          <code>java.util.EventListener</code>
+	 *
+	 * @see #getListSelectionListeners
+	 *
+	 * @since 1.3
+	 */
+	public <T extends EventListener> T[] getListeners(Class<T> listenerType) {
+		return listenerList.getListeners(listenerType);
+	}
 
 	public void setTempSelection(Rectangle newSelectRect){
 		if(tempSelectionRect != null && tempSelectionRect.equals(newSelectRect)){
 			// old selection is the same - do nothing
 		}
-		
+
 		if(tempSelectionRect == null){
 			tempSelectionRect = newSelectRect;
 			tempSelectionMaxRect = tempSelectionRect;
 		}
-		
+
 		else{
 			tempSelectionRect = newSelectRect;
 			tempSelectionMaxRect.add(tempSelectionRect);
 			fireSelectionChanged(tempSelectionMaxRect, false);
 		}
-		
+
 	}
 
 	public Rectangle getTempSelection() {
 		return tempSelectionRect;
 	}
-	
+
 	public void clearTempSelection() {
 		this.tempSelectionRect = null;
 	}
-	
+
 	public boolean isSequenceAtLeastPartlyAffectedByTempSelection(int index){
 		if(tempSelectionRect == null){
 			return false;
@@ -821,7 +821,7 @@ public class AlignmentSelectionModel{
 		}
 		fireSelectionChangedAll();
 	}
-	
+
 	public void reTranslateSelection(AlignmentMeta aliMeta) {
 		for(Sequence seq: sequences){
 			if(seq.hasSelection()){
@@ -836,6 +836,6 @@ public class AlignmentSelectionModel{
 			}
 		}
 		fireSelectionChangedAll();
-		
+
 	}
 }

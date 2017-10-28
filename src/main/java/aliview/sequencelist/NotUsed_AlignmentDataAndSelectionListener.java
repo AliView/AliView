@@ -36,45 +36,45 @@ public class NotUsed_AlignmentDataAndSelectionListener implements AlignmentSelec
 	}
 
 	public void intervalRemoved(ListDataEvent e) {
-        logger.info("intervalRemoved");
-        if(e instanceof AlignmentDataEvent){
+		logger.info("intervalRemoved");
+		if(e instanceof AlignmentDataEvent){
 			contentsChanged((AlignmentDataEvent)e);
 		}
 	}  	
-	
+
 	public void contentsChanged(ListDataEvent e) {
 		logger.info("contentsChanged");
 		if(e instanceof AlignmentDataEvent){
 			contentsChanged((AlignmentDataEvent)e);
 		}
 	}
-	
+
 	public void contentsChanged(AlignmentDataEvent e) {
 		logger.info("contentsChanged");
 		if(e.getSource() instanceof FileSequenceAlignmentListModel){
-		//	aliViewWindow.fileSequencesChanged();
+			//	aliViewWindow.fileSequencesChanged();
 		}
-		
+
 		Rectangle grown = new Rectangle(e.getBounds().x - 3, e.getBounds().y - 1, e.getBounds().width + 6, e.getBounds().height + 2);
 		Rectangle paneBounds = alignmentPane.matrixCoordToPaneCoord(grown);
-		
+
 		alignmentPane.validateSize();
 		alignmentPane.validateSequenceOrder();
-		
+
 		//alignmentPane.paintImmediately(paneBounds);
 		//aliList.paintImmediately(aliList.getVisibleRect());
 		//alignmentPane.scrollRectToVisible(paneBounds);
 		//logger.info("paneBounds" + paneBounds);
 		alignmentPane.repaint(paneBounds);
-		
+
 		//alignmentPane.repaint();
 		//aliList.repaint();
-		
+
 		Rectangle visiRect = aliList.getVisibleRect();
 		Rectangle drawListBounds = new Rectangle(visiRect.x,paneBounds.y, visiRect.width, paneBounds.height);
 		aliList.scrollRectToVisible(drawListBounds);
 		aliList.repaint(visiRect.x,paneBounds.y, visiRect.width, paneBounds.height);
-		
+
 	}
 
 	public void selectionChanged(AlignmentSelectionEvent e) {
@@ -84,14 +84,14 @@ public class NotUsed_AlignmentDataAndSelectionListener implements AlignmentSelec
 		Rectangle paneBounds = alignmentPane.matrixCoordToPaneCoord(grown);
 
 		alignmentPane.repaint(paneBounds);
-		
+
 		Rectangle visiRect = aliList.getVisibleRect();
 		Rectangle drawListBounds = new Rectangle(visiRect.x,paneBounds.y, visiRect.width, paneBounds.height);
 		logger.info("drawListBounds" + drawListBounds);
 		aliList.repaint(drawListBounds);
-						
+
 		//logger.info("paneBounds" + paneBounds);
-		
+
 	}
-	
+
 }

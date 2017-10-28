@@ -61,13 +61,13 @@ public class SequenceJList extends javax.swing.JList implements Autoscroll{
 	//private DefaultListModel<String> notUsed;
 	private JScrollPane alignmentScrollPane;
 	private JScrollPane listScrollPane;
-	
-	
+
+
 	public SequenceJList(AlignmentListModel model, double charHeight, AliViewWindow aliWindow) {
 		super(model);
 		//this.addMouseMotionListener(new SequenceListMouseListener());
 		//this.getParent().addMouseMotionListener(new SequenceListMouseListener());
-		
+
 		/*
 		DropTarget old = this.getDropTarget();
 		DropTarget newDT = new MyOtherDropTarget();	
@@ -75,12 +75,12 @@ public class SequenceJList extends javax.swing.JList implements Autoscroll{
 		newDT.setFlavorMap(old.getFlavorMap());
 		newDT.setDefaultActions(old.getDefaultActions());
 		this.setDropTarget(newDT);
-		*/
-		
+		 */
+
 		//jComponent.setTransferHandler(new MyTransferHandler());
 		this.setDropMode(DropMode.INSERT);
 		this.setTransferHandler(new SequenceTransferHandler(aliWindow));
-		
+
 		// Add modified drop target due to otherwise erratic drag-scrolling
 		DropTarget original = this.getDropTarget();// the Swing DropTarget
 		MyDropTarget myDropTarget = new MyDropTarget();
@@ -91,23 +91,23 @@ public class SequenceJList extends javax.swing.JList implements Autoscroll{
 			e.printStackTrace();
 		}// delegate for original behavior
 		this.setDropTarget(myDropTarget);
-		
+
 		this.setDragEnabled(true);
-		
-		
+
+
 		this.setSelectionModel(model.getAlignmentSelectionModel().getSequenceListSelectionModel());
 		//this.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		
-		
+
+
 		this.setCharSize(charHeight);
-		
-		
+
+
 		// int width = model.getLongestSequenceName();
 		// int fixedWidth = 300;
-		
+
 		this.setCellRenderer(new FasterTextCellRenderer()); 	
-		
-		
+
+
 		this.setBorder(new EmptyBorder(0,0,0,0));
 
 		// Remove default ctrl-C action (because it only copys names in list and not sequence)
@@ -121,20 +121,20 @@ public class SequenceJList extends javax.swing.JList implements Autoscroll{
 		map.put(OSNativeUtils.getMoveSelectionDownKeyAccelerator(),"null");
 		map.put(OSNativeUtils.getIncreaseFontSizeKeyAccelerator(),"null");
 		map.put(OSNativeUtils.getDecreaseFontSizeKeyAccelerator(),"null");
-		
+
 	}
-	
+
 	@Override
 	public AlignmentListModel getModel() {
 		// TODO Auto-generated method stub
 		return (AlignmentListModel) super.getModel();
 	}
-	
+
 	public void setModel(AlignmentListModel model) {
 		super.setModel(model);
 	}
 
-	
+
 	public void paintComponent(Graphics g){
 		long startTime = System.currentTimeMillis();
 		Graphics2D g2 = (Graphics2D) g;
@@ -142,7 +142,7 @@ public class SequenceJList extends javax.swing.JList implements Autoscroll{
 		long endTime = System.currentTimeMillis();
 		logger.info("Draw JList took " + (endTime - startTime) + " milliseconds");	
 	}
-	
+
 	@Override
 	public void validate() {
 		long startTime = System.currentTimeMillis();
@@ -151,8 +151,8 @@ public class SequenceJList extends javax.swing.JList implements Autoscroll{
 		synchAlignmentScrollPane();
 		logger.info("Validate JList took " + (endTime - startTime) + " milliseconds");	
 	}
-	
-	
+
+
 	private void synchAlignmentScrollPane(){
 		logger.info("synch ScrollPanes");
 		JScrollPane source = listScrollPane;
@@ -168,16 +168,16 @@ public class SequenceJList extends javax.swing.JList implements Autoscroll{
 	}
 
 	public void setCharSize(double charHeight) {
-	    this.charHeight = charHeight;
-	    
-	    // And now check font size
+		this.charHeight = charHeight;
+
+		// And now check font size
 		float listFontSize = (int)(charHeight -1);
 		if(listFontSize > 13 && !Settings.getUseCustomFontSize().getBooleanValue()){	
 			listFontSize = 13;
 		}	
 		updateCharSize(listFontSize);
 	}
-	
+
 	@Override
 	public void revalidate(){
 		super.revalidate();
@@ -188,17 +188,17 @@ public class SequenceJList extends javax.swing.JList implements Autoscroll{
 		//logger.info(super.getPreferredSize());
 		return super.getPreferredSize();
 	}
-	
+
 	private void updateCharSize(float listFontSize) {
 
-		
+
 		// Fixed cell height is needed or otherwise all items are loaded
 		this.setFixedCellHeight((int)charHeight);
 		this.setFixedCellWidth(this.getModel().getLongestSequenceName()*(int)(charHeight));
 
 		this.setFont(this.getFont().deriveFont(listFontSize));
-		
-		
+
+
 		// Remove List cell renderer att small sizes (saves a lot of drawing speed)
 		if(charHeight < 3 && this.getCellRenderer() != null){
 			this.storedCellRenderer = this.getCellRenderer();
@@ -208,7 +208,7 @@ public class SequenceJList extends javax.swing.JList implements Autoscroll{
 		}
 
 	}
-	
+
 
 	/*
 	 * This is for drop support from SequenceTransferHandler
@@ -221,7 +221,7 @@ public class SequenceJList extends javax.swing.JList implements Autoscroll{
 		this.listScrollPane = listScrollPane;
 		this.alignmentScrollPane = alignmentScrollPane;	
 	}
-	
+
 	/*
 	 * 
 	 * Drop target Autoscroll interface
@@ -236,16 +236,16 @@ public class SequenceJList extends javax.swing.JList implements Autoscroll{
 
 
 	public void autoscroll(Point cursor) {
-	//	logger.info("autoscroll loc=" + cursor);
+		//	logger.info("autoscroll loc=" + cursor);
 		Rectangle visiRect = this.getVisibleRect();
-	//	logger.info("visiRect=" + visiRect);
-		
-		
+		//	logger.info("visiRect=" + visiRect);
+
+
 		// depending on how close pointer is to border the more indexex get visible at a time
-		
+
 		int topDist = cursor.y - visiRect.y;
 		int bottomDist = (visiRect.y + visiRect.height) - cursor.y;
-		
+
 		int scrollSpeed = 0;
 		if(topDist < 20){
 			scrollSpeed = -1;
@@ -262,7 +262,7 @@ public class SequenceJList extends javax.swing.JList implements Autoscroll{
 		if(topDist < 2){
 			scrollSpeed = -5;
 		}
-		
+
 		if(bottomDist < 20){
 			scrollSpeed = 1;
 		}
@@ -278,17 +278,17 @@ public class SequenceJList extends javax.swing.JList implements Autoscroll{
 		if(bottomDist < 2){
 			scrollSpeed = 5;
 		}
-		
+
 		if(scrollSpeed > 0){
 			int lastVisible = this.getLastVisibleIndex();
 			ensureIndexIsVisible(lastVisible + scrollSpeed);
 		}
-		
+
 		if(scrollSpeed < 0){
 			int firstVisible = this.getFirstVisibleIndex();
 			ensureIndexIsVisible(firstVisible + scrollSpeed);
 		}
-		
+
 	}
 
 	public Point getFirstSelectedCellPos(){
@@ -301,5 +301,5 @@ public class SequenceJList extends javax.swing.JList implements Autoscroll{
 		return pos;
 	}
 
-	
+
 }

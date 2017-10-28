@@ -42,24 +42,24 @@ public class ExternalCmdFrame extends JFrame {
 
 	public ExternalCmdFrame(final AliViewWindow aliViewWin){
 		final ExternalCmdFrame commandFrame = this;
-		
+
 		mainPanel = new JPanel();
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-		
+
 		// get saved commands (or default will be served by settings if none)
 		final ArrayList<CommandItem> cmdItems = Settings.getExternalCommands();
-		
+
 		//final CommandItem cmdItems[] = Settings.COMMAND_ITEM_DEFAULTS;
-		
+
 		//mainPanel.add(new AlignerItem("AliVi", "command", true, false));
 		//mainPanel.add(new AlignerItem("AliVjklkjhi", "commahkjh k jhhkjhk klhkj hkjh kjh nd", true, false));
-		
-		
+
+
 		for(CommandItem cmdItem: cmdItems){
 			mainPanel.add(new CmdItemPanel(cmdItem));
 		}
 		mainPanel.add(Box.createVerticalGlue());
-		
+
 		getContentPane().add(mainPanel, BorderLayout.CENTER);
 
 		// OK - Cancel Buttton
@@ -82,9 +82,9 @@ public class ExternalCmdFrame extends JFrame {
 			}
 		});
 		bottomButtonPanel.add(okButton);
-		
+
 		mainPanel.add(bottomButtonPanel);
-				
+
 		// Arrange Frame
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.addWindowListener(new WindowAdapter() {		
@@ -92,7 +92,7 @@ public class ExternalCmdFrame extends JFrame {
 				// Dont save here - only
 				Settings.putExternalCommands(cmdItems);
 				commandFrame.dispose();
-				}
+			}
 		});	
 		this.setTitle("External commands");
 		this.setPreferredSize(new Dimension(650,550));
@@ -101,7 +101,7 @@ public class ExternalCmdFrame extends JFrame {
 		this.setVisible(true);
 		okButton.requestFocus();
 	}
-	
+
 	public void centerLocationToThisComponent(Component parent){
 		// align to middle of parent window
 		if(parent != null){

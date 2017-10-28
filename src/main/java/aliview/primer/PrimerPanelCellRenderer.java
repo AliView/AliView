@@ -14,14 +14,14 @@ public class PrimerPanelCellRenderer implements TableCellRenderer, TableCellEdit
 	private static final Logger logger = Logger.getLogger(PrimerPanelCellRenderer.class);
 
 	public Component getTableCellRendererComponent(JTable table, Object obj,
-													boolean isSelected, boolean hasFocus,
-													int row, int column) {
-		
+			boolean isSelected, boolean hasFocus,
+			int row, int column) {
+
 		PrimerPanel panel = (PrimerPanel) obj;
 		panel.isSelected(isSelected);
-		
+
 		return panel;
-		
+
 	}
 
 	public Component getTableCellEditorComponent(JTable table, Object obj,
@@ -29,18 +29,18 @@ public class PrimerPanelCellRenderer implements TableCellRenderer, TableCellEdit
 		logger.info("gotEditTableCellComp");
 		PrimerPanel panel = (PrimerPanel) obj;
 		panel.isSelected(isSelected);
-		
+
 		return panel;
 	}
 
 	public void addCellEditorListener(CellEditorListener l) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void cancelCellEditing() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public Object getCellEditorValue() {
@@ -55,7 +55,7 @@ public class PrimerPanelCellRenderer implements TableCellRenderer, TableCellEdit
 
 	public void removeCellEditorListener(CellEditorListener l) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public boolean shouldSelectCell(EventObject anEvent) {

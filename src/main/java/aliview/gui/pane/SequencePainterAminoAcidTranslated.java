@@ -9,7 +9,7 @@ import aliview.sequences.Sequence;
 public class SequencePainterAminoAcidTranslated extends SequencePainter {
 
 	private static final Logger logger = Logger.getLogger(SequencePainterAminoAcidTranslated.class);
-	
+
 	public SequencePainterAminoAcidTranslated(Sequence seq, int seqYPos,
 			int clipPosY, int xMinSeqPos, int xMaxSeqPos, double seqPerPix,
 			double charWidth, double charHeight, double highDPIScaleFactor,
@@ -22,7 +22,7 @@ public class SequencePainterAminoAcidTranslated extends SequencePainter {
 	@Override
 	protected void copyPixels(Sequence seq, RGBArray clipRGB, int seqXPos, int seqYPos, int pixelPosX, int pixelPosY, AlignmentPane aliPane, Alignment alignment) {
 
-		
+
 		byte residue = seq.getBaseAtPos(seqXPos);
 		AminoAcid acid = seq.getTranslatedAminoAcidAtNucleotidePos(seqXPos);	
 

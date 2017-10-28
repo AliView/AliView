@@ -25,7 +25,7 @@ public class NexusFileIndexer implements FileIndexer{
 			SubThreadProgressWindow progressWin) throws AlignmentImportException {
 
 		ByteBufferInpStream mappedBuff = sequencesFile.getMappedBuff();
-		
+
 		ArrayList<Sequence> allSeqs = new ArrayList<Sequence>();
 		try{
 			this.fileSize = mappedBuff.length();
@@ -33,7 +33,7 @@ public class NexusFileIndexer implements FileIndexer{
 			mappedBuff.position(filePointerStart);
 
 			logger.info("Nexus file ix");
-/*
+			/*
 			MappedBuffReaderHelper readerHelper = new MappedBuffReaderHelper(mappedBuff);
 			ArrayList<String> allTokens = readerHelper.readAllNexusTokensUntil("MATRIX");
 
@@ -99,9 +99,9 @@ public class NexusFileIndexer implements FileIndexer{
 
 			// load depending on file type
 			if(importerType == NEXUS_TYPE_INTERLEAVED){
-				
+
 				logger.info("NEXUS_TYPE_INTERLEAVED");
-				
+
 				// first lines
 				for(int n = 0; n < nTax; n ++){
 
@@ -125,28 +125,28 @@ public class NexusFileIndexer implements FileIndexer{
 						}
 					}			
 				}
-				
+
 				// loop until all characters are found
 				while(allSeqs.get(0).getLength() < nChar){
-					
+
 					for(int n = 0; n < nTax; n ++){
-						
+
 						String name = readerHelper.readNextNexusSeqName();
 						long nameStartPointer = mappedBuff.position() - name.length();
 
 						long segmentStartPointer = readerHelper.posOfNextNonWhiteNexusChar();
 						long segmentEndPointer = readerHelper.posOfNextNewline(); // minus one because we dont want newline
-						
+
 						NexusFileSequence appendSeq = (NexusFileSequence) allSeqs.get(n);
 						int segmentLength = (int)(segmentEndPointer - segmentStartPointer);
 						int segmentStartPos = appendSeq.getLength(); // startpos (because pos start at 0 so length is next startPos)
 						int segmentEndPos = segmentStartPos + segmentLength - 1; // -1 because seqment length and seqm start pos otherwise is one to much
-							
+
 						appendSeq.add(new PositionToPointer(segmentStartPos, segmentEndPos, segmentStartPointer, segmentEndPointer));									
 					}
 				}			
 			}
-*/
+			 */
 
 		}catch(Exception exc){
 			logger.info("could not read as nexus");

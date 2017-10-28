@@ -30,9 +30,9 @@ public class FastFastaImporterSlow {
 			String name = null;
 			int nLine = 0;
 			while ((line = r.readLine()) != null) {
-				
+
 				line = line.trim();
-				
+
 				if(nLine == 0){
 					// if not fasta file then break
 					if(line.length() > 0 && line.charAt(0) != '>'){
@@ -40,7 +40,7 @@ public class FastFastaImporterSlow {
 						throw new AlignmentImportException("Fasta file should start with > character");
 					}
 				}
-				
+
 				if(line.length() > 0){
 
 					if(line.charAt(0) == '>'){
@@ -49,9 +49,9 @@ public class FastFastaImporterSlow {
 						if(name != null && name.length() > 0){
 							//char[] bases = new char[sequence.length()];
 							//sequence.getChars(0, sequence.length() -1, bases, 0);
-							
+
 							//char[] bases = sequence.toString().toCharArray();
-							
+
 							// remove blank in string todo this could maybe be done quicker
 							// in some fasta files there are blanks (ncbi format)
 							String seqAsString = sequence.toString();
@@ -70,18 +70,18 @@ public class FastFastaImporterSlow {
 				}
 				nLine ++;
 			}
-			
+
 			// add last sequence
 			if(name != null && name.length() > 0){
-				
+
 				String seqAsString = sequence.toString();
 				seqAsString = seqAsString.replaceAll(" ","");
 				sequences.add(new FastFastaSequence(name, seqAsString));
 				this.longestSequenceLength = Math.max(this.longestSequenceLength, seqAsString.length());
 				name = null;
 			}	
-			
-			
+
+
 		} catch (Exception e) {
 			logger.error(e);
 			// TODO Auto-generated catch block

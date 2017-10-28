@@ -38,7 +38,7 @@ public class TranslationCharPixelsContainer {
 		}
 		return transContainer;
 	}
-	
+
 	public static TranslationCharPixelsContainer createSelectedTranslationPixelsContainer(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCase) {
 		TranslationCharPixelsContainer transContainer = new TranslationCharPixelsContainer();
 		transContainer.allAAContainers = new CharPixelsContainer[AminoAcid.HIGEST_AA_INT_VAL + 1];
@@ -55,7 +55,7 @@ public class TranslationCharPixelsContainer {
 		}
 		return transContainer;
 	}
-	
+
 	public static TranslationCharPixelsContainer createLetterTranslationPixelsContainer(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCase) {
 		TranslationCharPixelsContainer transContainer = new TranslationCharPixelsContainer();
 		transContainer.allAAContainers = new CharPixelsContainer[AminoAcid.HIGEST_AA_INT_VAL + 1];
@@ -70,7 +70,7 @@ public class TranslationCharPixelsContainer {
 		}
 		return transContainer;
 	}
-	
+
 	public static TranslationCharPixelsContainer createSelectedLetterTranslationPixelsContainer(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCase) {
 		TranslationCharPixelsContainer transContainer = new TranslationCharPixelsContainer();
 		transContainer.allAAContainers = new CharPixelsContainer[AminoAcid.HIGEST_AA_INT_VAL + 1];
@@ -85,10 +85,10 @@ public class TranslationCharPixelsContainer {
 		}
 		return transContainer;
 	}
-	
+
 	////////////////////////
-	
-	
+
+
 	public static TranslationCharPixelsContainer createDefaultTranslationAndNucPixelsContainer(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCase) {
 		TranslationCharPixelsContainer transContainer = new TranslationCharPixelsContainer();
 		transContainer.allAAContainers = new CharPixelsContainer[AminoAcid.HIGEST_AA_INT_VAL + 1];
@@ -106,7 +106,7 @@ public class TranslationCharPixelsContainer {
 		}
 		return transContainer;
 	}
-	
+
 	public static TranslationCharPixelsContainer createDefaultTranslationAndNucPixelsContainerNoAALetter(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCase) {
 		TranslationCharPixelsContainer transContainer = new TranslationCharPixelsContainer();
 		transContainer.allAAContainers = new CharPixelsContainer[AminoAcid.HIGEST_AA_INT_VAL + 1];
@@ -124,7 +124,7 @@ public class TranslationCharPixelsContainer {
 		}
 		return transContainer;
 	}
-	
+
 	public static TranslationCharPixelsContainer createSelectedTranslationAndNucPixelsContainer(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCase) {
 		TranslationCharPixelsContainer transContainer = new TranslationCharPixelsContainer();
 		transContainer.allAAContainers = new CharPixelsContainer[AminoAcid.HIGEST_AA_INT_VAL + 1];
@@ -142,7 +142,7 @@ public class TranslationCharPixelsContainer {
 		}
 		return transContainer;
 	}
-	
+
 	public static TranslationCharPixelsContainer createSelectedTranslationAndNucPixelsContainerNoAALetter(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCase) {
 		TranslationCharPixelsContainer transContainer = new TranslationCharPixelsContainer();
 		transContainer.allAAContainers = new CharPixelsContainer[AminoAcid.HIGEST_AA_INT_VAL + 1];
@@ -160,8 +160,8 @@ public class TranslationCharPixelsContainer {
 		}
 		return transContainer;
 	}
-	
-	
+
+
 	public static TranslationCharPixelsContainer createDominantNucTranslationAndNucPixelsContainer(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCase) {
 		TranslationCharPixelsContainer transContainer = new TranslationCharPixelsContainer();
 		transContainer.allAAContainers = new CharPixelsContainer[AminoAcid.HIGEST_AA_INT_VAL + 1];
@@ -179,7 +179,7 @@ public class TranslationCharPixelsContainer {
 		}
 		return transContainer;
 	}
-	
+
 	public static TranslationCharPixelsContainer createDominantNucTranslationAndNucPixelsContainerNoAALetter(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCase) {
 		TranslationCharPixelsContainer transContainer = new TranslationCharPixelsContainer();
 		transContainer.allAAContainers = new CharPixelsContainer[AminoAcid.HIGEST_AA_INT_VAL + 1];
@@ -197,7 +197,7 @@ public class TranslationCharPixelsContainer {
 		}
 		return transContainer;
 	}
-	
+
 	public static TranslationCharPixelsContainer createSelectedDominantNucTranslationAndNucPixelsContainer(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCase) {
 		TranslationCharPixelsContainer transContainer = new TranslationCharPixelsContainer();
 		transContainer.allAAContainers = new CharPixelsContainer[AminoAcid.HIGEST_AA_INT_VAL + 1];
@@ -214,9 +214,9 @@ public class TranslationCharPixelsContainer {
 			transContainer.allAAContainers[containerAcid.intVal] = container;
 		}
 		return transContainer;
-			
+
 	}
-	
+
 	public static TranslationCharPixelsContainer createSelectedDominantNucTranslationAndNucPixelsContainerNoAALetter(Font font, int minFontSize, int width, int height, ColorScheme colorScheme, int fontCase) {
 		TranslationCharPixelsContainer transContainer = new TranslationCharPixelsContainer();
 		transContainer.allAAContainers = new CharPixelsContainer[AminoAcid.HIGEST_AA_INT_VAL + 1];
@@ -233,7 +233,7 @@ public class TranslationCharPixelsContainer {
 			transContainer.allAAContainers[containerAcid.intVal] = container;
 		}
 		return transContainer;
-			
+
 	}
 
 }

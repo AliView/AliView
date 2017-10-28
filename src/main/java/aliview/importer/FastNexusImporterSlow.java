@@ -25,20 +25,20 @@ import aliview.subprocesses.SubThreadProgressWindow;
 
 public class FastNexusImporterSlow{
 	private static final Logger logger = Logger.getLogger(FastNexusImporterSlow.class);
-//	long estimateTotalSeqInFile = 0;
-//	long fileSize = -1;
+	//	long estimateTotalSeqInFile = 0;
+	//	long fileSize = -1;
 	File alignmentFile;
 
 	public FastNexusImporterSlow(File alignmentFile) throws FileNotFoundException, IOException {
 		this.alignmentFile = alignmentFile;
 	}
-	
+
 	public List<Sequence> importSequences() throws AlignmentImportException {
 
 		ArrayList<Sequence> allSeqs = new ArrayList<Sequence>();
 		try{
 			ByteBufferInpStream mappedBuff = ByteBufferInpStream.map(new FileInputStream(alignmentFile).getChannel(),FileChannel.MapMode.READ_ONLY );
-	//		this.fileSize = mappedBuff.length();
+			//		this.fileSize = mappedBuff.length();
 			int longestSequenceLength = 0;
 			//mappedBuff.position(0);
 
@@ -87,27 +87,27 @@ public class FastNexusImporterSlow{
 
 					String name = readerHelper.readNextNexusSeqName();
 
-	//				logger.info("name=" + name);
-					
-					
+					//				logger.info("name=" + name);
+
+
 					long seqStartPointer = readerHelper.posOfNextNonWhiteNexusChar();
 					long seqEndPointer = readerHelper.getPosOfNonWhiteNexusCharacter(nChar - 1); // minus one because first is already read when loooking for startpoint
 
 					byte[] seqAsBytes = readerHelper.getBytesBetween(seqStartPointer, seqEndPointer);
-					
+
 					NexusSequence seq = new NexusSequence(name, seqAsBytes);
 					allSeqs.add(seq);
-					
+
 					readerHelper.setPosition(seqEndPointer + 1);
-							
+
 				}
 			}
 
 			// load depending on file type
 			if(importerType == NEXUS_TYPE_INTERLEAVED){
-				
+
 				logger.info("NEXUS_TYPE_INTERLEAVED");
-			/*	
+				/*	
 				// first lines
 				for(int n = 0; n < nTax; n ++){
 
@@ -123,30 +123,30 @@ public class FastNexusImporterSlow{
 
 					seq.add(new PositionToPointer(0, (int)(seqEndPointer - seqStartPointer), seqStartPointer, seqEndPointer));
 					allSeqs.add(seq);
-	
+
 				}
-				
+
 				// loop until all characters are found
 				while(allSeqs.get(0).getLength() < nChar){
-					
+
 					for(int n = 0; n < nTax; n ++){
-						
+
 						String name = readerHelper.readNextNexusSeqName();
 						long nameStartPointer = mappedBuff.position() - name.length();
 
 						long segmentStartPointer = readerHelper.posOfNextNonWhiteNexusChar();
 						long segmentEndPointer = readerHelper.posOfNextNewline(); // minus one because we dont want newline
-						
+
 						NexusFileSequence appendSeq = (NexusFileSequence) allSeqs.get(n);
 						int segmentLength = (int)(segmentEndPointer - segmentStartPointer);
 						int segmentStartPos = appendSeq.getLength(); // startpos (because pos start at 0 so length is next startPos)
 						int segmentEndPos = segmentStartPos + segmentLength - 1; // -1 because seqment length and seqm start pos otherwise is one to much
-							
+
 						appendSeq.add(new PositionToPointer(segmentStartPos, segmentEndPos, segmentStartPointer, segmentEndPointer));									
 					}
 				}	
-				
-					*/
+
+				 */
 			}
 
 

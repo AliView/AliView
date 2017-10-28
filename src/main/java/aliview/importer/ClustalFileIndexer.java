@@ -43,9 +43,9 @@ public class ClustalFileIndexer {
 	public ArrayList<Sequence> findSequencesInFile(MemoryMappedSequencesFile sequencesFile, long filePointerStart, int seqOffset, int nSeqsToRetrieve,
 			SubThreadProgressWindow progressWin) throws AlignmentImportException {
 		long startTime = System.currentTimeMillis();
-		
+
 		ByteBufferInpStream mappedBuff = sequencesFile.getMappedBuff();
-		
+
 		ArrayList<Sequence> sequences = new ArrayList<Sequence>();
 		try{
 			long fileSize = mappedBuff.length();
@@ -151,7 +151,7 @@ public class ClustalFileIndexer {
 							// otherwise break
 							int linebreaks = readerHelper.skipUntilNextNonWhiteCharInFirstPosAfterNewLine();
 							nameStartPointer = readerHelper.position();
-		
+
 							lineCount ++;
 							if(lineCount % 100000 == 0){
 								progressWin.setMessage("Indexing interleaved Phylip file" + LF + "line:" + lineCount);
@@ -159,10 +159,10 @@ public class ClustalFileIndexer {
 									break;
 								}
 							}
-							
+
 							// if the next name is after more than one linebreak - should be next round of interleaved sequence parts
 							if(linebreaks > 1){
-	//							logger.info("break");
+								//							logger.info("break");
 								break;
 							}
 						}
@@ -170,9 +170,9 @@ public class ClustalFileIndexer {
 				}catch(EOFException eof){
 					logger.info("hit EOF hopefully file is read OK");
 					// only log output
-//					for(Sequence seq: sequences){
-//						logger.info(seq.getName() + " " + seq.getBasesAsString());
-//					}
+					//					for(Sequence seq: sequences){
+					//						logger.info(seq.getName() + " " + seq.getBasesAsString());
+					//					}
 				}
 
 

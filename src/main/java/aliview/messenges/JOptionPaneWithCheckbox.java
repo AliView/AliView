@@ -22,8 +22,8 @@ if (dontAskBox.isSelected()) {xxxxx}
 or: boolean dontAsk = dontAskBox.isSelected();
 	 */
 
-	
-	
+
+
 	public JOptionPaneWithCheckbox(JCheckBox cbx, String text, int messageType, int optionType) {
 		super(new Object[]{text," ",cbx}, messageType, optionType);
 	}
@@ -46,5 +46,5 @@ or: boolean dontAsk = dontAskBox.isSelected();
 				optionType);
 
 		return reply;
-	*/
+	 */
 } 

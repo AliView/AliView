@@ -92,10 +92,10 @@ public class ColorUtils {
 	public static int getAlpha(int colVal) {
 		return (colVal >> 24) & 0xff;
 	}
-	
+
 	public static NamedColor parseColor(String text){
 		NamedColor color = null;
-		
+
 		if(text.contains("(")){
 			color = parseJavaSyntax(text);
 		}
@@ -106,20 +106,20 @@ public class ColorUtils {
 	}
 
 	private static NamedColor parseClustalSyntax(String text) throws NumberFormatException {
-		
+
 		String[] splitted = StringUtils.split(text);
 		String name = splitted[0];
 		float r = Float.parseFloat(splitted[1]);
 		float g = Float.parseFloat(splitted[2]);
 		float b = Float.parseFloat(splitted[3]);
-		
+
 		return new NamedColor(name, new Color(r, g, b));
-		
+
 	}
 
 	private static NamedColor parseJavaSyntax(String text) {
 		if(text.contains("0x")){
-			
+
 		}
 		return null;
 	}

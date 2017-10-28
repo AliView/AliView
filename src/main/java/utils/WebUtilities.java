@@ -7,7 +7,6 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.net.URL;
@@ -16,6 +15,7 @@ import java.net.URLConnection;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+
 import org.apache.log4j.Logger;
 //import org.apache.commons.codec.binary.Base64;
 

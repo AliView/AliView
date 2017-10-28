@@ -174,7 +174,7 @@ public class AliView implements ApplicationListener{
 
 				//System.setProperty("awt.useSystemAAFontSettings","on");
 				//System.setProperty("swing.aatext", "true");
-				
+
 				// Default look and feel mac is already Aqua
 
 				// This might actually be to late for setting mac-application menu

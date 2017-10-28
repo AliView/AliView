@@ -21,19 +21,19 @@ public class ColorSchemeParser{
 	Color[] aminoAcidSelectionForegroundColor;
 	Color baseConsensusBackgroundColor;
 	Color aminoAcidConsensusBackgroundColor;
-	
-	
+
+
 	protected String colorSchemeName = "Default";
-	
+
 	public String getName() {
 		return colorSchemeName;
 	}
-	
+
 	public ColorSchemeParser() {
-		
+
 		this.colorSchemeName = "Default";
-		
-		
+
+
 		baseForegroundColor = new Color[64];
 		baseForegroundColor[NucleotideUtilities.A] = new Color(1,128,1); //Color.green
 		baseForegroundColor[NucleotideUtilities.C] = new Color(1,1,255); //Color.blue
@@ -52,7 +52,7 @@ public class ColorSchemeParser{
 		baseForegroundColor[NucleotideUtilities.N] =  Color.magenta;//new Color(180,200,250);
 		baseForegroundColor[NucleotideUtilities.GAP] = Color.LIGHT_GRAY.darker(); 
 		baseForegroundColor[NucleotideUtilities.UNKNOWN] = Color.cyan;
-		
+
 		baseBackgroundColor = new Color[64];
 		baseBackgroundColor[NucleotideUtilities.A] = new Color(90,220,90); 
 		baseBackgroundColor[NucleotideUtilities.C] = new Color(100,100,250);
@@ -71,9 +71,9 @@ public class ColorSchemeParser{
 		baseBackgroundColor[NucleotideUtilities.N] = Color.white; 
 		baseBackgroundColor[NucleotideUtilities.GAP] = new Color(250,250,250);
 		baseBackgroundColor[NucleotideUtilities.UNKNOWN] = Color.white;
-		
+
 		baseConsensusBackgroundColor =  new Color(240,240,240);
-			
+
 		baseSelectionForegroundColor = new Color[64];
 		baseSelectionForegroundColor[NucleotideUtilities.A]       =createSelectionForegroundColor(baseForegroundColor[NucleotideUtilities.A] );
 		baseSelectionForegroundColor[NucleotideUtilities.C]       =createSelectionForegroundColor(baseForegroundColor[NucleotideUtilities.C] );
@@ -92,7 +92,7 @@ public class ColorSchemeParser{
 		baseSelectionForegroundColor[NucleotideUtilities.N]       =createSelectionForegroundColor(baseForegroundColor[NucleotideUtilities.N] );
 		baseSelectionForegroundColor[NucleotideUtilities.GAP]     =createSelectionForegroundColor(baseForegroundColor[NucleotideUtilities.GAP]);
 		baseSelectionForegroundColor[NucleotideUtilities.UNKNOWN] =createSelectionForegroundColor(baseForegroundColor[NucleotideUtilities.UNKNOWN]);
-		
+
 
 		baseSelectionBackgroundColor = new Color[64];	
 		baseSelectionBackgroundColor[NucleotideUtilities.A]       =  createSelectionColor(baseBackgroundColor[NucleotideUtilities.A]);
@@ -112,9 +112,9 @@ public class ColorSchemeParser{
 		baseSelectionBackgroundColor[NucleotideUtilities.N]       =  createSelectionColor(baseBackgroundColor[NucleotideUtilities.N]);
 		baseSelectionBackgroundColor[NucleotideUtilities.GAP]     =  createSelectionColor(baseBackgroundColor[NucleotideUtilities.GAP]);
 		baseSelectionBackgroundColor[NucleotideUtilities.UNKNOWN] =  createSelectionColor(baseBackgroundColor[NucleotideUtilities.UNKNOWN]);
-		
-		
-		
+
+
+
 		/*
 		 * 
 		 * This is mesquite color-sceme
@@ -145,8 +145,8 @@ public class ColorSchemeParser{
 		aminoAcidBackgroundColor[AminoAcid.STOP.intVal] = Color.black;
 		aminoAcidBackgroundColor[AminoAcid.GAP.intVal] = Color.white;
 		aminoAcidBackgroundColor[AminoAcid.X.intVal] = Color.white;
-		*/
-		
+		 */
+
 		/*
 		 * 
 		 * This is seaview color-sceme (almost - but I put shades on same color)
@@ -177,9 +177,9 @@ public class ColorSchemeParser{
 		aminoAcidBackgroundColor[AminoAcid.GAP.intVal] = new Color(230,230,230);
 		//aminoAcidBackgroundColor[AminoAcid.GAP.intVal] = Color.white;
 		aminoAcidBackgroundColor[AminoAcid.X.intVal] = Color.white;
-		
+
 		aminoAcidConsensusBackgroundColor = new Color(240,240,240);
-		
+
 		aminoAcidForegroundColor = new Color[255];
 		aminoAcidForegroundColor[AminoAcid.A.intVal] = Color.BLACK;
 		aminoAcidForegroundColor[AminoAcid.C.intVal] = Color.BLACK;
@@ -204,7 +204,7 @@ public class ColorSchemeParser{
 		aminoAcidForegroundColor[AminoAcid.STOP.intVal] = Color.CYAN;
 		aminoAcidForegroundColor[AminoAcid.GAP.intVal] = Color.DARK_GRAY;
 		aminoAcidForegroundColor[AminoAcid.X.intVal] = Color.CYAN;
-		
+
 		aminoAcidSelectionBackgroundColor = new Color[255];
 		aminoAcidSelectionBackgroundColor[AminoAcid.A.intVal] = new Color(0x276eb7).brighter();
 		aminoAcidSelectionBackgroundColor[AminoAcid.C.intVal] = new Color(0xe68080).brighter();
@@ -229,7 +229,7 @@ public class ColorSchemeParser{
 		aminoAcidSelectionBackgroundColor[AminoAcid.STOP.intVal] = Color.darkGray.brighter();
 		aminoAcidSelectionBackgroundColor[AminoAcid.GAP.intVal] = Color.lightGray;
 		aminoAcidSelectionBackgroundColor[AminoAcid.X.intVal] = Color.lightGray;
-		
+
 		aminoAcidSelectionForegroundColor = new Color[255];
 		aminoAcidSelectionForegroundColor[AminoAcid.A.intVal] = Color.GRAY;
 		aminoAcidSelectionForegroundColor[AminoAcid.C.intVal] = Color.GRAY;
@@ -258,17 +258,17 @@ public class ColorSchemeParser{
 
 	public static Color createSelectionColor(Color color) {
 		//return color.darker();
-		
+
 		int r = Math.max(color.getRed() - 85, 0);
 		int g = Math.max(color.getGreen() - 85, 0);
 		int b = Math.max(color.getBlue() - 85, 0);
 		return new Color(r,g,b);
-		
+
 	}
-	
+
 	public static Color createSelectionForegroundColor(Color color) {
-	//	return color.darker();
-		
+		//	return color.darker();
+
 		int r = Math.min(color.getRed() + 150, 255);
 		int g = Math.min(color.getGreen() + 150, 255);
 		int b = Math.min(color.getBlue() + 150, 255);
@@ -286,7 +286,7 @@ public class ColorSchemeParser{
 	public Color getBaseSelectionForegroundColor(int baseValue) {
 		return baseSelectionForegroundColor[baseValue];
 	}
-	
+
 	public Color getBaseSelectionBackgroundColor(int baseValue) {
 		return baseSelectionBackgroundColor[baseValue];
 	}

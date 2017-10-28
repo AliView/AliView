@@ -19,20 +19,20 @@ import aliview.gui.TextEditFrame;
 public class ColorEditFrame extends JFrame {
 	private static final Logger logger = Logger.getLogger(ColorEditFrame.class);
 	private Component parentFrame;
-	
+
 	public static void main(String[] args) {
 		new ColorEditFrame(null);
 	}
-	
+
 	public ColorEditFrame(Component parent){
 		this.parentFrame = parent;
 		logger.info("constructor");
 		ColorEditPanel cep = new ColorEditPanel(this);
 		cep.setPreferredSize(new Dimension(500, 500));
-		
+
 		init(cep);
 	}
-	
+
 	public void init(JPanel mainPanel){
 		this.getContentPane().add(mainPanel);
 		this.setIconImage(AppIcons.getProgramIconImage());
@@ -43,7 +43,7 @@ public class ColorEditFrame extends JFrame {
 		this.setVisible(true);
 		//this.centerLocationToThisComponent(parentFrame);
 	}
-	
+
 	public void centerLocationToThisComponent(Component parent){
 		// align to middle of parent window
 		if(parent != null){
@@ -52,5 +52,5 @@ public class ColorEditFrame extends JFrame {
 			this.setLocation(newX, newY);
 		}
 	}
-	
+
 }

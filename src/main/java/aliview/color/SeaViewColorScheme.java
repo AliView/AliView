@@ -5,16 +5,16 @@ import java.awt.Color;
 import aliview.NucleotideUtilities;
 
 public class SeaViewColorScheme extends DefaultColorScheme{
-	
+
 	String COLORSCHEMENAME = "SeaView";
-	
+
 	public String getName() {
 		return COLORSCHEMENAME;
 	}
-	
+
 	public SeaViewColorScheme() {
 		super();
-		
+
 		baseForegroundColor = new Color[64];
 		baseForegroundColor[NucleotideUtilities.A] = Color.black;
 		baseForegroundColor[NucleotideUtilities.C] = Color.black;
@@ -33,7 +33,7 @@ public class SeaViewColorScheme extends DefaultColorScheme{
 		baseForegroundColor[NucleotideUtilities.N] = Color.black; 
 		baseForegroundColor[NucleotideUtilities.GAP] = Color.black; 
 		baseForegroundColor[NucleotideUtilities.UNKNOWN] = Color.cyan; 
-		
+
 		baseBackgroundColor = new Color[64];
 		baseBackgroundColor[NucleotideUtilities.A] = new Color(255,0,0); 
 		baseBackgroundColor[NucleotideUtilities.C] = new Color(0,255,0);
@@ -53,11 +53,11 @@ public class SeaViewColorScheme extends DefaultColorScheme{
 		baseBackgroundColor[NucleotideUtilities.N] = IUPAC_BG;
 		baseBackgroundColor[NucleotideUtilities.GAP] = IUPAC_BG.brighter();
 		baseBackgroundColor[NucleotideUtilities.UNKNOWN] = IUPAC_BG.brighter();
-			
+
 		baseSelectionForegroundColor = new Color[64];
-		
+
 		Color baseSelectionForegroundColorDefault = Color.black.brighter().brighter();
-		
+
 		baseSelectionForegroundColor[NucleotideUtilities.A] = baseSelectionForegroundColorDefault;
 		baseSelectionForegroundColor[NucleotideUtilities.C] = baseSelectionForegroundColorDefault;
 		baseSelectionForegroundColor[NucleotideUtilities.G] = baseSelectionForegroundColorDefault;
@@ -75,15 +75,15 @@ public class SeaViewColorScheme extends DefaultColorScheme{
 		baseSelectionForegroundColor[NucleotideUtilities.N] = baseSelectionForegroundColorDefault;
 		baseSelectionForegroundColor[NucleotideUtilities.GAP] = baseSelectionForegroundColorDefault;
 		baseSelectionForegroundColor[NucleotideUtilities.UNKNOWN] = baseSelectionForegroundColorDefault;
-		
+
 		baseSelectionBackgroundColor = new Color[64];
 		baseSelectionBackgroundColor[NucleotideUtilities.A] = new Color(255 - 120,0,0); 
 		baseSelectionBackgroundColor[NucleotideUtilities.C] = new Color(0,255 - 120,0);
 		baseSelectionBackgroundColor[NucleotideUtilities.G] = new Color(255 - 120,255 - 120,0);  
 		baseSelectionBackgroundColor[NucleotideUtilities.TU] = new Color(0,0,255 - 120); 
-		
+
 		Color IUPAC_BG_SELECTED =  new Color(225,225,225).darker().darker();
-		
+
 		baseSelectionBackgroundColor[NucleotideUtilities.R] = IUPAC_BG_SELECTED;
 		baseSelectionBackgroundColor[NucleotideUtilities.Y] = IUPAC_BG_SELECTED;
 		baseSelectionBackgroundColor[NucleotideUtilities.M] = IUPAC_BG_SELECTED;

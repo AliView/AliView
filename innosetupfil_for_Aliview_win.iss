@@ -41,23 +41,23 @@ Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescrip
 
 [Registry]
 Root: HKCR; Subkey: ".nex"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}_nex"; Flags: uninsdeletevalue; Tasks: nexAssociation
-Root: HKCR; Subkey: ".nexus"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}_nex"; Flags: uninsdeletevalue; Tasks: nexAssociation 
+Root: HKCR; Subkey: ".nexus"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}_nex"; Flags: uninsdeletevalue; Tasks: nexAssociation
 Root: HKCR; Subkey: "{#MyAppName}_nex"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletekey; Tasks: nexAssociation
 Root: HKCR; Subkey: "{#MyAppName}_nex\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#MyAppName}"" ""%1"""
-Root: HKCR; Subkey: ".phy"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}_phy"; Flags: uninsdeletevalue; Tasks: phyAssociation 
-Root: HKCR; Subkey: ".phylip"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}_phy"; Flags: uninsdeletevalue; Tasks: phyAssociation 
+Root: HKCR; Subkey: ".phy"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}_phy"; Flags: uninsdeletevalue; Tasks: phyAssociation
+Root: HKCR; Subkey: ".phylip"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}_phy"; Flags: uninsdeletevalue; Tasks: phyAssociation
 Root: HKCR; Subkey: "{#MyAppName}_phy"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletekey; Tasks: phyAssociation
 Root: HKCR; Subkey: "{#MyAppName}_phy\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#MyAppName}"" ""%1"""
-Root: HKCR; Subkey: ".fas"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}_fas"; Flags: uninsdeletevalue; Tasks: fasAssociation 
-Root: HKCR; Subkey: ".fa"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}_fas"; Flags: uninsdeletevalue; Tasks: fasAssociation 
-Root: HKCR; Subkey: ".fasta"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}_fas"; Flags: uninsdeletevalue; Tasks: fasAssociation 
+Root: HKCR; Subkey: ".fas"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}_fas"; Flags: uninsdeletevalue; Tasks: fasAssociation
+Root: HKCR; Subkey: ".fa"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}_fas"; Flags: uninsdeletevalue; Tasks: fasAssociation
+Root: HKCR; Subkey: ".fasta"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}_fas"; Flags: uninsdeletevalue; Tasks: fasAssociation
 Root: HKCR; Subkey: "{#MyAppName}_fas"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}_fas"; Flags: uninsdeletekey; Tasks: fasAssociation
 Root: HKCR; Subkey: "{#MyAppName}_fas\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#MyAppName}"" ""%1"""
-Root: HKCR; Subkey: ".clustal"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}_clustal"; Flags: uninsdeletevalue; Tasks: clustalAssociation 
-Root: HKCR; Subkey: ".aln"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}_clustal"; Flags: uninsdeletevalue; Tasks: clustalAssociation 
+Root: HKCR; Subkey: ".clustal"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}_clustal"; Flags: uninsdeletevalue; Tasks: clustalAssociation
+Root: HKCR; Subkey: ".aln"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}_clustal"; Flags: uninsdeletevalue; Tasks: clustalAssociation
 Root: HKCR; Subkey: "{#MyAppName}_clustal"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletekey; Tasks: clustalAssociation
 Root: HKCR; Subkey: "{#MyAppName}_clustal\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#MyAppName}"" ""%1"""
-Root: HKCR; Subkey: ".msf"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}_msf"; Flags: uninsdeletevalue; Tasks: msfAssociation 
+Root: HKCR; Subkey: ".msf"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}_msf"; Flags: uninsdeletevalue; Tasks: msfAssociation
 Root: HKCR; Subkey: "{#MyAppName}_msf"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletekey; Tasks: msfAssociation
 Root: HKCR; Subkey: "{#MyAppName}_msf\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#MyAppName}"" ""%1"""
 
@@ -73,4 +73,3 @@ Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName}"; Fil
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
-

@@ -1,9 +1,16 @@
 Version history
-
-1.19-beta 4
+1.20-beta-1
 
 - Custom color scheme feature added
 
+1.19
+- Better automatic detection wether alignment is Nucleotide or Amino-Acid
+- Menu alternative to manually change alignment to Nucleotide or AminoAcid
+- Confirmation box when deleting all gaps in all sequences
+- Go to position function
+- Courier font on OS X regardless of Java VM
+- Some changes on OS X retina screens when using Oracle Java
+- Fixed hide checkboxes issue where "clear all" in settings didn't clear all
 
 1.18.1
 

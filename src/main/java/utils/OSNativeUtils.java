@@ -1,6 +1,7 @@
 package utils;
 
 import java.awt.AWTKeyStroke;
+import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -346,6 +347,14 @@ public class OSNativeUtils {
 			return KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.SHIFT_DOWN_MASK | InputEvent.ALT_DOWN_MASK);
 		}
 	}
+	
+	public static KeyStroke getGoToPosKeyAccelerator() {
+		if(isMac()){
+			return KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.META_DOWN_MASK);
+		}else{
+			return KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_DOWN_MASK);
+		}
+	}
 
 	public static KeyStroke incReadingFrameKeyAccelerator() {
 		if(isMac()){
@@ -586,7 +595,12 @@ public class OSNativeUtils {
 		return registerOK;
 	}
 
-	
-
+	public static String getMonospacedFontName() {
+		if(isMac()){
+			return "Courier";
+		}else{
+			return Font.MONOSPACED;
+		}
+	}
 
 }

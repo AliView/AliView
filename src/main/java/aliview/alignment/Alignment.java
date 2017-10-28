@@ -1513,6 +1513,10 @@ public class Alignment implements FileSequenceLoadListener {
 	public boolean isAAAlignment() {
 		return (sequences.getSequenceType() == SequenceUtils.TYPE_AMINO_ACID);
 	}
+	
+	public boolean isUnknownAlignment() {
+		return (sequences.getSequenceType() == SequenceUtils.TYPE_UNKNOWN);
+	}
 
 	public boolean replaceSelectedWithChar(char newChar) {
 		List<Sequence> replacedSeqs = sequences.replaceSelectedWithChar(newChar, isUndoable());
@@ -1915,11 +1919,11 @@ public class Alignment implements FileSequenceLoadListener {
 		return false;
 	}
 
-	
-
-	
-
-	
-	
+	public boolean isEmptyAlignment() {
+		if(getSequences() == null || getSequences().size() == 0){
+			return true;
+		}
+		return false;
+	}	
 	
 }

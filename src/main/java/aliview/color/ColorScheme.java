@@ -2,7 +2,6 @@ package aliview.color;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.util.ArrayList;
 
 import aliview.AminoAcid;
 import aliview.alignment.AAHistogram;

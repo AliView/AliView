@@ -32,26 +32,26 @@ public class MemorySettingsPanel extends JPanel{
 		gridBagLayout.columnWeights = new double[]{1.0, 1.0, 0.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
-		
-		
+
+
 		JTextPane textPane = new JTextPane();
 		textPane.setContentType("text/html");
 		textPane.setEditable(false);
-//		textPane.setText("To change memory settings of aliview you have to edit the settings in a textfile on your computer, " +
-//		                 "depending on your operating system this file is located differently." + LF + 
-//		                 "Please click help button for exact instructions.");
-		
+		//		textPane.setText("To change memory settings of aliview you have to edit the settings in a textfile on your computer, " +
+		//		                 "depending on your operating system this file is located differently." + LF + 
+		//		                 "Please click help button for exact instructions.");
+
 		textPane.setText("<html><body><h2><a name=\"memory_settings\">Memory settings</a></h2><p>If you want AliView to read larger alignments in memory and not from file " +
-		                 "(this allows for more editing capabilities), then you can change the maximum memory settings for the program." + 
-				         "<br>The amount of memory needed for a file to be read into memory is about 2 x file size.</p><p><b>Mac OS X</b> </p><p>Go to " + 
-				         "Applications in Finder --&gt;Left click on specific application AliView --&gt; Show Package Content --&gt; Contents --&gt; Then open the file \"Info.Plist\" " + 
-		                 "in a text-editor and change the parameter: &lt;string&gt;-Xmx512m -Xms128m&lt;/string&gt; to something different (for example 2GB=2048M):<br> &lt;string&gt;-Xmx2048m" + 
-				         " -Xms128m&lt;/string&gt;</p><p><b>Linux</b> </p> <p>/usr/bin/aliview <br> open this file in text-editor and change the parameter -Xmx1024M (default setting = " + 
-		                 "1024M memory)</p> <p><b>Windows</b> </p> <p>In the installation folder of AliView (default: 'c:\\Program Files\\AliView\\') open the file \"AliView.l4j.ini\" in " + 
-				         "a text editor and change the setting: -Xmx1024m to something you prefer (for example 2GB=2048M) -Xmx2048m</p></body></html>");
-		
-		
-		
+				"(this allows for more editing capabilities), then you can change the maximum memory settings for the program." + 
+				"<br>The amount of memory needed for a file to be read into memory is about 2 x file size.</p><p><b>Mac OS X</b> </p><p>Go to " + 
+				"Applications in Finder --&gt;Left click on specific application AliView --&gt; Show Package Content --&gt; Contents --&gt; Then open the file \"Info.Plist\" " + 
+				"in a text-editor and change the parameter: &lt;string&gt;-Xmx512m -Xms128m&lt;/string&gt; to something different (for example 2GB=2048M):<br> &lt;string&gt;-Xmx2048m" + 
+				" -Xms128m&lt;/string&gt;</p><p><b>Linux</b> </p> <p>/usr/bin/aliview <br> open this file in text-editor and change the parameter -Xmx1024M (default setting = " + 
+				"1024M memory)</p> <p><b>Windows</b> </p> <p>In the installation folder of AliView (default: 'c:\\Program Files\\AliView\\') open the file \"AliView.l4j.ini\" in " + 
+				"a text editor and change the setting: -Xmx1024m to something you prefer (for example 2GB=2048M) -Xmx2048m</p></body></html>");
+
+
+
 		GridBagConstraints gbc_textPane = new GridBagConstraints();
 		gbc_textPane.gridwidth = 3;
 		gbc_textPane.gridheight = 6;
@@ -69,7 +69,7 @@ public class MemorySettingsPanel extends JPanel{
 				parentFrame.dispose();
 			}
 		});
-		
+
 		JButton btnHelp = new JButton("Help");
 		btnHelp.setPreferredSize(new Dimension(100,30));
 		btnHelp.addActionListener(new ActionListener() {

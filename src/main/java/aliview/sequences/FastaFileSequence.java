@@ -5,11 +5,11 @@ import aliview.sequencelist.MemoryMappedSequencesFile;
 public class FastaFileSequence extends FileSequence {
 	private int residuesPerLine;
 	private int charsPerLine;
-	
+
 	public FastaFileSequence(MemoryMappedSequencesFile sequencesFile, long startPointer){
 		super(sequencesFile, startPointer);
 	}
-	
+
 	public String getName() {
 		return name.substring(1);
 	}
@@ -30,7 +30,7 @@ public class FastaFileSequence extends FileSequence {
 		this.charsPerLine = charsPerLine;
 	}
 
-	
-	
-	
+
+
+
 }

@@ -15,7 +15,7 @@ public class PositionsToPointerFileSequenceBases extends FileSequenceBases{
 	private static final Logger logger = Logger.getLogger(PositionsToPointerFileSequenceBases.class);
 	private static final String TEXT_FILE_BYTE_ENCODING = "ASCII";
 	PositionsToPointer positionsToPointer = new PositionsToPointer();
-	
+
 	public PositionsToPointerFileSequenceBases(MemoryMappedSequencesFile sequencesFile, long startPointer){
 		super(sequencesFile, startPointer);
 	}
@@ -26,11 +26,11 @@ public class PositionsToPointerFileSequenceBases extends FileSequenceBases{
 		copy.positionsToPointer = this.positionsToPointer.getCopy();
 		return copy;
 	}
-	
+
 	public void add(PositionToPointer posToPoint){
 		positionsToPointer.add(posToPoint);
 	}
-	
+
 	@Override
 	public long getEndPointer() {
 		return positionsToPointer.getMaxPointer(); 
@@ -41,12 +41,12 @@ public class PositionsToPointerFileSequenceBases extends FileSequenceBases{
 		long pos = positionsToPointer.getPointerFromPos(n);
 		return (byte) sequencesFile.readInFile(pos);
 	}
-	
+
 	@Override
 	public int getLength(){
 		int length = positionsToPointer.getMaxPosition() + 1; // +1 since that is length
 		return length;
 	}
-	
+
 
 }

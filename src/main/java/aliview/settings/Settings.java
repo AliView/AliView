@@ -23,10 +23,10 @@ import aliview.gui.pane.CharPixels;
 public class Settings {
 	private static final Logger logger = Logger.getLogger(Settings.class);
 	private static final String LF = System.getProperty("line.separator");
-	
+
 	//private static final String ALIVIEW_HELP_URL = "http://www.ormbunkar.se/aliview/help/help.html";
 	private static final String ALIVIEW_HELP_URL = "http://www.ormbunkar.se/aliview/index.html";
-	
+
 	private static final String SAVE_ALIGNMENT_DIRECTORY = "SAVE_ALIGNMENT_DIRECTORY";
 	private static final String LOAD_ALIGNMENT_DIRECTORY = "LOAD_ALIGNMENT_DIRECTORY";
 	private static final String SAVE_SELECTION_DIRECTORY = "SAVE_SELECTION_DIRECTORY";
@@ -36,13 +36,13 @@ public class Settings {
 	private static final String COLOR_SCHEME_AMINOACID = "COLOR_SCHEME_AMINOACID";
 	private static final String COLOR_SCHEME_NUCLEOTIDE = "COLOR_SCHEME_NUCLEOTIDE";
 	private static final String  RECENT_FILE = "RECENT_FILE";
-	
+
 	private static final String CMD_NAME_ = "CMD_NAME_";
 	private static final String CMD_PROGRAM_PATH_ = "CMD_PROGRAM_PATH_";
 	private static final String CMD_COMMAND_ = "CMD_COMMAND_";
 	private static final String CMD_IS_ACTIVATED_ = "CMD_IS_ACTIVATED_";
 	private static final String CMD_SHOW_COMMAND_WIN_ = "CMD_SHOW_COMMAND_WIN_";
-	
+
 	private static SettingValue saveAlignmentDir = new SettingValue("SAVE_ALIGNMENT_DIRECTORY", System.getProperty("user.home"));
 	private static SettingValue minPrimerLength = new SettingValue("MIN_PRIMER_LEN", 20, 15, 30);
 	private static SettingValue maxPrimerLength = new SettingValue("MAX_PRIMER_LEN", 24, 15, 30);
@@ -52,25 +52,25 @@ public class Settings {
 	private static SettingValue useCustomFontSize = new SettingValue("USE_CUSTOM_FONT_SIZE", false);
 	private static SettingValue customFontSize = new SettingValue("CUSTOM_FONT_SIZE", 12, 1, 24);
 	private static SettingValue showCharsetRuler = new SettingValue("SHOW_CHARSET_RULER", true);
-		
+
 	private static SettingValue reverseHorizontalMouseWheel = new SettingValue("REVERSE_HORIZONTAL_MOUSE_WHEEL", false);
 	private static SettingValue reverseVerticalMouseWheel = new SettingValue("REVERSE_VERTICAL_MOUSE_WHEEL", false);
-	
-	
-	
+
+
+
 	private static SettingValue horizontalMouseWheelScrollModifier = new SettingValue("HORIZONTALMOUSEWHEELSCROLLMODIFIER", 20,1,100);
 	private static SettingValue verticalMouseWheelScrollModifier = new SettingValue("VERTICALMOUSEWHEELSCROLLMODIFIER", 20,1,100);
 	private static SettingValue largeFileIndexing = new SettingValue("LARGE_FILE_INDEXING", 100000,10,100000000);
 	private static SettingValue maxFileHistogramSequences = new SettingValue("MAX_FILE_HISTOGRAM_SEQUENCES", 1000,10,1000000);
-	
+
 	private static final String LOGFILE_NAME = "AliView.log";
 	private static final String ALIVIEW_USERDATA_SUBDIR = ".AliView";
-	
+
 	private static Preferences prefs = Preferences.userNodeForPackage(Settings.class);
 	private static ArrayList<SettingsListener> settingListeners = new ArrayList<SettingsListener>();
-	
+
 	private static SettingValue fontCase = new SettingValue("fontCase", CharPixels.CASE_UNTOUCHED, 0, 10);
-	
+
 	// This is a good place for putting all hide checkbox values
 	private static SettingValue hideFileSeqLimitedEditCapabilities = new SettingValue("hideFileSeqLimitedEditCapabilities", false);
 	private static SettingValue hideEditModeMessage = new SettingValue("hideEditModeMessage", false);
@@ -101,19 +101,19 @@ public class Settings {
 		allHideMsgSettingVals.add(hideDeleteAllSelectedBases);
 		allHideMsgSettingVals.add(hideUnknownAlignmentType);
 	}
-	
+
 	public static SettingValue getMinPrimerLength(){
 		return minPrimerLength;
 	}
-	
+
 	public static SettingValue getMaxPrimerLength(){	
 		return maxPrimerLength;
 	}
-	
+
 	public static SettingValue getDimerReportThreashold() {
 		return dimerReportThreashold;
 	}
-	
+
 	public static void putBooleanValue(SettingValue settingValue,boolean booleanValue) {
 		prefs.putBoolean(settingValue.getPrefsKey(), booleanValue);
 		try {
@@ -123,18 +123,18 @@ public class Settings {
 			e.printStackTrace();
 		}	
 	}
-	
+
 	public static boolean getBooleanValue(SettingValue settingValue) {
 		boolean value = prefs.getBoolean(settingValue.getPrefsKey(), settingValue.getDefaultBooleanValue());
 		return value;
 	}
-	
-	
+
+
 	public static int getIntValue(SettingValue settingValue) {
 		int value = prefs.getInt(settingValue.getPrefsKey(), settingValue.getDefaultIntValue());
 		return value;
 	}
-	
+
 	public static void putIntValue(SettingValue settingValue, int intValue){
 		prefs.putInt(settingValue.getPrefsKey(), intValue);
 		try {
@@ -144,7 +144,7 @@ public class Settings {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static void putIntValue(SettingValue settingValue){
 		logger.info("put" + settingValue.getIntValue());
 		prefs.putInt(settingValue.getPrefsKey(), settingValue.getIntValue());
@@ -155,7 +155,7 @@ public class Settings {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static String getStringValue(SettingValue settingValue) {
 		String value = prefs.get(settingValue.getPrefsKey(), settingValue.getDefaultStringValue());
 		return value;
@@ -170,10 +170,10 @@ public class Settings {
 			e.printStackTrace();
 		}
 	}
-	
-	
-	
-	
+
+
+
+
 	/*
 	public static void putIntValue(String prefsKey, int value) {
 		prefs.putInt(maxPrimerLength.getPrefsKey(), length);
@@ -184,12 +184,12 @@ public class Settings {
 			e.printStackTrace();
 		}
 	}
-	*/
-	
+	 */
+
 	public static final String getSaveAlignmentDirectory(){	
 		return prefs.get(SAVE_ALIGNMENT_DIRECTORY, System.getProperty("user.home"));
 	}
-	
+
 	public static final void putSaveAlignmentDirectory(String dirName){	
 		prefs.put(SAVE_ALIGNMENT_DIRECTORY, dirName);
 		try {
@@ -199,12 +199,12 @@ public class Settings {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static final String getLoadAlignmentDirectory(){	
 		return prefs.get(LOAD_ALIGNMENT_DIRECTORY, System.getProperty("user.home"));
 	}
-	
-	
+
+
 	public static final void putLoadAlignmentDirectory(String dirName){	
 		prefs.put(LOAD_ALIGNMENT_DIRECTORY, dirName);
 		try {
@@ -227,13 +227,13 @@ public class Settings {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
 	public static String getExternalCommandFileDirectory() {
 		return prefs.get(EXTERNAL_COMMAND_FILE_DIRECTORY, System.getProperty("user.home"));
 	}
-	
+
 	public static void putExternalCommandFileDirectory(String selectedFile) {
 		prefs.put(EXTERNAL_COMMAND_FILE_DIRECTORY, selectedFile);
 		try {
@@ -243,7 +243,7 @@ public class Settings {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static final String getSaveSelectionDirectory() {
 		return prefs.get(SAVE_SELECTION_DIRECTORY, System.getProperty("user.home"));
 	}
@@ -266,17 +266,17 @@ public class Settings {
 		return LOGFILE_NAME;
 	}
 
-	
+
 	public static ColorScheme getColorSchemeNucleotide() {
 		String colorSchemeName = prefs.get(COLOR_SCHEME_NUCLEOTIDE, null);
 		return ColorSchemeFactory.getColorScheme(colorSchemeName);
 	}
-	
+
 	public static ColorScheme getColorSchemeAminoAcid() {
 		String colorSchemeName = prefs.get(COLOR_SCHEME_AMINOACID, null);
 		return ColorSchemeFactory.getColorScheme(colorSchemeName);
 	}
-	
+
 	public static void setColorSchemeNucleotide(ColorScheme colorScheme) {
 		prefs.put(COLOR_SCHEME_NUCLEOTIDE, colorScheme.getName());
 		try {
@@ -286,7 +286,7 @@ public class Settings {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static void setColorSchemeAminoAcid(ColorScheme colorScheme) {
 		prefs.put(COLOR_SCHEME_AMINOACID, colorScheme.getName());
 		try {
@@ -296,8 +296,8 @@ public class Settings {
 			e.printStackTrace();
 		}
 	}
-	
-	
+
+
 	public static ArrayList<CommandItem> getCommandItems(String prefix){
 		ArrayList<CommandItem> commands = new ArrayList<CommandItem>();
 		for(int n = 0; n < 10; n++){
@@ -311,7 +311,7 @@ public class Settings {
 		}
 		return commands;
 	}
-	
+
 	public static void putCommandItems(ArrayList<CommandItem> commands, String prefix){
 		for(int n = 0; n < commands.size(); n++){
 			putCommandItem(n, prefix, commands.get(n));
@@ -337,7 +337,7 @@ public class Settings {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private static void clearCommandItem(int i, String prefix){
 		prefs.remove(prefix + CMD_NAME_ + i);
 		prefs.remove(prefix + CMD_PROGRAM_PATH_ + i);
@@ -351,7 +351,7 @@ public class Settings {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private static CommandItem getCommandItem(int i, String prefix){
 		String name = prefs.get(prefix + CMD_NAME_ + i, null);
 		String programPath = prefs.get(prefix + CMD_PROGRAM_PATH_ + i, null);
@@ -360,7 +360,7 @@ public class Settings {
 		boolean showCommandWindow =  prefs.getBoolean(prefix + CMD_SHOW_COMMAND_WIN_ + i, false);	
 		return new CommandItem(name, programPath, command, isActivated, showCommandWindow);
 	}
-	
+
 	private static void putCommandItem(int i, String prefix, CommandItem cmd){
 		logger.info("put"+cmd);
 		prefs.put(prefix + CMD_NAME_ + i, cmd.getName());
@@ -373,7 +373,7 @@ public class Settings {
 	public static SettingValue getPrimerMinTM() {
 		return minPrimerTM;
 	}
-	
+
 	public static SettingValue getPrimerMaxTM() {
 		return maxPrimerTM;
 	}
@@ -383,16 +383,16 @@ public class Settings {
 		return getCommandItem(i, "EXTERNAL_");
 	}
 
-	
+
 	private static void putExternalCommand(int i, CommandItem cmd){
 		putCommandItem(i, "EXTERNAL_", cmd);
 	}
-	*/
-	
+	 */
+
 	public static void putExternalCommands(ArrayList<CommandItem> items){
 		putCommandItems(items, "EXTERNAL_");
 	}
-	
+
 	public static ArrayList<CommandItem> getExternalCommands(){
 		ArrayList<CommandItem> items = getCommandItems("EXTERNAL_");
 		if(items.size() == 0){
@@ -403,22 +403,22 @@ public class Settings {
 		}
 		return items;		
 	}
-	
-	
-/*	
+
+
+	/*	
 	private static CommandItem getAlignADDCommand(int i){
 		return getCommandItem(i, "ALIGN_ADD_");
 	}
-	
+
 	private static void putAlignADDCommand(int i, CommandItem cmd){
 		putCommandItem(i, "ALIGN_ADD_", cmd);
 	}
-*/
-	
+	 */
+
 	private static CommandItem[] getDefaultCommandItems() {
-		
+
 		// raxmlHPC -f a -x 1465421654 -# 1 -m PROTGAMMAGTR -n RAXML_ALIGN -s /tmp/aliview-tmp-current-alignment3189140589076301400phy 
-		
+
 		if(OSNativeUtils.isMac()){			
 			CommandItem MAC_DEFAULT_1 = new CommandItem("FastTree + FigTree", "", "/usr/local/bin/FastTree -nt -gtr -out TEMP_OUT_FILE CURRENT_ALIGNMENT_FASTA" + LF + "open -a \"FigTree v1.4.2.app\" TEMP_OUT_FILE", false, true);
 			CommandItem MAC_DEFAULT_2 = new CommandItem("Textedit", "", "open -a TextEdit CURRENT_ALIGNMENT_FASTA", false,false);
@@ -445,7 +445,7 @@ public class Settings {
 			return COMMAND_ITEM_DEFAULTS;
 		}
 	}
-	
+
 	private static CommandItem[] getAlignerAddDefaultItems() {
 		if(OSNativeUtils.isMac()){
 			CommandItem MAC_DEFAULT_ADD_ALIGNER_ITEM_1 = new CommandItem("Muscle-profile", MuscleWrapper.getMusclePath().getAbsolutePath(), "-profile -in1 CURRENT_ALIGNMENT_FASTA -in2 SECOND_SEQUENCES -out TEMP_OUT_FILE", true,true);
@@ -474,7 +474,7 @@ public class Settings {
 
 		}
 	}
-	
+
 	private static CommandItem[] getAlignerALLDefaultItems() {
 		if(OSNativeUtils.isMac()){
 			CommandItem MAC_DEFAULT_ALL_ALIGNER_ITEM_1 = new CommandItem("Muscle", MuscleWrapper.getMusclePath().getAbsolutePath(), "-in CURRENT_ALIGNMENT_FASTA -out TEMP_OUT_FILE", true, true);
@@ -514,12 +514,12 @@ public class Settings {
 		}
 		return items;		
 	}
-	
+
 	public static void putAlignADDCommands(ArrayList<CommandItem> items){
 		putCommandItems(items, "ALIGN_ADD_");
 		fireAlignADDCmdsChanged();
 	}
-	
+
 	public static void clearAlignADDCommands() {
 		clearCommandItems("ALIGN_ADD_");
 		fireAlignADDCmdsChanged();
@@ -529,7 +529,7 @@ public class Settings {
 		clearCommandItems("ALIGN_ALL_");
 		fireAlignAllCmdsChanged();
 	}
-	
+
 	public static void putAlignALLCommands(ArrayList<CommandItem> items){
 		putCommandItems(items, "ALIGN_ALL_");
 		fireAlignAllCmdsChanged();
@@ -548,23 +548,23 @@ public class Settings {
 		return items;		
 	}
 
-	
-	
+
+
 	/*
 	private static CommandItem getAlignALLCommand(int i){
 		return getCommandItem(i, "ALIGN_ALL_");
 	}
-	
+
 	private static void putAlignALLCommand(int i, CommandItem cmd){
 		putCommandItem(i, "ALIGN_ALL_", cmd);
 	}
-	*/
-	
+	 */
+
 
 	public static SettingValue getReverseHorizontalMouseWheel() {
 		return reverseHorizontalMouseWheel;
 	}
-	
+
 	public static SettingValue getReverseVerticalMouseWheel() {
 		return reverseVerticalMouseWheel;
 	}
@@ -576,60 +576,60 @@ public class Settings {
 	public static SettingValue getVerticalScrollModifier() {
 		return verticalMouseWheelScrollModifier;
 	}
-	
+
 	public static SettingValue getHideFileSeqLimitedEditCapabilities() {
 		return hideFileSeqLimitedEditCapabilities;
 	}
-	
+
 	public static SettingValue getHideEditModeMessage() {
 		return hideEditModeMessage;
 	}
-	
+
 	public static SettingValue getHideDeleteVerticalGapsMessage() {
 		return hideDeleteVerticalGapsMessage;
 	}
-	
+
 	public static SettingValue getHideMuscleProfileAlignInfoMessage() {
 		return hideMuscleProfileAlignInfoMessage;
 	}
-	
+
 	public static SettingValue getHideRealignEverythingMessage() {
 		return hideRealignEverythingMessage;
 	}
-	
+
 	public static SettingValue getHideAlignmentProgressWindowWhenDone() {
 		return hideAlignmentProgressWindowWhenDone;
 	}
-	
+
 	public static SettingValue getHideAlignmentProgramInvalidCharsInfoMessage() {
-		
+
 		return hideAlignmentProgramInvalidCharsInfoMessage;
 	}
-	
+
 	public static SettingValue getHideDuplicateSeqNamesMessage() {
 		return hideDuplicateSeqNamesMessage;
 	}
-	
+
 	public static SettingValue getHideDeleteAllGapsMessage() {
 		return hideDeleteAllGapsMessage;
 	}
-	
+
 	public static SettingValue getHideDeleteAllSelectedSequences() {
 		return hideDeleteAllSelectedSequences;
 	}
-	
+
 	public static SettingValue getHideDeleteAllSelectedBases() {
 		return hideDeleteAllSelectedBases;
 	}
-	
+
 	public static SettingValue getHideAskBeforeEditMode() {
 		return hideAskBeforeEditMode;
 	}
-	
+
 	public static SettingValue getHideUnknownAlignmentType() {
 		return hideUnknownAlignmentType;
 	}
-	
+
 	public static void clearAllHideThisDialogCheckboxes() {
 		for(SettingValue setVal: allHideMsgSettingVals){
 			setVal.putBooleanValue(false);
@@ -638,14 +638,14 @@ public class Settings {
 
 	public static void addRecentFile(File alignmentFile){
 		Vector<File> files = getRecentFiles();
-		
+
 		// skip if file is same as last
 		if(files.size() > 0 && files.get(0).getAbsolutePath().equals(alignmentFile.getAbsolutePath()) == true){
-			
+
 			// skip
-			
+
 		}else{
-			
+
 			// remove older previous files with same name
 			Vector<File> toRemove = new Vector<File>();
 			for(File aRecentFile: files){
@@ -655,27 +655,27 @@ public class Settings {
 			}
 			files.removeAll(toRemove);
 			files.insertElementAt(alignmentFile, 0);
-			
+
 			putRecentFiles(files);
 		}
 	}
-	
+
 	private static void putRecentFiles(Vector<File> files){
 		// save the last 20 files
 		logger.info(files.size());
-		
+
 		// first remove old ones
 		for(int n = 0; n < 20; n++){
 			logger.info("n" + n);
 			prefs.remove(RECENT_FILE + n);
 		}
-		
+
 		// then add new ones
 		for(int n = 0; n < files.size() && n < 20; n++){
 			logger.info("n" + n);
 			prefs.put(RECENT_FILE + n, files.get(n).getAbsolutePath());
 		}
-		
+
 		// and flush changes
 		try {
 			prefs.flush();
@@ -696,7 +696,7 @@ public class Settings {
 		}
 		return recent;
 	}
-	
+
 	public static File getLastRecentFile() {	
 		Vector<File> recentFiles = getRecentFiles();	
 		if(recentFiles == null || recentFiles.size() == 0){
@@ -704,18 +704,18 @@ public class Settings {
 		}
 		return recentFiles.get(0);	
 	}
-	
+
 
 	public static SettingValue getLargeFileIndexing() {
 		return largeFileIndexing;
 	}
-	
+
 	public static void addSettingsListener(SettingsListener listener){
 		if(listener != null || !settingListeners.contains(listener)){
 			settingListeners.add(listener);
 		}
 	}
-	
+
 	private static void fireRecentFilesChanged() {
 		//logger.info("fire fireRecentFilesChanged, settingListeners.size()" + settingListeners.size());
 		for(SettingsListener listener: settingListeners){
@@ -737,15 +737,15 @@ public class Settings {
 			listener.externalCmdsChanged();
 		}
 	}
-	
+
 	public static SettingValue getUseCustomFontSize() {
 		return useCustomFontSize;
 	}
-	
+
 	public static SettingValue getCustomFontSize() {
 		return customFontSize;
 	}
-	
+
 	public static SettingValue getShowCharsetRuler() {
 		return showCharsetRuler;
 	}

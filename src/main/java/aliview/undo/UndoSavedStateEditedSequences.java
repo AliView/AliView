@@ -13,5 +13,5 @@ public class UndoSavedStateEditedSequences extends UndoSavedState{
 		this.editedSequences = editedSequences;
 		this.meta = meta;
 	}
-	
+
 }

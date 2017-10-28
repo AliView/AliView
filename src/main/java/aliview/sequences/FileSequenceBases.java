@@ -14,7 +14,7 @@ import aliview.utils.ArrayUtilities;
 public class FileSequenceBases implements Bases {
 	private static final Logger logger = Logger.getLogger(FileSequenceBases.class);
 	private static final String TEXT_FILE_BYTE_ENCODING = "ASCII";
-	
+
 	protected MemoryMappedSequencesFile sequencesFile;
 	private long startPointer;
 	private long endPointer;
@@ -26,7 +26,7 @@ public class FileSequenceBases implements Bases {
 		this.endPointer = endPointer;
 		this.sequenceAfterNameStartPointer = sequenceAfterNameStartPointer;
 	}
-	
+
 	public FileSequenceBases(MemoryMappedSequencesFile sequencesFile, long startPointer) {
 		this.sequencesFile = sequencesFile;
 		this.startPointer = startPointer;
@@ -35,12 +35,12 @@ public class FileSequenceBases implements Bases {
 	public FileSequenceBases getCopy(){
 		return new FileSequenceBases(sequencesFile, startPointer, endPointer, sequenceAfterNameStartPointer);
 	}
-	
+
 	public int getLength(){
-		 long len = (getEndPointer() - getStartPointer()) - (getSequenceAfterNameStartPointer() - getStartPointer()); // +1 because seq end pointer is inclusive 
-		 return (int)len;
+		long len = (getEndPointer() - getStartPointer()) - (getSequenceAfterNameStartPointer() - getStartPointer()); // +1 because seq end pointer is inclusive 
+		return (int)len;
 	}
-	
+
 	protected long getSequenceAfterNameStartPointer(){
 		return sequenceAfterNameStartPointer;
 	}
@@ -72,16 +72,16 @@ public class FileSequenceBases implements Bases {
 	public byte[] toByteArray() {
 		return toByteArray(0, this.getLength() - 1);
 	}
-	
+
 	public byte[] toByteArray(int startIndexInclusive, int endIndexInclusive) {
 		// TODO Problem if to big
 		if(this.getLength() > 100 * 1000 * 1000){
 			return null;
 		}
-		
+
 		int subSize = endIndexInclusive - startIndexInclusive + 1; // +1 because end index is inclusive
-		
-		
+
+
 		if(subSize >= 0){
 			byte[] subarray = new byte[subSize];
 			int subIndex = 0;
@@ -93,82 +93,82 @@ public class FileSequenceBases implements Bases {
 		}
 		return null;
 	}
-	
+
 	@Override
 	public String toString() {
-		
+
 		logger.warn("Maybe string could be to big....");
 		return super.toString();
 	}
 
 	public void set(int n, byte newBase) {
-		
+
 	}
-	
+
 	private void assureSize(int n) {
 
 	}
 
 	private void resize(int n) {
-		
+
 	}
-	
+
 	// convenience
 	public void append(byte[] newBytes) {
-		
+
 	}
 
 	public void moveBaseLeft(int n) {
-		
+
 	}
 
 	public void moveBaseRight(int n) {
-		
+
 	}
-	
-	
+
+
 	public void insertAt(int n, byte[] newBytes) {
-		
+
 	}
 
 	public void replace(int startReplaceIndex, int stopReplaceIndex, byte[] insertBases) {
-		
+
 	}
-	
+
 	public void deleteAll(byte target) {
-		
+
 	}
-	
+
 	public void delete(int[] toDelete) {
-		
+
 	}
-	
+
 	// ?????
 	public void complement() {
-		
+
 	}
-	
+
 	// ?????
 	public void reverse() {
-		
+
 	}
 
 	// convenience method
 	public void set(int n, char c) {
-		
+
 	}
-		
+
 	// convenience
 	public void delete(int pos) {
-		
+
 	}
-		
+
 	// convenience
 	public void insertAt(int n, byte newByte) {
-		
+
 	}
-		
-	
+
+
 
 
 }

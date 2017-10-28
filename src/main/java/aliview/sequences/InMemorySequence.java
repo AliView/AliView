@@ -22,9 +22,9 @@ public class InMemorySequence extends BasicSequence{
 
 		this.bases = new DefaultBases(bytes);
 		this.name = name;
-		
+
 	}
-	
+
 	public void setBases(byte[] bytes) {
 		logger.info("setnewbases");
 		this.bases = new DefaultBases(bytes);
@@ -44,14 +44,14 @@ public class InMemorySequence extends BasicSequence{
 		}
 		return formatted;
 	}
-	
+
 	public String toString(){
 		return getSimpleName();
 	}
-	
+
 	public int compareTo(Sequence anotherSeq) {
 		return this.getSimpleName().compareTo(anotherSeq.getSimpleName());
 	}
-	*/
-	
+	 */
+
 }

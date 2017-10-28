@@ -144,7 +144,7 @@ public class PrimerSettingsPanel extends JPanel{
 				parentFrame.dispose();
 			}
 		});
-		
+
 		JButton btnHelp = new JButton("Help");
 		btnHelp.setPreferredSize(new Dimension(100,30));
 		btnHelp.addActionListener(new ActionListener() {

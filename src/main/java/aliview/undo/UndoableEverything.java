@@ -10,7 +10,7 @@ import aliview.sequences.Sequence;
 
 
 public class UndoableEverything extends AbstractUndoableEdit{
-	
+
 	private String fastaAlignment;
 	private AlignmentMeta meta;
 
@@ -18,14 +18,14 @@ public class UndoableEverything extends AbstractUndoableEdit{
 		this.fastaAlignment = fastaAlignment;
 		this.meta = meta;
 	}
-	
+
 	public String getPresentationName() { return "Edit"; }
-	
-	
+
+
 	public void undo() throws CannotUndoException {
 		// aliviewWindow.restoreAlignmentFromFasta(fastaAlignment, meta);
 	}
-	
+
 	public void redo() throws CannotRedoException {
 		// aliviewWindow.restoreAlignmentFromFasta(fastaAlignment, meta);
 	}

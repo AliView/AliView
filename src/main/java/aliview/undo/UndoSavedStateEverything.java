@@ -8,7 +8,7 @@ import aliview.sequencelist.AlignmentListModel;
 import aliview.sequences.Sequence;
 
 public class UndoSavedStateEverything extends UndoSavedState{
-	
+
 	public String fastaAlignment;
 	public AlignmentMeta meta;
 	public AlignmentListModel sequences;

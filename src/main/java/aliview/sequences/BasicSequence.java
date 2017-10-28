@@ -35,13 +35,13 @@ public class BasicSequence implements Sequence, Comparable<Sequence> {
 	private AlignmentListModel alignmentModel;
 	protected String name;
 	protected int id;
-	
+
 
 	public BasicSequence(){
 		this.id = SequenceUtils.createID();
 		selectionModel = new DefaultSequenceSelectionModel();
 	}
-	
+
 	public BasicSequence(Bases bases) {
 		this();
 		this.bases = bases;
@@ -54,7 +54,7 @@ public class BasicSequence implements Sequence, Comparable<Sequence> {
 		this.alignmentModel = template.alignmentModel;
 		this.selectionModel = createNewSelectionModel();
 	}
-	
+
 	public Sequence getCopy() {
 		return new BasicSequence(this);
 	}
@@ -77,19 +77,19 @@ public class BasicSequence implements Sequence, Comparable<Sequence> {
 		}
 		return false;
 	}
-	
+
 	public int getLength() {
 		return getBases().getLength();
 	}
-	
+
 	public int getNonTranslatedLength() {
 		return getNonTranslatedBases().getLength();
 	}
-	
+
 	public byte[] getGapPaddedCodonInTranslatedPos(int pos) {
 		return getTranslatedBases().getGapPaddedCodonInTranslatedPos(pos);
 	}
-	
+
 	public boolean isCodonSecondPos(int pos) {
 		return getTranslatedBases().isCodonSecondPos(pos);
 	}
@@ -100,13 +100,13 @@ public class BasicSequence implements Sequence, Comparable<Sequence> {
 		}
 		return this.bases;
 	}
-	
+
 	protected Bases getNonTranslatedBases(){
 		return this.bases;
 	}
 
 	private TranslatedBases getTranslatedBases(){
-		
+
 		if(translatedBases == null){
 			// this is double locked to avoid synchronized block after the lazy initialization of TranslatedBases object
 			// TranslatedBases has to be declared volatile above
@@ -123,7 +123,7 @@ public class BasicSequence implements Sequence, Comparable<Sequence> {
 	public SequenceSelectionModel createNewSelectionModel(){
 		return new DefaultSequenceSelectionModel();
 	}
-	
+
 	public int countStopCodon(){
 		return getTranslatedBases().countStopCodon();
 	}
@@ -131,7 +131,7 @@ public class BasicSequence implements Sequence, Comparable<Sequence> {
 	public AminoAcid getTranslatedAminoAcidAtNucleotidePos(int x) {
 		return getTranslatedBases().getAminoAcidAtNucleotidePos(x);
 	}
-	
+
 	public AminoAcidAndPosition getNoGapAminoAcidAtNucleotidePos(int target){
 		return getTranslatedBases().getNoGapAminoAcidAtNucleotidePos(target);
 	}
@@ -200,12 +200,12 @@ public class BasicSequence implements Sequence, Comparable<Sequence> {
 			out.write(getBases().get(n));
 		}
 	}
-	
+
 	public void writeBasesBetween(int start, int end, Writer out) throws IOException {
 		for(int n = start; n <= end; n++){
 			out.write( getBases().charAt(n));
 		}
-		
+
 	}
 
 	public void toggleSimpleName(){
@@ -238,7 +238,7 @@ public class BasicSequence implements Sequence, Comparable<Sequence> {
 		}
 		return foundInterval;
 	}
-	
+
 	public int find(byte find, int startPos){	
 		for(int n = startPos; n < getBases().getLength(); n++){
 			if(find == getBases().get(n)){
@@ -247,15 +247,15 @@ public class BasicSequence implements Sequence, Comparable<Sequence> {
 		}
 		return -1;
 	}
-	
+
 	public int getFirstSelectedPosition() {
 		return selectionModel.getFirstSelectedPosition();
 	}
-	
+
 	public int getLastSelectedPosition() {
 		return selectionModel.getLastSelectedPosition(this.getLength());
 	}
-	
+
 	/*
 	 * 
 	 * TODO could skip
@@ -306,7 +306,7 @@ public class BasicSequence implements Sequence, Comparable<Sequence> {
 	public boolean isGapRightOfSelection(){
 		return isGapRightOfSelection(1);
 	}
-	
+
 	public boolean isEndRightOfSelection(){
 		int rightSelected = getLastSelectedPosition();
 		if(rightSelected + 1 == getLength()){
@@ -314,7 +314,7 @@ public class BasicSequence implements Sequence, Comparable<Sequence> {
 		}
 		return false;
 	}
-	
+
 	public boolean isGapOrEndRightOfSelection(){
 		if(isEndRightOfSelection()){
 			return true;
@@ -323,7 +323,7 @@ public class BasicSequence implements Sequence, Comparable<Sequence> {
 			return isGapRightOfSelection();
 		}
 	}
-	
+
 	public boolean isGapLeftOfSelection(){
 		return isGapLeftOfSelection(1);
 	}
@@ -382,26 +382,26 @@ public class BasicSequence implements Sequence, Comparable<Sequence> {
 			int rightPosition = getLastSelectedPosition();
 			//if(rangeCheck(leftPosition) && rangeCheck(rightPosition+1)){
 
-				// only if gap is right of selection
-				if(isGapOrEndRightOfSelection()){
+			// only if gap is right of selection
+			if(isGapOrEndRightOfSelection()){
 
-					// move bases one step at the time from right to left
-					for(int n = rightPosition; n >= leftPosition; n--){
-						// move residue
-						getBases().moveBaseRight(n);
-						//getBases().set(n + 1, getBases().get(n));
-						// move selection
-						// move selection
-						if(isBaseSelected(n)){
-							setSelectionAt(n+1);
-						}else{
-							clearSelectionAt(n+1);
-						}
+				// move bases one step at the time from right to left
+				for(int n = rightPosition; n >= leftPosition; n--){
+					// move residue
+					getBases().moveBaseRight(n);
+					//getBases().set(n + 1, getBases().get(n));
+					// move selection
+					// move selection
+					if(isBaseSelected(n)){
+						setSelectionAt(n+1);
+					}else{
+						clearSelectionAt(n+1);
 					}
-					// and finally put the gap at the left side
-					getBases().set(leftPosition,'-');
-					clearSelectionAt(leftPosition);
 				}
+				// and finally put the gap at the left side
+				getBases().set(leftPosition,'-');
+				clearSelectionAt(leftPosition);
+			}
 			//}
 		}
 	}
@@ -419,20 +419,20 @@ public class BasicSequence implements Sequence, Comparable<Sequence> {
 				if(isGapLeftOfSelection()){
 
 					for(int n = leftPosition; n <= rightPosition; n++){
-						
+
 						// move residue
 						getBases().moveBaseLeft(n);
 						//getBases().set(n - 1, getBases().get(n));
-						
+
 						// move selection
 						if(isBaseSelected(n)){
 							setSelectionAt(n-1);
 						}else{
 							clearSelectionAt(n-1);
 						}
-						
-						
-						
+
+
+
 					}
 					// and finally put the gap at the right side
 					getBases().set(rightPosition, '-');
@@ -441,7 +441,7 @@ public class BasicSequence implements Sequence, Comparable<Sequence> {
 			}
 		}
 	}
-	
+
 
 	public void moveSelectedResiduesRightIfGapOrEndIsPresent(){
 		moveSelectionRightIfGapOrEndIsPresent(1);
@@ -469,7 +469,7 @@ public class BasicSequence implements Sequence, Comparable<Sequence> {
 	public void setSelectionAt(int i){
 		selectionModel.setSelectionAt(i);
 	}
-	
+
 	public void clearSelectionAt(int i){
 		selectionModel.clearSelectionAt(i);
 	}
@@ -524,14 +524,14 @@ public class BasicSequence implements Sequence, Comparable<Sequence> {
 	}
 
 	public void leftPadSequenceWithGaps(int finalLength) {
-		
+
 		int addCount = finalLength - getBases().getLength();
 		if(addCount > 0){
 			byte[] additional = new byte[addCount];
 			Arrays.fill(additional, SequenceUtils.GAP_SYMBOL);
 			getBases().insertAt(0,additional);
 		}
-		
+
 
 	}
 
@@ -557,7 +557,7 @@ public class BasicSequence implements Sequence, Comparable<Sequence> {
 		int nTruePos = ArrayUtilities.count(mask, true);
 
 		int[] toDelete = new int[nTruePos];
-		
+
 		int deleteCount = 0;
 		for(int n = 0; n < getBases().getLength() && n < mask.length ; n++){
 			if(mask[n] == true){
@@ -565,9 +565,9 @@ public class BasicSequence implements Sequence, Comparable<Sequence> {
 				deleteCount ++;
 			}
 		}
-		
+
 		getBases().delete(toDelete);
-		
+
 		// and do same for sel-model
 		for(int n = mask.length-1; n >= 0; n--){
 			if(mask[n] == true){
@@ -626,7 +626,7 @@ public class BasicSequence implements Sequence, Comparable<Sequence> {
 		if(position > 1000000){
 			return -1;
 		}
-		
+
 
 		int posCount = 0;
 		int gapCount = 0;
@@ -673,7 +673,7 @@ public class BasicSequence implements Sequence, Comparable<Sequence> {
 			}
 		}
 	}
-	
+
 	public void selectionExtendRight() {
 		if(hasSelection()){
 			int lastSelectedPos = getLastSelectedPosition();
@@ -681,26 +681,26 @@ public class BasicSequence implements Sequence, Comparable<Sequence> {
 			setSelection(lastSelectedPos, seqEndPos, true);
 		}
 	}
-	
+
 	public void selectionExtendLeft() {
 		if(hasSelection()){
 			int firstSelectedPos = getLastSelectedPosition();
 			setSelection(0, firstSelectedPos, true);
 		}
 	}
-	
+
 	public void invertSelection(){
 		selectionModel.invertSelection(getLength());
 	}
-	
+
 
 	public void deleteAllGaps(){
-		
+
 		// no matter if translated or not - always remove all gaps from backend sequence
 		getNonTranslatedBases().deleteAll(SequenceUtils.GAP_SYMBOL);
 		//getUnBases().deleteAll(SequenceUtils.GAP_SYMBOL);
 		createNewSelectionModel();
-		
+
 	}
 
 	public int getID() {
@@ -756,15 +756,15 @@ public class BasicSequence implements Sequence, Comparable<Sequence> {
 		}
 		return count;
 	}
-	
+
 	public void setAlignmentModel(AlignmentListModel model){
 		this.alignmentModel = model;
 	}
-	
+
 	public AlignmentListModel getAlignmentModel() {
 		return alignmentModel;
 	}
 
-	
+
 
 }

@@ -1,7 +1,7 @@
 package aliview.sequences;
 
 public class PositionToPointer {
-	
+
 	private int startPos;
 	private int endPos;
 	private long startPointer;
@@ -17,11 +17,11 @@ public class PositionToPointer {
 	public PositionToPointer(int seqPosition, long startPointer, long endPointer) {
 		this(seqPosition, seqPosition + (int)(endPointer - startPointer), startPointer, endPointer);
 	}
-	
+
 	public PositionToPointer getCopy() {
 		return new PositionToPointer(startPos, endPos, startPointer, endPointer);
 	}
-	
+
 
 	public long getPointer(int askedPos) {
 		long pointer = -1;

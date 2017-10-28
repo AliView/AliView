@@ -13,26 +13,26 @@ public final class SequenceUtils {
 	public static int TYPE_AMINO_ACID = 0;
 	public static int TYPE_NUCLEIC_ACID = 1;
 	public static int TYPE_UNKNOWN = 2;
-	
+
 	public static int id_counter;
-	
-	
+
+
 	public static byte[] createGapByteArray(int length) {
 		byte[] byteSeq = new byte[length];
 		Arrays.fill(byteSeq, SequenceUtils.GAP_SYMBOL);
 		return byteSeq;
 	}
-	
+
 	public static int createID() {
-	//	logger.info("create ID=" + id_counter);
+		//	logger.info("create ID=" + id_counter);
 		id_counter ++;
 		return id_counter;
 	}
-	
+
 	public static int countExactNucleotideOverlap(Sequence seq1, Sequence seq2) {
 		int nExactOverlap = 0;
 		int nDifferentOverlap = 0;
-		
+
 		for(int n = 0; n < seq1.getLength(); n++){
 			if(NucleotideUtilities.isAtLeastOneGap(seq1.getBaseAtPos(n),seq2.getBaseAtPos(n))){
 				// Nothing to do
@@ -47,7 +47,7 @@ public final class SequenceUtils {
 		}
 		return nExactOverlap;		
 	}
-	
+
 	public static boolean isSeqResiduesIdentical(Sequence seq1, Sequence seq2) {
 		if(seq1.getLength() != seq2.getLength()){
 			return false;
@@ -59,11 +59,11 @@ public final class SequenceUtils {
 		}	
 		return true;
 	}
-	
+
 	public static int countDifferentNucleotideOverlap(Sequence seq1, Sequence seq2) {
 		int nExactOverlap = 0;
 		int nDifferentOverlap = 0;
-		
+
 		for(int n = 0; n < seq1.getLength(); n++){
 			if(NucleotideUtilities.isAtLeastOneGap(seq1.getBaseAtPos(n),seq2.getBaseAtPos(n))){
 				// Nothing to do
@@ -78,11 +78,11 @@ public final class SequenceUtils {
 		}
 		return nDifferentOverlap;		
 	}
-	
+
 	public static int countDifferentAminoAcidOverlap(Sequence seq1, Sequence seq2) {
 		int nExactOverlap = 0;
 		int nDifferentOverlap = 0;
-		
+
 		for(int n = 0; n < seq1.getLength(); n++){
 			if(AminoAcid.isGap(seq1.getBaseAtPos(n)) || AminoAcid.isGap(seq2.getBaseAtPos(n))){
 				// nothing to do
@@ -97,11 +97,11 @@ public final class SequenceUtils {
 		}
 		return nDifferentOverlap;		
 	}
-	
+
 	public static int countExactAminoAcidOverlap(Sequence seq1, Sequence seq2) {
 		int nExactOverlap = 0;
 		int nDifferentOverlap = 0;
-		
+
 		for(int n = 0; n < seq1.getLength(); n++){
 			if(AminoAcid.isGap(seq1.getBaseAtPos(n)) || AminoAcid.isGap(seq2.getBaseAtPos(n))){
 				// nothing to do

@@ -9,13 +9,13 @@ public class NucleotideHistogram extends AliHistogram{
 	public NucleotideHistogram(int length) {
 		super(length);
 	}
-	
+
 	public void addSequence(Sequence seq){	
 		for(int pos = 0; pos < seq.getLength(); pos++){
 			hist[pos][NucleotideUtilities.baseValFromBase(seq.getBaseAtPos(pos))] ++;	
 		}
 	}
-	
+
 	public double getSumNonGap(int x){
 		int sum = 0;
 		// add all
@@ -26,7 +26,7 @@ public class NucleotideHistogram extends AliHistogram{
 		sum -= hist[x][NucleotideUtilities.GAP];
 		return sum;
 	}
-	
+
 }
 
 

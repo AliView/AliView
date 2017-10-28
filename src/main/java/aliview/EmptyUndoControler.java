@@ -21,7 +21,7 @@ public class EmptyUndoControler implements UndoControler {
 
 	public void pushUndoState(UndoSavedState undoSavedState) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

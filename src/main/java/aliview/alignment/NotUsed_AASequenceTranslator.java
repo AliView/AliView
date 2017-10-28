@@ -25,7 +25,7 @@ public class NotUsed_AASequenceTranslator{
 	private int cachedClosestStartPos = -1;
 	private int cachedAminoTripletAcidPos = -1;
 	private AminoAcid cachedAminoAcid;
-	
+
 	public NotUsed_AASequenceTranslator(CodonPositions codonPositions, GeneticCode genCode) {
 		this.codonPositions = codonPositions;
 		this.genCode = genCode;
@@ -34,21 +34,21 @@ public class NotUsed_AASequenceTranslator{
 	public void setCodonPos(CodonPositions codonPos) {
 		this.codonPositions = codonPos;
 	}
-	
+
 	public void setSequence(Sequence seq){
 		this.sequence = seq;
 		this.cachedClosestStartPos = -1;
 		this.cachedAminoTripletAcidPos = -1;
 	}
-	
+
 	public void setGeneticCode(GeneticCode genCode) {
 		this.genCode = genCode;
 	}	
-	
+
 	public boolean isFullCodonStartingAt(int x){
 		return codonPositions.isFullCodonStartingAt(x);
 	}
-	
+
 	public AminoAcid getAminoAcidAtNucleotidePos(int x){
 		if(isFullCodonStartingAt(x)){
 			return getAminoAcidFromTripletStartingAt(x);
@@ -60,7 +60,7 @@ public class NotUsed_AASequenceTranslator{
 			return AminoAcid.GAP;
 		}
 	}
-	
+
 	public boolean isCodonSecondPos(int x){
 		if(isFullCodonStartingAt(x - 1)){
 			return true;
@@ -68,7 +68,7 @@ public class NotUsed_AASequenceTranslator{
 			return false;
 		}
 	}
-	
+
 	public byte[] getTripletAt(int x){
 		byte[] codon = new byte[3];
 		for(int n = 0; n < 3; n ++){
@@ -81,21 +81,21 @@ public class NotUsed_AASequenceTranslator{
 		}
 		return codon;
 	}
-	
+
 	public int getCachedClosestStartPos(){
 		return cachedClosestStartPos;
 	}
 
-	
+
 	public AminoAcid getNoGapAminoAcidAtNucleotidePos(int target){
 		int tripCount = 0;
 		byte[] triplet = new byte[3];
 		int seqLen = sequence.getLength();
-		
-		
+
+
 		// skip pos depending on ReadingFrame
 		int startPos = 0;
-		
+
 		// if cached pos not is set, get a start pos
 		if(cachedClosestStartPos == -1){
 			int skipCount = 0;
@@ -114,7 +114,7 @@ public class NotUsed_AASequenceTranslator{
 		}else{
 			startPos = cachedClosestStartPos;
 		}
-		
+
 		if(target >= startPos){
 			for(int n = startPos; n < seqLen; n++){
 				byte base = sequence.getBaseAtPos(n);
@@ -123,14 +123,14 @@ public class NotUsed_AASequenceTranslator{
 						return AminoAcid.GAP;
 					}			
 				}else{
-					
+
 					tripCount ++;
 					triplet[tripCount - 1] = base;
-					
+
 					if(tripCount == 1){
 						cachedClosestStartPos = n;
 					}
-					
+
 					if(tripCount == 3){				
 						if(n >= target){
 							AminoAcid aa = AminoAcid.getAminoAcidFromCodon(triplet, genCode);
@@ -146,8 +146,8 @@ public class NotUsed_AASequenceTranslator{
 			return AminoAcid.GAP;
 		}
 	}
-	
-	
+
+
 	public AminoAcid getAminoAcidFromTripletStartingAt(int x){
 		if(cachedAminoTripletAcidPos != x){
 			cachedAminoTripletAcidPos = x;
@@ -155,17 +155,17 @@ public class NotUsed_AASequenceTranslator{
 		}
 		return cachedAminoAcid;
 	}
-	
+
 	public String getTranslatedAsString(){
 		StringWriter out = new StringWriter(sequence.getLength()/3);
 		writeTranslation(out);
 		return out.toString();
 	}
-	
+
 	public void writeTranslation(Writer out){
 		int x = 0;
 		int gap = 0;
-		
+
 		try {
 			while(x < sequence.getLength()){
 				if(isFullCodonStartingAt(x)){
@@ -190,19 +190,19 @@ public class NotUsed_AASequenceTranslator{
 			e.printStackTrace();
 		}
 	}
-	
+
 	public int getTranslatedAminAcidSequenceLength(){
 		return codonPositions.getAminoAcidPosFromNucleotidePos(sequence.getLength() - 1);
 	}
-	
+
 	public int getMaximumTranslationLength(){
 		return codonPositions.getLengthOfTranslatedPos();
 	}
-	
+
 	public AminoAcid getAAinNoGapTranslatedPos(int x) {
 		return getNoGapAminoAcidAtNucleotidePos(x * 3);
 	}
-	
+
 	public AminoAcid getAAinTranslatedPos(int x) {
 		CodonPos codonPos = codonPositions.getCodonInTranslatedPos(x);
 		if(codonPos == null){
@@ -216,7 +216,7 @@ public class NotUsed_AASequenceTranslator{
 			return aa;
 		}
 	}
-	
+
 	public byte[] getGapPaddedCodonInTranslatedPos(int x) {
 		byte[] codon = getCodonInTranslatedPos(x);
 		byte[] padded = new byte[3];
@@ -226,13 +226,13 @@ public class NotUsed_AASequenceTranslator{
 		}
 		return padded;
 	}
-	
+
 	public byte[] getCodonInTranslatedPos(int x) {
 		CodonPos codonPos = codonPositions.getCodonInTranslatedPos(x);
 		if(codonPos.isOrfan()){
 			byte[] codon = sequence.getBasesBetween(codonPos.startPos, codonPos.endPos);
 			return codon;
-			
+
 		}else{
 			byte[] codon = getTripletAt(codonPos.startPos);
 			return codon;
@@ -243,7 +243,7 @@ public class NotUsed_AASequenceTranslator{
 	public int findFistPosSkipStop(int nextFindPos, AminoAcid target){
 		for(int n = nextFindPos; n < codonPositions.getLengthOfTranslatedPos(); n++){
 			AminoAcid nextAA = getAAinTranslatedPos(n);
-			
+
 			if(nextAA != null && nextAA == AminoAcid.STOP){
 				// Skip to next
 			}	
@@ -253,11 +253,11 @@ public class NotUsed_AASequenceTranslator{
 		}
 		return -1;
 	}
-	
+
 	public int findFistPos(int nextFindPos, AminoAcid target){
 		for(int n = nextFindPos; n < codonPositions.getLengthOfTranslatedPos(); n++){
 			AminoAcid nextAA = getAAinTranslatedPos(n);
-			
+
 			if(nextAA != null && nextAA.getCodeCharVal() == target.getCodeCharVal()){
 				return n;
 			}
@@ -278,7 +278,7 @@ public class NotUsed_AASequenceTranslator{
 		}
 		return counter;
 	}
-	
-	*/
+
+	 */
 }
 

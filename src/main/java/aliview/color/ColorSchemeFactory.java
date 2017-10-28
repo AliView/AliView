@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ColorSchemeFactory {
-	
+
 	private static ColorScheme DEFAULT_COLOR_SCHEME = new DefaultColorScheme();
 	private static ColorScheme DEFAULT_COLOR_SCHEME_FAST = new DefaultColorSchemeFast();
 	private static ColorScheme SEAVIEW_COLOR_SCHEME = new SeaViewColorScheme();
@@ -34,17 +34,17 @@ public class ColorSchemeFactory {
 		}		
 		return selectedScheme;
 	}
-	
+
 	public static List<ColorScheme> getNucleotideColorSchemes(){
 		return nucleotideColorSchemes;
 	}
-	
+
 	public static List<ColorScheme> getAAColorSchemes(){
 		return aaColorSchemes;
 	}
-	
+
 	public static ColorScheme getDefaultColorScheme(){
 		return DEFAULT_COLOR_SCHEME;
 	}
-	
+
 }

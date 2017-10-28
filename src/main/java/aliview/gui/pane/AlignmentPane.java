@@ -63,8 +63,8 @@ public class AlignmentPane extends JPanel{
 	//private static final Color ALPHACOLOR = new Color(255, 255,255, 128 );
 	double charWidth = 10;
 	double charHeight = 12;
-	private Font baseFont = new Font(Font.MONOSPACED, Font.PLAIN, (int)charWidth);
-	private Font highDPIFont = new Font(Font.MONOSPACED, Font.PLAIN, (int)charWidth);
+	private Font baseFont = new Font(OSNativeUtils.getMonospacedFontName(), Font.PLAIN, (int)charWidth);
+	private Font highDPIFont = new Font(OSNativeUtils.getMonospacedFontName(), Font.PLAIN, (int)charWidth);
 	private int highDPIScaleFactor = 1;
 
 	private Alignment alignment;

@@ -139,7 +139,6 @@ import aliview.gui.AlignmentPopupMenu;
 import aliview.gui.AppIcons;
 import aliview.gui.GlassPaneKeyListener;
 import aliview.gui.GlassPaneMouseListener;
-import aliview.gui.GoToPosDialog;
 import aliview.gui.ListTopOffsetJPanel;
 import aliview.gui.MessageLogFrame;
 import aliview.gui.ScrollBarModelSyncChangeListener;

@@ -19,26 +19,26 @@ public class ClustalXColorScheme extends DefaultColorScheme{
 	static final Color CLUSTAL_PINK = new Color((float) 0.9, (float) 0.5, (float) 0.5);
 	static final Color CLUSTAL_MAGENTA = new Color((float) 0.8, (float) 0.3, (float) 0.8);
 	static final Color CLUSTAL_YELLOW = new Color((float) 0.8, (float) 0.8, (float) 0.0);
-	
-//	static Color SELECTED_CLUSTAL_RED =  new Color((float) 0.9, (float) 0.2, (float) 0.1);
-//	static Color CLUSTAL_BLUE = new Color((float) 0.5, (float) 0.7, (float) 0.9);
-//	static Color CLUSTAL_GREEN = new Color((float) 0.1, (float) 0.8, (float) 0.1);
-//	static Color CLUSTAL_ORANGE = new Color((float) 0.9, (float) 0.6, (float) 0.3);
-//	static Color CLUSTAL_CYAN =  new Color((float) 0.1, (float) 0.7, (float) 0.7);
-//	static Color CLUSTAL_PINK = new Color((float) 0.9, (float) 0.5, (float) 0.5);
-//	static Color CLUSTAL_MAGENTA = new Color((float) 0.8, (float) 0.3, (float) 0.8);
-//	static Color CLUSTAL_YELLOW = new Color((float) 0.8, (float) 0.8, (float) 0.0);
-	
+
+	//	static Color SELECTED_CLUSTAL_RED =  new Color((float) 0.9, (float) 0.2, (float) 0.1);
+	//	static Color CLUSTAL_BLUE = new Color((float) 0.5, (float) 0.7, (float) 0.9);
+	//	static Color CLUSTAL_GREEN = new Color((float) 0.1, (float) 0.8, (float) 0.1);
+	//	static Color CLUSTAL_ORANGE = new Color((float) 0.9, (float) 0.6, (float) 0.3);
+	//	static Color CLUSTAL_CYAN =  new Color((float) 0.1, (float) 0.7, (float) 0.7);
+	//	static Color CLUSTAL_PINK = new Color((float) 0.9, (float) 0.5, (float) 0.5);
+	//	static Color CLUSTAL_MAGENTA = new Color((float) 0.8, (float) 0.3, (float) 0.8);
+	//	static Color CLUSTAL_YELLOW = new Color((float) 0.8, (float) 0.8, (float) 0.0);
+
 	static final Color COLOR_FOREGROUND = Color.BLACK;
 	static final Color COLOR_FOREGROUND_SELECTED = Color.WHITE;
 	static final Color COLOR_BACKGROUND_SELECTED = Color.LIGHT_GRAY.darker();
-	
+
 	static final Color COLOR_OTHER = Color.WHITE;
-	
+
 	public ClustalXColorScheme() {
 		super();
 	}
-	
+
 	private static ColorThreshold percent = new ColorThreshold("WLVIMAFCHP",0.6);
 	private static ColorThreshold number = new ColorThreshold("WLVIMAFCHP",0.8);
 	private static ColorThreshold minus = new ColorThreshold("ED",0.5);
@@ -71,28 +71,28 @@ public class ClustalXColorScheme extends DefaultColorScheme{
 	private static ColorThreshold ALWAYS_G = new ColorThreshold("G",0.0);
 	private static ColorThreshold ALWAYS_P = new ColorThreshold("P",0.0);
 
-  Color[] ALL_COMPOUND_COLORS = new Color[]{
-		  CLUSTAL_RED, CLUSTAL_BLUE, CLUSTAL_GREEN, CLUSTAL_ORANGE, CLUSTAL_CYAN, CLUSTAL_PINK, CLUSTAL_PINK, CLUSTAL_MAGENTA, CLUSTAL_YELLOW, COLOR_OTHER};
-	
-  AACompColorThreshold[] ALL_COMPOUNDS = new AACompColorThreshold[]{	
-	new AACompColorThreshold("F,I,L,M,F,V,W", CLUSTAL_BLUE, new ColorThreshold[]{percent,number,A,C,F,H,I,L,M,V,W,Y,P,p}),
-	new AACompColorThreshold("K,R", CLUSTAL_RED, new ColorThreshold[]{plus,K,R,Q}),
-	new AACompColorThreshold("C", CLUSTAL_BLUE, new ColorThreshold[]{percent,number,A,C,F,H,I,L,M,V,W,S,P,p}),
-	new AACompColorThreshold("C", CLUSTAL_PINK, new ColorThreshold[]{C}),
-	new AACompColorThreshold("C", CLUSTAL_PINK, new ColorThreshold[]{C}),
-	new AACompColorThreshold("G", CLUSTAL_ORANGE, new ColorThreshold[]{ALWAYS_G}),
-	new AACompColorThreshold("P", CLUSTAL_YELLOW, new ColorThreshold[]{ALWAYS_P}),
-	new AACompColorThreshold("H,Y", CLUSTAL_CYAN, new ColorThreshold[]{percent,number,A,C,F,H,I,L,M,V,W,Y,P,p}),
-	new AACompColorThreshold("E", CLUSTAL_MAGENTA, new ColorThreshold[]{minus,D,E,q,Q}),
-	new AACompColorThreshold("D", CLUSTAL_MAGENTA, new ColorThreshold[]{minus,D,E,n,N}),
-	new AACompColorThreshold("A", CLUSTAL_BLUE, new ColorThreshold[]{percent,number,A,C,F,H,I,L,M,V,W,Y,P,p,T,S,G}),
-	new AACompColorThreshold("T", CLUSTAL_GREEN, new ColorThreshold[]{percent,number,t,S,T}),
-	new AACompColorThreshold("S", CLUSTAL_GREEN, new ColorThreshold[]{number,t,S,T}),
-	new AACompColorThreshold("N", CLUSTAL_GREEN, new ColorThreshold[]{n,N,D}),
-	new AACompColorThreshold("Q", CLUSTAL_GREEN, new ColorThreshold[]{q,Q,E,plus,K,R}),
+	Color[] ALL_COMPOUND_COLORS = new Color[]{
+			CLUSTAL_RED, CLUSTAL_BLUE, CLUSTAL_GREEN, CLUSTAL_ORANGE, CLUSTAL_CYAN, CLUSTAL_PINK, CLUSTAL_PINK, CLUSTAL_MAGENTA, CLUSTAL_YELLOW, COLOR_OTHER};
+
+	AACompColorThreshold[] ALL_COMPOUNDS = new AACompColorThreshold[]{	
+			new AACompColorThreshold("F,I,L,M,F,V,W", CLUSTAL_BLUE, new ColorThreshold[]{percent,number,A,C,F,H,I,L,M,V,W,Y,P,p}),
+			new AACompColorThreshold("K,R", CLUSTAL_RED, new ColorThreshold[]{plus,K,R,Q}),
+			new AACompColorThreshold("C", CLUSTAL_BLUE, new ColorThreshold[]{percent,number,A,C,F,H,I,L,M,V,W,S,P,p}),
+			new AACompColorThreshold("C", CLUSTAL_PINK, new ColorThreshold[]{C}),
+			new AACompColorThreshold("C", CLUSTAL_PINK, new ColorThreshold[]{C}),
+			new AACompColorThreshold("G", CLUSTAL_ORANGE, new ColorThreshold[]{ALWAYS_G}),
+			new AACompColorThreshold("P", CLUSTAL_YELLOW, new ColorThreshold[]{ALWAYS_P}),
+			new AACompColorThreshold("H,Y", CLUSTAL_CYAN, new ColorThreshold[]{percent,number,A,C,F,H,I,L,M,V,W,Y,P,p}),
+			new AACompColorThreshold("E", CLUSTAL_MAGENTA, new ColorThreshold[]{minus,D,E,q,Q}),
+			new AACompColorThreshold("D", CLUSTAL_MAGENTA, new ColorThreshold[]{minus,D,E,n,N}),
+			new AACompColorThreshold("A", CLUSTAL_BLUE, new ColorThreshold[]{percent,number,A,C,F,H,I,L,M,V,W,Y,P,p,T,S,G}),
+			new AACompColorThreshold("T", CLUSTAL_GREEN, new ColorThreshold[]{percent,number,t,S,T}),
+			new AACompColorThreshold("S", CLUSTAL_GREEN, new ColorThreshold[]{number,t,S,T}),
+			new AACompColorThreshold("N", CLUSTAL_GREEN, new ColorThreshold[]{n,N,D}),
+			new AACompColorThreshold("Q", CLUSTAL_GREEN, new ColorThreshold[]{q,Q,E,plus,K,R}),
 	};
-	
-	
+
+
 	private AACompColorThreshold getCompIfResidueWithinThreshold(AminoAcid acid, int xPos, Alignment alignment){
 		ArrayList<AACompColorThreshold> allComp = getCompoundThresholdsFromAcid(acid);
 		for(AACompColorThreshold aComp: allComp){
@@ -144,13 +144,13 @@ public class ClustalXColorScheme extends DefaultColorScheme{
 	public Color getAminoAcidSelectionForegroundColor(AminoAcid acid, int xPos, Alignment alignment) {
 		return COLOR_FOREGROUND_SELECTED;
 	}
-	
-	
-	
+
+
+
 	public String getName() {
 		return "ClustalX";
 	}
-	
+
 	public Color[] getALLCompundColors() {
 		return ALL_COMPOUND_COLORS;
 	}

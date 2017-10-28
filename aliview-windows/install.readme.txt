@@ -6,7 +6,6 @@ Download and run AliView-Setup.exe
 alignment type files.
 
 
-
 ----*** ALTERNATIVE ***----
 In directory "without_installer_version" is the program provided either as an .exe-file or a jar-file:
 

@@ -36,6 +36,7 @@ import utils.nexus.CharSet;
 import utils.nexus.CodonPos;
 import utils.nexus.CodonPositions;
 import aliview.AliView;
+import aliview.AliViewWindow;
 import aliview.AminoAcid;
 import aliview.GeneticCode;
 import aliview.NucleotideUtilities;
@@ -45,6 +46,8 @@ import aliview.alignment.AliHistogram;
 import aliview.alignment.Alignment;
 import aliview.alignment.AlignmentMeta;
 import aliview.alignment.NucleotideHistogram;
+import aliview.gui.SequenceTypeSelectDialog;
+import aliview.gui.TextEditDialog;
 import aliview.importer.AlignmentImportException;
 import aliview.importer.FileFormat;
 import aliview.sequences.FileSequence;
@@ -52,6 +55,7 @@ import aliview.sequences.BasicSequence;
 import aliview.sequences.InMemorySequence;
 import aliview.sequences.Sequence;
 import aliview.sequences.SequenceUtils;
+import aliview.undo.UndoSavedStateEditedSequences;
 
 public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 
@@ -381,34 +385,60 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 
 		public int getSequenceType() {
 
+			// Lazy initialization of sequence type field
 			if(delegateSequences.size() > 0 && sequenceType == SequenceUtils.TYPE_UNKNOWN){
 				// TODO could figure out if not a sequence
 				int gapCount = 0;
 				int nucleotideCount = 0;
+				int otherCount = 0;
 				
+				int 
+				// Loop through 1000 bases
+				mainLoop:
+				for(Sequence seq: delegateSequences){
+					for(int pos = 0; pos < seq.getLength(); pos ++){
+						byte base = seq.getBaseAtPos(pos); 
+						if(NucleotideUtilities.isGap(base)){
+							gapCount ++;
+						}else if(NucleotideUtilities.isNucleoticeOrIUPAC(base)){
+							nucleotideCount ++;
+						}
+						else{
+							otherCount ++;
+						}
+						if((nucleotideCount + otherCount) >= 1000){
+							break mainLoop;
+						}
+					}		
+				}
 				
-				// Loop through 5000 bases or sequence length
-				Sequence testSeq = delegateSequences.get(0);
-				int maxLen = Math.min(5000, testSeq.getLength());
-				for(int n = 0; n < maxLen; n++){
-					byte base = testSeq.getBaseAtPos(n); 
-					if(NucleotideUtilities.isGap(base)){
-						gapCount ++;
-					}else if(NucleotideUtilities.isNucleoticeOrIUPAC(base)){
-						nucleotideCount ++;
+			
+				// First check low or nucleotide count to avoid div by zero 
+                if(nucleotideCount < 4){
+                	this.sequenceType = SequenceUtils.TYPE_UNKNOWN;
+                }
+				else{
+					double ratio = (double)otherCount/(double)nucleotideCount;
+					
+					if(ratio == 0){
+						this.sequenceType = SequenceUtils.TYPE_NUCLEIC_ACID;
+					}
+					else if(ratio > 0.2){
+						this.sequenceType = SequenceUtils.TYPE_AMINO_ACID;
 					}
 					else{
-//						logger.info("other base=" + base);
+						this.sequenceType = SequenceUtils.TYPE_UNKNOWN;
 					}
 				}
-				
-				// allow 1 wrong base
-				if(maxLen == 0 || (nucleotideCount + gapCount + 1 >= maxLen)){
-					this.sequenceType = SequenceUtils.TYPE_NUCLEIC_ACID;
-				}
-				else{
-					this.sequenceType = SequenceUtils.TYPE_AMINO_ACID;
-				}
+                
+                if(this.sequenceType == SequenceUtils.TYPE_UNKNOWN){
+                	
+                	// Dialog set Alignment type
+                	// No good idéa, better just start as SequenceUtils.TYPE_UNKNOWN
+                	
+                }
+                
+
 			}	
 
 			return sequenceType;	
@@ -2174,6 +2204,9 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 
 	public void setAlignment(Alignment alignment) {
 		this.alignment = alignment;
-		
+	}
+
+	public void setSequenceType(int sequenceType) {
+		this.sequenceType = sequenceType;
 	}
 }

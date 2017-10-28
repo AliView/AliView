@@ -24,6 +24,3 @@ else
     install -v -m755 AliView.desktop /usr/share/applications/
   fi
 fi
-
-
-

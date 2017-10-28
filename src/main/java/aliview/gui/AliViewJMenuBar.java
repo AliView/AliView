@@ -52,6 +52,7 @@ import aliview.sequencelist.AlignmentSelectionEvent;
 import aliview.sequencelist.AlignmentSelectionListener;
 import aliview.sequencelist.FilePage;
 import aliview.sequencelist.FileSequenceAlignmentListModel;
+import aliview.sequences.SequenceUtils;
 import aliview.settings.Settings;
 import aliview.settings.SettingsListener;
 
@@ -746,7 +747,36 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 		mnEdit.add(mntmEditCharsets);
 		loadedAlignmentFunctions.add(mntmEditCharsets);
 		
-
+		mnEdit.add(new JSeparator());
+		
+		// create AlignmentType Menu and submenu
+		JMenu mnAlignmentType = new JMenu("Set Alignment Sequence Type");
+		ButtonGroup alignmentSeqTypeBG = new ButtonGroup();
+		
+		JCheckBoxMenuItem sequenceTypeNucSubmenu = new JCheckBoxMenuItem("Nucleoide");
+		sequenceTypeNucSubmenu.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				aliViewWindow.changeAlignmentType(SequenceUtils.TYPE_NUCLEIC_ACID);
+			}
+		});
+		alignmentSeqTypeBG.add(sequenceTypeNucSubmenu);
+		sequenceTypeNucSubmenu.setSelected(aliViewWindow.getAlignment().isNucleotideAlignment());		
+		mnAlignmentType.add(sequenceTypeNucSubmenu);
+		
+		JCheckBoxMenuItem sequenceTypeAASubmenu = new JCheckBoxMenuItem("Amino Acid");
+		sequenceTypeAASubmenu.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				aliViewWindow.changeAlignmentType(SequenceUtils.TYPE_AMINO_ACID);
+			}
+		});
+		alignmentSeqTypeBG.add(sequenceTypeAASubmenu);
+		sequenceTypeAASubmenu.setSelected(aliViewWindow.getAlignment().isAAAlignment());		
+		mnAlignmentType.add(sequenceTypeAASubmenu);
+				
+		mnEdit.add(mnAlignmentType);
+		loadedAlignmentFunctions.add(mnAlignmentType);
+				
+				
 		mnEdit.add(new JSeparator());
 
 		// Mac has its own menu item

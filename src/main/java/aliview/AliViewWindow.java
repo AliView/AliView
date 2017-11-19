@@ -3439,7 +3439,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 				alignmentPane.scrollRectToVisible(preferredVisisble);
 			}
 
-			statusPanel.setPointerPos(e.getPoint());
+			//statusPanel.setPointerPos(e.getPoint());
 
 			if(startPoint != null){
 
@@ -4339,9 +4339,6 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 	public void expandSelectionLeft() {
 		alignment.selectionExtendLeft();
 	}	
-
-
-
 
 	public void phenotype2genotype() {
 		// As default get last used stored directory

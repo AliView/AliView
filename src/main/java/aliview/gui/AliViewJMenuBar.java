@@ -1798,7 +1798,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 	}
 
 	public void updateAllMenuEnabled() {
-
+	
 		this.disableAllButEssentialButtons();		
 
 		if(! aliViewWindow.isEmpty()){
@@ -1849,42 +1849,6 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 		}
 	}
 
-	public void createDynamicLoadFilePages(final FileSequenceAlignmentListModel seqList, List<FilePage> pages) {
-		logger.info("beforemenu");
-		/*
-		if(mnFilePages == null){
-			mnFilePages = new JMenu("Load more sequences from file");
-			this.add(mnFilePages);
-		}else{
-			mnFilePages.removeAll();
-		}
-		ButtonGroup bg = new ButtonGroup();
-		for(final FilePage page: pages){
-			String startIndexPrefix = "";
-			if(page.startIndex != 0){
-				startIndexPrefix = "~";
-			}
-			JCheckBoxMenuItem nextItem = new JCheckBoxMenuItem("Load sequence "+ startIndexPrefix + page.startIndex + " to ~" + page.endIndex);
-			nextItem.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e){
-					seqList.loadMoreSequencesFromFile(page);
-				}
-			});
-			bg.add(nextItem);
-			mnFilePages.add(nextItem);
-			logger.info("seqList.getActivePage()" + seqList.getActivePage());
-			if(seqList.getActivePage() == page){
-				nextItem.setSelected(true);
-			}
-		}
-		 */
-	}
-
-	public void removeDynamicLoadFilePagesMenu(){
-		if(mnFilePages != null){
-			this.remove(mnFilePages);
-		}
-	}
 	public ButtonModel getToggleTranslationButtonModel() {
 		return toggleTranslationButtonModel;
 	}
@@ -1941,8 +1905,6 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 		return countCodonButtonModel;
 	}
 
-
-
 	/*
 	 * 
 	 * 
@@ -1951,11 +1913,11 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 	 * 
 	 */
 	public void newSequences(AlignmentEvent alignmentEvent) {
+		logger.info("new sequences");
 		this.updateAllMenuEnabled();
 	}
 
 	public void alignmentMetaChanged(AlignmentEvent alignmentEvent) {
-
 	}
 
 	//
@@ -1980,9 +1942,9 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 	}
 
 	public void contentsChanged(AlignmentDataEvent e) {
-		//this.updateAllMenuEnabled();
+		logger.info("contents changed");
+		this.updateAllMenuEnabled();
 	}
-
 
 	//
 	// AlignmentSelectionListener
@@ -2050,7 +2012,5 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 	public ButtonModel getAddNewSequenceButtonModel() {
 		return addEmptySeqButtonModel;
 	}
-
-
 
 }

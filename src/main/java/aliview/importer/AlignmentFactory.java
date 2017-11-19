@@ -98,7 +98,7 @@ public class AlignmentFactory {
 			MemoryUtils.logMem();
 
 
-			// There was a problem 
+		// There was a problem 
 		} catch (AlignmentImportException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

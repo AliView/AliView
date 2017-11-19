@@ -31,6 +31,7 @@ import java.awt.GridLayout;
 
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.BoxLayout;
 
 import java.awt.Component;
@@ -61,9 +62,7 @@ public class StatusPanel extends JPanel implements AlignmentListener, AlignmentD
 	private JLabel lblAlignmentInfo;
 	private JLabel lblTxtCharset;
 	private JLabel lblCharset;
-
-
-
+	Thread updateThread;
 
 	public StatusPanel(AlignmentPane alignmentPane, Alignment alignment) {
 		this.aliPane = alignmentPane;
@@ -113,7 +112,7 @@ public class StatusPanel extends JPanel implements AlignmentListener, AlignmentD
 		add(lblTxtPos);
 		lblTxtPos.setPreferredSize(lblTxtPos.getPreferredSize());
 
-		lblPos = new JLabel("3009909");
+		lblPos = new JLabel("01234567890");
 		add(lblPos);
 		lblPos.setHorizontalAlignment(SwingConstants.CENTER);
 		lblPos.setPreferredSize(lblPos.getPreferredSize());
@@ -126,7 +125,7 @@ public class StatusPanel extends JPanel implements AlignmentListener, AlignmentD
 		add(lblNewLabel_3);
 		lblNewLabel_3.setPreferredSize(lblNewLabel_3.getPreferredSize());
 
-		lblPosUngaped = new JLabel("2776569");
+		lblPosUngaped = new JLabel("0123456789");
 		add(lblPosUngaped);
 		lblPosUngaped.setHorizontalAlignment(SwingConstants.CENTER);
 		lblPosUngaped.setPreferredSize(lblPosUngaped.getPreferredSize());
@@ -140,7 +139,7 @@ public class StatusPanel extends JPanel implements AlignmentListener, AlignmentD
 		add(lblNewLabel_5);
 		lblNewLabel_5.setPreferredSize(lblNewLabel_5.getPreferredSize());
 
-		lblSelectedSeqCount = new JLabel("39879");
+		lblSelectedSeqCount = new JLabel("3987920");
 		add(lblSelectedSeqCount);
 		lblSelectedSeqCount.setHorizontalAlignment(SwingConstants.CENTER);
 		lblSelectedSeqCount.setPreferredSize(lblSelectedSeqCount.getPreferredSize());
@@ -156,7 +155,7 @@ public class StatusPanel extends JPanel implements AlignmentListener, AlignmentD
 		lblNewLabel_1.setMaximumSize(lblNewLabel_1.getPreferredSize());
 		add(lblNewLabel_1);
 
-		lblCols = new JLabel("1087990");
+		lblCols = new JLabel("0123456789");
 		add(lblCols);
 		lblCols.setHorizontalAlignment(SwingConstants.CENTER);
 		lblCols.setPreferredSize(lblCols.getPreferredSize());
@@ -173,7 +172,7 @@ public class StatusPanel extends JPanel implements AlignmentListener, AlignmentD
 		lblNewLabel_8.setMinimumSize(lblNewLabel_8.getPreferredSize());
 		lblNewLabel_8.setOpaque(true);
 
-		lblTotalSelectedChars = new JLabel("82099029");
+		lblTotalSelectedChars = new JLabel("0123456789");
 		add(lblTotalSelectedChars);
 		lblTotalSelectedChars.setHorizontalAlignment(SwingConstants.CENTER);
 		lblTotalSelectedChars.setPreferredSize(lblTotalSelectedChars.getPreferredSize());
@@ -203,7 +202,10 @@ public class StatusPanel extends JPanel implements AlignmentListener, AlignmentD
 
 		this.updateAll();
 	}
-
+	
+	public void setAlignment(Alignment alignment) {
+		this.alignment = alignment;
+	}
 
 	private Component createStatusPanelSeparator() {
 		JSeparator sep = new JSeparator(SwingConstants.VERTICAL);
@@ -213,20 +215,107 @@ public class StatusPanel extends JPanel implements AlignmentListener, AlignmentD
 		return sep;
 	}
 
+	private void updateAlignmentValuesAndLabels(){
+		if(alignment == null){
+			lblAlignmentInfo.setText("no alignmnet loaded");
+		}else{
+			String seqCount = StringUtils.leftPad("" + alignment.getMaxY(), 6);
+			String width = StringUtils.leftPad("" + alignment.getMaxX(), 6);
 
-	public void updateAll() {
-		updateAlignmentText();
-		updateSelectionText();	
+			lblAlignmentInfo.setText("" + seqCount + " sequences " + width + " pos.  ");
+		}
 	}
 
-	public void updateSelectionText(){
+	/*
+	public void setPointerPos(Point pointerPos) {
+		final Point newPos = new Point(pointerPos);	
+		Thread updateThread = new Thread(new Runnable() {
+			public void run() {
+				try {
+					posInSeq = aliPane.getPositionInSequenceAt(newPos);
+					posInUngapedSeq = aliPane.getUngapedPositionInSequenceAt(newPos);
+				} catch (InvalidAlignmentPositionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				// Put display update on queue when done
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						updateSelectionText();
+						logger.info("Update selection from thread done");
+					}
+				});
+			}
+		});
+		updateThread.start();
+
+		logger.info("Thread started OK");
+	}
+	*/
+
+	private void updateSelectionValuesAndLabels(){
+
+		// Only keep one thread for updates - interrupt if one
+		// is running already
+		if(updateThread != null && updateThread.isAlive()){
+			updateThread.interrupt();
+		}
+		
+		// Since these two values might take a long time to update
+		// start by setting them to a nonsens value so that user
+		// kknows they are not real until panel updates
+		posInSeq = -2;
+		posInUngapedSeq = -1;
+		
+		updateThread = new Thread(new Runnable() {
+			public void run() {
+
+				selectionSize = alignment.getSelectionSize();
+				selectedColumnCount = alignment.getSelectedColumnCount();
+				selectedSeqCount = alignment.getSelectedSequencesCount();
+				firstSelectedSequenceName = alignment.getFirstSelectedSequenceName();
+				if(firstSelectedSequenceName == null){
+					firstSelectedSequenceName = "";
+				}
+				ArrayList<CharSet> selectedCharsets = alignment.getSelectedCharsets();
+				if(selectedCharsets.size() == 0){
+					firstSelectedCharsetName = "";
+				}else{
+					for(CharSet charset: selectedCharsets){
+						firstSelectedCharsetName += charset.getName() + ",";
+					}
+					firstSelectedCharsetName = StringUtils.removeEnd(firstSelectedCharsetName, ",");
+				}
+
+				posInSeq = alignment.getFirstSelectedPositionX();
+				posInUngapedSeq = alignment.getFirstSelectedUngapedPositionX();
+
+				// Put display update on queue when done
+				// Put display update on queue when done
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						updateSelectionLabels();
+						logger.info("Update selection from thread done");
+					}
+				});
+
+			}
+		});
+		updateThread.start();
+	}
+	
+	/*
+	 * 
+	 * This method only updates labels from values that are set already
+	 */
+	private void updateSelectionLabels(){
 		if(alignment != null && selectionSize > 0){	
 
 			String firstSelSeqName = StringUtils.substring(firstSelectedSequenceName, 0, 40);			
 			if(selectedSeqCount > 1){
 				firstSelSeqName +="...";
 			}
-
 
 			String selSize = "" + selectionSize;
 			String ungapPos = "" + posInUngapedSeq;
@@ -259,62 +348,17 @@ public class StatusPanel extends JPanel implements AlignmentListener, AlignmentD
 		}
 	}
 
-
-	public void updateAlignmentText(){
-		if(alignment == null){
-			lblAlignmentInfo.setText("no alignmnet loaded");
-		}else{
-			String seqCount = StringUtils.leftPad("" + alignment.getMaxY(), 6);
-			String width = StringUtils.leftPad("" + alignment.getMaxX(), 6);
-
-			lblAlignmentInfo.setText("" + seqCount + " sequences " + width + " pos.  ");
-		}
+	public void updateAll() {
+		updateAlignmentValuesAndLabels();
+		updateSelectionValuesAndLabels();	
 	}
-
-	public void setAlignment(Alignment alignment) {
-		this.alignment = alignment;
-
-	}
-
-	public void setPointerPos(Point pointerPos) {
-		this.pointerPos = pointerPos;
-		try {
-			posInSeq = aliPane.getPositionInSequenceAt(pointerPos);
-			posInUngapedSeq = aliPane.getUngapedPositionInSequenceAt(pointerPos);		
-		} catch (InvalidAlignmentPositionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		updateSelectionText();
-	}
-
+	
+	//
+	// AlignmentSelectionListener
+	//
 	public void selectionChanged(AlignmentSelectionEvent e) {
-
-		logger.info("selectionChanged");
-
-		this.selectionSize = alignment.getSelectionSize();
-		this.selectedColumnCount = alignment.getSelectedColumnCount();
-		this.selectedSeqCount = alignment.getSelectedSequencesCount();
-		this.firstSelectedSequenceName = alignment.getFirstSelectedSequenceName();
-		if(firstSelectedSequenceName == null){
-			firstSelectedSequenceName = "";
-		}
-		ArrayList<CharSet> selectedCharsets = alignment.getSelectedCharsets();
-		if(selectedCharsets.size() == 0){
-			this.firstSelectedCharsetName = "";
-		}else{
-			for(CharSet charset: selectedCharsets){
-				this.firstSelectedCharsetName += charset.getName() + ",";
-			}
-			this.firstSelectedCharsetName = StringUtils.removeEnd(this.firstSelectedCharsetName, ",");
-		}
-		this.posInSeq = alignment.getFirstSelectedPositionX();
-		this.posInUngapedSeq = alignment.getFirstSelectedUngapedPositionX();
-
-
-		this.updateSelectionText();
+		this.updateSelectionValuesAndLabels();
 	}
-
 
 	//
 	// AlignmentListener

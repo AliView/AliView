@@ -622,12 +622,6 @@ public class BasicSequence implements Sequence, Comparable<Sequence> {
 
 	public int getUngapedPos(int position){
 
-		// TODO this is a problem with large sequences
-		if(position > 1000000){
-			return -1;
-		}
-
-
 		int posCount = 0;
 		int gapCount = 0;
 		for(int n = 0; n <= position; n++){
@@ -635,6 +629,11 @@ public class BasicSequence implements Sequence, Comparable<Sequence> {
 				gapCount ++;
 			}else{
 				posCount ++;
+			}
+			// To be able to break long running tasks
+			// e.g. billion size length file-sequences
+			if(Thread.interrupted()){
+				return -1;
 			}
 		}	
 		return posCount;
@@ -648,7 +647,7 @@ public class BasicSequence implements Sequence, Comparable<Sequence> {
 				// skip this one
 			}else{
 				ungapedSeq.append((char)base);
-			}
+			}	
 		}	
 		return ungapedSeq.toString();
 	}

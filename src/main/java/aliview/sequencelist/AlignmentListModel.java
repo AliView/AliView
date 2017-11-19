@@ -410,6 +410,10 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 					}		
 				}
 
+			logger.info("gapCount=" + gapCount);
+			logger.info("nucleotideCount=" + nucleotideCount);
+			logger.info("otherCount=" + otherCount);
+			
 			// First check low or nucleotide count to avoid div by zero 
 			if(nucleotideCount < 4){
 				this.sequenceType = SequenceUtils.TYPE_UNKNOWN;
@@ -2127,6 +2131,8 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 
 		for (int i = listeners.length - 2; i >= 0; i -= 2) {
 
+			logger.info("listeners[i]" + listeners[i]);
+			
 			if (listeners[i] == AlignmentDataListener.class) {
 				if (e == null) {
 					e = new AlignmentDataEvent(this, ListDataEvent.CONTENTS_CHANGED, rect);
@@ -2159,6 +2165,8 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 	}
 
 	private void fireSequenceIntervalAdded(int index0, int index1) {
+		
+
 		if(index0 < 0 || index1 < 0){
 			return;
 		}

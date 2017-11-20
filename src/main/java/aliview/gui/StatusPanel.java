@@ -215,6 +215,9 @@ public class StatusPanel extends JPanel implements AlignmentListener, AlignmentD
 		return sep;
 	}
 
+	/*
+	 * Collects values and sets in same thread
+	 */
 	private void updateAlignmentValuesAndLabels(){
 		if(alignment == null){
 			lblAlignmentInfo.setText("no alignmnet loaded");
@@ -227,33 +230,8 @@ public class StatusPanel extends JPanel implements AlignmentListener, AlignmentD
 	}
 
 	/*
-	public void setPointerPos(Point pointerPos) {
-		final Point newPos = new Point(pointerPos);	
-		Thread updateThread = new Thread(new Runnable() {
-			public void run() {
-				try {
-					posInSeq = aliPane.getPositionInSequenceAt(newPos);
-					posInUngapedSeq = aliPane.getUngapedPositionInSequenceAt(newPos);
-				} catch (InvalidAlignmentPositionException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-				// Put display update on queue when done
-				SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						updateSelectionText();
-						logger.info("Update selection from thread done");
-					}
-				});
-			}
-		});
-		updateThread.start();
-
-		logger.info("Thread started OK");
-	}
-	*/
-
+	 * Collects and sets values in separate thread and then calls label update
+	 */
 	private void updateSelectionValuesAndLabels(){
 
 		// Only keep one thread for updates - interrupt if one
@@ -306,8 +284,7 @@ public class StatusPanel extends JPanel implements AlignmentListener, AlignmentD
 	}
 	
 	/*
-	 * 
-	 * This method only updates labels from values that are set already
+	 * Updates labels from values that are set already
 	 */
 	private void updateSelectionLabels(){
 		if(alignment != null && selectionSize > 0){	
@@ -317,7 +294,6 @@ public class StatusPanel extends JPanel implements AlignmentListener, AlignmentD
 				firstSelSeqName +="...";
 			}
 
-			String selSize = "" + selectionSize;
 			String ungapPos = "" + posInUngapedSeq;
 			String posInSeqTxt = "" + (posInSeq + 1); // +1 because internally we are working with 0 as first pos and first sequence
 			if(selectionSize == 0){
@@ -396,4 +372,5 @@ public class StatusPanel extends JPanel implements AlignmentListener, AlignmentD
 	public void contentsChanged(AlignmentDataEvent e) {
 		this.updateAll();
 	}
+	
 }

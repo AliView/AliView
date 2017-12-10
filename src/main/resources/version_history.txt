@@ -5,6 +5,7 @@ Version history
 - Fixed bug making it impossible to manually set sequence type on large on-file-sequences
 - Fixed bug where menues were disabled after large large on-file-sequences were loaded
 - Added support for java 9 on windows by updating launch4java
+- Fixed bug missing javax.activation when running on JVM 9
 
 1.19
 - Better automatic detection wether alignment is Nucleotide or Amino-Acid

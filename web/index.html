@@ -607,7 +607,7 @@ here.<br>
 <br>
 <b>Override default program font size</b> <br>
 (on some computers with extreme resolution it might be hard to read text with
-default settings)<br>
+default settings - <b>OBS!</b> If you are having these problems on Windows, then you should consider installing Java 9, dpi-scaling works on Windows with Java 9)<br>
 <br>
 When working with large files being read straight from disk:<br>
 <b>Number of sequences to index at a time in very large files</b><br>
@@ -1087,7 +1087,7 @@ This is tested on Ubuntu/Debian/OpenSuse (RedHat - just download and install <a 
 
 <p>
 2. Unpack <br>
-sudo tar zxvf jre-8*-linux-x64.tar.gz
+sudo tar zxvf jre-8*.tar.gz
 </p>
 <p>
 3. Move whole unpacked dir: <br>
@@ -1105,6 +1105,47 @@ sudo update-alternatives --install /usr/bin/java java /usr/lib/jvm/jre1.8.*/bin/
 5. Tell your system to use new version:<br>
 <code>
 sudo update-alternatives --set java /usr/lib/jvm/jre1.8.*/bin/java
+</code>
+</p>
+
+</code>
+</p>
+
+<h2><a name="java9install"></a>Java 9 JRE Install (Linux)</h2>
+
+This is tested on Ubuntu/Debian/OpenSuse (RedHat - just download and install <a href=http://www.oracle.com/technetwork/java/javase/downloads/jre9-downloads-3848532.html>rpm-package</a>)<br>
+
+<p>
+# 1. Download jre tar.gz-version: <br>
+<a href=http://www.oracle.com/technetwork/java/javase/downloads/jre9-downloads-3848532.html>http://www.oracle.com/technetwork/java/javase/downloads/jre9-downloads-3848532.html</a>
+</p>
+
+<p>
+# 2. Unpack <br>
+<code>sudo tar zxvf jre-9.*.tar.gz</code>
+</p>
+
+<p>
+# 3. Make sure jvm-dir exists: <br>
+<code>sudo mkdir -p /usr/lib/jvm/</code>
+</p>
+
+<p>
+# 4. Move whole unpacked dir: <br>
+<code>sudo mv jre-9.* /usr/lib/jvm/</code>
+</p>
+
+<p>
+# 5. Tell your system where new java is located:<br>
+<code>
+sudo update-alternatives --install /usr/bin/java java /usr/lib/jvm/jre-9.*/bin/java 1
+</code>
+</p>
+
+<p>
+# 6. Tell your system to use new version:<br>
+<code>
+sudo update-alternatives --set java /usr/lib/jvm/jre-9.*/bin/java
 </code>
 </p>
 

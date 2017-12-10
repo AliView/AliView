@@ -328,7 +328,7 @@
 	 <plugin>
 		<groupId>com.akathist.maven.plugins.launch4j</groupId>
 		<artifactId>launch4j-maven-plugin</artifactId>
-		<version>1.7.11</version>
+		<version>1.7.21</version>
 		<executions>
 			<!-- GUI exe -->
 			<execution>

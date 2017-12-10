@@ -4,6 +4,7 @@ Version history
 - Improved selection position display for very large sequences (before position was limited to 1 milj) - now no limit
 - Fixed bug making it impossible to manually set sequence type on large on-file-sequences
 - Fixed bug where menues were disabled after large large on-file-sequences were loaded
+- Added support for java 9 on windows by updating launch4java
 
 1.19
 - Better automatic detection wether alignment is Nucleotide or Amino-Acid

@@ -2620,7 +2620,17 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 			}
 
 		}else{
-			Messenger.showOKOnlyMessage(Messenger.NO_FASTA_IN_CLIPBOARD, aliViewWindow);
+			//Messenger.showOKOnlyMessage(Messenger.NO_FASTA_IN_CLIPBOARD, aliViewWindow);
+			boolean hideMessage = Settings.getHidePasteAnywayMessage().getBooleanValue();
+			if(! hideMessage){
+				boolean hideMessageNextTime = Messenger.showOKCancelMessageWithCbx(Messenger.NO_FASTA_IN_CLIPBOARD_PASTE_ANYWAY, false, aliViewWindow);
+				Settings.getHidePasteAnywayMessage().putBooleanValue(hideMessageNextTime);
+				int choise = Messenger.getLastSelectedOption();
+				if(choise == JOptionPane.CANCEL_OPTION){
+					return;
+				}
+			}
+			
 		}
 	}
 

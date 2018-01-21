@@ -85,7 +85,9 @@ public class Settings {
 	private static SettingValue hideDeleteAllSelectedSequences = new SettingValue("hideDeleteAllSelectedSequences", false);
 	private static SettingValue hideDeleteAllSelectedBases = new SettingValue("hideDeleteAllSelectedBases", false);
 	private static SettingValue hideUnknownAlignmentType = new SettingValue("hideUnknownAlignmentType", false);
+	private static SettingValue hidePasteAnywayMessage = new SettingValue("hidePasteAnywayMessage", false);
 	private static ArrayList<SettingValue> allHideMsgSettingVals = new ArrayList<SettingValue>();
+	
 	static{
 		allHideMsgSettingVals.add(hideFileSeqLimitedEditCapabilities);
 		allHideMsgSettingVals.add(hideEditModeMessage);
@@ -628,6 +630,10 @@ public class Settings {
 
 	public static SettingValue getHideUnknownAlignmentType() {
 		return hideUnknownAlignmentType;
+	}
+	
+	public static SettingValue getHidePasteAnywayMessage() {
+		return hidePasteAnywayMessage;
 	}
 
 	public static void clearAllHideThisDialogCheckboxes() {

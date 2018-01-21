@@ -46,6 +46,7 @@ import java.awt.print.Paper;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -213,6 +214,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 	private JTextField primer2txtField;
 	private PrimerResultsFrame primerResultsFrame;
 	private int nextNameFindSequenceNumber;
+	private int pastedSeqCounter = 1;
 	//	private LimitedStack<UndoSavedState> undoStack = new LimitedStack<UndoSavedState>(30);
 	//	private LimitedStack<UndoSavedState> redoStack = new LimitedStack<UndoSavedState>(30);	
 	//	private Stack<UndoSavedState> undoStack = new Stack<UndoSavedState>();
@@ -2599,42 +2601,65 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 	public void pasteFasta(int pasteAtIndex) {
 		String clipboardSelection = getClipboard();
 
-		if(clipboardSelection != null &&
-				((FileFormat.isThisFasta(clipboardSelection)) || FileFormat.isThisSequenceFile(clipboardSelection))){
-
-			try {
-				File clipFile = null;
+		// If empty or null return
+		if(clipboardSelection == null || clipboardSelection.length() == 0){			
+			// Clipboard is empty - return
+			Messenger.showOKOnlyMessage(Messenger.CLIPBOARD_EMPTY, aliViewWindow);
+			return;
+		}
+		
+		try {
+			File clipAsFile = AlignmentFile.createAliViewTempFile("clipboard-alignment", ".fasta");
+			
+			// If selection is sequences or sequence-file then create temp clip-file from this 
+			if(FileFormat.isThisFasta(clipboardSelection) || FileFormat.isThisSequenceFile(clipboardSelection)){
 				if(!FileFormat.isThisSequenceFile(clipboardSelection)){
-					clipFile = AlignmentFile.createAliViewTempFile("clipboard-alignment", ".fasta");
-					FileUtils.writeStringToFile(clipFile, clipboardSelection);
+					FileUtils.writeStringToFile(clipAsFile, clipboardSelection);
 				}else{
-					clipFile = new File(clipboardSelection);
+					clipAsFile = new File(clipboardSelection);
 				}
-
-				addSequencesFromFile(clipFile, pasteAtIndex);
-
-
-			} catch (IOException e) {
-				e.printStackTrace();
-				Messenger.showOKOnlyMessage(Messenger.ERROR_PASTE, LF + e.getLocalizedMessage(), aliViewWindow);
 			}
-
-		}else{
-			//Messenger.showOKOnlyMessage(Messenger.NO_FASTA_IN_CLIPBOARD, aliViewWindow);
-			boolean hideMessage = Settings.getHidePasteAnywayMessage().getBooleanValue();
-			if(! hideMessage){
-				boolean hideMessageNextTime = Messenger.showOKCancelMessageWithCbx(Messenger.NO_FASTA_IN_CLIPBOARD_PASTE_ANYWAY, false, aliViewWindow);
-				Settings.getHidePasteAnywayMessage().putBooleanValue(hideMessageNextTime);
-				int choise = Messenger.getLastSelectedOption();
-				if(choise == JOptionPane.CANCEL_OPTION){
-					return;
+			// If not fasta or sequence file name - Ask if paste anyway and rewrite clipboard to fasta
+			else{
+				boolean hideMessage = Settings.getHidePasteAnywayMessage().getBooleanValue();
+				if(! hideMessage){
+					boolean hideMessageNextTime = Messenger.showOKCancelMessageWithCbx(Messenger.NO_FASTA_IN_CLIPBOARD_PASTE_ANYWAY, false, aliViewWindow);
+					Settings.getHidePasteAnywayMessage().putBooleanValue(hideMessageNextTime);
+					int choise = Messenger.getLastSelectedOption();
+					if(choise == JOptionPane.CANCEL_OPTION){
+						
+						// cancel paste
+						return;
+					}
 				}
+				
+				// rewrite clipboard to fasta
+				StringBuffer newClip = new StringBuffer();
+				String lines[] = clipboardSelection.split(LF);
+				for(String line: lines){
+					newClip.append(">pasted-seq_" + this.pastedSeqCounter + LF);
+					newClip.append(line + LF);
+					this.pastedSeqCounter ++;
+				}
+				FileUtils.writeStringToFile(clipAsFile, newClip.toString());
 			}
 			
+			// Paste sequences
+			addSequencesFromFile(clipAsFile, pasteAtIndex);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+			Messenger.showOKOnlyMessage(Messenger.ERROR_PASTE, LF + e.getLocalizedMessage(), aliViewWindow);
 		}
 	}
 
 	public void pasteFasta() {
+		// I commented out this because I find it more intuitive to paste at
+		// beginning with ctrl + v command
+		// int index = alignment.getFirstSelectedSequenceIndex();
+		// if(index < 0){
+		// index = 0;
+		//		}
 		pasteFasta(0);
 	}
 

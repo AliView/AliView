@@ -27,6 +27,7 @@ public class Messenger {
 	public static final Message SAVE_NOT_POSSIBLE_TRY_SAVE_AS = new Message("Not possible to save, try Save as....", "Sorry....");
 	public static final Message NO_SELECTION = new Message("Nothing selected...", "No selection");	
 	public static final Message NO_FASTA_IN_CLIPBOARD = new Message("Could not find fasta sequences in clipboard (name has to start with >)", "No fasta sequences");
+	public static final Message CLIPBOARD_EMPTY = new Message("Clipboard is empty", "No sequences");
 	public static final Message NO_FASTA_IN_CLIPBOARD_PASTE_ANYWAY = new Message("Could not find fasta sequences in clipboard (name has to start with >)" + LF + 
 			"- Paste anyway?", "No fasta sequences - Paste anyway?");
 	public static final Message NO_FASTA_OR_FILE_IN_CLIPBOARD = new Message("Could not find fasta sequences (name has to start with >)" + LF +

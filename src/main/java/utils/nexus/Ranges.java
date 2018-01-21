@@ -222,10 +222,15 @@ public class Ranges implements Iterable<Range> {
 			CodonRange reverseRange = new CodonRange(newStart, newEnd, newStartVal);
 			newBackend.add(reverseRange);
 			// and sort it
-			Collections.sort(backend);
-			// and set it
-			backend = newBackend;
+			Collections.sort(newBackend);
 		}
+		
+		// and set it
+		logger.info("before debug 1");
+		debug();
+		backend = newBackend;
+		logger.info("before debug 2");
+		debug();
 	}
 
 	public int countPositions(){

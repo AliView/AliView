@@ -65,7 +65,8 @@ public class AlignmentMeta {
 
 	public void reverse(int length) {
 		this.getExcludes().reverse(length);
-		this.getCodonPositions().reverse(length);
+		this.setCodonPositions(new CodonPositions());
+		this.setCharsets(new CharSets());
 	}
 
 	public int countIncludedPositionsBefore(int minimumInteger) {
@@ -203,6 +204,10 @@ public class AlignmentMeta {
 
 	public void setCharsets(CharSets charsets) {
 		this.charsets = charsets;
+	}
+	
+	private void setCodonPositions(CodonPositions codonPositions) {
+		this.codonPositions = codonPositions;
 	}
 
 	public void setTranslation(boolean shouldTrans) {

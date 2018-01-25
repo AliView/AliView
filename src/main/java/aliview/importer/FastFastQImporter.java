@@ -51,7 +51,7 @@ public class FastFastQImporter {
 
 				if(line.length() > 0){
 					
-					if(line.charAt(0) == '@'){
+					if(line.charAt(0) == '@' && lineIndex ! 4){
 
 						// if there is one sequence in buffer already create that one before starting a new one
 						if(name != null && name.length() > 0){
@@ -78,7 +78,7 @@ public class FastFastQImporter {
 					else{
 						if(nextLineIsSeq){
 							sequence.append(line);
-							nextLineIsSeq = false;
+							skipNextLi = false;
 						}
 					}
 					if(sequence.length() > maxMem/8){

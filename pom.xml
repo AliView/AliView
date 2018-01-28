@@ -19,12 +19,7 @@
     <repository>
       <id>My local server</id>
       <name>woodsia-servern-maven-2-repo</name>
-      <url>http://botanik.dnsalias.com/mvn-repo</url>
-    </repository>
-    <repository>
-      <id>www.intalio.org</id>
-      <name>www.intalio.org-maven-2-repo</name>
-      <url>http://www.intalio.org/public/maven2</url>
+      <url>http://ormbunkar.se/mvn-repo</url>
     </repository>
     <repository>
       <id>biojava-maven-repo</id>

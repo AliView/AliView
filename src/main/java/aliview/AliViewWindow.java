@@ -2613,10 +2613,10 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 			
 			// If selection is sequences or sequence-file then create temp clip-file from this 
 			if(FileFormat.isThisFasta(clipboardSelection) || FileFormat.isThisSequenceFile(clipboardSelection)){
-				if(!FileFormat.isThisSequenceFile(clipboardSelection)){
-					FileUtils.writeStringToFile(clipAsFile, clipboardSelection);
-				}else{
+				if(FileFormat.isThisSequenceFile(clipboardSelection)){
 					clipAsFile = new File(clipboardSelection);
+				}else{
+					FileUtils.writeStringToFile(clipAsFile, clipboardSelection);
 				}
 			}
 			// If not fasta or sequence file name - Ask if paste anyway and rewrite clipboard to fasta

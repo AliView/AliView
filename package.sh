@@ -1,6 +1,8 @@
 #!/bin/sh
 set -e
 
+INNO_SETUP_PROGRAM="$HOME/.wine/drive_c/Program Files/Inno Setup 5/iscc"
+
 #----------------------------------
 #prepare install-file for LINUX
 #----------------------------------
@@ -34,7 +36,7 @@ rsync -av htaccess-files/linux-install-dir/.htaccess target/linux-version*
 LATEST_WIN_PATH=$(ls -d $PWD/target/windows-version-*)
 ln -s -f -T $LATEST_WIN_PATH $PWD/target/windows-latest
 
-wine "/home/anders/.wine/drive_c/Program Files/Inno Setup 5/iscc" "innosetupfil_for_Aliview_win.iss"
+wine $INNO_SETUP_PROGRAM "innosetupfil_for_Aliview_win.iss"
 
 # move static files
 rsync -av aliview-windows/* target/windows-latest/

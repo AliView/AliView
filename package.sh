@@ -4,9 +4,6 @@ set -e
 #----------------------------------
 #prepare install-file for LINUX
 #----------------------------------
-# make link to latest version dir (this is what setup-script wants)
-#LATEST_LINUX_PATH=$(ls -d target/linux-version*)
-#ln -s -f -T $LATEST_LINUX_PATH target/linux-latest
 
 rsync -av aliview-linux/* target/linux-version*/aliview/
 
@@ -30,11 +27,10 @@ rsync -av target/linux-version*/aliview/install.readme.txt target/linux-version*
 rsync -av htaccess-files/linux-install-dir/.htaccess target/linux-version*
 
 
-
 #----------------------------------
 #prepare install-file for WINDOWS
 #----------------------------------
-# create setup for windows
+
 # make link to latest version dir (this is what setup-script wants)
 LATEST_WIN_PATH=$(ls -d $PWD/target/windows-version-*)
 ln -s -f -T $LATEST_WIN_PATH $PWD/target/windows-latest

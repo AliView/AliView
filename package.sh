@@ -14,7 +14,6 @@ chmod 755 -R target
 cd target/linux-version*/aliview/
 
 makeself . ../aliview.install.run "Installer for AliView" ./install.sh 
-makeself . ../aliview.install.run "Installer for AliView" ./install.sh
 
 # make standard archive for linux
 tar -czvf ../aliview.tgz *

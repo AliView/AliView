@@ -93,7 +93,7 @@ shift $((OPTIND-1))
 ## then always use this jar - otherwise confusing
 progdir=$(dirname $0)
 if [ ! -f "$progdir/$jarfile" ]; then
-	progdir="$defprogdir"
+    progdir="$defprogdir"
     aliview="$progdir/$jarfile"
     if [ ! -x "$aliview" ] ; then
         echo "$0: Error: Cannot find \'$progdir/$jarfile\'"

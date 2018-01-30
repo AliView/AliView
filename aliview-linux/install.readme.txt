@@ -2,7 +2,7 @@ Install:
 
 ---------- SIMPLEST ------------
 
-download and run the installer:
+download the installer from http://ormbunkar.se/downloads/linux and run:
 
 aliview.install.run
 
@@ -21,10 +21,40 @@ aliview (this is a sh-script that will execute java -jar aliview.jar)
 
 -----*** ALTERNATIVE (as non super-user) ***-----
 
-1. Download the archive aliview.tgz and extract it into a folder of your choice
+1. Download the archive aliview.tgz from http://ormbunkar.se/aliview/downloads/linux/ and extract it into a folder of your choice
 2. Run program from this folder by issuing command ./aliview from the terminal
    (this is a sh-script that will execute command java -jar aliview.jar)
 
 NOTE: If you are running Linux, consider upgrading to Java 8, there is a significant improvement in drawing speed
 since it is using Linux built in XRender. 
 Installation is very simple (1 minute) - http://ormbunkar.se/aliview/#java8install
+
+-----INSTALL FROM SOURCE -----
+
+Procedure below requires root (`sudo`) access.
+Tested on 64 bit Xubuntu 17.10 with Oracle java
+version 1.8.0_72, and Apache Maven v.3.5.0.
+
+1. Install Oracle Java 8
+
+        sudo add-apt-repository ppa:webupd8team/java
+        sudo apt update
+        sudo apt install oracle-java8-installer
+
+2. Install Apache Maven
+
+        sudo apt install maven
+
+3. Install makeself
+
+        sudo apt install makeself
+
+4. Install AliView, skip the MS Windows part
+
+        git clone https://github.com/AliView/AliView.git
+        cd AliView
+        mvn clean compile install package | tee mvn.build.log
+        bash <(sed -e '/WINDOWS/,$d' package.sh)
+        cd target/linux-version-*
+        sudo ./aliview.install.run
+

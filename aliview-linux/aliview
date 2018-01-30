@@ -1,13 +1,129 @@
 #!/bin/bash
 
-# set current directory default
-DIRECTORY_OF_PROGRAM=$(dirname $0)
+set -euo pipefail
 
-# check if not in local then always use this jar - otherwise confusing
-if [ ! -f $DIRECTORY_OF_PROGRAM/aliview.jar ]; then
-	DIRECTORY_OF_PROGRAM=/usr/share/aliview
+function show_help () {
+cat <<HEREDOC
+File:
+
+    `basename $0` - Launcher script for aliview.jar
+
+Version:
+
+    Wrapper script version 29 Jan 2018
+    (to see aliview.jar version, use the '-v' option)
+
+By:
+
+    Anders.Larsson [at] icm.uu.se
+
+Description:
+
+    AliView: a fast and lightweight alignment viewer
+    and editor for large data sets.
+    Citation: Larsson, A. (2014). Bioinformatics30(22): 3276-3278.
+    http://dx.doi.org/10.1093/bioinformatics/btu531
+
+    See http://ormbunkar.se/aliview for documentation
+    and downloads.
+
+    Source: https://github.com/AliView/AliView
+
+Options:
+
+    -?, -h    -- show this help
+    -d        -- show debug info in terminal
+    -v        -- show aliview.jar version
+    -x <size> -- set max mem size for java
+
+Usage:
+
+    `basename $0` infile
+    `basename $0` infile1 infile2
+    `basename $0` -x2048M infile
+    `basename $0` -d infile
+    `basename $0` -v
+    `basename $0` -h
+
+HEREDOC
+}
+
+jarfile="aliview.jar"
+defprogdir="/usr/share/aliview"
+minjavamem="512M"
+maxjavamem="1024M"
+debug=0
+version=0
+
+## Check java
+if type -p java &>/dev/null; then
+    myjava=java
+elif [[ -n "$JAVA_HOME" ]] && [[ -x "$JAVA_HOME/bin/java" ]];  then
+    myjava="$JAVA_HOME/bin/java"
+else
+    "Error: Cannot locate java"
+    exit 1
 fi
 
-# A correct wrapper script should pass all its arguments on as ${1+"$@"},
-# with regards to being able to handle embedded spaces properly. 
-java -Xmx1024M -Xms512M -jar $DIRECTORY_OF_PROGRAM/aliview.jar ${1+"$@"}
+## Check args 
+while getopts "h?vdx:" opt; do
+    case "$opt" in
+        h|\? )
+            show_help
+            exit 0
+            ;;
+        d )
+            debug=1
+            ;;
+        v )
+            version=1
+            ;;
+        x )
+            maxjavamem=$OPTARG
+            ;;
+        * ) echo "Unrecognized argument. use '-h' for usage information."
+            exit 1
+            ;;
+    esac
+done
+
+shift $((OPTIND-1))
+
+## Set current directory default, and check if not in local
+## then always use this jar - otherwise confusing
+progdir=$(dirname $0)
+if [ ! -f "$progdir/$jarfile" ]; then
+	progdir="$defprogdir"
+    aliview="$progdir/$jarfile"
+    if [ ! -x "$aliview" ] ; then
+        echo "$0: Error: Cannot find \'$progdir/$jarfile\'"
+        echo "This script is just a wrapper for $jarfile."
+        echo "See the aliview documentation for more information."
+        exit 1
+    fi
+fi
+
+## Try to get aliview version (experimental)
+if [ "$version" -eq 1 ]; then
+    nr=$(java -Djava.awt.headless=true -jar $aliview | grep -m1 'version' | awk '{print $NF}')
+    echo "$jarfile v.$nr"
+    exit 0
+fi
+
+## Launch aliview on all input
+if [ $# -eq 0 ]; then 
+    if [ "$debug" -eq 0 ]; then
+        $myjava -Xmx$maxjavamem -Xms$minjavamem -jar $aliview &> /dev/null &
+    else
+        $myjava -Xmx$maxjavamem -Xms$minjavamem -jar $aliview
+    fi
+else
+    for fil in "$@" ; do
+        if [ "$debug" -eq 0 ]; then
+            $myjava -Xmx$maxjavamem -Xms$minjavamem -jar $aliview "$fil" &> /dev/null &
+        else
+            $myjava -Xmx$maxjavamem -Xms$minjavamem -jar $aliview "$fil" &
+        fi
+    done
+fi
+

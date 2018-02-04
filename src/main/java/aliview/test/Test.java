@@ -41,7 +41,13 @@ public class Test implements Cloneable{
 
 	public static void main(String[] args) throws CloneNotSupportedException {
 
-		logger.info(2 % 2);
+		int a = 0;
+		logger.info(a % 4);
+		a = 1;
+		logger.info(a % 4);
+		a = 4;
+		logger.info(a % 4);
+		
 
 
 		NexusRange range = new NexusRange(new IntRange(64, 80), 3, 1);

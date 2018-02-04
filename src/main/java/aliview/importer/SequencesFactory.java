@@ -110,6 +110,24 @@ public class SequencesFactory {
 					}
 				}
 			}
+			
+			if(foundFormat == FileFormat.FASTQ){
+				try {
+					FastFastQImporter fastqImporter = new FastFastQImporter(new FileReader(alignmentFile));
+					List<Sequence> sequences = fastqImporter.importSequences();
+					model = new MemorySequenceAlignmentListModel();
+					model.setSequences(sequences);
+					model.setFileFormat(FileFormat.FASTQ);
+				} catch (FileNotFoundException e) {
+					importErrorMessage += "Tried import as FastQ but: " + e.getMessage() + LF;
+					logger.error(importErrorMessage);
+					logger.error(e);
+				} catch (AlignmentImportException aie){
+					if(aie.getMessage().contains("Sequence to long for memory")){
+						memorySequences = false;
+					}
+				}
+			}
 
 			if(foundFormat == FileFormat.MSF){
 

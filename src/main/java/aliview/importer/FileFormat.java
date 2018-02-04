@@ -20,6 +20,7 @@ public class FileFormat {
 	public static final FileFormat UNKNOWN = new FileFormat("Unknown", "", "");
 	public static final FileFormat FILE_FASTA = new FileFormat("Fasta", "fasta", "fas");
 	public static final FileFormat FASTA = new FileFormat("Fasta", "fasta", "fas");
+	public static final FileFormat FASTQ = new FileFormat("FastQ", "fastq", "fq");
 	public static final FileFormat NEXUS = new FileFormat("Nexus", "nexus", "nex");
 	public static final FileFormat NEXUS_CODONPOS_CHARSET = new FileFormat("NexusCodonposCharset", "codonpos.nexus", "codonpos.nex");
 	public static final FileFormat NEXUS_SIMPLE = new FileFormat("NexusSimple", "nexus", "nex");
@@ -119,6 +120,8 @@ public class FileFormat {
 
 				if(firstLine.startsWith(">")){
 					foundFormat = FileFormat.FASTA;
+				}else if(firstLine.startsWith("@")){
+					foundFormat = FileFormat.FASTQ;
 				}else if(StringUtils.containsIgnoreCase(firstLine, "NEXUS")){
 					foundFormat = FileFormat.NEXUS;
 				}else if(ClustalImporter.isStringValidFirstLine(firstLine)){

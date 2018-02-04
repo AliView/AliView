@@ -22,8 +22,6 @@ public class FastFastaImporter {
 		this.reader = reader;
 	}
 
-
-
 	public List<Sequence> importSequences() throws AlignmentImportException {
 		long startTime = System.currentTimeMillis();
 		ArrayList<Sequence> sequences = new ArrayList<Sequence>();

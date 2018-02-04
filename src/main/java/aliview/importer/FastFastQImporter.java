@@ -22,87 +22,44 @@ public class FastFastQImporter {
 		this.reader = reader;
 	}
 
-
-
 	public List<Sequence> importSequences() throws AlignmentImportException {
 		long startTime = System.currentTimeMillis();
 		ArrayList<Sequence> sequences = new ArrayList<Sequence>();
-		int nextSeqEstSize = 5000;
 		double maxMem = MemoryUtils.getMaxMem();
 		try {
-			StringBuilder sequence = new StringBuilder(nextSeqEstSize);
-			//			ByteBufferAutogrow seqBuff = new ByteBufferAutogrow(capacity);
 			BufferedReader r = new BufferedReader(this.reader);
 			String line;
 			String name = null;
 			int nLine = 0;
-			boolean nextLineIsSeq = true;
+
 			while ((line = r.readLine()) != null) {
 
 				line = line.trim();
+				
+				
 
-				if(nLine == 0){
+				// Starting with line 0 every 4:th line should be name
+				if(nLine % 4 == 0){
+
 					// if not fastq file then break
 					if(line.length() > 0 && line.charAt(0) != '@'){
 						// no fastg
-						throw new AlignmentImportException("Fastq file should start with @ character");
+						throw new AlignmentImportException("Error fastq format: very fourth line in fastq file should start with @ character");
 					}
+					name = line;				
 				}
 
-				if(line.length() > 0){
-					
-					if(line.charAt(0) == '@' && lineIndex ! 4){
-
-						// if there is one sequence in buffer already create that one before starting a new one
-						if(name != null && name.length() > 0){
-
-							//String seqAsString = sequence.toString();
-							//nextSeqEstSize = sequence.length();
-							// if there are whitespace replace them
-							if(sequence.indexOf(" ") > -1){
-								sequence = FileImportUtils.removeAll(sequence, " ");
-							}
-							//FileImportUtils.replaceChar(sequence, '.', '-');
-
-							byte[] bytes = getBytesFromBuffer(sequence);
-							sequences.add(new FastFastQSequence(name, bytes));
-
-							this.longestSequenceLength = Math.max(this.longestSequenceLength, sequence.length());
-							sequence = new StringBuilder(nextSeqEstSize + 10);
-							name = null;
-						}	
-						// skip
-						name = line.substring(1);
-						nextLineIsSeq = true;
-					}
-					else{
-						if(nextLineIsSeq){
-							sequence.append(line);
-							skipNextLi = false;
-						}
-					}
-					if(sequence.length() > maxMem/8){
+				// Starting with line 1 every 4:th line should be sequence
+				if(nLine % 4 == 1){	
+					if(line.length() > maxMem/8){
 						throw new AlignmentImportException("Sequence to long for memory");
 					}
-
+					sequences.add(new FastFastQSequence(name, line));
+					this.longestSequenceLength = Math.max(this.longestSequenceLength, line.length());
 				}
+
 				nLine ++;
 			}
-
-			// add last sequence
-			if(name != null && name.length() > 0){
-
-				if(sequence.indexOf(" ") > -1){
-					// sequence = FileImportUtils.replace(sequence, " ", "", -1);
-					sequence = FileImportUtils.removeAll(sequence, " ");
-				}
-
-				byte[] bytes = getBytesFromBuffer(sequence);
-				sequences.add(new FastFastQSequence(name, bytes));
-
-				this.longestSequenceLength = Math.max(this.longestSequenceLength, sequence.length());
-			}	
-
 
 		} catch (Exception e) {
 			logger.error(e);
@@ -113,14 +70,6 @@ public class FastFastQImporter {
 		System.out.println("reading sequences took " + (endTime - startTime) + " milliseconds");
 
 		return sequences;
-	}
-
-	private byte[] getBytesFromBuffer(StringBuilder sequence) {
-		byte[] bytes = new byte[sequence.length()];
-		for(int n = 0; n < bytes.length; n++){
-			bytes[n] = (byte)sequence.charAt(n);
-		}
-		return bytes;
 	}
 
 	public int getLongestSequenceLength() {

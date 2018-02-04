@@ -272,10 +272,6 @@ public class AliView implements ApplicationListener{
 				}
 			}
 
-
-
-			aliView = new AliView();
-
 			// get alignment fileName as first argument to program
 			File alignmentFile = null;
 			if(args != null && args.length >= 1){	
@@ -287,6 +283,7 @@ public class AliView implements ApplicationListener{
 				alignmentFile = null;
 			}
 
+			aliView = new AliView();
 
 			if(AliView.isDebugMode() && alignmentFile == null){
 				//		alignmentFile = new File("/home/anders/projekt/ormbunkar/analys/sekv_analysis/aligned-WoodsiatrnGR-mafft.fasta.nexus");
@@ -370,7 +367,7 @@ public class AliView implements ApplicationListener{
 				}
 
 			}
-			logger.info("6");
+
 
 			// only open file in Mac if there is a file name argument
 			// - otherwise open is handeled in handleOpenFile()

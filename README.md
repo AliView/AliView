@@ -33,23 +33,23 @@ version 1.8.0_72, and Apache Maven v.3.5.0.
 
 1. Install Oracle Java 8
 
-    sudo add-apt-repository ppa:webupd8team/java
-    sudo apt update
-    sudo apt install oracle-java8-installer
+     sudo add-apt-repository ppa:webupd8team/java
+     sudo apt update
+     sudo apt install oracle-java8-installer
 
 2. Install Apache Maven
 
-    sudo apt install maven
+     sudo apt install maven
 
 3. Install makeself
 
-    sudo apt install makeself
+     sudo apt install makeself
 
 4. Install AliView, skip the MS Windows part
 
-    git clone https://github.com/AliView/AliView.git
-    cd AliView
-    mvn clean compile install package | tee mvn.build.log
-    bash <(sed -e '/WINDOWS/,$d' package.sh)
-    cd target/linux-version-*
-    sudo ./aliview.install.run
+     git clone https://github.com/AliView/AliView.git
+     cd AliView
+     mvn clean compile install package | tee mvn.build.log
+     bash <(sed -e '/WINDOWS/,$d' package.sh)
+     cd target/linux-version-*
+     sudo ./aliview.install.run

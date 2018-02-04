@@ -4,7 +4,7 @@
   <groupId>AliView</groupId>
   <artifactId>AliView</artifactId>
   <packaging>jar</packaging>
-  <version>1.20</version>
+  <version>1.21</version>
   <name>AliView</name>
   <url>http://maven.apache.org</url>
   <properties>
@@ -17,14 +17,9 @@
   </properties>
   <repositories>
     <repository>
-      <id>My local server</id>
-      <name>woodsia-servern-maven-2-repo</name>
+      <id>ormbunkar-mvn2-repo</id>
+      <name>ormbunkar-maven-2-repo</name>
       <url>http://ormbunkar.se/mvn-repo</url>
-    </repository>
-    <repository>
-      <id>biojava-maven-repo</id>
-      <name>BioJava repository</name>
-      <url>http://www.biojava.org/download/maven/</url>
     </repository>
   </repositories>
   <build>

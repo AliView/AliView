@@ -2,6 +2,13 @@
 
 set -euo pipefail
 
+jarfile="aliview.jar"
+defprogdir="/usr/share/aliview"
+minjavamem="512M"
+maxjavamem="1024M"
+debug=0
+version=0
+
 function show_help () {
 cat <<HEREDOC
 File:
@@ -47,13 +54,6 @@ Usage:
 
 HEREDOC
 }
-
-jarfile="aliview.jar"
-defprogdir="/usr/share/aliview"
-minjavamem="512M"
-maxjavamem="1024M"
-debug=0
-version=0
 
 ## Check java
 if type -p java &>/dev/null; then

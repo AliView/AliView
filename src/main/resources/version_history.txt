@@ -1,11 +1,17 @@
 Version history
 
+1.21
+- Read fastq-files (quality values are ignored)
+- Allow pasting any data into alignment window (not only well formatted fasta-sequences)
+- Improved start script for Linux, stdout redirected to /dev/null unless debug (-d) is specified
+- Fixed some issues when building code from java-source
+
 1.20
 - Improved selection position display for very large sequences (before position was limited to 1 milj) - now no limit
 - Fixed bug making it impossible to manually set sequence type on large on-file-sequences
 - Fixed bug where menues were disabled after large large on-file-sequences were loaded
 - Added support for java 9 on windows by updating launch4java
-- Fixed bug missing javax.activation when running on JVM 9
+- Fixed bug missing javax.activation-library when running on JVM 9
 
 1.19
 - Better automatic detection wether alignment is Nucleotide or Amino-Acid

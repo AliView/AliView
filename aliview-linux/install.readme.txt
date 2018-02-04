@@ -25,7 +25,7 @@ aliview (this is a sh-script that will execute java -jar aliview.jar)
 2. Run program from this folder by issuing command ./aliview from the terminal
    (this is a sh-script that will execute command java -jar aliview.jar)
 
-NOTE: If you are running Linux, consider upgrading to Java 8, there is a significant improvement in drawing speed
+NOTE: If you are running Linux, consider upgrading to Java 8 or Java 9, there is a significant improvement in drawing speed
 since it is using Linux built in XRender.
 Installation is very simple (1 minute) - http://ormbunkar.se/aliview/#java8install
 

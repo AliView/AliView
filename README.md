@@ -45,11 +45,11 @@ Install makeself
 
      sudo apt install makeself
 
-Install AliView, skip the MS Windows part
+Build, package, create installer and install AliView
 
      git clone https://github.com/AliView/AliView.git
      cd AliView
      mvn clean compile install package | tee mvn.build.log
-     bash <(sed -e '/WINDOWS/,$d' package.sh)
+     ./make_installer_linux.sh
      cd target/linux-version-*
      sudo ./aliview.install.run

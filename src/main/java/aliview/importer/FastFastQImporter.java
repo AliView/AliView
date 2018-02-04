@@ -46,7 +46,7 @@ public class FastFastQImporter {
 						// no fastg
 						throw new AlignmentImportException("Error fastq format: very fourth line in fastq file should start with @ character");
 					}
-					name = line;				
+					name = line.substring(1);				
 				}
 
 				// Starting with line 1 every 4:th line should be sequence

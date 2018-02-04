@@ -26,24 +26,27 @@ public class Messenger {
 	private static final Logger logger = Logger.getLogger(Messenger.class);
 	public static final Message SAVE_NOT_POSSIBLE_TRY_SAVE_AS = new Message("Not possible to save, try Save as....", "Sorry....");
 	public static final Message NO_SELECTION = new Message("Nothing selected...", "No selection");	
-	public static Message NO_FASTA_IN_CLIPBOARD = new Message("Could not find fasta sequences in clipboard (name has to start with >)", "No fasta sequences");
-	public static Message NO_FASTA_OR_FILE_IN_CLIPBOARD = new Message("Could not find fasta sequences (name has to start with >)" + LF +
+	public static final Message NO_FASTA_IN_CLIPBOARD = new Message("Could not find fasta sequences in clipboard (name has to start with >)", "No fasta sequences");
+	public static final Message CLIPBOARD_EMPTY = new Message("Clipboard is empty", "No sequences");
+	public static final Message NO_FASTA_IN_CLIPBOARD_PASTE_ANYWAY = new Message("Could not find fasta sequences in clipboard (name has to start with >)" + LF + 
+			"- Paste anyway?", "No fasta sequences - Paste anyway?");
+	public static final Message NO_FASTA_OR_FILE_IN_CLIPBOARD = new Message("Could not find fasta sequences (name has to start with >)" + LF +
 			"- or a valid alignment file name in clipboard.", "No sequences");
-	public static Message ALIGNER_SOMETHING_PROBLEM_ERROR = new Message("Something did not work out when aligning.", "Problem when aligning");
-	public static Message NO_FULLY_SELECTED_SEQUENCES = new Message("There are no fully selected sequences - if you only want to realign" + LF +
+	public static final Message ALIGNER_SOMETHING_PROBLEM_ERROR = new Message("Something did not work out when aligning.", "Problem when aligning");
+	public static final Message NO_FULLY_SELECTED_SEQUENCES = new Message("There are no fully selected sequences - if you only want to realign" + LF +
 			"a part of sequence, select \"Realign selected block\" instead.", "No selected sequence");
-	public static Message COULD_NOT_OPEN_HELP_IN_BROWSER = new Message("Could not open help file in browser, help is available at: " + Settings.getAliViewHelpWebPage(), "Problem when aligning");
-	public static Message OUT_OF_MEMORY_ERROR = new Message("Out of memory error - you can probably still save your work as it is." + LF +
+	public static final Message COULD_NOT_OPEN_HELP_IN_BROWSER = new Message("Could not open help file in browser, help is available at: " + Settings.getAliViewHelpWebPage(), "Problem when aligning");
+	public static final Message OUT_OF_MEMORY_ERROR = new Message("Out of memory error - you can probably still save your work as it is." + LF +
 			//       "One source of this error is the number of undo-steps preserved - you can change this in Settings." + LF +
 			"If you want to increase memory available for AliView, see:  " + Settings.getAliViewHelpWebPage(), "Out of memory");
-	public static Message ONLY_VIEW_WHEN_FILESEQUENCES = new Message("Edit capabilities are limited when large alignment is read from file" + LF + 
+	public static final Message ONLY_VIEW_WHEN_FILESEQUENCES = new Message("Edit capabilities are limited when large alignment is read from file" + LF + 
 			"You can delete and rearange sequences." + LF + 
 			"If you need full editing capabilities then you can increase " + LF + 
 			"AliView memory settings under menu \"Preferences\". Memory " + LF +
 			"needed is 2 x file size if files are to be read into memory." + LF +
 			" ", "Limited edit capabilities");
 
-	public static Message MUSCLE_PROFILE_INFO_MESSAGE = new Message("MUSCLE \"-profile\" command is used for adding new sequences" + LF + 
+	public static final Message MUSCLE_PROFILE_INFO_MESSAGE = new Message("MUSCLE \"-profile\" command is used for adding new sequences" + LF + 
 			"to the alignment. The performance of this method might be" + LF +
 			"less favourable than some other add sequences algorithms." + LF + 
 			"See for example Löytynoja et al (2012) and Katoh & Frith (2012)" + LF +

@@ -65,7 +65,7 @@ else
     exit 1
 fi
 
-## Check args 
+## Check args
 while getopts "h?vdx:" opt; do
     case "$opt" in
         h|\? )
@@ -105,13 +105,13 @@ fi
 
 ## Try to get aliview version (experimental)
 if [ "$version" -eq 1 ]; then
-    nr=$(java -Djava.awt.headless=true -jar $aliview | grep -m1 'version' | awk '{print $NF}')
+    nr=$("$myjava" -Djava.awt.headless=true -jar "$aliview" | grep -m1 'version' | awk '{print $NF}')
     echo "$jarfile v.$nr"
     exit 0
 fi
 
 ## Launch aliview on all input
-if [ $# -eq 0 ]; then 
+if [ $# -eq 0 ]; then
     if [ "$debug" -eq 0 ]; then
         $myjava -Xmx$maxjavamem -Xms$minjavamem -jar $aliview &> /dev/null &
     else

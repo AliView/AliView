@@ -1,5 +1,9 @@
 Version history
 
+1.22
+- Fixes issue where restored window now should be properly maximized
+- Improved error handling when external command fails, e.g. "Realign everything", "Realign selected sequences" 
+
 1.21
 - Read fastq-files (quality values are ignored)
 - Allow pasting any data into alignment window (not only well formatted fasta-sequences)

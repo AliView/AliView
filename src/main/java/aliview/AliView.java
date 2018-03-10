@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -552,7 +553,7 @@ public class AliView implements ApplicationListener{
 
 			newWin.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			newWin.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-
+			
 			// create and add windowlisteners
 			newWin.addWindowListener(new WindowAdapter() {
 
@@ -601,6 +602,7 @@ public class AliView implements ApplicationListener{
 
 			newWin.setVisible(true);
 			newWin.toFront();
+			
 
 		}catch(Exception e) {
 			logger.error(e, e);
@@ -649,6 +651,9 @@ public class AliView implements ApplicationListener{
 	}
 
 	private static void placeWithinDesktop(AliViewWindow newWin) {
+		
+		logger.debug("Inside placeWithinDesktop");
+		
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
 		Rectangle screen = new Rectangle(screenSize);

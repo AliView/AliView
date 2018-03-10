@@ -93,6 +93,7 @@ public class Messenger {
 	public static final Message FAILED_SEQUENCE_DETECTION = new Message("Sequence type could not be automatically detected for" + LF +
 			"this alignment file. Please set sequence type manually:" + LF +
 			"Menu \"Edit\" -> \"Set Alignment Sequence Type\"", "Unknown sequence type");
+	public static final Message SUBPROCESS_CANCELLED_SUCCESSFULLY = new Message("Subprocess cancelled sucessfully", "Subprocess cancelled");
 
 	private static int lastSelectedOption = -1;
 	private static boolean showedMaxJPanelSizeMessageOnceThisSession;

@@ -17,11 +17,14 @@ cd target/linux-version*/aliview/
 
 makeself . ../aliview.install.run "Installer for AliView" ./install.sh
 
+# move up one step back
+cd ..
+
 # make standard archive for linux
-tar -czvf ../aliview.tgz *
+tar -czvf aliview.tgz aliview/
 
 # move back
-cd ../../../
+cd ../../
 
 # and linux install instr to package-dir
 rsync -av target/linux-version*/aliview/install.readme.txt target/linux-version*

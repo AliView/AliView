@@ -8,6 +8,7 @@ import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
+import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
@@ -201,6 +202,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 	private AliViewWindow aliViewWindow;
 	private Preferences prefs = Preferences.userNodeForPackage(AliViewWindow.class);
 	private static final Rectangle DEFAULT_WIN_GEOMETRY = new Rectangle(20,20,600,400);
+	private static final int DEFAULT_WIN_EXTENDED_STATE = Frame.NORMAL;
 	protected JViewport viewport;
 	protected AlignmentPane alignmentPane;
 	// MyScrollPane 
@@ -1544,6 +1546,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		bounds.y = prefs.getInt("window.y",DEFAULT_WIN_GEOMETRY.y);
 		bounds.width = prefs.getInt("window.width",DEFAULT_WIN_GEOMETRY.width);
 		bounds.height = prefs.getInt("window.height",DEFAULT_WIN_GEOMETRY.height);
+		this.setExtendedState(prefs.getInt("window.extendedState", DEFAULT_WIN_EXTENDED_STATE));
 		this.setBounds(bounds); // Do not use pack()!	
 	}
 
@@ -1554,6 +1557,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		prefs.putInt("window.y",bounds.y);
 		prefs.putInt("window.width",bounds.width);
 		prefs.putInt("window.height",bounds.height);
+		prefs.putInt("window.extendedState", this.getExtendedState());
 		try {
 			prefs.flush();
 		} catch (BackingStoreException e){
@@ -1687,7 +1691,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 								//glassPane.setVisible(false);
 							}
 						});
-					} catch (IOException e) {
+					} catch (Exception e) {
 						setSoftLockGUIThroughMenuDisable(false);
 						//glassPane.setVisible(false);
 						// Meddela användaren om fel
@@ -1697,13 +1701,16 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 								aliViewWindow);	
 						e.printStackTrace();
 					}
+					finally {  
+						setSoftLockGUIThroughMenuDisable(false);
+					}
 				}
 			});
 			// Lock GUI while second thread is working
 			setSoftLockGUIThroughMenuDisable(true);
 			//glassPane.setVisible(true);
 			thread.start();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			setSoftLockGUIThroughMenuDisable(false);
 			Messenger.showOKOnlyMessage(Messenger.ALIGNER_SOMETHING_PROBLEM_ERROR,
 					LF + "Message: " + e.getLocalizedMessage(),
@@ -1856,7 +1863,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 								setSoftLockGUIThroughMenuDisable(false);
 							}
 						});
-					} catch (IOException e) {
+					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						//glassPane.setVisible(false);
 						setSoftLockGUIThroughMenuDisable(false);
@@ -1866,13 +1873,16 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 								aliViewWindow);	
 						e.printStackTrace();		
 					}
+					finally {  
+						setSoftLockGUIThroughMenuDisable(false);
+					}
 				}
 			});
 			// Lock GUI while second thread is working
 			//glassPane.setVisible(true);
 			setSoftLockGUIThroughMenuDisable(true);
 			thread.start();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			setSoftLockGUIThroughMenuDisable(false);
 			Messenger.showOKOnlyMessage(Messenger.ALIGNER_SOMETHING_PROBLEM_ERROR,
 					LF + "Error message:" + e.getLocalizedMessage(),

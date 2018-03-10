@@ -26,7 +26,9 @@ import javax.swing.SwingUtilities;
 import org.apache.log4j.Logger;
 
 import aliview.gui.AppIcons;
+import aliview.messenges.Messenger;
 import aliview.settings.Settings;
+import utils.DialogUtils;
 
 
 public class SubProcessWindow{
@@ -66,7 +68,7 @@ public class SubProcessWindow{
 	}
 
 
-	public void init(JFrame parentFrame, boolean withAutocloseBox){
+	public void init(final JFrame parentFrame, boolean withAutocloseBox){
 
 		this.parentFrame = parentFrame;
 		dialog = new JDialog(parentFrame);
@@ -105,6 +107,9 @@ public class SubProcessWindow{
 					subProcessDestrouedByUser = true;
 					subProcess.destroy();		
 					logger.info("now after destroy");
+					
+					Messenger.showOKOnlyMessage(Messenger.SUBPROCESS_CANCELLED_SUCCESSFULLY, parentFrame);
+					
 				}
 				// and close window
 				dialog.dispose();

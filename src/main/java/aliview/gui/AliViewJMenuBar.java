@@ -1578,21 +1578,12 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 	mnAlign.add(mntmReAlignSelectionMafft);
 
 		 */
-		
+		//
+                // TOOLS menu
+                //
 		JMenu mnTools = new JMenu("Tools");
 		mnTools.setMnemonic(KeyEvent.VK_T);
-		this.add(mnTools);
-		
-		JMenuItem mntmMinimizeStop = new JMenuItem("Minimize stop codons");
-		mntmMinimizeStop.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				aliViewWindow.adjustReadingFrameMinimizeStop();
-			}
-		});
-		mnTools.add(mntmMinimizeStop);
-		loadedAlignmentFunctions.add(mntmMinimizeStop);
-		nucleotideFunctions.add(mntmMinimizeStop);
-		
+		this.add(mnTools);	
 
 		JMenu mnPrimer = new JMenu("Primer");
 		mnPrimer.setMnemonic(KeyEvent.VK_P);
@@ -1617,8 +1608,19 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 		mnPrimer.add(mntmFindPrimerSettings);
 		alwaysAvailableFunctions.add(mntmFindPrimerSettings);
 
+//		JMenuItem mntmMinimizeStop = new JMenuItem("Minimize stop codons");
+//		mntmMinimizeStop.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//				aliViewWindow.adjustReadingFrameMinimizeStop();
+//			}
+//		});
+//		mnTools.add(mntmMinimizeStop);
+//		loadedAlignmentFunctions.add(mntmMinimizeStop);
+//		nucleotideFunctions.add(mntmMinimizeStop);
 
-		// Menu with External Commands
+                //
+                // Menu with External Commands
+                //
 		mnExternal = new JMenu("External commands");
 		mnExternal.setMnemonic(KeyEvent.VK_E);
 		this.add(mnExternal);

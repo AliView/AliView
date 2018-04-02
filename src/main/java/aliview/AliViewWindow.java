@@ -1660,8 +1660,8 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 			final File newAlignmentTempFile = AlignmentFile.createAliViewTempFile("alignment", ".fasta");
 
 
-			final SubProcessWindow subProcessWin = SubProcessWindow.getAlignmentProgressWindow(aliViewWindow, true);
-			subProcessWin.setCloseWhenDoneCbxSelection(Settings.getHideAlignmentProgressWindowWhenDone().getBooleanValue());
+			final SubProcessWindow subProcessWin = SubProcessWindow.getProcessProgressWindow(aliViewWindow, true);
+			subProcessWin.setCloseWhenDoneCbxSelection(Settings.getHideProcessProgressWindowWhenDone().getBooleanValue());
 			subProcessWin.setTitle("Align and add sequences with " + alignItem.getName());
 			subProcessWin.setAlwaysOnTop(false);
 			subProcessWin.show();
@@ -1683,7 +1683,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 								subProcessWin.appendOutput(LF + "Done" + LF);
 
 								// close window automatically if that is what is wanted
-								if(Settings.getHideAlignmentProgressWindowWhenDone().getBooleanValue()){
+								if(Settings.getHideProcessProgressWindowWhenDone().getBooleanValue()){
 									subProcessWin.dispose();
 								}
 
@@ -1827,8 +1827,8 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 			alignItem.setParameterOutputFile(newAlignmentTempFile);
 
 
-			final SubProcessWindow subProcessWin = SubProcessWindow.getAlignmentProgressWindow(aliViewWindow, true);
-			subProcessWin.setCloseWhenDoneCbxSelection(Settings.getHideAlignmentProgressWindowWhenDone().getBooleanValue());
+			final SubProcessWindow subProcessWin = SubProcessWindow.getProcessProgressWindow(aliViewWindow, true);
+			subProcessWin.setCloseWhenDoneCbxSelection(Settings.getHideProcessProgressWindowWhenDone().getBooleanValue());
 			subProcessWin.setTitle("Align with " + alignItem.getName());
 			subProcessWin.setAlwaysOnTop(false);
 			subProcessWin.show();
@@ -1855,7 +1855,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 								logger.info("before-set-visible-false");
 
 								// close window automatically if that is what is wanted
-								if(Settings.getHideAlignmentProgressWindowWhenDone().getBooleanValue()){
+								if(Settings.getHideProcessProgressWindowWhenDone().getBooleanValue()){
 									subProcessWin.dispose();
 								}
 
@@ -4464,7 +4464,78 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 			Point newPos = new Point(newX,newY);
 			scrollToPos(newPos);
 		}
+	}
+	
+	public void adjustReadingFrameMinimizeStop() {
 
+		AlignmentListModel origModel = alignment.getSequences();
+		
+		for(Sequence origSequence: origModel){
+            Sequence seq = origSequence.getCopy();
+			ArrayList<Sequence> newSeqs = new ArrayList<Sequence>(1);
+			AlignmentListModel model = new AlignmentListModel(newSeqs);
+			Alignment newAliment = new Alignment(model);
+			int minStops = Integer.MAX_VALUE;
+			GeneticCode bestCode = GeneticCode.DEFAULT;
+			int bestFrame = 0;
+			for(int frame = 0; frame < 3; frame ++){
+				seq.insertGapAt(0);
+				for(GeneticCode genCode: GeneticCode.allCodesArray){
+					newAliment.setGeneticCode(genCode);				
+				
+					int stops = seq.countStopCodon();	  
+					  if(stops < minStops){
+						  minStops = stops;
+						  bestCode = genCode;
+						  bestFrame = frame;
+					  } 
+				}				
+			}
+			
+			logger.info("stops = " + minStops + " genCode = " + bestCode.name + " readingFrame = " + bestFrame);
+			
+			for(int n = 0; n < bestFrame; n++){
+				origSequence.insertGapAt(0);
+			}
+		}
+		
+		repaint();
+	}
+	
+	
+//	public void adjustReadingFrameMinimizeStopv2() {
+//
+//		Alignment newAlignment = new Alignment(alignment.getSequences().getCopy());
+//		
+//		for(int frame = 0; frame < 3; frame ++){
+//			
+//			for(GeneticCode genCode: GeneticCode.allCodesArray){
+//		
+//				for(Sequence seq: newAlignment.getSequences()){
+//					
+//					if(genCode == GeneticCode.DEFAULT){
+//						seq.insertGapAt(0);
+//					}
+//					
+//					int stops = seq.countStopCodon();
+//					  					  
+//				}
+//			}
+//		}
+//				
+//		repaint();
+//	}
+
+
+	public void terminalGAPtoMissing() {
+		getUndoControler().pushUndoState();
+		alignment.terminalGAPtoMissing();
+	}
+
+
+	public void missingToGAP() {
+		getUndoControler().pushUndoState();
+		alignment.missingToGAP();
 	}
 
 }

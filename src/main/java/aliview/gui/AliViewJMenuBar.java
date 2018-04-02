@@ -611,7 +611,6 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 
 		JMenuItem mntmTrim = new JMenuItem("Trim sequences");
 		mntmTrim.addActionListener(new ActionListener() {
-
 			public void actionPerformed(ActionEvent e) {
 				aliViewWindow.trimSequences();
 
@@ -640,6 +639,28 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 		mnEdit.add(mntmDeleteEmpty);
 		editFunctions.add(mntmDeleteEmpty);
 		loadedAlignmentFunctions.add(mntmDeleteEmpty);
+		
+		mnEdit.add(new JSeparator());
+		
+		JMenuItem mntmTermGapToMissing = new JMenuItem("Replace terminal GAPs into missing char (?)");
+		mntmTermGapToMissing.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				aliViewWindow.terminalGAPtoMissing();
+			}
+		});
+		mnEdit.add(mntmTermGapToMissing);
+		editFunctions.add(mntmTermGapToMissing);
+		loadedAlignmentFunctions.add(mntmTermGapToMissing);
+		
+		JMenuItem mntmMissingToGap = new JMenuItem("Replace missing char (?) into GAP (-)");
+		mntmMissingToGap.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				aliViewWindow.missingToGAP();
+			}
+		});
+		mnEdit.add(mntmMissingToGap);
+		editFunctions.add(mntmMissingToGap);
+		loadedAlignmentFunctions.add(mntmMissingToGap);
 
 		mnEdit.add(new JSeparator());
 
@@ -1389,7 +1410,6 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 		//mntmAlign.setIcon(AppIcons.getAlignIcon());
 		mnAlign.add(mntmAlign);
 		editFunctions.add(mntmAlign);
-		editFunctions.add(mntmAlign);
 		loadedAlignmentFunctions.add(mntmAlign);
 
 		JMenuItem mntmAlignAsAA = new JMenuItem("Realign everything as Translated Amino Acids");
@@ -1558,6 +1578,21 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 	mnAlign.add(mntmReAlignSelectionMafft);
 
 		 */
+		
+		JMenu mnTools = new JMenu("Tools");
+		mnTools.setMnemonic(KeyEvent.VK_T);
+		this.add(mnTools);
+		
+		JMenuItem mntmMinimizeStop = new JMenuItem("Minimize stop codons");
+		mntmMinimizeStop.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				aliViewWindow.adjustReadingFrameMinimizeStop();
+			}
+		});
+		mnTools.add(mntmMinimizeStop);
+		loadedAlignmentFunctions.add(mntmMinimizeStop);
+		nucleotideFunctions.add(mntmMinimizeStop);
+		
 
 		JMenu mnPrimer = new JMenu("Primer");
 		mnPrimer.setMnemonic(KeyEvent.VK_P);

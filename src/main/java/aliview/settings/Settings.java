@@ -76,7 +76,7 @@ public class Settings {
 	private static SettingValue hideEditModeMessage = new SettingValue("hideEditModeMessage", false);
 	private static SettingValue hideMuscleProfileAlignInfoMessage = new SettingValue("hideMuscleProfileAlignInfoMessage", false);
 	private static SettingValue hideRealignEverythingMessage = new SettingValue("hideRealignEverythingMessage", false);
-	private static SettingValue hideAlignmentProgressWindowWhenDone = new SettingValue("hideAlignmentProgressWindowWhenDone", false);
+	private static SettingValue hideProcessProgressWindowWhenDone = new SettingValue("hideProcessProgressWindowWhenDone", false);
 	private static SettingValue hideDuplicateSeqNamesMessage = new SettingValue("hideDuplicateSeqNamesMessage", false);
 	private static SettingValue hideAlignmentProgramInvalidCharsInfoMessage = new SettingValue("hideAlignmentProgramInvalidCharsInfoMessage", false);
 	private static SettingValue hideAskBeforeEditMode  = new SettingValue("hideAskBeforeEditMode", false);
@@ -93,7 +93,7 @@ public class Settings {
 		allHideMsgSettingVals.add(hideEditModeMessage);
 		allHideMsgSettingVals.add(hideMuscleProfileAlignInfoMessage);
 		allHideMsgSettingVals.add(hideRealignEverythingMessage);
-		allHideMsgSettingVals.add(hideAlignmentProgressWindowWhenDone);
+		allHideMsgSettingVals.add(hideProcessProgressWindowWhenDone);
 		allHideMsgSettingVals.add(hideDuplicateSeqNamesMessage);
 		allHideMsgSettingVals.add(hideAlignmentProgramInvalidCharsInfoMessage);
 		allHideMsgSettingVals.add(hideAskBeforeEditMode);
@@ -599,8 +599,8 @@ public class Settings {
 		return hideRealignEverythingMessage;
 	}
 
-	public static SettingValue getHideAlignmentProgressWindowWhenDone() {
-		return hideAlignmentProgressWindowWhenDone;
+	public static SettingValue getHideProcessProgressWindowWhenDone() {
+		return hideProcessProgressWindowWhenDone;
 	}
 
 	public static SettingValue getHideAlignmentProgramInvalidCharsInfoMessage() {

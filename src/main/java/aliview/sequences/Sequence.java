@@ -63,9 +63,6 @@ public interface Sequence extends Comparable<Sequence>{
 
 	public int countStopCodon();
 
-
-
-
 	// Undecided which version
 	public boolean isEmpty();
 
@@ -190,5 +187,9 @@ public interface Sequence extends Comparable<Sequence>{
 	public void setAlignmentModel(AlignmentListModel alignmentModel);
 
 	public AlignmentListModel getAlignmentModel();
+
+	public void terminalGAPtoMissing();
+
+	public void missingToGAP();
 
 }

@@ -10,6 +10,7 @@ import aliview.NucleotideUtilities;
 public final class SequenceUtils {
 	private static final Logger logger = Logger.getLogger(SequenceUtils.class);
 	public static final byte GAP_SYMBOL = (byte) '-';
+	public static final byte MISSING_SYMBOL = (byte) '?';
 	public static int TYPE_AMINO_ACID = 0;
 	public static int TYPE_NUCLEIC_ACID = 1;
 	public static int TYPE_UNKNOWN = 2;

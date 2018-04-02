@@ -764,6 +764,34 @@ public class BasicSequence implements Sequence, Comparable<Sequence> {
 		return alignmentModel;
 	}
 
+	public void terminalGAPtoMissing() {		
+		// Replace from forward to end until first non empty/missing char - then break
+		for(int n = 0; n < getBases().getLength(); n++){
+			if(getCharAtPos(n) == SequenceUtils.MISSING_SYMBOL || getCharAtPos(n) == SequenceUtils.GAP_SYMBOL){
+				getBases().set(n, SequenceUtils.MISSING_SYMBOL);
+			}
+			else{
+				break;
+			}
+		}
+		
+		// Replace reverse until first non empty/missing char - then break
+		for(int n = getBases().getLength() - 1; n >= 0; n--){
+			if(getCharAtPos(n) == SequenceUtils.MISSING_SYMBOL || getCharAtPos(n) == SequenceUtils.GAP_SYMBOL){
+				getBases().set(n, SequenceUtils.MISSING_SYMBOL);
+			}
+			else{
+				break;
+			}
+		}	
+	}
 
-
+	public void missingToGAP() {
+		// Replace from forward to end
+		for(int n = 0; n < getBases().getLength(); n++){
+			if(getCharAtPos(n) == SequenceUtils.MISSING_SYMBOL){
+				getBases().set(n, SequenceUtils.GAP_SYMBOL);
+			}
+		}
+	}
 }

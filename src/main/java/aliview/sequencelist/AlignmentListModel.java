@@ -2115,7 +2115,6 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 
 	private void fireSequencesChanged(Rectangle rect) {
 		sequencesChanged(rect);
-
 	}
 
 	private void sequencesChanged(Rectangle rect) {
@@ -2213,5 +2212,19 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 
 	public void setSequenceType(int sequenceType) {
 		this.sequenceType = sequenceType;
+	}
+
+	public void terminalGAPtoMissing() {
+		for(Sequence seq: delegateSequences){
+			seq.terminalGAPtoMissing();
+		}
+		fireSequencesChangedAll();
+	}
+
+	public void missingToGAP() {
+		for(Sequence seq: delegateSequences){
+			seq.missingToGAP();
+		}
+		fireSequencesChangedAll();	
 	}
 }

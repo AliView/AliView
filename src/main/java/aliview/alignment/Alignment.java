@@ -1924,6 +1924,14 @@ public class Alignment implements FileSequenceLoadListener {
 			return true;
 		}
 		return false;
-	}	
+	}
 
+	public void terminalGAPtoMissing() {
+		sequences.terminalGAPtoMissing();
+	}
+
+	public void missingToGAP() {
+		sequences.missingToGAP();
+	}
+	
 }

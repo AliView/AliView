@@ -21,7 +21,6 @@ public class AlignmentMeta {
 	private GeneticCode geneticCode;
 	private boolean isTranslated;
 
-
 	public AlignmentMeta(){
 		this(GeneticCode.DEFAULT);
 	}
@@ -210,6 +209,4 @@ public class AlignmentMeta {
 			isTranslated = shouldTrans;
 		}
 	}
-
-
 }

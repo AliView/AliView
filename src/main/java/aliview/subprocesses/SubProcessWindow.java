@@ -51,7 +51,7 @@ public class SubProcessWindow{
 		init(parentFrame, true);
 	}
 
-	public static SubProcessWindow getAlignmentProgressWindow(JFrame parentFrame, boolean autoCloseWhenDoneCbxSelected){
+	public static SubProcessWindow getProcessProgressWindow(JFrame parentFrame, boolean autoCloseWhenDoneCbxSelected){
 
 		SubProcessWindow procWin = new SubProcessWindow(parentFrame, true);
 
@@ -60,7 +60,7 @@ public class SubProcessWindow{
 		procWin.closeAutomaticCbx.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JCheckBox box = (JCheckBox) e.getSource();
-				Settings.getHideAlignmentProgressWindowWhenDone().putBooleanValue(box.isSelected());
+				Settings.getHideProcessProgressWindowWhenDone().putBooleanValue(box.isSelected());
 			}
 		});
 
@@ -131,40 +131,6 @@ public class SubProcessWindow{
 		dialog.setIconImage(Toolkit.getDefaultToolkit().getImage(SubProcessWindow.class.getResource("/img/alignment_ico_128x128.png")));
 
 	}
-	/*
-	public void init(){
-
-		frame = new JFrame();
-
-		consoleTextArea = new JTextArea();
-		JScrollPane scrollPane = new JScrollPane(consoleTextArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-
-		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		frame.addWindowListener(new WindowAdapter() {		
-			public void windowClosing(WindowEvent e) {
-				if(subProcess != null){
-					logger.info("destroy-subprocess");
-					try {
-						subProcess.getInputStream().close();
-						subProcess.getOutputStream().close();
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-
-					subProcess.destroy();
-					subProcessDestrouedByUser = true;
-				}
-				frame.dispose();
-			}
-		});
-
-		frame.getContentPane().add(scrollPane, BorderLayout.CENTER);
-		frame.setTitle("Sub Process Window");
-		frame.setIconImage(AppIcons.getProgramIconImage());
-		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(SubProcessWindow.class.getResource("/img/alignment_ico_128x128.png")));
-	}
-	 */
 
 	public void show(){
 		dialog.setPreferredSize(this.preferredSize);
@@ -194,17 +160,6 @@ public class SubProcessWindow{
 	public void setActiveProcess(Process subProcess){
 		this.subProcess = subProcess;	
 	}	
-
-	/*
-	public void centerLocationToThisComponent(Component parent){
-		// align to middle of parent window
-		if(parent != null){
-			int newX = parent.getX() + parent.getWidth()/2 - dialog.getPreferredSize().width/2;
-			int newY = parent.getY() + parent.getHeight()/2 - dialog.getPreferredSize().height/2;
-			dialog.setLocation(newX, newY);
-		}
-	}
-	 */
 
 	public void placeFrameupperLeftLocationOfThis(Component parent){
 		if(parent != null){

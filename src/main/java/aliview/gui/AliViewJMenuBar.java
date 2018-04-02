@@ -98,6 +98,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 	private JMenu mnSelectCharset;
 	private ButtonModel countCodonButtonModel;
 	private ButtonModel addEmptySeqButtonModel;
+	private ButtonModel deleteSequencesButtonModel;
 
 	/*
 	 * 
@@ -582,6 +583,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 			}
 		});
 		mntmDeleteSelectedItem.setAccelerator(OSNativeUtils.getDeleteKeyAccelerator());
+		deleteSequencesButtonModel = mntmDeleteSelectedItem.getModel();
 		mnEdit.add(mntmDeleteSelectedItem);
 		reorderAndDeleteFunctions.add(mntmDeleteSelectedItem);
 
@@ -2044,6 +2046,10 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 
 	public ButtonModel getRenameButtonModel() {
 		return renameButtonModel;
+	}
+	
+	public ButtonModel getDeleteSequencesButtonModel() {
+		return deleteSequencesButtonModel;
 	}
 
 	public ButtonModel getAddNewSequenceButtonModel() {

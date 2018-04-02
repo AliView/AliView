@@ -5,6 +5,7 @@ Version history
 - Improved error handling when external command fails, e.g. "Realign everything", "Realign selected sequences"
 - Add function "Replace terminal GAPs into missing char (?)"
 - Add Function "Replace missing char (?) into GAP (-)"
+- Add "Delete selected sequence(s)" to right click menu
 - Change "Primer" menu to "Tool" menu and move "Primer" to this as a sumbeny
 - Minor changes in Linux start-script
 - Minor changes in Windows package scripts

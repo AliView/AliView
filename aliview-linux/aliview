@@ -55,6 +55,23 @@ Usage:
 HEREDOC
 }
 
+#
+# Adapted from stackoverflow-questions-59895
+#
+function resolve_links() {
+  # parameters
+  source="$1"
+  # resolve $source until the file is no longer a symlink
+  while [ -h "$source" ]; do
+    dir="$(cd -P "$(dirname "$source")" && pwd)"
+    # if $dir was a relative symlink, we need to resolve it relative to
+    # the path where the symlink file was located
+    source="$(readlink "$source")"
+    [[ $dir != /* ]] && dir="$dir/$dir"
+  done
+  echo "$source"
+}
+
 ## Check java
 if type -p java &>/dev/null; then
     myjava=java
@@ -91,7 +108,8 @@ shift $((OPTIND-1))
 
 ## Set current directory default, and check if not in local
 ## then always use this jar - otherwise confusing
-progdir=$(dirname $0)
+absolute_file="$(resolve_links $0)"
+progdir=$(dirname $absolute_file)
 if [ ! -f "$progdir/$jarfile" ]; then
     progdir="$defprogdir"
     aliview="$progdir/$jarfile"

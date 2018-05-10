@@ -536,20 +536,22 @@ public class AliView implements ApplicationListener{
 		return hasNonEmptyWin;
 	}
 
-	public static void createNewWindow() {
+	public static AliViewWindow createNewWindow() {
 		logger.info("new win");
-		createNewAliViewWindow(null);
+		return createNewAliViewWindow(null);
 	}
 
 	public static AliViewWindow getActiveWindow(){
 		return activeWindow;
 	}
 
-	private static void createNewAliViewWindow(final File alignmentFile){
+	private static AliViewWindow createNewAliViewWindow(final File alignmentFile){
 
+		AliViewWindow newWin = null;
+		
 		try {
 
-			AliViewWindow newWin = new AliViewWindow(alignmentFile,menuBarFactory);
+			newWin = new AliViewWindow(alignmentFile,menuBarFactory);
 
 			newWin.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			newWin.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -601,8 +603,7 @@ public class AliView implements ApplicationListener{
 			placeWithinDesktop(newWin);
 
 			newWin.setVisible(true);
-			newWin.toFront();
-			
+			newWin.toFront();	
 
 		}catch(Exception e) {
 			logger.error(e, e);
@@ -614,6 +615,8 @@ public class AliView implements ApplicationListener{
 		}catch(Error err){
 			logger.error(err, err);
 		}
+		
+		return newWin;
 
 	}
 

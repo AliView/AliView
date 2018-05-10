@@ -1440,6 +1440,12 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 	public void loadNewAlignmentFile(File selectedFile){
 		loadNewAlignmentFile(selectedFile, SequenceUtils.TYPE_UNKNOWN);
 	}
+	
+	public AliViewWindow createLinkedAlignmentWin(){
+		AliViewWindow newWin = AliView.createNewWindow();
+		newWin.setupNewAlignment(this.getAlignment());
+		return newWin;
+	}
 
 	public void loadNewAlignmentFile(File selectedFile, int sequenceType){
 		alignment = AlignmentFactory.createNewAlignment(selectedFile, sequenceType);

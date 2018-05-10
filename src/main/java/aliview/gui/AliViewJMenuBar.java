@@ -119,6 +119,18 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 		mnFile.setMnemonic(KeyEvent.VK_F);
 		this.add(mnFile);
 
+		JMenuItem mntmLinkedWin = new JMenuItem("Linked window");
+		mntmLinkedWin.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				aliViewWindow.createLinkedAlignmentWin();
+			}
+
+		});
+		mntmLinkedWin.setIcon(AppIcons.getNewIcon());
+		mntmLinkedWin.setAccelerator(OSNativeUtils.getNewFileAccelerator());
+		mnFile.add(mntmLinkedWin);
+		alwaysAvailableFunctions.add(mntmLinkedWin);
+		
 		JMenuItem mntmNew = new JMenuItem("New");
 		mntmNew.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -1581,15 +1593,15 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 
 		 */
 		//
-                // TOOLS menu
-                //
+        // TOOLS menu
+        //
 		JMenu mnTools = new JMenu("Tools");
 		mnTools.setMnemonic(KeyEvent.VK_T);
 		this.add(mnTools);	
 
 		JMenu mnPrimer = new JMenu("Primer");
 		mnPrimer.setMnemonic(KeyEvent.VK_P);
-		this.add(mnPrimer);
+		mnTools.add(mnPrimer);
 
 		JMenuItem mntmPrimerInCurrent = new JMenuItem("Find primer in current selection");
 		mntmPrimerInCurrent.addActionListener(new ActionListener() {

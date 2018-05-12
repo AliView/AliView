@@ -95,9 +95,9 @@ public class Messenger {
 			"Menu \"Edit\" -> \"Set Alignment Sequence Type\"", "Unknown sequence type");
 	public static final Message SUBPROCESS_CANCELLED_SUCCESSFULLY = new Message("Subprocess cancelled sucessfully", "Subprocess cancelled");
 	public static final Message PAD_OR_TRIM_ALIGNMENT_TO_EQUAL_LENGTH = new Message("Sequences are of different length." + LF +
-			                                                                        "Sometimes alignments with different length sequences" + LF + 
-			                                                                        "cause problems in other programs. Do you want to pad" + LF + 
-			                                                                        "sequences with gap(s) at end to equal length?", "Sequences are of different length");
+			"Sometimes alignments with different length sequences" + LF + 
+			"cause problems in other programs. Do you want to pad" + LF + 
+			"sequences with gap(s) at end to equal length?", "Sequences are of different length");
 
 	private static int lastSelectedOption = -1;
 	private static boolean showedMaxJPanelSizeMessageOnceThisSession;
@@ -136,7 +136,7 @@ public class Messenger {
 	public static void showOKOnlyMessage(Message message, String appendMessageText, JFrame parentFrame) {
 		showOptionMessage(message, parentFrame, JOptionPane.OK_OPTION);
 	}
-	
+
 	public static void showOKCancelMessage(Message message, JFrame parentFrame) {
 		showOptionMessage(message, parentFrame, JOptionPane.OK_CANCEL_OPTION);
 	}
@@ -177,19 +177,19 @@ public class Messenger {
 		//dialog.setModal(false);
 
 	}
-	
+
 	public static boolean showYesNoCancelMessageWithCbx(Message message, boolean cbxSelected, JFrame parentFrame) {
 		return  showOptionMessageWithCbx(message, cbxSelected, parentFrame, JOptionPane.YES_NO_CANCEL_OPTION);
 	}
-	
+
 	public static boolean showOKOnlyMessageWithCbx(Message message, boolean cbxSelected, JFrame parentFrame) {
 		return showOptionMessageWithCbx(message, cbxSelected, parentFrame, JOptionPane.OK_OPTION);
 	}
-	
+
 	public static boolean showOKCancelMessageWithCbx(Message message, boolean cbxSelected, JFrame parentFrame) {
 		return showOptionMessageWithCbx(message, cbxSelected, parentFrame, JOptionPane.OK_CANCEL_OPTION);
 	}
-		
+
 	/*
 	 * 
 	 * TODO this method should maybe not be all static - due to problem with multiple dialogs and static variable (lastSelected)
@@ -238,7 +238,7 @@ public class Messenger {
 
 		return cbx.isSelected();
 	}
-	
+
 	public static int getLastSelectedOption() {
 		return lastSelectedOption;
 	}

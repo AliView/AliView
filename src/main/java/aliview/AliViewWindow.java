@@ -1397,13 +1397,13 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		}
 
 	}
-	
+
 	private void saveAlignmentAsFileAskIfNotEqualLength(File outFile, FileFormat fileFormat) throws IOException {
-		
+
 		// If sequences are editable and not of equal length, ask user if they should be padded first
 		boolean rightPadOrTrimIfNeeded = false;
 		if(alignment.isEditable() && !alignment.isSequencesEqualLength()){
-		
+
 			boolean hideMessage = Settings.getHidePadOrTrimToEqualLength().getBooleanValue();
 			if(! hideMessage){
 				boolean hideMessageNextTime = Messenger.showYesNoCancelMessageWithCbx(Messenger.PAD_OR_TRIM_ALIGNMENT_TO_EQUAL_LENGTH, false, aliViewWindow);
@@ -1423,7 +1423,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 				}
 			}	
 		}
-		
+
 		alignment.saveAlignmentAsFile(outFile, fileFormat, rightPadOrTrimIfNeeded);
 	}
 
@@ -2642,10 +2642,10 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 			Messenger.showOKOnlyMessage(Messenger.CLIPBOARD_EMPTY, aliViewWindow);
 			return;
 		}
-		
+
 		try {
 			File clipAsFile = AlignmentFile.createAliViewTempFile("clipboard-alignment", ".fasta");
-			
+
 			// If selection is sequences or sequence-file then create temp clip-file from this 
 			if(FileFormat.isThisFasta(clipboardSelection) || FileFormat.isThisSequenceFile(clipboardSelection)){
 				if(FileFormat.isThisSequenceFile(clipboardSelection)){
@@ -2662,12 +2662,12 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 					Settings.getHidePasteAnywayMessage().putBooleanValue(hideMessageNextTime);
 					int choise = Messenger.getLastSelectedOption();
 					if(choise == JOptionPane.CANCEL_OPTION){
-						
+
 						// cancel paste
 						return;
 					}
 				}
-				
+
 				// rewrite clipboard to fasta
 				StringBuffer newClip = new StringBuffer();
 				String lines[] = clipboardSelection.split(LF);
@@ -2678,7 +2678,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 				}
 				FileUtils.writeStringToFile(clipAsFile, newClip.toString());
 			}
-			
+
 			// Paste sequences
 			addSequencesFromFile(clipAsFile, pasteAtIndex);
 
@@ -4490,13 +4490,13 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 			scrollToPos(newPos);
 		}
 	}
-	
+
 	public void adjustReadingFrameMinimizeStop() {
 
 		AlignmentListModel origModel = alignment.getSequences();
-		
+
 		for(Sequence origSequence: origModel){
-            Sequence seq = origSequence.getCopy();
+			Sequence seq = origSequence.getCopy();
 			ArrayList<Sequence> newSeqs = new ArrayList<Sequence>(1);
 			AlignmentListModel model = new AlignmentListModel(newSeqs);
 			Alignment newAliment = new Alignment(model);
@@ -4507,49 +4507,49 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 				seq.insertGapAt(0);
 				for(GeneticCode genCode: GeneticCode.allCodesArray){
 					newAliment.setGeneticCode(genCode);				
-				
+
 					int stops = seq.countStopCodon();	  
-					  if(stops < minStops){
-						  minStops = stops;
-						  bestCode = genCode;
-						  bestFrame = frame;
-					  } 
+					if(stops < minStops){
+						minStops = stops;
+						bestCode = genCode;
+						bestFrame = frame;
+					} 
 				}				
 			}
-			
+
 			logger.info("stops = " + minStops + " genCode = " + bestCode.name + " readingFrame = " + bestFrame);
-			
+
 			for(int n = 0; n < bestFrame; n++){
 				origSequence.insertGapAt(0);
 			}
 		}
-		
+
 		repaint();
 	}
-	
-	
-//	public void adjustReadingFrameMinimizeStopv2() {
-//
-//		Alignment newAlignment = new Alignment(alignment.getSequences().getCopy());
-//		
-//		for(int frame = 0; frame < 3; frame ++){
-//			
-//			for(GeneticCode genCode: GeneticCode.allCodesArray){
-//		
-//				for(Sequence seq: newAlignment.getSequences()){
-//					
-//					if(genCode == GeneticCode.DEFAULT){
-//						seq.insertGapAt(0);
-//					}
-//					
-//					int stops = seq.countStopCodon();
-//					  					  
-//				}
-//			}
-//		}
-//				
-//		repaint();
-//	}
+
+
+	//	public void adjustReadingFrameMinimizeStopv2() {
+	//
+	//		Alignment newAlignment = new Alignment(alignment.getSequences().getCopy());
+	//		
+	//		for(int frame = 0; frame < 3; frame ++){
+	//			
+	//			for(GeneticCode genCode: GeneticCode.allCodesArray){
+	//		
+	//				for(Sequence seq: newAlignment.getSequences()){
+	//					
+	//					if(genCode == GeneticCode.DEFAULT){
+	//						seq.insertGapAt(0);
+	//					}
+	//					
+	//					int stops = seq.countStopCodon();
+	//					  					  
+	//				}
+	//			}
+	//		}
+	//				
+	//		repaint();
+	//	}
 
 
 	public void terminalGAPtoMissing() {

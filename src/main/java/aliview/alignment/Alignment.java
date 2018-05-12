@@ -1930,5 +1930,5 @@ public class Alignment implements FileSequenceLoadListener {
 	public boolean isSequencesEqualLength() {
 		return sequences.isEqualLength();
 	}
-	
+
 }

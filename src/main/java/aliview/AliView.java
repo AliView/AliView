@@ -393,20 +393,7 @@ public class AliView implements ApplicationListener{
 
 			// Create Application Adapter (only needed for OsX and register this AliView as listener of Application events (interface below)
 			if(OSNativeUtils.isMac()){
-
-				// first try latest version
-				boolean regAdapterOK = OSNativeUtils.registerMacAdapter(aliView);
-
-				logger.info("boolean regAdapterOK =" + regAdapterOK);
-
-				// if not try old version
-				if(!regAdapterOK){
-					logger.info("doing old version of Mac eawt");
-					Application macApplication = new DefaultApplication();
-					macApplication.addApplicationListener(aliView);
-					macApplication.addPreferencesMenuItem();
-					macApplication.setEnabledPreferencesMenu(true);
-				}	
+				OSNativeUtils.registerMacAdapter(aliView);				
 			}
 
 		}catch(Exception ex){
@@ -553,7 +540,7 @@ public class AliView implements ApplicationListener{
 
 			newWin.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			newWin.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-			
+
 			// create and add windowlisteners
 			newWin.addWindowListener(new WindowAdapter() {
 
@@ -602,7 +589,7 @@ public class AliView implements ApplicationListener{
 
 			newWin.setVisible(true);
 			newWin.toFront();
-			
+
 
 		}catch(Exception e) {
 			logger.error(e, e);
@@ -651,9 +638,9 @@ public class AliView implements ApplicationListener{
 	}
 
 	private static void placeWithinDesktop(AliViewWindow newWin) {
-		
+
 		logger.debug("Inside placeWithinDesktop");
-		
+
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
 		Rectangle screen = new Rectangle(screenSize);
@@ -668,8 +655,9 @@ public class AliView implements ApplicationListener{
 
 	}
 
-	public static void quitProgram() {
+	public static boolean quitProgram() {
 
+		boolean isQuitOK = true;
 		// close all windows (ask if it is OK)
 		// reverse order since that is order you windows opened
 		for(int n = aliViewWindows.size() - 1; n >= 0; n--){
@@ -680,13 +668,14 @@ public class AliView implements ApplicationListener{
 				aliViewWindows.remove(window);
 			}
 			else{
-				// Not OK stop operation
-				return;
+				// Not OK should stop operation
+				return false;
 			}
 		}
 
 		logger.info("System exit");
 		System.exit(0);
+		return isQuitOK;
 	}
 
 	public static void logAllLogs(){
@@ -725,6 +714,23 @@ public class AliView implements ApplicationListener{
 		}
 	}
 
+	public static void focusNextWin() {
+		int activeWinIndex = 0;
+		for(int n = 0; n < aliViewWindows.size(); n++){
+			if(activeWindow == aliViewWindows.get(n)){
+				activeWinIndex = n;
+			}
+		}
+
+		int nextWin = activeWinIndex +1;
+		if(nextWin >= aliViewWindows.size()){
+			nextWin = 0;
+		}
+
+		aliViewWindows.get(nextWin).requestFocus();
+
+	}
+
 
 	/*
 	 * 
@@ -734,11 +740,10 @@ public class AliView implements ApplicationListener{
 	 */
 
 	public void handleAbout(ApplicationEvent event) {
-		// this is handled with a standard window in Mac - version is specified in application-jar
+		// before Java 9 this is handled with a standard window in Mac
+		// version is specified in application-jar
 		logger.info("inside handle About");
-		// TODO Auto-generated method stub
 	}
-
 
 	public void handleOpenApplication(ApplicationEvent event) {
 		/*
@@ -756,7 +761,6 @@ public class AliView implements ApplicationListener{
 		event.setHandled(true);
 	}
 
-
 	public void handleOpenFile(ApplicationEvent event) {
 		// TODO create new AliView if program
 		logger.info("inside handle open file" + event.getSource());
@@ -770,7 +774,6 @@ public class AliView implements ApplicationListener{
 		doMacPreferences();
 	}
 
-
 	public void handlePrintFile(ApplicationEvent event) {
 		//		String message = "No print option - Instead choose Export as Image" + LF + "and then print from Image-program";
 		//		JOptionPane.showConfirmDialog(activeWindow, message, "Print", JOptionPane.OK_OPTION);
@@ -779,11 +782,9 @@ public class AliView implements ApplicationListener{
 
 	public void handleQuit(ApplicationEvent event) {
 		logger.info("inside handle quit");
-		doMacQuit();
-		event.setHandled(true);
+		boolean isNotInterruptedByUser = doMacQuit();
+		event.setHandled(isNotInterruptedByUser);
 	}
-
-
 
 	public void handleReOpenApplication(ApplicationEvent event) {
 		// Is handled when files are dropped
@@ -815,30 +816,21 @@ public class AliView implements ApplicationListener{
 		AliView.openAlignmentFile(aFile);
 	}
 
-	public static void doMacQuit(){
-		AliView.quitProgram();
+	public static void doMacOpenFiles(List<File> oFiles){
+		for(File aFile: oFiles){
+			doMacOpenFile(aFile);
+		}
 	}
 
-	public static void focusNextWin() {
-		int activeWinIndex = 0;
-		for(int n = 0; n < aliViewWindows.size(); n++){
-			if(activeWindow == aliViewWindows.get(n)){
-				activeWinIndex = n;
-			}
-		}
-
-		int nextWin = activeWinIndex +1;
-		if(nextWin >= aliViewWindows.size()){
-			nextWin = 0;
-		}
-
-		aliViewWindows.get(nextWin).requestFocus();
-
+	public static boolean doMacQuit(){
+		boolean isNotInterruptedByUser = AliView.quitProgram();
+		return isNotInterruptedByUser;
 	}
 
+	public static void doMacAbout() {
+		AliView.activeWindow.showAbout();
+	}
 
 }
-
-
 
 

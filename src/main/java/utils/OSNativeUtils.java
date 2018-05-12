@@ -17,12 +17,19 @@ import javax.swing.UIManager;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.simplericity.macify.eawt.Application;
+import org.simplericity.macify.eawt.DefaultApplication;
 
 import aliview.AliView;
 
 public class OSNativeUtils {
 	private static final Logger logger = Logger.getLogger(OSNativeUtils.class);
 	private static float cachedContentScaleFactor = -1; // 1 indicates a regular mac display. 2= retina
+
+	public static void main(String[] args) {
+		double version = getJavaVersionAsDouble();
+		logger.info("version=" + version);
+	}
 
 	public static boolean isWindows() {
 
@@ -50,7 +57,7 @@ public class OSNativeUtils {
 	public static boolean isRunningDefectJFilechooserJVM(){
 		logger.info("java ver" + getJavaVersionAsDouble());	
 		String javaVersion = System.getProperty("java.version").toLowerCase();
-		if(isWindows() && getJavaVersionAsDouble() >= 7){
+		if(isWindows() && getJavaVersionAsDouble() >= 7 && getJavaVersionAsDouble() < 8){
 			return true;
 		}
 		return false;
@@ -66,9 +73,21 @@ public class OSNativeUtils {
 		try{	
 			// java version "";
 			String javaVersion = System.getProperty("java.version").toLowerCase();
+
+			logger.info("javaVersion" + javaVersion);
+
 			String[] splitted = StringUtils.split(javaVersion,"._-");
-			String major = splitted[1];
-			String minor = splitted[3];
+
+			String major = "";
+			String minor = "";
+			if(splitted[0].equals("1")){
+				major = splitted[1];
+				minor = splitted[3];
+			}else{
+				major = splitted[0];
+				minor = splitted[2];
+			}
+
 			String versionString = major + "." + minor;
 			version = Double.parseDouble(versionString);
 
@@ -76,10 +95,19 @@ public class OSNativeUtils {
 			e.printStackTrace();
 		}
 		return version;
-
-
 	}
 
+	private static boolean isJavaVersion9OrHigher() {
+		double javaVersion = getJavaVersionAsDouble();
+		logger.info("java_version=" + javaVersion);
+
+		if(javaVersion >= 9){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
 
 	public static boolean isMac() {
 
@@ -568,28 +596,21 @@ public class OSNativeUtils {
 	 * 
 	 */
 	public static boolean registerMacAdapter(AliView aliView) {
-
 		boolean registerOK = false;
+
 		if(isMac()){
-			logger.info("register Mac Adapter");
-			try {
-				Class macAdapter = Class.forName("utils.MacAdapter");
-
-				if(macAdapter != null){
-
-					Class[] defArgs = {AliView.class};
-					Method regAppMethod = macAdapter.getDeclaredMethod("registerApplication", defArgs);
-
-					if(regAppMethod != null){
-						Object[] args = {aliView};
-						regAppMethod.invoke(macAdapter, args);
-						registerOK = true;
-					}
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			} catch (Error err){
-				err.printStackTrace();
+			logger.info("register Mac Adapter");			
+			if(isJavaVersion9OrHigher()){
+				logger.info("Doing java-9 version of Mac application adapter via javax.awt.desktop");
+				OSXHandlerJava9 adapter = new OSXHandlerJava9();
+				registerOK = true;
+			}else{
+				logger.info("Doing pre-java-9 version of Mac application adapter via com.apple.eawt");
+				Application macApplication = new DefaultApplication();
+				macApplication.addApplicationListener(aliView);
+				macApplication.addPreferencesMenuItem();
+				macApplication.setEnabledPreferencesMenu(true);
+				registerOK = true;
 			}
 		}
 		return registerOK;

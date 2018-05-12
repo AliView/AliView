@@ -4,6 +4,7 @@ Version history
 - Java 9/10 Desktop integration for OSX (fixes preferences-, about- and quit-menu and click in finder to open alignments)
 - Ask user if alignment is to be padded if sequences are of different length when saving to file
 - Fix move "Primer" menu to "Tool"-submenu
+- Remove redundant "overwrite confirm" dialog on Windows when saving file that already exists.
 
 1.22
 - Fixes issue where restored window now should be properly maximized

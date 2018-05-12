@@ -641,9 +641,9 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 		mnEdit.add(mntmDeleteEmpty);
 		editFunctions.add(mntmDeleteEmpty);
 		loadedAlignmentFunctions.add(mntmDeleteEmpty);
-		
+
 		mnEdit.add(new JSeparator());
-		
+
 		JMenuItem mntmTermGapToMissing = new JMenuItem("Replace terminal GAPs into missing char (?)");
 		mntmTermGapToMissing.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -653,7 +653,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 		mnEdit.add(mntmTermGapToMissing);
 		editFunctions.add(mntmTermGapToMissing);
 		loadedAlignmentFunctions.add(mntmTermGapToMissing);
-		
+
 		JMenuItem mntmMissingToGap = new JMenuItem("Replace missing char (?) into GAP (-)");
 		mntmMissingToGap.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -1581,15 +1581,15 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 
 		 */
 		//
-                // TOOLS menu
-                //
+		// TOOLS menu
+		//
 		JMenu mnTools = new JMenu("Tools");
 		mnTools.setMnemonic(KeyEvent.VK_T);
 		this.add(mnTools);	
 
 		JMenu mnPrimer = new JMenu("Primer");
 		mnPrimer.setMnemonic(KeyEvent.VK_P);
-		this.add(mnPrimer);
+		mnTools.add(mnPrimer);
 
 		JMenuItem mntmPrimerInCurrent = new JMenuItem("Find primer in current selection");
 		mntmPrimerInCurrent.addActionListener(new ActionListener() {
@@ -1610,19 +1610,19 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 		mnPrimer.add(mntmFindPrimerSettings);
 		alwaysAvailableFunctions.add(mntmFindPrimerSettings);
 
-//		JMenuItem mntmMinimizeStop = new JMenuItem("Minimize stop codons");
-//		mntmMinimizeStop.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent e) {
-//				aliViewWindow.adjustReadingFrameMinimizeStop();
-//			}
-//		});
-//		mnTools.add(mntmMinimizeStop);
-//		loadedAlignmentFunctions.add(mntmMinimizeStop);
-//		nucleotideFunctions.add(mntmMinimizeStop);
+		//		JMenuItem mntmMinimizeStop = new JMenuItem("Minimize stop codons");
+		//		mntmMinimizeStop.addActionListener(new ActionListener() {
+		//			public void actionPerformed(ActionEvent e) {
+		//				aliViewWindow.adjustReadingFrameMinimizeStop();
+		//			}
+		//		});
+		//		mnTools.add(mntmMinimizeStop);
+		//		loadedAlignmentFunctions.add(mntmMinimizeStop);
+		//		nucleotideFunctions.add(mntmMinimizeStop);
 
-                //
-                // Menu with External Commands
-                //
+		//
+		// Menu with External Commands
+		//
 		mnExternal = new JMenu("External commands");
 		mnExternal.setMnemonic(KeyEvent.VK_E);
 		this.add(mnExternal);
@@ -1837,7 +1837,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 	}
 
 	public void updateAllMenuEnabled() {
-	
+
 		this.disableAllButEssentialButtons();		
 
 		if(! aliViewWindow.isEmpty()){
@@ -2047,7 +2047,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 	public ButtonModel getRenameButtonModel() {
 		return renameButtonModel;
 	}
-	
+
 	public ButtonModel getDeleteSequencesButtonModel() {
 		return deleteSequencesButtonModel;
 	}

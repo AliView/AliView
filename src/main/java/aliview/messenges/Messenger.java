@@ -94,6 +94,10 @@ public class Messenger {
 			"this alignment file. Please set sequence type manually:" + LF +
 			"Menu \"Edit\" -> \"Set Alignment Sequence Type\"", "Unknown sequence type");
 	public static final Message SUBPROCESS_CANCELLED_SUCCESSFULLY = new Message("Subprocess cancelled sucessfully", "Subprocess cancelled");
+	public static final Message PAD_OR_TRIM_ALIGNMENT_TO_EQUAL_LENGTH = new Message("Sequences are of different length." + LF +
+			"Sometimes alignments with different length sequences" + LF + 
+			"cause problems in other programs. Do you want to pad" + LF + 
+			"sequences with gap(s) at end to equal length?", "Sequences are of different length");
 
 	private static int lastSelectedOption = -1;
 	private static boolean showedMaxJPanelSizeMessageOnceThisSession;
@@ -129,18 +133,22 @@ public class Messenger {
 		showOKOnlyMessage(message, appendMessageText,  AliView.getActiveWindow());
 	}
 
+	public static void showOKOnlyMessage(Message message, String appendMessageText, JFrame parentFrame) {
+		showOptionMessage(message, parentFrame, JOptionPane.OK_OPTION);
+	}
 
-	public static void showOKOnlyMessage(Message message, String appendMessageText,  JFrame parentFrame) {
+	public static void showOKCancelMessage(Message message, JFrame parentFrame) {
+		showOptionMessage(message, parentFrame, JOptionPane.OK_CANCEL_OPTION);
+	}
+
+	public static void showOptionMessage(Message message,JFrame parentFrame, int optionType) {
 
 		final JDialog dialog = new JDialog(parentFrame);
 		dialog.setTitle(message.title);
 		// OBS DO NOT MODAL - Then there is problem in MAC when executed from error thread
-		dialog.setModal(false);
+		dialog.setModal(true);
 		dialog.setAlwaysOnTop(true);
-
-		String messageText = message.text + appendMessageText;
-
-		JOptionPane optPane = new JOptionPane(messageText,JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane optPane = new JOptionPane(message.text,JOptionPane.INFORMATION_MESSAGE, optionType);
 		optPane.addPropertyChangeListener(new PropertyChangeListener()
 		{
 			public void propertyChange(PropertyChangeEvent e)
@@ -150,10 +158,71 @@ public class Messenger {
 					switch ((Integer)e.getNewValue())
 					{
 					case JOptionPane.OK_OPTION:
-						//user clicks OK
+						lastSelectedOption = JOptionPane.OK_OPTION;
 						break;
 					case JOptionPane.CANCEL_OPTION:
-						//user clicks CANCEL
+						lastSelectedOption = JOptionPane.CANCEL_OPTION;
+						break;                       
+					}
+					// dialog.setModal(false);
+					dialog.dispose();
+				}
+			}
+		});
+
+		dialog.setContentPane(optPane);
+		dialog.pack();
+		dialog.setLocationRelativeTo(parentFrame);
+		dialog.setVisible(true);
+		//dialog.setModal(false);
+
+	}
+
+	public static boolean showYesNoCancelMessageWithCbx(Message message, boolean cbxSelected, JFrame parentFrame) {
+		return  showOptionMessageWithCbx(message, cbxSelected, parentFrame, JOptionPane.YES_NO_CANCEL_OPTION);
+	}
+
+	public static boolean showOKOnlyMessageWithCbx(Message message, boolean cbxSelected, JFrame parentFrame) {
+		return showOptionMessageWithCbx(message, cbxSelected, parentFrame, JOptionPane.OK_OPTION);
+	}
+
+	public static boolean showOKCancelMessageWithCbx(Message message, boolean cbxSelected, JFrame parentFrame) {
+		return showOptionMessageWithCbx(message, cbxSelected, parentFrame, JOptionPane.OK_CANCEL_OPTION);
+	}
+
+	/*
+	 * 
+	 * TODO this method should maybe not be all static - due to problem with multiple dialogs and static variable (lastSelected)
+	 * 
+	 */
+	public static boolean showOptionMessageWithCbx(Message message, boolean cbxSelected, JFrame parentFrame, int optionType) {
+
+		final JDialog dialog = new JDialog(parentFrame);
+		dialog.setTitle(message.title);
+		// OBS DO NOT MODAL - Then there is problem in MAC when executed from error thread
+		dialog.setModal(true);
+		dialog.setAlwaysOnTop(true);
+		JCheckBox cbx = new JCheckBox("Don't show this message again (can be undone in Preferences)");
+		cbx.setSelected(cbxSelected);
+		cbx.setFocusPainted(false);
+		JOptionPane optPane = new JOptionPaneWithCheckbox(cbx, message.text,JOptionPane.INFORMATION_MESSAGE, optionType);
+		optPane.addPropertyChangeListener(new PropertyChangeListener()
+		{
+			public void propertyChange(PropertyChangeEvent e)
+			{
+				if (e.getPropertyName().equals("value"))
+				{
+					switch ((Integer)e.getNewValue())
+					{
+					// OK and YES Options are the same
+					case JOptionPane.OK_OPTION:
+						lastSelectedOption = JOptionPane.OK_OPTION;
+						break;
+					case JOptionPane.NO_OPTION:
+						lastSelectedOption = JOptionPane.NO_OPTION;
+						break;
+					case JOptionPane.CANCEL_OPTION:
+						lastSelectedOption = JOptionPane.CANCEL_OPTION;
 						break;                       
 					}
 					dialog.dispose();
@@ -165,145 +234,13 @@ public class Messenger {
 		dialog.pack();
 		dialog.setLocationRelativeTo(parentFrame);
 		dialog.setVisible(true);
+		//dialog.setModal(false);
 
-		//JOptionPane.showMessageDialog(aliViewWindow,message.text,message.title, JOptionPane.INFORMATION_MESSAGE);	
+		return cbx.isSelected();
 	}
-
 
 	public static int getLastSelectedOption() {
 		return lastSelectedOption;
-	}
-
-
-	/*
-	 * 
-	 * TODO this method should not be all static - due to problem with multiple dialogs and static variable (lastSelected)
-	 * 
-	 */
-	public static boolean showOKOnlyMessageWithCbx(Message message, boolean cbxSelected, AliViewWindow aliViewWindow) {
-
-		final JDialog dialog = new JDialog(aliViewWindow);
-		dialog.setTitle(message.title);
-		// OBS DO NOT MODAL - Then there is problem in MAC when executed from error thread
-		dialog.setModal(false);
-		dialog.setAlwaysOnTop(true);
-
-
-		JCheckBox cbx = new JCheckBox("Don't show this message again (can be undone in Preferences)");
-		cbx.setSelected(cbxSelected);
-		cbx.setFocusPainted(false);
-		JOptionPane optPane = new JOptionPaneWithCheckbox(cbx, message.text,JOptionPane.INFORMATION_MESSAGE);
-		optPane.addPropertyChangeListener(new PropertyChangeListener()
-		{
-			public void propertyChange(PropertyChangeEvent e)
-			{
-				if (e.getPropertyName().equals("value"))
-				{
-					switch ((Integer)e.getNewValue())
-					{
-					case JOptionPane.OK_OPTION:
-						lastSelectedOption = JOptionPane.OK_OPTION;
-						break;
-					case JOptionPane.CANCEL_OPTION:
-						lastSelectedOption = JOptionPane.CANCEL_OPTION;
-						break;                       
-					}
-					dialog.dispose();
-				}
-			}
-		});
-
-		dialog.setContentPane(optPane);
-		// TODO make sure dialogs does not become larger than screen size
-		dialog.setMaximumSize(new Dimension(800,600));
-		//dialog.setPreferredSize(new Dimension(800,600));
-
-		dialog.pack();
-		logger.debug("dialog.getPreferredSize()" + dialog.getPreferredSize());
-		dialog.setLocationRelativeTo(aliViewWindow);
-		dialog.setVisible(true);
-
-		return cbx.isSelected();
-
-	}
-
-	public static void showOKCancelMessage(Message message,AliViewWindow aliViewWindow) {
-
-		final JDialog dialog = new JDialog(aliViewWindow);
-		dialog.setTitle(message.title);
-		// OBS DO NOT MODAL - Then there is problem in MAC when executed from error thread
-		dialog.setModal(true);
-		dialog.setAlwaysOnTop(true);
-		JOptionPane optPane = new JOptionPane(message.text,JOptionPane.INFORMATION_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
-		optPane.addPropertyChangeListener(new PropertyChangeListener()
-		{
-			public void propertyChange(PropertyChangeEvent e)
-			{
-				if (e.getPropertyName().equals("value"))
-				{
-					switch ((Integer)e.getNewValue())
-					{
-					case JOptionPane.OK_OPTION:
-						lastSelectedOption = JOptionPane.OK_OPTION;
-						break;
-					case JOptionPane.CANCEL_OPTION:
-						lastSelectedOption = JOptionPane.CANCEL_OPTION;
-						break;                       
-					}
-					// dialog.setModal(false);
-					dialog.dispose();
-				}
-			}
-		});
-
-		dialog.setContentPane(optPane);
-		dialog.pack();
-		dialog.setLocationRelativeTo(aliViewWindow);
-		dialog.setVisible(true);
-		//dialog.setModal(false);
-
-	}
-
-	public static boolean showOKCancelMessageWithCbx(Message message, boolean cbxSelected, AliViewWindow aliViewWindow) {
-
-		final JDialog dialog = new JDialog(aliViewWindow);
-		dialog.setTitle(message.title);
-		// OBS DO NOT MODAL - Then there is problem in MAC when executed from error thread
-		dialog.setModal(true);
-		dialog.setAlwaysOnTop(true);
-		JCheckBox cbx = new JCheckBox("Don't show this message again (can be undone in Preferences)");
-		cbx.setSelected(cbxSelected);
-		cbx.setFocusPainted(false);
-		JOptionPane optPane = new JOptionPaneWithCheckbox(cbx, message.text,JOptionPane.INFORMATION_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
-		optPane.addPropertyChangeListener(new PropertyChangeListener()
-		{
-			public void propertyChange(PropertyChangeEvent e)
-			{
-				if (e.getPropertyName().equals("value"))
-				{
-					switch ((Integer)e.getNewValue())
-					{
-					case JOptionPane.OK_OPTION:
-						lastSelectedOption = JOptionPane.OK_OPTION;
-						break;
-					case JOptionPane.CANCEL_OPTION:
-						lastSelectedOption = JOptionPane.CANCEL_OPTION;
-						break;                       
-					}
-					// dialog.setModal(false);
-					dialog.dispose();
-				}
-			}
-		});
-
-		dialog.setContentPane(optPane);
-		dialog.pack();
-		dialog.setLocationRelativeTo(aliViewWindow);
-		dialog.setVisible(true);
-		//dialog.setModal(false);
-
-		return cbx.isSelected();
-
 	}
 
 	public static void showCountStopCodonMessage(int count, AliViewWindow aliViewWindow) {

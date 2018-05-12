@@ -2227,4 +2227,14 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		}
 		fireSequencesChangedAll();	
 	}
+
+	public boolean isEqualLength() {
+		int longLen = getLongestSequenceLength();
+		for(Sequence sequence : delegateSequences){
+			if(sequence.getLength() < longLen){
+				return false;
+			}
+		}
+		return true;
+	}
 }

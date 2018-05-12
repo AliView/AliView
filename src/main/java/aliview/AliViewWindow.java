@@ -777,9 +777,6 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		}
 	}
 
-
-
-
 	public void showMessageLog() {
 		startDebug();
 		MessageLogFrame messFrame = new MessageLogFrame(this);
@@ -1256,7 +1253,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 				if(fileFormat == fileFormat.IMAGE_PNG){
 					ImageExporter.writeComponentAsImageToFile(selectedFile, fileFormat.getSuffix(), alignmentPane);
 				}else{
-					alignment.saveAlignmentAsFile(selectedFile, fileFormat);
+					saveAlignmentAsFileAskIfNotEqualLength(selectedFile, fileFormat);
 				}
 				if(! saveAsCopy){
 					alignment.setAlignmentFile(selectedFile);
@@ -1384,7 +1381,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 
 		try {
 
-			alignment.saveAlignmentAsFile(saveFile, alignment.getFileFormat());
+			saveAlignmentAsFileAskIfNotEqualLength(saveFile, alignment.getFileFormat());
 			// many of this below should not be necessary 
 			alignment.setAlignmentFile(saveFile);
 			alignment.setAlignmentFormat(alignment.getFileFormat());
@@ -1400,7 +1397,35 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		}
 
 	}
-
+	
+	private void saveAlignmentAsFileAskIfNotEqualLength(File outFile, FileFormat fileFormat) throws IOException {
+		
+		// If sequences are editable and not of equal length, ask user if they should be padded first
+		boolean rightPadOrTrimIfNeeded = false;
+		if(alignment.isEditable() && !alignment.isSequencesEqualLength()){
+		
+			boolean hideMessage = Settings.getHidePadOrTrimToEqualLength().getBooleanValue();
+			if(! hideMessage){
+				boolean hideMessageNextTime = Messenger.showYesNoCancelMessageWithCbx(Messenger.PAD_OR_TRIM_ALIGNMENT_TO_EQUAL_LENGTH, false, aliViewWindow);
+				Settings.getHidePadOrTrimToEqualLength().putBooleanValue(hideMessageNextTime);
+				int choise = Messenger.getLastSelectedOption();
+				if(choise == JOptionPane.CANCEL_OPTION){
+					return;
+				}
+				else if(choise == JOptionPane.YES_OPTION){
+					rightPadOrTrimIfNeeded = true;
+				}
+				else if(choise == JOptionPane.NO_OPTION){
+					rightPadOrTrimIfNeeded = false;
+				}else{
+					// if dialog is closed with window close then save but don't pad 
+					rightPadOrTrimIfNeeded = false;
+				}
+			}	
+		}
+		
+		alignment.saveAlignmentAsFile(outFile, fileFormat, rightPadOrTrimIfNeeded);
+	}
 
 	public void saveSelectionAsFastaFileViaChooser() {
 
@@ -1624,7 +1649,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 			// Save current alignment in tempdir (to be sure all unsaved changes are there)
 			FileFormat currentTempFileFormat = firstSelected.getCurrentAlignmentFileFormat();
 			final File currentAlignmentTempFile = AlignmentFile.createAliViewTempFile("current-alignment", currentTempFileFormat.getSuffix());
-			alignment.saveAlignmentAsFile(currentAlignmentTempFile, currentTempFileFormat);	
+			alignment.saveAlignmentAsFile(currentAlignmentTempFile, currentTempFileFormat, true);	
 			alignAndAddSequences(firstSelected, currentAlignmentTempFile, additionalSequencesFile);
 		}
 	}
@@ -1812,11 +1837,11 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 			// save selection if user changes it during alignment
 			final Rectangle selectionBounds = alignment.getSelectionAsMinRect();
 			if(asTranslatedAA){
-				alignment.saveAlignmentAsFile(currentAlignmentTempFile, FileFormat.FASTA_TRANSLATED_AMINO_ACID);
+				alignment.saveAlignmentAsFile(currentAlignmentTempFile, FileFormat.FASTA_TRANSLATED_AMINO_ACID, true);
 			}else if(selection){		
 				alignment.saveSelectionAsFastaFile(currentAlignmentTempFile);
 			}else{
-				alignment.saveAlignmentAsFile(currentAlignmentTempFile, currentTempFileFormat);
+				alignment.saveAlignmentAsFile(currentAlignmentTempFile, currentTempFileFormat, true);
 			}
 
 			// Create a tempFile for new alignment
@@ -2785,7 +2810,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 
 		undoControler.pushUndoState();
 		alignment.deleteAllGaps();
-		alignment.rightPadSequencesWithGapUntilEqualLength();
+		//alignment.rightPadSequencesWithGapUntilEqualLength();
 		//requestPaneRepaint();;
 	}
 
@@ -4081,7 +4106,7 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 			// Save current alignment in tempdir (to be sure all unsaved changes are there)
 			FileFormat currentTempFileFormat = cmdItem.getCurrentAlignmentFileFormat();
 			File currentAlignmentTempFile = AlignmentFile.createAliViewTempFile("current-alignment", currentTempFileFormat.getSuffix());
-			alignment.saveAlignmentAsFile(currentAlignmentTempFile, currentTempFileFormat);	
+			alignment.saveAlignmentAsFile(currentAlignmentTempFile, currentTempFileFormat, true);	
 
 			// Create a tempFile for new alignment
 			File emptyTempFile = AlignmentFile.createAliViewTempFile("tempfile-for-new-alignment", ".tmp");

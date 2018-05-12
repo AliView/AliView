@@ -534,12 +534,6 @@ public class Alignment implements FileSequenceLoadListener {
 		}
 	}
 
-	public void saveAlignmentAsFile(File outFile) throws IOException{	
-
-		// save as current format
-		saveAlignmentAsFile(outFile,getFileFormat());	
-	}
-
 	public void exportPartitionsFileRaxMLFormat(File outFile)  throws IOException{
 
 		//		DNA,p1=1-1194
@@ -585,15 +579,14 @@ public class Alignment implements FileSequenceLoadListener {
 	}
 
 
-	public void saveAlignmentAsFile(File outFile, FileFormat fileFormat) throws IOException{
-
+	public void saveAlignmentAsFile(File outFile, FileFormat fileFormat, boolean rightPadOrTrimIfNeeded) throws IOException{
 
 		logger.info("fileFormat" + fileFormat);
 
 		// make sure they are equal length (if editable)
-		if(sequences.isEditable()){
+		if(rightPadOrTrimIfNeeded && sequences.isEditable()){			
 			sequences.rightPadWithGapUntilEqualLength();
-			sequences.rightTrimSequencesRemoveGapsUntilEqualLength();
+			sequences.rightTrimSequencesRemoveGapsUntilEqualLength();			
 		}
 		// store current translation (might be modofied below)
 		boolean wasTranslated = isTranslatedOnePos();
@@ -1932,6 +1925,10 @@ public class Alignment implements FileSequenceLoadListener {
 
 	public void missingToGAP() {
 		sequences.missingToGAP();
+	}
+
+	public boolean isSequencesEqualLength() {
+		return sequences.isEqualLength();
 	}
 	
 }

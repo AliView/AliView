@@ -86,6 +86,8 @@ public class Settings {
 	private static SettingValue hideDeleteAllSelectedBases = new SettingValue("hideDeleteAllSelectedBases", false);
 	private static SettingValue hideUnknownAlignmentType = new SettingValue("hideUnknownAlignmentType", false);
 	private static SettingValue hidePasteAnywayMessage = new SettingValue("hidePasteAnywayMessage", false);
+	private static SettingValue hidePadOrTrimToEqualLength = new SettingValue("hidePadOrTrimToEqualLength", false);
+	
 	private static ArrayList<SettingValue> allHideMsgSettingVals = new ArrayList<SettingValue>();
 	
 	static{
@@ -634,6 +636,10 @@ public class Settings {
 	
 	public static SettingValue getHidePasteAnywayMessage() {
 		return hidePasteAnywayMessage;
+	}
+	
+	public static SettingValue getHidePadOrTrimToEqualLength() {
+		return hidePadOrTrimToEqualLength;
 	}
 
 	public static void clearAllHideThisDialogCheckboxes() {

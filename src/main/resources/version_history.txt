@@ -1,12 +1,17 @@
 Version history
 
+1.23
+- Java 9/10 Desktop integration for OSX (fixes preferences-, about- and quit-menu and click in finder to open alignments)
+- Ask user if alignment is to be padded if sequences are of different length when saving to file
+- Fix move "Primer" menu to "Tool"-submenu
+
 1.22
 - Fixes issue where restored window now should be properly maximized
 - Improved error handling when external command fails, e.g. "Realign everything", "Realign selected sequences"
 - Add function "Replace terminal GAPs into missing char (?)"
 - Add Function "Replace missing char (?) into GAP (-)"
 - Add "Delete selected sequence(s)" to right click menu
-- Change "Primer" menu to "Tool" menu and move "Primer" to this as a sumbeny
+- Change "Primer" menu to "Tool" menu and move "Primer" to this as a submenu
 - Minor changes in Linux start-script
 - Minor changes in Windows package scripts
 

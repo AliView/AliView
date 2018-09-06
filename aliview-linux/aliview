@@ -110,7 +110,8 @@ shift $((OPTIND-1))
 ## then always use this jar - otherwise confusing
 absolute_file="$(resolve_links $0)"
 progdir=$(dirname $absolute_file)
-if [ ! -f "$progdir/$jarfile" ]; then
+aliview="$progdir/$jarfile"
+if [ ! -f "$aliview" ]; then
     progdir="$defprogdir"
     aliview="$progdir/$jarfile"
     if [ ! -x "$aliview" ] ; then

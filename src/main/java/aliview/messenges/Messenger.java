@@ -134,7 +134,7 @@ public class Messenger {
 	}
 
 	public static void showOKOnlyMessage(Message message, String appendMessageText, JFrame parentFrame) {
-		showOptionMessage(message, parentFrame, JOptionPane.OK_OPTION);
+		showOptionMessage(message, parentFrame, JOptionPane.DEFAULT_OPTION);
 	}
 
 	public static void showOKCancelMessage(Message message, JFrame parentFrame) {
@@ -183,7 +183,7 @@ public class Messenger {
 	}
 
 	public static boolean showOKOnlyMessageWithCbx(Message message, boolean cbxSelected, JFrame parentFrame) {
-		return showOptionMessageWithCbx(message, cbxSelected, parentFrame, JOptionPane.OK_OPTION);
+		return showOptionMessageWithCbx(message, cbxSelected, parentFrame, JOptionPane.DEFAULT_OPTION);
 	}
 
 	public static boolean showOKCancelMessageWithCbx(Message message, boolean cbxSelected, JFrame parentFrame) {

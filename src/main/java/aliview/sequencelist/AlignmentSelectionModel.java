@@ -377,6 +377,7 @@ public class AlignmentSelectionModel{
 		if(!hasSelection()){
 			return;
 		}
+		
 		Rectangle oldSelect = getSelectionBounds();
 		for(Sequence seq: sequences){
 			seq.selectionExtendLeft();
@@ -386,19 +387,42 @@ public class AlignmentSelectionModel{
 		fireSelectionChanged(newSelect, false);
 	}
 
-	public void selectionExtendDown() {
+	public void selectionExtendDown() {	
 		if(!hasSelection()){
 			return;
 		}
+		
 		Rectangle oldSelect = getSelectionBounds();
 
-		// start one above bottom
-		for(int n = sequences.size()-2; n >= 1; n--){
+		// start from top and loop till last but one
+		for(int n = 0; n < sequences.size() - 1; n++){
 			Sequence seq = sequences.get(n);
 			if(seq.hasSelection()){
 				int[] selected = seq.getSelectedPositions();
 				for(int index: selected){
-					sequences.get(n+1).setSelection(index,index, true);
+					sequences.get(n+1).setSelection(index,index, false);
+				}
+			}
+		}
+		Rectangle newSelect = getSelectionBounds();
+		newSelect.add(oldSelect);
+		fireSelectionChanged(newSelect, false);
+	}
+	
+	public void selectionExtendTop() {
+		if(!hasSelection()){
+			return;
+		}
+		
+		Rectangle oldSelect = getSelectionBounds();
+
+		// start bottom and loop till top but one
+		for(int n = sequences.size() - 1; n > 0; n--){
+			Sequence seq = sequences.get(n);
+			if(seq.hasSelection()){
+				int[] selected = seq.getSelectedPositions();
+				for(int index: selected){
+					sequences.get(n-1).setSelection(index,index, false);
 				}
 			}
 		}

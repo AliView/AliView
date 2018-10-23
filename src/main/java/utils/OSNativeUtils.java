@@ -350,6 +350,22 @@ public class OSNativeUtils {
 			return KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.ALT_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
 		}
 	}
+	
+	public static KeyStroke getSelectionExpandTopKeyAccelerator() {
+		if(isMac()){
+			return KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.ALT_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
+		}else{
+			return KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.ALT_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
+		}
+	}
+	
+	public static KeyStroke getSelectionExpandDownKeyAccelerator() {
+		if(isMac()){
+			return KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.ALT_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
+		}else{
+			return KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.ALT_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
+		}
+	}
 
 
 	public static KeyStroke getToggleTranslationOnePosKeyAccelerator() {

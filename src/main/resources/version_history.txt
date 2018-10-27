@@ -1,4 +1,8 @@
 Version history
+
+1.25
+- Feature "Extend selection all the way up to top or down to bottom" Alt + Shift + Arrow up/down
+
 1.24
 - Fixed confusing "Yes/No" option on message dialogs introduced in version 1.23
 - Fixed Linux start-script error if saving AliView in non-default problem

@@ -1925,10 +1925,6 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		this.selectionOffset = i;
 	}
 
-	public void expandSelectionDown() {
-		selectionModel.selectionExtendDown();
-	}
-
 	public String getSelectionAsNucleotides() {
 		return selectionModel.getSelectionAsNucleotides();
 	}
@@ -1967,6 +1963,14 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 
 	public void selectionExtendLeft() {
 		selectionModel.selectionExtendLeft();
+	}
+	
+	public void selectionExtendDown() {
+		selectionModel.selectionExtendDown();
+	}
+	
+	public void selectionExtendTop() {
+		selectionModel.selectionExtendTop();
 	}
 
 	public void invertSelection() {

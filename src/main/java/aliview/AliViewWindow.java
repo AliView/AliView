@@ -4409,6 +4409,14 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 	public void expandSelectionLeft() {
 		alignment.selectionExtendLeft();
 	}	
+	
+	public void expandSelectionDown() {
+		alignment.selectionExtendDown();
+	}
+	
+	public void expandSelectionTop() {
+		alignment.selectionExtendTop();
+	}
 
 	public void phenotype2genotype() {
 		// As default get last used stored directory

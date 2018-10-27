@@ -1552,6 +1552,14 @@ public class Alignment implements FileSequenceLoadListener {
 	public void selectionExtendLeft() {
 		sequences.selectionExtendLeft();
 	}
+	
+	public void selectionExtendDown() {
+		sequences.selectionExtendDown();
+	}
+	
+	public void selectionExtendTop() {
+		sequences.selectionExtendTop();
+	}
 
 	public void invertSelection() {
 		long startTime = System.currentTimeMillis();

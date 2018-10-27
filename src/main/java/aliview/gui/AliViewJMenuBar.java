@@ -865,6 +865,26 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 		mntmExpandSelectionLeft.setAccelerator(OSNativeUtils.getSelectionExpandLeftKeyAccelerator());
 		mnSelection.add(mntmExpandSelectionLeft);
 		hasSelectionFunctions.add(mntmExpandSelectionLeft);
+		
+		JMenuItem mntmExpandSelectionDown = new JMenuItem("Expand selection Down");
+		mntmExpandSelectionDown.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				aliViewWindow.expandSelectionDown();
+			}
+		});
+		mntmExpandSelectionDown.setAccelerator(OSNativeUtils.getSelectionExpandDownKeyAccelerator());
+		mnSelection.add(mntmExpandSelectionDown);
+		hasSelectionFunctions.add(mntmExpandSelectionDown);
+		
+		JMenuItem mntmExpandSelectionTop = new JMenuItem("Expand selection Up");
+		mntmExpandSelectionTop.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				aliViewWindow.expandSelectionTop();
+			}
+		});
+		mntmExpandSelectionTop.setAccelerator(OSNativeUtils.getSelectionExpandTopKeyAccelerator());
+		mnSelection.add(mntmExpandSelectionTop);
+		hasSelectionFunctions.add(mntmExpandSelectionTop);
 
 
 		mnSelection.add(new JSeparator());

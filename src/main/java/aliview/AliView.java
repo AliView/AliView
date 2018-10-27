@@ -68,8 +68,6 @@ public class AliView implements ApplicationListener{
 	 */
 	public static void main(String[] args){
 
-		//
-		//
 		// First set max logging for startup, then at end of initialization turn off
 		//		// it can then be turned on manually from menu
 		//		System.setErr( new PrintStream( new LoggingOutputStream( logger, Level.ERROR ), true));

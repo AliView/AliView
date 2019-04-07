@@ -1,5 +1,8 @@
 Version history
 
+1.26
+- Fix antialias font issues on OSX (not least retina screen)
+
 1.25
 - Feature "Extend selection all the way up to top or down to bottom" Alt + Shift + Arrow up/down
 

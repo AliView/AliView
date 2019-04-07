@@ -57,8 +57,10 @@ public class OSNativeUtils {
 		if(isJavaVersion8orLower()) {
 		
 			//Just call all methods and see which returns highest value
-			double scaleFactorJ6 = getHighDPIScaleFactor_OSX_Java6();		
+			double scaleFactorJ6 = getHighDPIScaleFactor_OSX_Java6();
+			logger.info("scaleFactorJ6" + scaleFactorJ6);
 			double scaleFactorJ8 = getHighDPIScaleFactor_OSX_Java_Pre_9(component);
+			logger.info("scaleFactorJ8" + scaleFactorJ8);
 			
 			scaleFactor = Math.max(scaleFactorJ6, scaleFactorJ8);		
 		}
@@ -96,7 +98,11 @@ public class OSNativeUtils {
             	Integer intScale = (Integer) scale;
             	scaleFactor = intScale.intValue();
 	        }
-        } catch (ReflectiveOperationException e) {
+        } catch (Error err) {
+        	logger.debug("Reflection error? " + err);
+            return -1;
+        } catch (Exception e) {
+        	logger.debug("Reflection exception? " + e);
             return -1;
         }
         return scaleFactor;

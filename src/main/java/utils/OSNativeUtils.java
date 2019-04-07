@@ -1,10 +1,15 @@
 package utils;
 
 import java.awt.AWTKeyStroke;
+import java.awt.Component;
 import java.awt.Font;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.awt.geom.AffineTransform;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
@@ -24,7 +29,7 @@ import aliview.AliView;
 
 public class OSNativeUtils {
 	private static final Logger logger = Logger.getLogger(OSNativeUtils.class);
-	private static float cachedContentScaleFactor = -1; // 1 indicates a regular mac display. 2= retina
+	// private static float contentScaleFactor = -1; // 1 indicates a regular mac display. 2= retina
 
 	public static void main(String[] args) {
 		double version = getJavaVersionAsDouble();
@@ -38,21 +43,86 @@ public class OSNativeUtils {
 		return (os.indexOf("win") >= 0);
 
 	}
+	
+	/*
+	 * 
+	 * TODO Fix this so that you can move window from HighDPI to normal and vice.v.
+	 * https://stackoverflow.com/questions/20767708/how-do-you-detect-a-retina-display-in-java
+	 * 
+	 */
+	public static double getHighDPIScaleFactor(Component component) {
+		
+		// 1 indicates a regular mac display. 2= retina
+		double scaleFactor = -1;
+		if(isJavaVersion8orLower()) {
+		
+			//Just call all methods and see which returns highest value
+			double scaleFactorJ6 = getHighDPIScaleFactor_OSX_Java6();		
+			double scaleFactorJ8 = getHighDPIScaleFactor_OSX_Java_Pre_9(component);
+			
+			scaleFactor = Math.max(scaleFactorJ6, scaleFactorJ8);		
+		}
+		else {
+			scaleFactor = getHighDPIScaleFactor_OSX_Java_9_or_Later(component);
+		}
+		
+		// Set 1 as minimum
+		if(scaleFactor == -1){
+			scaleFactor = 1;
+		}
+		
+		return scaleFactor;
+		
+	}
 
-	public static float getHighDPIScaleFactor() {
-
-		if(cachedContentScaleFactor == -1){
+	public static float getHighDPIScaleFactor_OSX_Java6() {
+		    float scaleFactor = -1;
 			Object obj = Toolkit.getDefaultToolkit().getDesktopProperty("apple.awt.contentScaleFactor");
 			if (obj instanceof Float) {
 				Float f = (Float) obj;
-				cachedContentScaleFactor = f;
-			}else{
-				cachedContentScaleFactor = 1;
-			}
-		}
-		return cachedContentScaleFactor;
-
+				scaleFactor = f;
+			}		
+			return scaleFactor;
 	}
+	
+	private static double getHighDPIScaleFactor_OSX_Java_Pre_9(final Component component) {
+		double scaleFactor = -1;
+        final GraphicsDevice device = getCurrentDevice(component);
+        try {
+        	// Try to call scale factor method (if it is not on OSX device a reflection exception will be thrown)
+            final Method getScaleFactorMethod = device.getClass().getMethod("getScaleFactor");
+            final Object scale = getScaleFactorMethod.invoke(device);
+            if (scale instanceof Integer) {
+            	Integer intScale = (Integer) scale;
+            	scaleFactor = intScale.intValue();
+	        }
+        } catch (ReflectiveOperationException e) {
+            return -1;
+        }
+        return scaleFactor;
+    }
+	
+	private static double getHighDPIScaleFactor_OSX_Java_9_or_Later(final Component component) {
+        return getCurrentConfiguration(component).getDefaultTransform().getScaleX();
+    }
+	
+	private static GraphicsConfiguration getCurrentConfiguration(final Component component) {
+        final GraphicsConfiguration graphicsConfiguration = component.getGraphicsConfiguration();
+        if (graphicsConfiguration == null) {
+            return GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
+        } else {
+            return graphicsConfiguration;
+        }
+    }
+	
+    private static GraphicsDevice getCurrentDevice(final Component component) {
+        final GraphicsConfiguration graphicsConfiguration = component.getGraphicsConfiguration();
+        if (graphicsConfiguration == null) {
+            return GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+        } else {
+            return graphicsConfiguration.getDevice();
+        }
+    }
 
 	public static boolean isRunningDefectJFilechooserJVM(){
 		logger.info("java ver" + getJavaVersionAsDouble());	
@@ -97,11 +167,11 @@ public class OSNativeUtils {
 		return version;
 	}
 
-	private static boolean isJavaVersion9OrHigher() {
+	private static boolean isJavaVersion8orLower() {
 		double javaVersion = getJavaVersionAsDouble();
 		logger.info("java_version=" + javaVersion);
 
-		if(javaVersion >= 9){
+		if(javaVersion < 9){
 			return true;
 		}
 		else{
@@ -616,16 +686,16 @@ public class OSNativeUtils {
 
 		if(isMac()){
 			logger.info("register Mac Adapter");			
-			if(isJavaVersion9OrHigher()){
-				logger.info("Doing java-9 version of Mac application adapter via javax.awt.desktop");
-				OSXHandlerJava9 adapter = new OSXHandlerJava9();
-				registerOK = true;
-			}else{
+			if(isJavaVersion8orLower()){
 				logger.info("Doing pre-java-9 version of Mac application adapter via com.apple.eawt");
 				Application macApplication = new DefaultApplication();
 				macApplication.addApplicationListener(aliView);
 				macApplication.addPreferencesMenuItem();
 				macApplication.setEnabledPreferencesMenu(true);
+				registerOK = true;
+			}else {
+				logger.info("Doing java-9 version of Mac application adapter via javax.awt.desktop");
+				OSXHandlerJava9 adapter = new OSXHandlerJava9();
 				registerOK = true;
 			}
 		}

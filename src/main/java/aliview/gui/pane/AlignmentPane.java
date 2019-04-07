@@ -116,7 +116,7 @@ public class AlignmentPane extends JPanel{
 	private int CHARSET_LINE_HEIGHT = 5;
 
 	public AlignmentPane() {
-		highDPIScaleFactor = (int)OSNativeUtils.getHighDPIScaleFactor();
+		highDPIScaleFactor = (int)OSNativeUtils.getHighDPIScaleFactor(this);
 		createAdjustedDerivedBaseFont();
 		createAdjustedDerivedHighDPIFont();
 		createCharPixelsContainers();

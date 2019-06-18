@@ -4571,6 +4571,9 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		alignment.missingToGAP();
 	}
 
+
+
+
 }
 
 

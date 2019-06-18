@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
@@ -248,14 +249,14 @@ public class Messenger {
 		showOKOnlyMessage(countMessage, aliViewWindow);
 	}
 
-	public static void showDuplicateSeqNamesMessage(ArrayList<String> dupeNames){
+	public static void showDuplicateSeqNamesMessage(HashSet<String> duplicateSeqNames){
 
 		boolean hideMessage = Settings.getHideDuplicateSeqNamesMessage().getBooleanValue();
 		if(! hideMessage){
 
 			String dupeString = "";
 			int dupeCount = 0;
-			for(String dupe: dupeNames){	   
+			for(String dupe: duplicateSeqNames){	   
 				dupeString += dupe + LF;
 
 				// Only list 10 names

@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -1366,7 +1367,7 @@ public class Alignment implements FileSequenceLoadListener {
 		sequences.findAndSelectDuplicates();
 	}
 
-	public ArrayList<String> findDuplicateNames(){
+	public HashSet<String> findDuplicateNames(){
 		if(sequences != null){
 			return sequences.findDuplicateNames();
 		}else{

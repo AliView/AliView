@@ -1796,9 +1796,9 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 		fireSequencesChangedAll();
 	}
 
-	public ArrayList<String> findDuplicateNames() {
-		ArrayList<String> dupes = new ArrayList<String>();
-		HashSet set = new HashSet<String>(delegateSequences.size());
+	public HashSet<String> findDuplicateNames() {
+		HashSet<String> dupes = new HashSet<String>();
+		HashSet<String> set = new HashSet<String>();
 		for(Sequence seq: delegateSequences){
 			boolean isNotDuplicate = set.add(seq.getName());
 			if(isNotDuplicate == false){
@@ -1863,9 +1863,11 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 	}
 
 	public void selectDuplicateNamesSequences() {
-		ArrayList<String> dupeNames = findDuplicateNames();
+		HashSet<String> dupeNames = findDuplicateNames();
 		List<Sequence> dupeSeqs = new ArrayList<Sequence>();
+		logger.debug("dupes found:" + dupeNames.size());
 		for(String dupeName: dupeNames){
+			logger.debug("add all with name:" + dupeName);
 			dupeSeqs.addAll(getSequencesByName(dupeName));
 		}
 		selectionModel.selectSequences(dupeSeqs);

@@ -1,4 +1,4 @@
-AliView
+Text Aligner
 =======
 Download: www.ormbunkar.se/aliview/downloads
 <br>Webpage: www.ormbunkar.se/aliview

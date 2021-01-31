@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -49,7 +50,7 @@ public class AlignmentTest {
 	
 	@Test
 	public void testFindAndSelectDuplicates() {
-		ArrayList<String> result = alignment.findDuplicateNames();
+		HashSet<String> result = alignment.findDuplicateNames();
 		assertEquals(0, result.size());
 	}
 	

@@ -2,6 +2,7 @@ Version history
 
 1.27
 - Fix bug that made large files with duplicate sequence names very slow to open.
+- Fix start problems on Windows when using some versions oj OpenJDK
 
 1.26
 - Fix antialias font issues on OSX (not least retina screen)

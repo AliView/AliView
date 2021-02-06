@@ -4,7 +4,7 @@
   <groupId>AliView</groupId>
   <artifactId>AliView</artifactId>
   <packaging>jar</packaging>
-  <version>1.26</version>
+  <version>1.27</version>
   <name>AliView</name>
   <url>http://maven.apache.org</url>
   <properties>
@@ -345,6 +345,7 @@
 						<!--<maxVersion>1.6.0</maxVersion>-->
 						<initialHeapSize>128</initialHeapSize>
 						<maxHeapSize>1024</maxHeapSize>
+
 					</jre>
 					<splash>
 						<file>icon_images/alignment_ico_128x128_transp.bmp</file>
@@ -352,6 +353,9 @@
 						<timeout>60</timeout>
 						<timeoutErr>true</timeoutErr>
 					</splash>
+					<messages>
+    						<jreVersionErr>Could not find Java version > 1.5.0 - If using OpenJDK, install OpenJDK with option JAVA_HOME or Registry keys. Min version required:</jreVersionErr>
+					</messages>
 					<versionInfo>
 						<fileVersion>1.0.0.0</fileVersion>
 						<txtFileVersion>1.0.0.0</txtFileVersion>

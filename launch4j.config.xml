@@ -1,0 +1,40 @@
+
+<launch4jConfig>
+	<headerType>gui</headerType>
+	<outfile>target/windows-latest/AliView.exe</outfile>
+	<jar>target/windows-latest/aliview.jar</jar>
+	<!--
+      <outfile>target/windows-version-${project.version}/AliView.exe</outfile><jar>target/windows/aliview.jar</jar>
+  -->
+	<errTitle>App Err</errTitle>
+	<classPath>
+		<mainClass>aliview.AliView</mainClass>
+	</classPath>
+	<icon>icon_images/win/alignment_multi.ico</icon>
+	<jre>
+		<minVersion>1.5.0</minVersion>
+		<!--<maxVersion>1.6.0</maxVersion>-->
+		<initialHeapSize>128</initialHeapSize>
+		<maxHeapSize>1024</maxHeapSize>
+	</jre>
+	<splash>
+		<file>icon_images/alignment_ico_128x128_transp.bmp</file>
+		<waitForWindow>true</waitForWindow>
+		<timeout>60</timeout>
+		<timeoutErr>true</timeoutErr>
+	</splash>
+	<messages>
+		<jreVersionErr>Could not find Java version > 1.5.0 - If using OpenJDK, install OpenJDK with option JAVA_HOME or Registry keys. Min version required:</jreVersionErr>
+	</messages>
+	<versionInfo>
+		<fileVersion>1.0.0.0</fileVersion>
+		<txtFileVersion>1.0.0.0</txtFileVersion>
+		<fileDescription>Desc</fileDescription>
+		<copyright>C</copyright>
+		<productVersion>1.0.0.0</productVersion>
+		<txtProductVersion>1.0.0.0</txtProductVersion>
+		<productName>AliView</productName>
+		<internalName>AliView</internalName>
+		<originalFilename>App.exe</originalFilename>
+	</versionInfo>
+</launch4jConfig>

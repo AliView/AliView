@@ -151,15 +151,9 @@ public class NexusUtilities {
 	private static String getNexusRangesAsBlock(List <NexusRange> ranges){
 		String rangeBlock = "";
 		for(NexusRange range: ranges){
-
-			if(range.getMinimumInt() == range.getMaximumInt()){
-				rangeBlock += " " + range.getMinimumInt(); 
-			}
-			else{
-				rangeBlock += " " + range.getMinimumInt() + "-" + range.getMaximumInt();
-				if(range.getSteps() != 1){
-					rangeBlock += "\\" + range.getSteps(); 
-				}
+			rangeBlock += " " + range.getMinimumInt() + "-" + range.getMaximumInt();
+			if(range.getSteps() != 1){
+				rangeBlock += "\\" + range.getSteps(); 
 			}
 		}
 

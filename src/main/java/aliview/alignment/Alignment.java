@@ -234,7 +234,7 @@ public class Alignment implements FileSequenceLoadListener {
 		for(int pos = 0; pos < longSeq; pos += 60){
 
 			int endPos = pos + 59; // end is inclusive
-			endPos = Math.min(endPos, longSeq);
+			endPos = Math.min(endPos, longSeq - 1);
 
 			for(int n = 0; n < sequences.getSize(); n++){		
 				// Write name space and up to 60 residues

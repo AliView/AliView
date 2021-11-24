@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.Action;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -13,6 +14,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.event.ListDataEvent;
+
+import org.apache.log4j.Logger;
 
 import aliview.AliViewWindow;
 import aliview.GeneticCode;
@@ -25,7 +28,7 @@ import aliview.sequencelist.AlignmentSelectionEvent;
 import aliview.sequencelist.AlignmentSelectionListener;
 
 public class TranslationToolPanel extends JPanel implements AlignmentListener, AlignmentDataListener, AlignmentSelectionListener {
-
+	private static final Logger logger = Logger.getLogger(TranslationToolPanel.class);
 	private JComboBox readingFrameBox;
 	private JComboBox genCodeBox;
 
@@ -42,12 +45,12 @@ public class TranslationToolPanel extends JPanel implements AlignmentListener, A
 		toggleBtnAACode.setModel(aliViewWindow.getAliMenuBar().getShowAACodeButtonModel());
 		this.add(toggleBtnAACode);
 
-		JToggleButton toggleBtnTransOnePos = new JToggleButton();//("");
+		Action transOnePosAction = aliViewWindow.getAliMenuBar().getTransOnePosAction();
+		JToggleButton toggleBtnTransOnePos = new JToggleButton(transOnePosAction);
 		toggleBtnTransOnePos.setPreferredSize(new Dimension(32,32));
 		toggleBtnTransOnePos.setMaximumSize(new Dimension(32,32));
 		toggleBtnTransOnePos.setToolTipText("Show Translation as only one character Amino Acid)");
 		toggleBtnTransOnePos.setIcon(AppIcons.getTransOnePosIcon());
-		toggleBtnTransOnePos.setModel(aliViewWindow.getAliMenuBar().getTransOnePosButtonModel());
 		this.add(toggleBtnTransOnePos);
 
 		JToggleButton toggleBtnShowCodon = new JToggleButton();//("");

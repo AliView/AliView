@@ -12,6 +12,7 @@ import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
+import javax.swing.Action;
 import javax.swing.ButtonGroup;
 import javax.swing.ButtonModel;
 import javax.swing.JButton;
@@ -85,7 +86,6 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 	private ButtonModel coding1ButtonModel;
 	private ButtonModel coding0ButtonModel;
 	private ButtonModel coding2ButtonModel;
-	private ButtonModel transOnePosButtonModel;
 	private ButtonModel copyAsFastaButtonModel;
 	private ButtonModel copyAsCharatersButtonModel;
 	private ButtonModel realignSelectedBlockButtonModel;
@@ -99,6 +99,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 	private ButtonModel countCodonButtonModel;
 	private ButtonModel addEmptySeqButtonModel;
 	private ButtonModel deleteSequencesButtonModel;
+	private Action transOnePosAction;
 
 	/*
 	 * 
@@ -1163,14 +1164,16 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 		nucleotideFunctions.add(mntmToggleTranslation);
 		loadedAlignmentFunctions.add(mntmToggleTranslation);
 
-		JCheckBoxMenuItem mntmToggleTranslationOnePos = new JCheckBoxMenuItem("Show as translation (1 pos per AminoAcid)");
-		mntmToggleTranslationOnePos.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				aliViewWindow.mntmToggleTranslationOnePos();
-			}
-		});
+		
+		transOnePosAction = new AbstractAction() {
+		    public void actionPerformed(ActionEvent e) {
+		    	aliViewWindow.mntmToggleTranslationOnePos();
+		    }
+		};
+		JCheckBoxMenuItem mntmToggleTranslationOnePos = new JCheckBoxMenuItem(transOnePosAction);
+		// Has to set text after action, otherwise action text overwrite
+		mntmToggleTranslationOnePos.setText("Show as translation (1 pos per AminoAcid)");
 		mntmToggleTranslationOnePos.setAccelerator(OSNativeUtils.getToggleTranslationOnePosKeyAccelerator());
-		transOnePosButtonModel = mntmToggleTranslationOnePos.getModel();
 		mnViewMenu.add(mntmToggleTranslationOnePos);
 		nucleotideFunctions.add(mntmToggleTranslationOnePos);
 		loadedAlignmentFunctions.add(mntmToggleTranslationOnePos);
@@ -1907,6 +1910,11 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 			}
 		}
 	}
+	
+
+	public Action getTransOnePosAction() {
+		return transOnePosAction;
+	}
 
 	public ButtonModel getToggleTranslationButtonModel() {
 		return toggleTranslationButtonModel;
@@ -1956,9 +1964,6 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 		return drawCoonPosOnRulerButtonModel;
 	}
 
-	public ButtonModel getTransOnePosButtonModel() {
-		return transOnePosButtonModel;
-	}
 
 	public ButtonModel getCountCodonButtonModel() {
 		return countCodonButtonModel;

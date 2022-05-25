@@ -1,4 +1,8 @@
 Version history
+1.28
+- Fix bug that occured in Toggle Translation One Pos Button in combination with Oracle Java 1.8.0_311
+- Fix bug when saving clustal
+- Fix bug when saving/reading ranges, 11 22 as 11-11 22-22 instead
 
 1.27
 - Fix bug that made large files with duplicate sequence names very slow to open.

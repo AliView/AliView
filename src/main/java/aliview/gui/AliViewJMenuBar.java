@@ -87,6 +87,7 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 	private ButtonModel coding0ButtonModel;
 	private ButtonModel coding2ButtonModel;
 	private ButtonModel copyAsFastaButtonModel;
+	private ButtonModel copyAsUngappedFastaButtonModel;
 	private ButtonModel copyAsCharatersButtonModel;
 	private ButtonModel realignSelectedBlockButtonModel;
 	private ButtonModel realignSelectedSequencesButtonModel;
@@ -479,6 +480,17 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 		mnEdit.add(mntmCopySelectionAsFasta);
 		hasSelectionFunctions.add(mntmCopySelectionAsFasta);
 
+
+		JMenuItem mntmCopySelectionAsUngappedFasta = new JMenuItem("Copy selection as ungapped fasta");
+		mntmCopySelectionAsUngappedFasta.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				aliViewWindow.copySelectionAsUngappedFasta();
+			}
+		});
+		//mntmCopySelectionAsUngappedFasta.setAccelerator(OSNativeUtils.getCopySelectionAsUngappedFastaKeyAccelerator());
+		copyAsUngappedFastaButtonModel = mntmCopySelectionAsUngappedFasta.getModel();
+		mnEdit.add(mntmCopySelectionAsUngappedFasta);
+		hasSelectionFunctions.add(mntmCopySelectionAsUngappedFasta);
 
 		JMenuItem mntmCopySelectionAsNucleotides = new JMenuItem("Copy selection as characters");
 		mntmCopySelectionAsNucleotides.addActionListener(new ActionListener() {
@@ -2042,6 +2054,10 @@ public class AliViewJMenuBar extends JMenuBar implements AlignmentListener, Alig
 
 	public ButtonModel getCopyAsFastaButtonModel() {
 		return copyAsFastaButtonModel;
+	}
+	
+	public ButtonModel getCopyAsUngappedFastaButtonModel() {
+		return copyAsUngappedFastaButtonModel;
 	}
 
 	public ButtonModel getCopyAsCharactersButtonModel() {

@@ -129,6 +129,8 @@ public interface Sequence extends Comparable<Sequence>{
 
 	public String getSelectedBasesAsString();
 
+	public String getSelectedBasesAsUngappedString();
+
 	public int getFirstSelectedPosition();
 
 	public int getLastSelectedPosition();

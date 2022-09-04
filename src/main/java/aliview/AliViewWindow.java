@@ -2573,6 +2573,12 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		alignment.copySelectionToClipboardAsFasta();
 	}
 
+	public void copySelectionAsUngappedFasta() {
+		logger.info("copy selection as ungapped fasta");
+		alignment.copySelectionToClipboardAsUngappedFasta();
+	}
+
+
 	public void copyNames() {
 		alignment.copySelectionNames();
 	}

@@ -37,6 +37,10 @@ public class AlignmentPopupMenu extends JPopupMenu implements MouseListener {
 		JMenuItem copyItem = new JMenuItem("Copy (as fasta)");
 		copyItem.setModel(aliViewMenuBar.getCopyAsFastaButtonModel());
 		add(copyItem);
+		
+		JMenuItem copyUngappedItem = new JMenuItem("Copy (as ungapped fasta)");
+		copyItem.setModel(aliViewMenuBar.getCopyAsUngappedFastaButtonModel());
+		add(copyUngappedItem);
 
 		JMenuItem copyNucItem = new JMenuItem("Copy (the characters only)");		
 		copyNucItem.setModel(aliViewMenuBar.getCopyAsCharactersButtonModel());

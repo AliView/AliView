@@ -13,6 +13,9 @@ ln -s -f -T $LATEST_WIN_PATH $PWD/target/windows-latest
 # First Create exe with launch4j
 #
 #---------------------------------
+# Display version in console
+$PWD/launch4j/launch4j --help
+# Build
 $PWD/launch4j/launch4j $PWD/launch4j.config.xml
 
 

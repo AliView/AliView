@@ -165,12 +165,36 @@
                   </execution>
 		 </executions>
     </plugin>
-	<plugin>
+
+    <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>osxappbundle-maven-plugin</artifactId>
+        <version>1.0-alpha-2</version>
+        <configuration>
+            <mainClass>aliview.AliView</mainClass>
+            <dictionaryFile>${basedir}/aliview-mac/Info.plist</dictionaryFile>
+            <iconFile>${basedir}/src/main/resources/img/alignment_ico.icns</iconFile>
+            <version>${project.version}</version>
+            <myClasspath>$JAVAROOT/repo/AliView/AliView/${project.version}/AliView-${project.version}.jar</myClasspath>
+            <javaApplicationStub>${basedir}/aliview-mac/universalJavaApplicationStub/universalJavaApplicationStub</javaApplicationStub>
+        </configuration>
+        <executions>
+            <execution>
+                <phase>package</phase>
+                <goals>
+                   <goal>bundle</goal>
+                </goals>
+            </execution>
+        </executions>
+     </plugin>
+
+     <plugin>
 	   <groupId>org.codehaus.mojo</groupId>
 	   <artifactId>truezip-maven-plugin</artifactId>
-	   <version>1.1</version>
+	   <version>1.2</version>
 	   <executions>
-		  <execution>
+	   
+	      <execution>
             <id>remove-a-file-in-windows-version</id>
             <goals>
                 <goal>remove</goal>
@@ -226,36 +250,7 @@
                </filesets>
              </configuration>
          </execution>
-       </executions>
-    </plugin>
-
-    <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>osxappbundle-maven-plugin</artifactId>
-        <version>1.0-alpha-2</version>
-        <configuration>
-            <mainClass>aliview.AliView</mainClass>
-            <dictionaryFile>${basedir}/aliview-mac/Info.plist</dictionaryFile>
-            <iconFile>${basedir}/src/main/resources/img/alignment_ico.icns</iconFile>
-            <version>${project.version}</version>
-            <myClasspath>$JAVAROOT/repo/AliView/AliView/${project.version}/AliView-${project.version}.jar</myClasspath>
-            <javaApplicationStub>${basedir}/aliview-mac/universalJavaApplicationStub/universalJavaApplicationStub</javaApplicationStub>
-        </configuration>
-        <executions>
-            <execution>
-                <phase>package</phase>
-                <goals>
-                   <goal>bundle</goal>
-                </goals>
-            </execution>
-        </executions>
-     </plugin>
-
-     <plugin>
-	   <groupId>org.codehaus.mojo</groupId>
-	   <artifactId>truezip-maven-plugin</artifactId>
-	   <version>1.2</version>
-	   <executions>
+	   
 		  <execution>
             <id>add-splash-image-mac-version</id>
             <goals>
@@ -271,27 +266,7 @@
                 </files>
             </configuration>
          </execution>
-         <!--
-         <execution>
-            <id>add-second-stubfile</id>
-            <goals>
-                <goal>copy</goal>
-            </goals>
-            <phase>package</phase>
-            <configuration>
-
-				<fileset>
-                  <directory>${basedir}/aliview-mac/</directory>
-                  <includes>
-                        <include>JavaApplicationStub</include>
-                   </includes>
-                  <outputDirectory>target/AliView-${project.version}/AliView.app/Contents/MacOS/</outputDirectory>
-                  <fileMode>0755</fileMode>
-                </fileset>
-
-            </configuration>
-         </execution>
-         -->
+   
          <execution>
             <id>remove-jar-files-from-osx-bundle-since-they-are-unpacked-in-ailiview-jar-already</id>
             <goals>

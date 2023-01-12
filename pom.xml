@@ -19,7 +19,7 @@
     <repository>
       <id>ormbunkar-mvn2-repo</id>
       <name>ormbunkar-maven-2-repo</name>
-      <url>http://ormbunkar.se/mvn-repo</url>
+      <url>https://ormbunkar.se/mvn-repo</url>
     </repository>
   </repositories>
   <build>

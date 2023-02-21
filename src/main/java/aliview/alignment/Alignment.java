@@ -862,8 +862,18 @@ public class Alignment implements FileSequenceLoadListener {
 	}
 
 	public void copySelectionToClipboardAsFasta(){
+		logger.info("copySelectionToClipboardAsFasta");
 		StringWriter writer = new StringWriter();
 		sequences.writeSelectionAsFasta(writer);
+		// Set to clipboard
+		StringSelection ss = new StringSelection(writer.toString());
+		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, null);
+	}
+
+	public void copySelectionToClipboardAsUngappedFasta(){
+		logger.info("copySelectionToClipboardAsUngappedFasta");
+		StringWriter writer = new StringWriter();
+		sequences.writeSelectionAsUngappedFasta(writer);
 		// Set to clipboard
 		StringSelection ss = new StringSelection(writer.toString());
 		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, null);

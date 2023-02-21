@@ -174,6 +174,23 @@ public class BasicSequence implements Sequence, Comparable<Sequence> {
 		return selection.toString();
 	}
 
+	public String getSelectedBasesAsUngappedString(){
+		StringBuilder selection = new StringBuilder();
+		if(selectionModel.hasSelection()){
+			//logger.info("hasSel");
+			for(int n = 0;n < getBases().getLength();n++){
+				if(selectionModel.isSelected(n) == true){		
+					byte base = getBaseAtPos(n);
+					if(NucleotideUtilities.isGap(base)){
+						// skip this one
+					}else{
+						selection.append((char)base);
+					}
+				}
+			}
+		}
+		return selection.toString();
+	}
 
 	public byte[] getSelectedBasesAsByte(){
 		byte[] bases = null;

@@ -636,13 +636,35 @@ public class AlignmentListModel implements ListModel, Iterable<Sequence>{
 
 		List <Sequence> selectedSequences = selectionModel.getSelectedSequences();
 		for(Sequence sequence : selectedSequences){
-			String tempSeq = sequence.getSelectedBasesAsString();
 			try {
 				//TODO maybe format fasta better
 				out.append(">");
 				out.append(sequence.getName());
 				out.append(LF);
 				out.append(sequence.getSelectedBasesAsString());
+
+				out.append(LF);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			//logger.info("WroteSeq=" + n);
+		}
+
+		logger.info("Write done");
+	}
+
+	public void writeSelectionAsUngappedFasta(Writer out) {
+
+		List <Sequence> selectedSequences = selectionModel.getSelectedSequences();
+		for(Sequence sequence : selectedSequences){
+			try {
+				//TODO maybe format fasta better
+				out.append(">");
+				out.append(sequence.getName());
+				out.append(LF);
+				out.append(sequence.getSelectedBasesAsUngappedString());
 
 				out.append(LF);
 			} catch (IOException e) {

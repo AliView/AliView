@@ -1,4 +1,9 @@
 Version history
+1.30
+- Fix problems starting AliView on OSX Sequoia
+- Upgraded launch4j
+- Upgraded program to run on Java 8 or later
+
 1.28
 - Fix bug that occured in Toggle Translation One Pos Button in combination with Oracle Java 1.8.0_311
 - Fix bug when saving clustal

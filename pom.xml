@@ -4,7 +4,7 @@
   <groupId>AliView</groupId>
   <artifactId>AliView</artifactId>
   <packaging>jar</packaging>
-  <version>1.28</version>
+  <version>1.30</version>
   <name>AliView</name>
   <url>http://maven.apache.org</url>
   <properties>
@@ -199,7 +199,7 @@
 	   <artifactId>truezip-maven-plugin</artifactId>
 	   <version>1.2</version>
 	   <executions>
-	   
+
 	      <execution>
             <id>remove-a-file-in-windows-version</id>
             <goals>
@@ -256,7 +256,7 @@
                </filesets>
              </configuration>
          </execution>
-	   
+
 		  <execution>
             <id>add-splash-image-mac-version</id>
             <goals>
@@ -272,7 +272,7 @@
                 </files>
             </configuration>
          </execution>
-   
+
          <execution>
             <id>remove-jar-files-from-osx-bundle-since-they-are-unpacked-in-ailiview-jar-already</id>
             <goals>

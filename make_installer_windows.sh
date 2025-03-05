@@ -24,7 +24,7 @@ $PWD/launch4j/launch4j $PWD/launch4j.config.xml
 # Second Create Windows installer with Inno Setup
 #
 #----------------------------------
-INNO_SETUP_PROGRAM="$HOME/.wine/drive_c/Program Files/Inno Setup 5/iscc"
+INNO_SETUP_PROGRAM="$HOME/.wine/drive_c/Program Files (x86)/Inno_Setup_6/ISCC.exe"
 
 wine "$INNO_SETUP_PROGRAM" "innosetupfil_for_Aliview_win.iss"
 

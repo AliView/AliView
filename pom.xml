@@ -189,107 +189,83 @@
      </plugin>
 
      <plugin>
-	   <groupId>org.codehaus.mojo</groupId>
-	   <artifactId>truezip-maven-plugin</artifactId>
-	   <version>1.2</version>
-	   <executions>
+  <groupId>org.codehaus.mojo</groupId>
+  <artifactId>truezip-maven-plugin</artifactId>
+  <version>1.2</version>
+  <executions>
+    <!-- 1) Copy execution -->
+    <execution>
+      <id>add-splash-image-mac-version</id>
+      <phase>package</phase>
+      <goals>
+        <goal>copy</goal>
+      </goals>
+      <configuration>
+        <files>
+          <file>
+            <!-- The source image to copy into .app -->
+            <source>${basedir}/src/main/resources/img/splash_128x128.png</source>
+            <!-- Where to place it in the .app bundle -->
+            <outputDirectory>${project.build.directory}/AliView-${project.version}/AliView.app/Contents/Resources/</outputDirectory>
+          </file>
+        </files>
+      </configuration>
+    </execution>
 
-	      <execution>
-            <id>remove-a-file-in-windows-version</id>
-            <goals>
-                <goal>remove</goal>
-            </goals>
-            <phase>package</phase>
-            <configuration>
-              <filesets>
-                <fileset>
-                    <directory>target/windows-version-${project.version}/aliview.jar</directory>
-                    <includes>
-                        <include>muscle*linux*</include>
-                        <include>muscle*darwin*</include>
-                        <include>muscle*mac*</include>
-                    </includes>
-                </fileset>
-              </filesets>
-            </configuration>
-         </execution>
-         <execution>
-            <id>remove-a-file-in-sub-archive-mac</id>
-            <goals>
-                <goal>remove</goal>
-            </goals>
-            <phase>package</phase>
-            <configuration>
-              <filesets>
-                <fileset>
-                    <directory>target/aliview.jar</directory>
-                    <includes>
-                        <include>muscle*linux*</include>
-                        <include>muscle*.exe</include>
-                    </includes>
-                </fileset>
-               </filesets>
-             </configuration>
-          </execution>
-          <execution>
-            <id>remove-a-file-in-sub-archive-linux</id>
-            <goals>
-               <goal>remove</goal>
-            </goals>
-            <phase>package</phase>
-            <configuration>
-              <filesets>
-                <fileset>
-                    <directory>target/linux-version-${project.version}/aliview/aliview.jar</directory>
-                    <includes>
-                        <include>muscle*darwin*</include>
-                        <include>muscle*mac*</include>
-                        <include>muscle*.exe</include>
-                    </includes>
-                 </fileset>
-               </filesets>
-             </configuration>
-         </execution>
+    <!-- 2) Remove execution -->
+    <execution>
+      <id>cleanup-unneeded-files</id>
+      <phase>package</phase>
+      <goals>
+        <goal>remove</goal>
+      </goals>
+      <configuration>
+        <filesets>
+          <!-- Example: Remove muscle from Windows .jar -->
+          <fileset>
+            <directory>target/windows-version-${project.version}/aliview.jar</directory>
+            <includes>
+              <include>muscle*linux*</include>
+              <include>muscle*darwin*</include>
+              <include>muscle*mac*</include>
+            </includes>
+          </fileset>
 
-		  <execution>
-            <id>add-splash-image-mac-version</id>
-            <goals>
-                <goal>copy</goal>
-            </goals>
-            <phase>package</phase>
-            <configuration>
-				<files>
-                <file>
-                  <source>${basedir}/src/main/resources/img/splash_128x128.png</source>
-                  <outputDirectory>target/AliView-${project.version}/AliView.app/Contents/Resources/</outputDirectory>
-                </file>
-                </files>
-            </configuration>
-         </execution>
+          <!-- Example: Remove muscle from "main" mac jar (if applicable) -->
+          <fileset>
+            <directory>target/aliview.jar</directory>
+            <includes>
+              <include>muscle*linux*</include>
+              <include>muscle*.exe</include>
+            </includes>
+          </fileset>
 
-         <execution>
-            <id>remove-jar-files-from-osx-bundle-since-they-are-unpacked-in-ailiview-jar-already</id>
-            <goals>
-               <goal>remove</goal>
-            </goals>
-            <!-- This has to be install phase - because it is not created until package phase -->
-            <phase>install</phase>
-            <configuration>
-              <filesets>
-                <fileset>
-                    <directory>${project.build.directory}/${project.build.finalName}-app.zip</directory>
-                    <includes>
-                        <include>**/jebl2</include>
-                        <include>**/commons-lang</include>
-                        <include>**/commons-io</include>
-                        <include>**/log4j</include>
-                    </includes>
-                 </fileset>
-               </filesets>
-             </configuration>
-         </execution>
-       </executions>
-     </plugin>
+          <!-- Example: Remove muscle from Linux version .jar -->
+          <fileset>
+            <directory>target/linux-version-${project.version}/aliview/aliview.jar</directory>
+            <includes>
+              <include>muscle*darwin*</include>
+              <include>muscle*mac*</include>
+              <include>muscle*.exe</include>
+            </includes>
+          </fileset>
+
+          <!-- Example: Remove extra JARs from macOS .app bundle -->
+          <fileset>
+            <directory>${project.build.directory}/AliView-${project.version}/AliView.app</directory>
+            <includes>
+              <include>**/jebl2*.jar</include>
+              <include>**/commons-lang*.jar</include>
+              <include>**/commons-io*.jar</include>
+              <include>**/log4j*.jar</include>
+            </includes>
+          </fileset>
+
+        </filesets>
+      </configuration>
+    </execution>
+  </executions>
+</plugin>
 
 
    </plugins>

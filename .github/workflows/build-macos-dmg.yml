@@ -11,30 +11,34 @@ jobs:
     runs-on: macos-latest
     
     steps:
+      # 1) Check out code
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
+      # 2) Set up the correct Java version
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
-          java-version: '17'  # or '8', '11', etc. as needed
+          distribution: temurin
+          java-version: "17"
 
+      # 3) Build with Maven
       - name: Build with Maven
         run: mvn clean package
 
+      # 4) Create a DMG from the .app using hdiutil
       - name: Create DMG
         run: |
-          # This is just an example; paths might differ in your project.
           hdiutil create -volname "AliView" \
                          -srcfolder "target/AliView-1.30/AliView.app" \
                          -ov \
                          -format UDZO \
                          "target/AliView-1.30.dmg"
 
+      # 5) Upload the DMG as a workflow artifact
       - name: Upload DMG artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: Aliview-DMG
+          name: AliView-DMG
           path: target/*.dmg
 

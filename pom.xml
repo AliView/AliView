@@ -272,8 +272,8 @@
             <goals>
                <goal>remove</goal>
             </goals>
-            <!-- This has to be in deploy phase - because it is not created until package phase -->
-            <phase>package</phase>
+            <!-- This has to be install phase - because it is not created until package phase -->
+            <phase>install</phase>
             <configuration>
               <filesets>
                 <fileset>

@@ -221,6 +221,7 @@
       </goals>
       <configuration>
         <filesets>
+        
           <!-- Example: Remove muscle from Windows .jar -->
           <fileset>
             <directory>target/windows-version-${project.version}/aliview.jar</directory>
@@ -254,13 +255,13 @@
           <fileset>
             <directory>${project.build.directory}/AliView-${project.version}/AliView.app</directory>
             <includes>
-              <include>**/jebl2*.jar</include>
-              <include>**/commons-lang*.jar</include>
-              <include>**/commons-io*.jar</include>
-              <include>**/log4j*.jar</include>
+            	<include>**/jebl2</include>
+                <include>**/commons-lang</include>
+                <include>**/commons-io</include>
+                <include>**/log4j</include>
             </includes>
           </fileset>
-
+          
         </filesets>
       </configuration>
     </execution>

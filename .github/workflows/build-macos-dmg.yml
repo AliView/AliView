@@ -1,0 +1,40 @@
+name: Build macOS DMG
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-dmg:
+    runs-on: macos-latest
+    
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'  # or '8', '11', etc. as needed
+
+      - name: Build with Maven
+        run: mvn clean package
+
+      - name: Create DMG
+        run: |
+          # This is just an example; paths might differ in your project.
+          hdiutil create -volname "AliView" \
+                         -srcfolder "target/AliView-1.30/AliView.app" \
+                         -ov \
+                         -format UDZO \
+                         "target/AliView-1.30.dmg"
+
+      - name: Upload DMG artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: Aliview-DMG
+          path: target/*.dmg
+

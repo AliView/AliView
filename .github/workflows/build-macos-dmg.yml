@@ -24,7 +24,7 @@ jobs:
 
       # 3) Build with Maven
       - name: Build with Maven
-        run: mvn clean install
+        run: mvn clean package
 
       # 4) Create a DMG from the .app using hdiutil
       - name: Create DMG

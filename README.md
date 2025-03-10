@@ -26,6 +26,13 @@ Download: www.ormbunkar.se/aliview/downloads
 
 Webpage: www.ormbunkar.se/aliview
 
+[Bioconda package](https://anaconda.org/bioconda/aliview) (unofficial):
+
+``` bash
+conda install -c bioconda aliview
+```
+
+
 ## Build from source
 
 Tested on 64 bit Xubuntu 17.10 with Oracle java

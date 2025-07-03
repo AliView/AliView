@@ -115,6 +115,87 @@ public class AminoAcid {
 
 	public static AminoAcid getAminoAcidFromCodon(byte[] codon, GeneticCode geneticCode) {
 
+		// if(codon == null || codon.length <3){
+		// 	return AminoAcid.GAP;
+		// }
+
+		// int baseVal0 = NucleotideUtilities.baseValFromChar((char)codon[0]);
+		// int baseVal1 = NucleotideUtilities.baseValFromChar((char)codon[1]);
+		// int baseVal2 = NucleotideUtilities.baseValFromChar((char)codon[2]);
+
+		// int position1Val;
+		// if(baseVal0 == NucleotideUtilities.T){
+		// 	position1Val = 0;
+		// }else if(baseVal0 == NucleotideUtilities.C){
+		// 	position1Val = 1;
+		// }else if(baseVal0 == NucleotideUtilities.A){
+		// 	position1Val = 2;
+		// }else if(baseVal0 == NucleotideUtilities.G){
+		// 	position1Val = 3;
+		// }
+		// else{
+		// 	position1Val = -1;
+		// }
+
+		// int position2Val;
+		// if(baseVal1 == NucleotideUtilities.T){
+		// 	position2Val = 0;
+		// }else if(baseVal1 == NucleotideUtilities.C){
+		// 	position2Val = 1;
+		// }else if(baseVal1 == NucleotideUtilities.A){
+		// 	position2Val = 2;
+		// }else if(baseVal1 == NucleotideUtilities.G){
+		// 	position2Val = 3;
+		// }
+		// else{
+		// 	position2Val = -1;
+		// }
+
+		// int position3Val;
+		// if(baseVal2 == NucleotideUtilities.T){
+		// 	position3Val = 0;
+		// }else if(baseVal2 == NucleotideUtilities.C){
+		// 	position3Val = 1;
+		// }else if(baseVal2 == NucleotideUtilities.A){
+		// 	position3Val = 2;
+		// }else if(baseVal2 == NucleotideUtilities.G){
+		// 	position3Val = 3;
+		// }
+		// else{
+		// 	position3Val = -1;
+		// }
+
+		// // Set default
+		// AminoAcid acid = X;
+
+		// if(position1Val == -1 || position2Val == -1 || position3Val == -1){
+		// 	acid = AminoAcid.X;
+		// }
+		// else{
+		// 	int acidVal = position1Val * 16 + position2Val * 4 + position3Val;
+		// 	acid = geneticCode.acidTranslation[acidVal];
+		// }
+
+		// if(baseVal0 == NucleotideUtilities.GAP && baseVal1 == NucleotideUtilities.GAP && baseVal2 == NucleotideUtilities.GAP){
+		// 	acid = AminoAcid.GAP;
+		// }
+
+
+		// /*
+		// if(baseVal0 == NucleotideUtilities.UNKNOWN || baseVal1 == NucleotideUtilities.UNKNOWN || baseVal2 == NucleotideUtilities.UNKNOWN){
+		// 	acid = AminoAcid.X;
+		// }
+		//  */
+
+		// return acid;	
+		return getAminoAcidFromIUPACCodon(codon, geneticCode);
+	}
+
+	public static AminoAcid getAminoAcidFromIUPACCodon(byte[] codon) {
+		return getAminoAcidFromIUPACCodon(codon, GeneticCode.DEFAULT);
+	}
+	
+	public static AminoAcid getAminoAcidFromIUPACCodon(byte[] codon, GeneticCode geneticCode) {
 		if(codon == null || codon.length <3){
 			return AminoAcid.GAP;
 		}
@@ -123,71 +204,12 @@ public class AminoAcid {
 		int baseVal1 = NucleotideUtilities.baseValFromChar((char)codon[1]);
 		int baseVal2 = NucleotideUtilities.baseValFromChar((char)codon[2]);
 
-		int position1Val;
-		if(baseVal0 == NucleotideUtilities.T){
-			position1Val = 0;
-		}else if(baseVal0 == NucleotideUtilities.C){
-			position1Val = 1;
-		}else if(baseVal0 == NucleotideUtilities.A){
-			position1Val = 2;
-		}else if(baseVal0 == NucleotideUtilities.G){
-			position1Val = 3;
-		}
-		else{
-			position1Val = -1;
+		if (baseVal0 == NucleotideUtilities.UNKNOWN || baseVal1 == NucleotideUtilities.UNKNOWN || baseVal2 == NucleotideUtilities.UNKNOWN) {
+			return AminoAcid.X;
 		}
 
-		int position2Val;
-		if(baseVal1 == NucleotideUtilities.T){
-			position2Val = 0;
-		}else if(baseVal1 == NucleotideUtilities.C){
-			position2Val = 1;
-		}else if(baseVal1 == NucleotideUtilities.A){
-			position2Val = 2;
-		}else if(baseVal1 == NucleotideUtilities.G){
-			position2Val = 3;
-		}
-		else{
-			position2Val = -1;
-		}
-
-		int position3Val;
-		if(baseVal2 == NucleotideUtilities.T){
-			position3Val = 0;
-		}else if(baseVal2 == NucleotideUtilities.C){
-			position3Val = 1;
-		}else if(baseVal2 == NucleotideUtilities.A){
-			position3Val = 2;
-		}else if(baseVal2 == NucleotideUtilities.G){
-			position3Val = 3;
-		}
-		else{
-			position3Val = -1;
-		}
-
-		// Set default
-		AminoAcid acid = X;
-
-		if(position1Val == -1 || position2Val == -1 || position3Val == -1){
-			acid = AminoAcid.X;
-		}
-		else{
-			int acidVal = position1Val * 16 + position2Val * 4 + position3Val;
-			acid = geneticCode.acidTranslation[acidVal];
-		}
-
-		if(baseVal0 == NucleotideUtilities.GAP && baseVal1 == NucleotideUtilities.GAP && baseVal2 == NucleotideUtilities.GAP){
-			acid = AminoAcid.GAP;
-		}
-
-
-		/*
-		if(baseVal0 == NucleotideUtilities.UNKNOWN || baseVal1 == NucleotideUtilities.UNKNOWN || baseVal2 == NucleotideUtilities.UNKNOWN){
-			acid = AminoAcid.X;
-		}
-		 */
-
-		return acid;	
+		int iupacVal = baseVal0 << 8 | baseVal1 << 4 | baseVal2;
+		return geneticCode.iupacAcidTranslation[iupacVal];
 	}
 
 	public byte getCodeByteVal() {
@@ -196,6 +218,14 @@ public class AminoAcid {
 
 	public static final AminoAcid getAminoAcidFromByte(byte base){
 		return getAminoAcidFromChar((char)base);
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getThreeLetterName() {
+		return threeLeterName;
 	}
 
 	public static final AminoAcid getAminoAcidFromChar(char base){

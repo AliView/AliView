@@ -13,8 +13,6 @@ import jebl.evolution.io.NexusImporter;
 import jebl.evolution.sequences.SequenceType;
 
 import org.apache.log4j.Logger;
-
-import aliview.AliView;
 import aliview.MemoryUtils;
 import aliview.sequencelist.FileSequenceAlignmentListModel;
 import aliview.sequencelist.MemorySequenceAlignmentListModel;
@@ -161,77 +159,54 @@ public class SequencesFactory {
 
 
 			if(foundFormat == FileFormat.PHYLIP){
+				PhylipImporter.PhylipHint phylipHint = PhylipImporter.getPhylipHint(alignmentFile);
 
-				try {
-					// First try phylip sequencial long names
-					PhylipImporter phylipImporter = new PhylipImporter(new FileReader(alignmentFile), FileFormat.PHYLIP_RELAXED_PADDED_AKA_LONG_NAME_SEQUENTIAL);
-					// this method will throw error if problem importing as this format and then we can try with other versions of phylip
-					List<Sequence> sequences = phylipImporter.importSequences();
-					model = new MemorySequenceAlignmentListModel();
-					model.setSequences(sequences);
-					model.setFileFormat(FileFormat.PHYLIP);
-
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					importErrorMessage += "Tried import as Phylip but: " + e.getMessage() + LF;
-					logger.error(importErrorMessage);
-					logger.error(e);
+				if(phylipHint.isStrictShortName && phylipHint.isInterleaved){
+					PhylipImportResult result = tryPhylipImport(alignmentFile, FileFormat.PHYLIP_SHORT_NAME_INTERLEAVED, importErrorMessage);
+					importErrorMessage = result.importErrorMessage;
+					model = result.model;
 				}
 
-				if(model == null){			
-					try {
-						logger.info("try LONG_NAME_INTERLEAVED");
-						// Then try phylip sequencial short names
-						PhylipImporter phylipImporter = new PhylipImporter(new FileReader(alignmentFile), FileFormat.PHYLIP_RELAXED_PADDED_INTERLEAVED_AKA_LONG_NAME_INTERLEAVED);
-						// this method will throw error if problem importing as this format and then we can try with other versions of phylip
-						List<Sequence> sequences = phylipImporter.importSequences();
-						model = new MemorySequenceAlignmentListModel();
-						model.setSequences(sequences);
-						model.setFileFormat(FileFormat.PHYLIP);	
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						importErrorMessage += "Tried import as Phylip but: " + e.getMessage() + LF;
-						logger.error(importErrorMessage);
-						logger.error(e);
-					}					
-				}	
+				if(model == null && phylipHint.isStrictShortName && !phylipHint.isInterleaved){
+					PhylipImportResult result = tryPhylipImport(alignmentFile, FileFormat.PHYLIP_STRICT_SEQUENTIAL_AKA_SHORT_NAME_SEQUENTIAL, importErrorMessage);
+					importErrorMessage = result.importErrorMessage;
+					model = result.model;
+				}
 
+				if(model == null){
+					PhylipImportResult result = tryPhylipImport(alignmentFile, FileFormat.PHYLIP_RELAXED_PADDED_AKA_LONG_NAME_SEQUENTIAL, importErrorMessage);
+					importErrorMessage = result.importErrorMessage;
+					model = result.model;
+				}
 
-				if(model == null){			
-					try {
-						logger.info("try short name sequential");
-						// Then try phylip sequencial short names
-						PhylipImporter phylipImporter = new PhylipImporter(new FileReader(alignmentFile), FileFormat.PHYLIP_STRICT_SEQUENTIAL_AKA_SHORT_NAME_SEQUENTIAL);
-						// this method will throw error if problem importing as this format and then we can try with other versions of phylip
-						List<Sequence> sequences = phylipImporter.importSequences();
-						model = new MemorySequenceAlignmentListModel();
-						model.setSequences(sequences);
-						model.setFileFormat(phylipImporter.getFileFormat());	
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						importErrorMessage += "Tried import as Phylip but: " + e.getMessage() + LF;
-						logger.error(importErrorMessage);
-						logger.error(e);
-					}					
-				}	
+				if(model == null){
+					PhylipImportResult result = tryPhylipImport(alignmentFile, FileFormat.PHYLIP_RELAXED_PADDED_INTERLEAVED_AKA_LONG_NAME_INTERLEAVED, importErrorMessage);
+					importErrorMessage = result.importErrorMessage;
+					model = result.model;
+				}
 
+				if(model == null && phylipHint.isStrictShortName && phylipHint.isInterleaved){
+					PhylipImportResult result = tryPhylipImport(alignmentFile, FileFormat.PHYLIP_STRICT_SEQUENTIAL_AKA_SHORT_NAME_SEQUENTIAL, importErrorMessage);
+					importErrorMessage = result.importErrorMessage;
+					model = result.model;
+				}
 
-				if(model == null){		
-					try {
-						logger.info("try short name interleaved");
-						// Then try phylip sequencial short names
-						PhylipImporter phylipImporter = new PhylipImporter(new FileReader(alignmentFile), FileFormat.PHYLIP_SHORT_NAME_INTERLEAVED);
-						// this method will throw error if problem importing as this format and then we can try with other versions of phylip
-						List<Sequence> sequences = phylipImporter.importSequences();
-						model = new MemorySequenceAlignmentListModel();
-						model.setSequences(sequences);
-						model.setFileFormat(FileFormat.PHYLIP);
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						importErrorMessage += "Tried import as Phylip but: " + e.getMessage() + LF;
-						logger.error(importErrorMessage);
-						logger.error(e);
-					}		
+				if(model == null && phylipHint.isStrictShortName && !phylipHint.isInterleaved){
+					PhylipImportResult result = tryPhylipImport(alignmentFile, FileFormat.PHYLIP_SHORT_NAME_INTERLEAVED, importErrorMessage);
+					importErrorMessage = result.importErrorMessage;
+					model = result.model;
+				}
+
+				if(model == null && !phylipHint.isStrictShortName){
+					PhylipImportResult result = tryPhylipImport(alignmentFile, FileFormat.PHYLIP_STRICT_SEQUENTIAL_AKA_SHORT_NAME_SEQUENTIAL, importErrorMessage);
+					importErrorMessage = result.importErrorMessage;
+					model = result.model;
+				}
+
+				if(model == null && !phylipHint.isStrictShortName){
+					PhylipImportResult result = tryPhylipImport(alignmentFile, FileFormat.PHYLIP_SHORT_NAME_INTERLEAVED, importErrorMessage);
+					importErrorMessage = result.importErrorMessage;
+					model = result.model;
 				}
 			}
 
@@ -337,7 +312,31 @@ public class SequencesFactory {
 		return sequences;
 	}
 
+	private static final class PhylipImportResult {
+		private final AlignmentListModel model;
+		private final String importErrorMessage;
 
+		private PhylipImportResult(AlignmentListModel model, String importErrorMessage) {
+			this.model = model;
+			this.importErrorMessage = importErrorMessage;
+		}
+	}
 
+	private PhylipImportResult tryPhylipImport(File alignmentFile, FileFormat formatType, String importErrorMessage) {
+		try {
+			logger.info("try " + formatType);
+			PhylipImporter phylipImporter = new PhylipImporter(new FileReader(alignmentFile), formatType);
+			List<Sequence> sequences = phylipImporter.importSequences();
+			AlignmentListModel model = new MemorySequenceAlignmentListModel();
+			model.setSequences(sequences);
+			model.setFileFormat(FileFormat.PHYLIP);
+			return new PhylipImportResult(model, importErrorMessage);
+		} catch (Exception e) {
+			importErrorMessage += "Tried import as Phylip but: " + e.getMessage() + LF;
+			logger.error(importErrorMessage);
+			logger.error(e);
+			return new PhylipImportResult(null, importErrorMessage);
+		}
+	}
 
 }

@@ -63,6 +63,7 @@ public class PhylipImporter {
 			ReaderHelper helper = new ReaderHelper(r);
 
 			logger.info("inside phy importer");
+			logger.debug("formatType: " + formatType);
 
 			try{
 
@@ -177,6 +178,9 @@ public class PhylipImporter {
 
 
 				if(formatType == FileFormat.PHYLIP_SHORT_NAME_INTERLEAVED){
+					
+					logger.info("Import as FileFormat.PHYLIP_SHORT_NAME_INTERLEAVED");
+					logger.debug("seqCount=" + seqCount + " longestSequenceLength=" + longestSequenceLength);
 					// try long name sequential
 
 					// first read names lines
@@ -184,7 +188,6 @@ public class PhylipImporter {
 
 						// short name sequential
 						String name = helper.getStringFromNextPositions(10);
-
 						// read rest of line as seq data
 						helper.readNextLine();
 						String line = helper.getNextLine();
@@ -198,8 +201,14 @@ public class PhylipImporter {
 						// loop through all sequences in order
 						for(int n = 0; n <seqCount; n++){			
 							// read lines of seq data
-							helper.readNextLine();
-							String line = helper.getNextLine();
+							String line = null;
+							do {
+								helper.readNextLine();
+								line = helper.getNextLine();
+								if(line == null){
+									throw new EOFException();
+								}
+							} while(line.trim().isEmpty());
 							line = ReaderHelper.removeSpaceAndTab(line);	
 							PhylipSequence seq = (PhylipSequence) sequences.get(n);
 							seq.append(line);
@@ -269,6 +278,67 @@ public class PhylipImporter {
 			}
 		}
 		return isValid;
+	}
+
+	public static final class PhylipHint {
+		public final boolean isStrictShortName;
+		public final boolean isInterleaved;
+
+		private PhylipHint(boolean isStrictShortName, boolean isInterleaved) {
+			this.isStrictShortName = isStrictShortName;
+			this.isInterleaved = isInterleaved;
+		}
+
+		@Override
+		public String toString() {
+			return "PhylipHint{isStrictShortName=" + isStrictShortName
+					+ ", isInterleaved=" + isInterleaved + "}";
+		}
+	}
+
+	public static PhylipHint getPhylipHint(File alignmentFile) {
+		boolean isStrictShortName = false;
+		boolean isInterleaved = false;
+		try (BufferedReader reader = new BufferedReader(new FileReader(alignmentFile))) {
+			String firstLine = reader.readLine();
+			if(firstLine == null){
+				return new PhylipHint(false, false);
+			}
+			firstLine = firstLine.trim();
+			String[] lineSplitted = firstLine.split("\\s+");
+			if(lineSplitted == null || lineSplitted.length != 2 || !NumberUtils.isNumber(lineSplitted[0]) || !NumberUtils.isNumber(lineSplitted[1])){
+				return new PhylipHint(false, false);
+			}
+			int seqCount = Integer.parseInt(lineSplitted[0]);
+			String line = reader.readLine();
+			while(line != null && line.trim().isEmpty()){
+				line = reader.readLine();
+			}
+			if(line == null || line.length() <= 10){
+				return new PhylipHint(false, false);
+			}
+			if(!Character.isWhitespace(line.charAt(10))){
+				isStrictShortName = true;
+			}
+			if(isStrictShortName && seqCount > 0){
+				int linesRead = 1;
+				while(linesRead < seqCount && reader.readLine() != null){
+					linesRead++;
+				}
+				if(linesRead == seqCount){
+					String afterBlock = reader.readLine();
+					if(afterBlock != null && afterBlock.trim().isEmpty()){
+						isInterleaved = true;
+					}
+				}
+			}
+		} catch (IOException e) {
+			logger.info("phylip hint detection failed", e);
+		}
+		PhylipHint hint = new PhylipHint(isStrictShortName, isInterleaved);
+		logger.debug(hint);
+		
+		return hint;
 	}
 
 

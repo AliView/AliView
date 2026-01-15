@@ -25,11 +25,11 @@ public class FileFormat {
 	public static final FileFormat NEXUS_CODONPOS_CHARSET = new FileFormat("NexusCodonposCharset", "codonpos.nexus", "codonpos.nex");
 	public static final FileFormat NEXUS_SIMPLE = new FileFormat("NexusSimple", "nexus", "nex");
 	public static final FileFormat PHYLIP = new FileFormat("Phylip", "phy", "phy");	
-	public static final FileFormat PHYLIP_RELAXED = new FileFormat("Phylip", "phy", "phy");
-	public static final FileFormat PHYLIP_RELAXED_PADDED_AKA_LONG_NAME_SEQUENTIAL = new FileFormat("Phylip", "phy", "phy");
-	public static final FileFormat PHYLIP_RELAXED_PADDED_INTERLEAVED_AKA_LONG_NAME_INTERLEAVED = new FileFormat("Phylip", "phy", "phy");
-	public static final FileFormat PHYLIP_STRICT_SEQUENTIAL_AKA_SHORT_NAME_SEQUENTIAL = new FileFormat("Phylip", "phy", "phy");
-	public static final FileFormat PHYLIP_SHORT_NAME_INTERLEAVED = new FileFormat("Phylip", "phy", "phy");
+	public static final FileFormat PHYLIP_RELAXED = new FileFormat("Phylip (relaxed)", "phy", "phy");
+	public static final FileFormat PHYLIP_RELAXED_PADDED_AKA_LONG_NAME_SEQUENTIAL = new FileFormat("Phylip (long name sequential)", "phy", "phy");
+	public static final FileFormat PHYLIP_RELAXED_PADDED_INTERLEAVED_AKA_LONG_NAME_INTERLEAVED = new FileFormat("Phylip (long name interleaved)", "phy", "phy");
+	public static final FileFormat PHYLIP_STRICT_SEQUENTIAL_AKA_SHORT_NAME_SEQUENTIAL = new FileFormat("Phylip (short name sequential)", "phy", "phy");
+	public static final FileFormat PHYLIP_SHORT_NAME_INTERLEAVED = new FileFormat("Phylip (short name interleaved)", "phy", "phy");
 
 
 	public static final FileFormat MSF = new FileFormat("MSF", "msf", "msf");

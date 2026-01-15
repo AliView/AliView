@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+  <Properties>
+    <Property name="logPattern">%-5level %d{ISO8601} %t %c{1}:%L - %msg%n</Property>
+  </Properties>
+
+  <Appenders>
+    <Console name="Console" target="SYSTEM_OUT">
+      <PatternLayout pattern="${logPattern}"/>
+    </Console>
+    <File name="FileLog" fileName="${sys:user.home}/.AliView/AliView.log" append="false">
+      <PatternLayout pattern="${logPattern}"/>
+    </File>
+  </Appenders>
+
+  <Loggers>
+    <Root level="error" includeLocation="true">
+      <AppenderRef ref="Console"/>
+      <AppenderRef ref="FileLog"/>
+    </Root>
+  </Loggers>
+</Configuration>

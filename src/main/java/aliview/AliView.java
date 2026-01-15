@@ -109,7 +109,7 @@ public class AliView implements ApplicationListener{
 			// check if debug in user environ
 			String debugEnv = System.getenv("ALIVIEW_DEBUG");
 			logger.info("debugEnv" + debugEnv);
-			debugEnv = null;
+			//debugEnv = null;
 
 
 
@@ -832,5 +832,3 @@ public class AliView implements ApplicationListener{
 	}
 
 }
-
-

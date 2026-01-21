@@ -21,6 +21,11 @@
       <name>ormbunkar-maven-2-repo</name>
       <url>https://ormbunkar.se/mvn-repo</url>
     </repository>
+    <repository>
+      <id>central</id>
+      <name>central</name>
+      <url>https://repo1.maven.apache.org/maven2</url>
+    </repository>
   </repositories>
   <build>
   <!-- make sure binaries not are filtered - then they will get corrupted-->
@@ -58,8 +63,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.1</version>
         <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
+          <source>8</source>
+          <target>8</target>
        </configuration>
      </plugin>
      <plugin>
@@ -306,9 +311,9 @@
     	<version>2.18.0</version>
     </dependency>
     <dependency>
-      <groupId>javax.activation</groupId>
-      <artifactId>javax.activation-api</artifactId>
-      <version>1.2.0</version>
+      <groupId>com.sun.activation</groupId>
+      <artifactId>jakarta.activation</artifactId>
+      <version>1.2.2</version>
     </dependency>
     <dependency>
       <groupId>jebl2</groupId>

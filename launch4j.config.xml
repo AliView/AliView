@@ -23,7 +23,7 @@
 		<timeoutErr>true</timeoutErr>
 	</splash>
 	<messages>
-		<jreVersionErr>Could not find Java version >= 8 - If using OpenJDK, install OpenJDK with option JAVA_HOME or Registry keys. Min version required:</jreVersionErr>
+		<jreVersionErr>Could not find Java version >= 8. Install Temurin (Adoptium): https://adoptium.net/temurin/releases/ Min version required:</jreVersionErr>
 	</messages>
 	<versionInfo>
 		<fileVersion>1.0.0.0</fileVersion>

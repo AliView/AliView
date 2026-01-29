@@ -835,7 +835,7 @@ if [ -z "${JAVACMD}" ] || [ ! -x "${JAVACMD}" ] ; then
 		osascript -e "tell application \"System Events\" to display dialog \"${MSG_ERROR_LAUNCHING}\n\n${MSG_NO_SUITABLE_JAVA_EXPANDED}\n${MSG_NO_SUITABLE_JAVA_CHECK}\" with title \"${CFBundleName}\"  buttons {\" OK \", \"${MSG_VISIT_ADOPTIUM}\", \"${MSG_VISIT_JAVA_DOT_COM}\"} default button 1${DialogWithIcon}" \
 				-e "set response to button returned of the result" \
 				-e "if response is \"${MSG_VISIT_JAVA_DOT_COM}\" then open location \"https://www.java.com/download/\"" \
-				-e "if response is \"${MSG_VISIT_ADOPTIUM}\" then open location \"https://adoptium.net/releases.html\""
+				-e "if response is \"${MSG_VISIT_ADOPTIUM}\" then open location \"https://adoptium.net/temurin/releases/\""
 		# exit with error
 		exit 3
 
@@ -846,7 +846,7 @@ if [ -z "${JAVACMD}" ] || [ ! -x "${JAVACMD}" ] ; then
 		osascript -e "tell application \"System Events\" to display dialog \"${MSG_ERROR_LAUNCHING}\n\n${MSG_INSTALL_JAVA}\" with title \"${CFBundleName}\" buttons {\"${MSG_LATER}\", \"${MSG_VISIT_JAVA_DOT_COM}\", \"${MSG_VISIT_ADOPTIUM}\"} default button 1${DialogWithIcon}" \
 					-e "set response to button returned of the result" \
 					-e "if response is \"${MSG_VISIT_JAVA_DOT_COM}\" then open location \"https://www.java.com/download/\"" \
-					-e "if response is \"${MSG_VISIT_ADOPTIUM}\" then open location \"https://adoptium.net/releases.html\""
+					-e "if response is \"${MSG_VISIT_ADOPTIUM}\" then open location \"https://adoptium.net/temurin/releases/\""
 		# exit with error
 		exit 1
 	fi

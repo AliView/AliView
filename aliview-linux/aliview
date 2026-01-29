@@ -78,7 +78,8 @@ if type -p java &>/dev/null; then
 elif [[ -n "$JAVA_HOME" ]] && [[ -x "$JAVA_HOME/bin/java" ]];  then
     myjava="$JAVA_HOME/bin/java"
 else
-    "Error: Cannot locate java"
+    echo "Error: Cannot locate java."
+    echo "Install Temurin (Adoptium): https://adoptium.net/temurin/releases/"
     exit 1
 fi
 
@@ -145,4 +146,3 @@ else
         fi
     done
 fi
-

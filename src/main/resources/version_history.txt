@@ -1,4 +1,8 @@
 Version history
+1.31
+- Fix Adoptium url in installer if java is not detected
+- Upgrade launch4j and mvn plugins
+
 1.30
 - Fix problems starting AliView on OSX Sequoia
 - Upgraded launch4j

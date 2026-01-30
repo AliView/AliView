@@ -1,0 +1,35 @@
+name: Build Windows MSI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Build MSI via jpackage
+        shell: pwsh
+        run: |
+          .\jpackage-windows.ps1
+          $version = (Select-Xml -Path pom.xml -XPath "/*[local-name()='project']/*[local-name()='version']").Node.InnerText
+          $msi = Get-ChildItem -Path target\jpackage-windows -Filter *.msi | Select-Object -First 1
+          $newName = "AliView-$version-Windows-x64.msi"
+          Rename-Item -Path $msi.FullName -NewName $newName
+
+      - name: Upload MSI artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AliView-Windows-x64
+          path: target/jpackage-windows/AliView-*-Windows-x64.msi

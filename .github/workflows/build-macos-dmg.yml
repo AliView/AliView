@@ -8,37 +8,41 @@ on:
 
 jobs:
   build-dmg:
-    runs-on: macos-latest
-    
+    strategy:
+      matrix:
+        include:
+          - os: macos-13
+            arch: x64
+          - os: macos-14
+            arch: arm64
+    runs-on: ${{ matrix.os }}
     steps:
-      # 1) Check out code
       - name: Check out code
         uses: actions/checkout@v4
 
-      # 2) Set up the correct Java version
       - name: Set up Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: "17"
+          java-version: "25"
 
-      # 3) Build with Maven
-      - name: Build with Maven
-        run: mvn clean package
-
-      # 4) Create a DMG from the .app using hdiutil
-      - name: Create DMG
+      - name: Build DMG via jpackage
         run: |
-          hdiutil create -volname "AliView" \
-                         -srcfolder "target/AliView-1.30/AliView.app" \
-                         -ov \
-                         -format UDZO \
-                         "target/AliView-1.30.dmg"
+          chmod +x jpackage-mac.sh
+          JPACKAGE_TYPES=dmg ./jpackage-mac.sh
+          VERSION=$(python3 - <<'PY'
+          import xml.etree.ElementTree as ET
+          tree = ET.parse("pom.xml")
+          root = tree.getroot()
+          ns = {"m": root.tag.split("}")[0].strip("{")}
+          print(root.find("m:version", ns).text)
+          PY
+          )
+          DMG=$(ls target/jpackage/*.dmg | head -n 1)
+          mv "$DMG" "target/jpackage/AliView-${VERSION}-macOS-${{ matrix.arch }}.dmg"
 
-      # 5) Upload the DMG as a workflow artifact
       - name: Upload DMG artifact
         uses: actions/upload-artifact@v4
         with:
-          name: AliView-DMG
-          path: target/*.dmg
-
+          name: AliView-${{ matrix.arch }}-DMG
+          path: target/jpackage/AliView-*-macOS-${{ matrix.arch }}.dmg

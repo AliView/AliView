@@ -28,7 +28,7 @@ $BuildDir = Join-Path $RootDir "target\jpackage-windows"
 $InputDir = Join-Path $BuildDir "input"
 $RuntimeDir = Join-Path $BuildDir "runtime"
 $Types = $env:JPACKAGE_TYPES
-if (-not $Types) { $Types = "app-image,msi" }
+if (-not $Types) { $Types = "app-image,msi,exe" }
 
 Remove-Item -Recurse -Force $BuildDir -ErrorAction SilentlyContinue
 New-Item -ItemType Directory -Path $InputDir | Out-Null

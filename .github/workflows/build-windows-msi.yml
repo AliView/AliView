@@ -19,17 +19,24 @@ jobs:
           distribution: temurin
           java-version: "21"
 
-      - name: Build MSI via jpackage
+      - name: Build Windows installers via jpackage
         shell: pwsh
         run: |
           .\jpackage-windows.ps1
           $version = (Select-Xml -Path pom.xml -XPath "/*[local-name()='project']/*[local-name()='version']").Node.InnerText
           $msi = Get-ChildItem -Path target\jpackage-windows -Filter *.msi | Select-Object -First 1
-          $newName = "AliView-$version-Windows-x64.msi"
-          Rename-Item -Path $msi.FullName -NewName $newName
+          $exe = Get-ChildItem -Path target\jpackage-windows -Filter *.exe | Select-Object -First 1
+          if ($msi) {
+            Rename-Item -Path $msi.FullName -NewName "AliView-$version-Windows-x64.msi"
+          }
+          if ($exe) {
+            Rename-Item -Path $exe.FullName -NewName "AliView-$version-Windows-x64.exe"
+          }
 
-      - name: Upload MSI artifact
+      - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
         with:
           name: AliView-Windows-x64
-          path: target/jpackage-windows/AliView-*-Windows-x64.msi
+          path: |
+            target/jpackage-windows/AliView-*-Windows-x64.msi
+            target/jpackage-windows/AliView-*-Windows-x64.exe

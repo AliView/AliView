@@ -84,6 +84,7 @@ foreach ($Type in $TypeList) {
     "--main-class", "aliview.AliView",
     "--icon", $IconPath,
     "--runtime-image", $RuntimeDir,
+    "--file-associations", (Join-Path $RootDir "jpackage\file-associations.properties"),
     "--dest", $BuildDir,
     "--java-options", "-Xmx1024m",
     "--java-options", "-Xms128m"

@@ -79,6 +79,7 @@ for TYPE in ${TYPES//,/ }; do
     --main-class "aliview.AliView"
     --icon "$ROOT_DIR/src/main/resources/img/alignment_ico.icns"
     --runtime-image "$RUNTIME_DIR"
+    --file-associations "$ROOT_DIR/jpackage/file-associations.properties"
     --dest "$BUILD_DIR"
     --java-options "-Xmx1024m"
     --java-options "-Xms128m"

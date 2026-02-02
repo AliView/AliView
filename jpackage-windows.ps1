@@ -95,11 +95,11 @@ foreach ($Type in $TypeList) {
     "--win-menu",
     "--win-menu-group", $AppName,
     "--win-shortcut",
+    "--win-dir-chooser",
     "--java-options", "-Xmx1024m",
     "--java-options", "-Xms128m"
   )
 
-  if ($env:WIN_DIR_CHOOSER) { $Args += "--win-dir-chooser" }
 
   Write-Host "Packaging with jpackage: $Type"
   & $Jpackage @Args

@@ -74,6 +74,8 @@ for TYPE in ${TYPES//,/ }; do
     --type "$TYPE"
     --name "$APP_NAME"
     --app-version "$APP_VERSION"
+    --vendor "Systematic Biology, Uppsala University"
+    --about-url "https://www.ormbunkar.se"
     --input "$INPUT_DIR"
     --main-jar "aliview.jar"
     --main-class "aliview.AliView"

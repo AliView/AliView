@@ -16,6 +16,9 @@ if (-not (Test-Path $Jdeps) -or -not (Test-Path $Jlink) -or -not (Test-Path $Jpa
 }
 
 $AppName = "AliView"
+$AppVendor = "Systematic Biology, Uppsala University"
+$AppUrl = "https://www.ormbunkar.se"
+$WinUpgradeUuid = "DC75EEAA-05CC-4923-ADE4-0D84CBD25703"
 
 [xml]$Pom = Get-Content (Join-Path $RootDir "pom.xml")
 $Ns = New-Object System.Xml.XmlNamespaceManager($Pom.NameTable)
@@ -79,6 +82,8 @@ foreach ($Type in $TypeList) {
     "--type", $Type,
     "--name", $AppName,
     "--app-version", $AppVersion,
+    "--vendor", $AppVendor,
+    "--about-url", $AppUrl,
     "--input", $InputDir,
     "--main-jar", "aliview.jar",
     "--main-class", "aliview.AliView",
@@ -86,12 +91,14 @@ foreach ($Type in $TypeList) {
     "--runtime-image", $RuntimeDir,
     "--file-associations", (Join-Path $RootDir "jpackage\file-associations.properties"),
     "--dest", $BuildDir,
+    "--win-upgrade-uuid", $WinUpgradeUuid,
+    "--win-menu",
+    "--win-menu-group", $AppName,
+    "--win-shortcut",
     "--java-options", "-Xmx1024m",
     "--java-options", "-Xms128m"
   )
 
-  if ($env:WIN_MENU) { $Args += "--win-menu" }
-  if ($env:WIN_SHORTCUT) { $Args += "--win-shortcut" }
   if ($env:WIN_DIR_CHOOSER) { $Args += "--win-dir-chooser" }
 
   Write-Host "Packaging with jpackage: $Type"

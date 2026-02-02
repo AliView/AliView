@@ -131,12 +131,8 @@ public class OSNativeUtils {
     }
 
 	public static boolean isRunningDefectJFilechooserJVM(){
-		logger.info("java ver" + getJavaVersionAsDouble());	
-		String javaVersion = System.getProperty("java.version").toLowerCase();
-		if(isWindows() && getJavaVersionAsDouble() >= 7 && getJavaVersionAsDouble() < 8){
-			return true;
-		}
-		return false;
+		logger.info("java ver" + getJavaVersionAsDouble());
+		return isMac() || isWindows();
 	}
 
 	/*

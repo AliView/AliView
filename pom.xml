@@ -170,50 +170,9 @@
 
     <plugin>
         <groupId>org.codehaus.mojo</groupId>
-        <artifactId>osxappbundle-maven-plugin</artifactId>
-        <version>1.0-alpha-2</version>
-        <configuration>
-            <mainClass>aliview.AliView</mainClass>
-            <dictionaryFile>${basedir}/aliview-mac/Info.plist</dictionaryFile>
-            <iconFile>${basedir}/src/main/resources/img/alignment_ico.icns</iconFile>
-            <version>${project.version}</version>
-            <myClasspath>$JAVAROOT/repo/AliView/AliView/${project.version}/AliView-${project.version}.jar</myClasspath>
-            <javaApplicationStub>${basedir}/aliview-mac/universalJavaApplicationStub/universalJavaApplicationStub</javaApplicationStub>
-        </configuration>
-        <executions>
-            <execution>
-                <phase>package</phase>
-                <goals>
-                   <goal>bundle</goal>
-                </goals>
-            </execution>
-        </executions>
-     </plugin>
-
-    <plugin>
-        <groupId>org.codehaus.mojo</groupId>
         <artifactId>truezip-maven-plugin</artifactId>
         <version>1.2</version>
   <executions>
-    <!-- 1) Copy execution -->
-    <execution>
-      <id>add-splash-image-mac-version</id>
-      <phase>package</phase>
-      <goals>
-        <goal>copy</goal>
-      </goals>
-      <configuration>
-        <files>
-          <file>
-            <!-- The source image to copy into .app -->
-            <source>${basedir}/src/main/resources/img/splash_128x128.png</source>
-            <!-- Where to place it in the .app bundle -->
-            <outputDirectory>${project.build.directory}/AliView-${project.version}/AliView.app/Contents/Resources/</outputDirectory>
-          </file>
-        </files>
-      </configuration>
-    </execution>
-
     <!-- 2) Remove execution -->
     <execution>
       <id>cleanup-unneeded-files</id>
@@ -273,6 +232,64 @@
 
    </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>mac-bundle</id>
+      <activation>
+        <os>
+          <family>mac</family>
+        </os>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>osxappbundle-maven-plugin</artifactId>
+            <version>1.0-alpha-2</version>
+            <configuration>
+              <mainClass>aliview.AliView</mainClass>
+              <dictionaryFile>${basedir}/aliview-mac/Info.plist</dictionaryFile>
+              <iconFile>${basedir}/src/main/resources/img/alignment_ico.icns</iconFile>
+              <version>${project.version}</version>
+              <myClasspath>$JAVAROOT/repo/AliView/AliView/${project.version}/AliView-${project.version}.jar</myClasspath>
+              <javaApplicationStub>${basedir}/aliview-mac/universalJavaApplicationStub/universalJavaApplicationStub</javaApplicationStub>
+            </configuration>
+            <executions>
+              <execution>
+                <phase>package</phase>
+                <goals>
+                  <goal>bundle</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>truezip-maven-plugin</artifactId>
+            <version>1.2</version>
+            <executions>
+              <execution>
+                <id>add-splash-image-mac-version</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>copy</goal>
+                </goals>
+                <configuration>
+                  <files>
+                    <file>
+                      <source>${basedir}/src/main/resources/img/splash_128x128.png</source>
+                      <outputDirectory>${project.build.directory}/AliView-${project.version}/AliView.app/Contents/Resources/</outputDirectory>
+                    </file>
+                  </files>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>

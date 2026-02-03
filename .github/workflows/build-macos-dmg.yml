@@ -28,8 +28,8 @@ jobs:
 
       - name: Build DMG via jpackage
         run: |
-          chmod +x jpackage-mac.sh
-          JPACKAGE_TYPES=dmg ./jpackage-mac.sh
+          chmod +x jpackage/jpackage-mac.sh
+          JPACKAGE_TYPES=dmg ./jpackage/jpackage-mac.sh
           VERSION=$(python3 - <<'PY'
           import xml.etree.ElementTree as ET
           tree = ET.parse("pom.xml")

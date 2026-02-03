@@ -117,96 +117,121 @@ public class Utilities{
 
 		System.err.println("Inne i saveFileViaChooser");
 
-		// Skapa den panel som visas för användaren
-		JFileChooser fileChooser = new JFileChooser();
-		//fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY); 
-
 		// Om inte suffix är specifierat använd eventuellt suffix som finns i filnamn
-		if(suffix == null){		
-			suffix = Utilities.getFileSuffix(theFile);		    
+		if(suffix == null){
+			suffix = Utilities.getFileSuffix(theFile);
 		}
 
-		System.err.println("Hit");
-
-		fileChooser.setFileSystemView(FileSystemView.getFileSystemView());
-
-		fileChooser.setSelectedFile(theFile);
-
-		while(fileChooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION){
-			boolean shouldSaveFile = true;
-			theFile = fileChooser.getSelectedFile();
-
-			// Lägg eventuellt till suffix
+		if(OSNativeUtils.isMac() || OSNativeUtils.isWindows()){
+			theFile = FileUtilities.selectSaveFileViaChooser(theFile, frame);
+			if(theFile == null){
+				return null;
+			}
 			theFile = Utilities.assureFileSuffix(theFile, suffix);
 
-
-			// Kolla om filen redan finns
 			if(theFile.exists()){
 				String question = theFile.toString() + "," + LF +
 						"finns redan, vill du ersätta den?";
 				int result = JOptionPane.showOptionDialog(frame,
 						question,
 						"Ersätt?",
-								JOptionPane.YES_NO_OPTION,
-								JOptionPane.QUESTION_MESSAGE,
-								null,
-								new Object[]{"Ja","Nej"},
-								"Nej"
-						);
-				// Användaren ville ej skriva över
+						JOptionPane.YES_NO_OPTION,
+						JOptionPane.QUESTION_MESSAGE,
+						null,
+						new Object[]{"Ja","Nej"},
+						"Nej"
+				);
 				if(result == JOptionPane.NO_OPTION){
-					shouldSaveFile = false;
+					return null;
 				}
-				else{
-					// Kolla om det går att skriva över filen
-					if(! theFile.canWrite()){
-						System.err.println("Kan inte skriva");
+			}
+		}else{
+			// Skapa den panel som visas för användaren
+			JFileChooser fileChooser = new JFileChooser();
+			//fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY); 
+
+			System.err.println("Hit");
+
+			fileChooser.setFileSystemView(FileSystemView.getFileSystemView());
+
+			fileChooser.setSelectedFile(theFile);
+
+			while(fileChooser.showSaveDialog(frame) == JFileChooser.APPROVE_OPTION){
+				boolean shouldSaveFile = true;
+				theFile = fileChooser.getSelectedFile();
+
+				// Lägg eventuellt till suffix
+				theFile = Utilities.assureFileSuffix(theFile, suffix);
+
+
+				// Kolla om filen redan finns
+				if(theFile.exists()){
+					String question = theFile.toString() + "," + LF +
+							"finns redan, vill du ersätta den?";
+					int result = JOptionPane.showOptionDialog(frame,
+							question,
+							"Ersätt?",
+									JOptionPane.YES_NO_OPTION,
+									JOptionPane.QUESTION_MESSAGE,
+									null,
+									new Object[]{"Ja","Nej"},
+									"Nej"
+							);
+					// Användaren ville ej skriva över
+					if(result == JOptionPane.NO_OPTION){
+						shouldSaveFile = false;
+					}
+					else{
+						// Kolla om det går att skriva över filen
+						if(! theFile.canWrite()){
+							System.err.println("Kan inte skriva");
+							JOptionPane.showOptionDialog(frame,
+									"Det går inte att ersätta filen," + LF +
+									"den kanske används eller är skrivskyddad.",
+									"Går ej att ersätta",
+									JOptionPane.OK_OPTION,
+									JOptionPane.WARNING_MESSAGE,
+									null,
+									new Object[]{"Ok"},
+									"Ok"
+									);
+
+							shouldSaveFile = false;
+						}
+
+					}
+
+
+				}
+
+				// Spara filen   
+				if(shouldSaveFile){
+
+					// This is where file is saved
+					//               fileSaved = Utilities.saveStreamAsFile(fileStream, theFile);
+
+
+					if(fileSaved){
+						break;
+					}
+					else{
 						JOptionPane.showOptionDialog(frame,
-								"Det går inte att ersätta filen," + LF +
-								"den kanske används eller är skrivskyddad.",
-								"Går ej att ersätta",
+								"Det gick inte att spara filen," + LF +
+								"kanske det saknas rättigheter" + LF + 
+								"eller den kanske används.",
+								"Går ej att spara",
 								JOptionPane.OK_OPTION,
 								JOptionPane.WARNING_MESSAGE,
 								null,
 								new Object[]{"Ok"},
 								"Ok"
-								);
+								);  
 
-						shouldSaveFile = false;
 					}
-
 				}
 
 
 			}
-
-			// Spara filen   
-			if(shouldSaveFile){
-
-				// This is where file is saved
-				//               fileSaved = Utilities.saveStreamAsFile(fileStream, theFile);
-
-
-				if(fileSaved){
-					break;
-				}
-				else{
-					JOptionPane.showOptionDialog(frame,
-							"Det gick inte att spara filen," + LF +
-							"kanske det saknas rättigheter" + LF + 
-							"eller den kanske används.",
-							"Går ej att spara",
-							JOptionPane.OK_OPTION,
-							JOptionPane.WARNING_MESSAGE,
-							null,
-							new Object[]{"Ok"},
-							"Ok"
-							);  
-
-				}
-			}
-
-
 		}
 
 		if(fileSaved){

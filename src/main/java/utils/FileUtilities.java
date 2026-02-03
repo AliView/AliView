@@ -24,10 +24,8 @@ public class FileUtilities {
 
 		File selectedFile = null;
 
-		// If mac or windows open FileDialog
-		// I have skipped using Native FileUtils in mac - it is sometimes crashing
-		// Only for some Windos VM is it used
-		if(OSNativeUtils.isRunningDefectJFilechooserJVM()) {
+		// Use the native file dialog on macOS/Windows.
+		if(OSNativeUtils.isMac() || OSNativeUtils.isWindows()) {
 			// get Frame
 			Component root = SwingUtilities.getRoot(parentComponent);
 			Frame parentFrame = null;
@@ -88,7 +86,7 @@ public class FileUtilities {
 		File selectedFile = null;	
 
 
-		if(OSNativeUtils.isRunningDefectJFilechooserJVM()) {
+		if(OSNativeUtils.isMac() || OSNativeUtils.isWindows()) {
 			// get Frame
 			Component root = SwingUtilities.getRoot(parentComponent);
 			Frame parentFrame = null;

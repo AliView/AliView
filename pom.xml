@@ -212,17 +212,6 @@
             </includes>
           </fileset>
 
-          <!-- Example: Remove extra JARs from macOS .app bundle -->
-          <fileset>
-            <directory>${project.build.directory}/AliView-${project.version}/AliView.app</directory>
-            <includes>
-            	<include>**/jebl2</include>
-                <include>**/commons-lang</include>
-                <include>**/commons-io</include>
-                <include>**/log4j</include>
-            </includes>
-          </fileset>
-          
         </filesets>
       </configuration>
     </execution>
@@ -282,6 +271,26 @@
                       <outputDirectory>${project.build.directory}/AliView-${project.version}/AliView.app/Contents/Resources/</outputDirectory>
                     </file>
                   </files>
+                </configuration>
+              </execution>
+              <execution>
+                <id>cleanup-unneeded-files-mac</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>remove</goal>
+                </goals>
+                <configuration>
+                  <filesets>
+                    <fileset>
+                      <directory>${project.build.directory}/AliView-${project.version}/AliView.app</directory>
+                      <includes>
+                        <include>**/jebl2</include>
+                        <include>**/commons-lang</include>
+                        <include>**/commons-io</include>
+                        <include>**/log4j</include>
+                      </includes>
+                    </fileset>
+                  </filesets>
                 </configuration>
               </execution>
             </executions>

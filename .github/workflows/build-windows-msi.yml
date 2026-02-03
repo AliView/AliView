@@ -21,8 +21,9 @@ jobs:
 
       - name: Build Windows installers via jpackage
         shell: pwsh
+        working-directory: ${{ github.workspace }}
         run: |
-          .\jpackage\jpackage-windows.ps1
+          & "${{ github.workspace }}\jpackage\jpackage-windows.ps1"
           $version = (Select-Xml -Path pom.xml -XPath "/*[local-name()='project']/*[local-name()='version']").Node.InnerText
           $msi = Get-ChildItem -Path target\jpackage-windows -Filter *.msi | Select-Object -First 1
           $exe = Get-ChildItem -Path target\jpackage-windows -Filter *.exe | Select-Object -First 1

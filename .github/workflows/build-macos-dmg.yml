@@ -27,9 +27,10 @@ jobs:
           java-version: "25"
 
       - name: Build DMG via jpackage
+        working-directory: ${{ github.workspace }}
         run: |
-          chmod +x jpackage/jpackage-mac.sh
-          JPACKAGE_TYPES=dmg ./jpackage/jpackage-mac.sh
+          chmod +x "${{ github.workspace }}/jpackage/jpackage-mac.sh"
+          JPACKAGE_TYPES=dmg "${{ github.workspace }}/jpackage/jpackage-mac.sh"
           VERSION=$(python3 - <<'PY'
           import xml.etree.ElementTree as ET
           tree = ET.parse("pom.xml")

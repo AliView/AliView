@@ -29,12 +29,17 @@ print(root.find("m:version", ns).text)
 PY
 )"
 fi
+IFS='.' read -r ver_major ver_minor ver_patch <<<"$APP_VERSION"
+ver_major=${ver_major:-0}
+ver_minor=${ver_minor:-0}
+ver_patch=${ver_patch:-0}
 if command -v git >/dev/null 2>&1; then
-  GIT_HASH=$(git rev-parse --short HEAD 2>/dev/null || true)
-  if [[ -n "$GIT_HASH" ]]; then
-    APP_VERSION="${APP_VERSION}-${GIT_HASH}"
+  GIT_COUNT=$(git rev-list --count HEAD 2>/dev/null || true)
+  if [[ -n "$GIT_COUNT" ]]; then
+    ver_patch="$GIT_COUNT"
   fi
 fi
+APP_VERSION="${ver_major}.${ver_minor}.${ver_patch}"
 
 TYPES="${JPACKAGE_TYPES:-deb,rpm}"
 

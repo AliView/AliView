@@ -27,17 +27,17 @@ $Ns.AddNamespace("m", $Pom.DocumentElement.NamespaceURI)
 $AppVersion = $Pom.SelectSingleNode("//m:project/m:version", $Ns).InnerText
 if ($env:APP_VERSION) {
   $AppVersion = $env:APP_VERSION
-} else {
-  $gitHash = ""
-  try {
-    $gitHash = (git rev-parse --short HEAD).Trim()
-  } catch {
-    $gitHash = ""
-  }
-  if ($gitHash) {
-    $AppVersion = "$AppVersion-$gitHash"
-  }
 }
+$parts = $AppVersion.Split(".")
+$verMajor = if ($parts.Length -gt 0) { [int]$parts[0] } else { 0 }
+$verMinor = if ($parts.Length -gt 1) { [int]$parts[1] } else { 0 }
+$verPatch = if ($parts.Length -gt 2) { [int]$parts[2] } else { 0 }
+try {
+  $gitCount = [int](git rev-list --count HEAD)
+  $verPatch = $gitCount % 256
+} catch {
+}
+$AppVersion = "$verMajor.$verMinor.$verPatch"
 
 $Types = $env:JPACKAGE_TYPES
 if (-not $Types) { $Types = "msi,exe" }

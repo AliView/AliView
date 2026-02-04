@@ -23,7 +23,7 @@ jobs:
         shell: pwsh
         run: |
           $base = (Select-Xml -Path pom.xml -XPath "/*[local-name()='project']/*[local-name()='version']").Node.InnerText
-          $patch = ($env:GITHUB_RUN_NUMBER % 256)
+          $patch = ($env:GITHUB_RUN_ID % 256)
           $env:APP_VERSION = "$base.$patch"
           .\jpackage\jpackage-windows.ps1
           $version = (Select-Xml -Path pom.xml -XPath "/*[local-name()='project']/*[local-name()='version']").Node.InnerText

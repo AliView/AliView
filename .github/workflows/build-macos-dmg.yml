@@ -37,7 +37,7 @@ jobs:
           print(root.find("m:version", ns).text)
           PY
           )
-          PATCH=$(( ${GITHUB_RUN_NUMBER} % 256 ))
+          PATCH=$(( ${GITHUB_RUN_ID} % 256 ))
           JPACKAGE_TYPES=dmg APP_VERSION="${VERSION}.${PATCH}" ./jpackage/jpackage-mac.sh
           VERSION=$(python3 - <<'PY'
           import xml.etree.ElementTree as ET

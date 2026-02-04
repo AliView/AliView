@@ -20,8 +20,7 @@ if [[ ! -x "$JDEPS" || ! -x "$JLINK" || ! -x "$JPACKAGE" ]]; then
 fi
 
 APP_NAME="AliView"
-if [[ -z "${APP_VERSION:-}" ]]; then
-  APP_VERSION="$(python3 - <<'PY'
+APP_VERSION="$(python3 - <<'PY'
 import xml.etree.ElementTree as ET
 tree = ET.parse("pom.xml")
 root = tree.getroot()
@@ -29,7 +28,7 @@ ns = {"m": root.tag.split("}")[0].strip("{")}
 print(root.find("m:version", ns).text)
 PY
 )"
-fi
+
 patch_version=$(git rev-list --count HEAD)
 patch_version=$((patch_version % 256))
 APP_VERSION="${APP_VERSION}.${patch_version}"

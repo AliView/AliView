@@ -8,6 +8,7 @@ if [[ -z "${JAVA_HOME:-}" ]]; then
   echo "JAVA_HOME is not set. Point it to a JDK install." >&2
   exit 1
 fi
+echo "JAVA_HOME=$JAVA_HOME"
 
 JDEPS="$JAVA_HOME/bin/jdeps"
 JLINK="$JAVA_HOME/bin/jlink"
@@ -29,18 +30,10 @@ print(root.find("m:version", ns).text)
 PY
 )"
 fi
-IFS='.' read -r ver_major ver_minor ver_patch <<<"$APP_VERSION"
-ver_major=${ver_major:-0}
-ver_minor=${ver_minor:-0}
-ver_patch=${ver_patch:-0}
-if command -v git >/dev/null 2>&1; then
-  GIT_COUNT=$(git rev-list --count HEAD 2>/dev/null || true)
-  if [[ -n "$GIT_COUNT" ]]; then
-    ver_patch="$GIT_COUNT"
-  fi
-fi
-APP_VERSION="${ver_major}.${ver_minor}.${ver_patch}"
-
+patch_version=$(git rev-list --count HEAD)
+patch_version=$((patch_version % 256))
+APP_VERSION="${APP_VERSION}.${patch_version}"
+echo "APP_VERSION=$APP_VERSION"
 TYPES="${JPACKAGE_TYPES:-deb,rpm}"
 
 rm -rf "target/jpackage-linux"

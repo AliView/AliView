@@ -6,6 +6,7 @@ Set-Location (Join-Path $ScriptDir "..")
 if (-not $env:JAVA_HOME) {
   Write-Error "JAVA_HOME is not set. Point it to a JDK install."
 }
+Write-Host "JAVA_HOME=$env:JAVA_HOME"
 
 $Jdeps = Join-Path $env:JAVA_HOME "bin\jdeps.exe"
 $Jlink = Join-Path $env:JAVA_HOME "bin\jlink.exe"
@@ -24,20 +25,14 @@ $WinUpgradeUuid = "DC75EEAA-05CC-4923-ADE4-0D84CBD25703"
 [xml]$Pom = Get-Content "pom.xml"
 $Ns = New-Object System.Xml.XmlNamespaceManager($Pom.NameTable)
 $Ns.AddNamespace("m", $Pom.DocumentElement.NamespaceURI)
-$AppVersion = $Pom.SelectSingleNode("//m:project/m:version", $Ns).InnerText
-if ($env:APP_VERSION) {
-  $AppVersion = $env:APP_VERSION
+$AppVersion = $env:APP_VERSION
+if (-not $AppVersion) {
+  $AppVersion = $Pom.SelectSingleNode("//m:project/m:version", $Ns).InnerText
 }
-$parts = $AppVersion.Split(".")
-$verMajor = if ($parts.Length -gt 0) { [int]$parts[0] } else { 0 }
-$verMinor = if ($parts.Length -gt 1) { [int]$parts[1] } else { 0 }
-$verPatch = if ($parts.Length -gt 2) { [int]$parts[2] } else { 0 }
-try {
-  $gitCount = [int](git rev-list --count HEAD)
-  $verPatch = $gitCount % 256
-} catch {
-}
-$AppVersion = "$verMajor.$verMinor.$verPatch"
+$patchVersion = [int](git rev-list --count HEAD)
+$patchVersion = $patchVersion % 256
+$AppVersion = "$AppVersion.$patchVersion"
+Write-Host "APP_VERSION=$AppVersion"
 
 $Types = $env:JPACKAGE_TYPES
 if (-not $Types) { $Types = "msi,exe" }

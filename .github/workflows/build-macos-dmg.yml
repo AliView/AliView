@@ -29,7 +29,28 @@ jobs:
       - name: Build DMG via jpackage
         run: |
           chmod +x jpackage/jpackage-mac.sh
-          JPACKAGE_TYPES=dmg ./jpackage/jpackage-mac.sh
+          VERSION=$(python3 - <<'PY'
+          import xml.etree.ElementTree as ET
+          tree = ET.parse("pom.xml")
+          root = tree.getroot()
+          ns = {"m": root.tag.split("}")[0].strip("{")}
+          print(root.find("m:version", ns).text)
+          PY
+          )
+          MAJOR=$(python3 - <<'PY'
+          import xml.etree.ElementTree as ET
+          tree = ET.parse("pom.xml")
+          root = tree.getroot()
+          ns = {"m": root.tag.split("}")[0].strip("{")}
+          ver = root.find("m:version", ns).text
+          parts = ver.split(".")
+          major = parts[0]
+          minor = parts[1] if len(parts) > 1 else "0"
+          print(f"{major}.{minor}")
+          PY
+          )
+          PATCH=$(( $(git rev-list --count HEAD) % 256 ))
+          JPACKAGE_TYPES=dmg APP_VERSION="${MAJOR}.${PATCH}" ./jpackage/jpackage-mac.sh
           VERSION=$(python3 - <<'PY'
           import xml.etree.ElementTree as ET
           tree = ET.parse("pom.xml")

@@ -22,6 +22,12 @@ jobs:
       - name: Build Windows installers via jpackage
         shell: pwsh
         run: |
+          $base = (Select-Xml -Path pom.xml -XPath "/*[local-name()='project']/*[local-name()='version']").Node.InnerText
+          $parts = $base.Split(".")
+          $major = $parts[0]
+          $minor = if ($parts.Length -gt 1) { $parts[1] } else { "0" }
+          $patch = ([int](git rev-list --count HEAD) % 256)
+          $env:APP_VERSION = "$major.$minor.$patch"
           .\jpackage\jpackage-windows.ps1
           $version = (Select-Xml -Path pom.xml -XPath "/*[local-name()='project']/*[local-name()='version']").Node.InnerText
           $msi = Get-ChildItem -Path target\jpackage-windows -Filter *.msi | Select-Object -First 1

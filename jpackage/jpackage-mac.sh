@@ -82,6 +82,7 @@ for TYPE in ${TYPES//,/ }; do
     --main-jar "aliview.jar"
     --main-class "aliview.AliView"
     --icon "src/main/resources/img/alignment_ico.icns"
+    --resource-dir "src/main/resources/img"
     --runtime-image "target/jpackage/runtime"
     --file-associations "jpackage/file-associations/nexus.properties"
     --file-associations "jpackage/file-associations/nex.properties"
@@ -99,6 +100,7 @@ for TYPE in ${TYPES//,/ }; do
     --dest "target/jpackage"
     --java-options "-Xmx1024m"
     --java-options "-Xms128m"
+    --java-options "-splash:\$APPDIR/splash_128x128.png"
   )
 
   if [[ "$TYPE" != "app-image" ]]; then

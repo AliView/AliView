@@ -92,6 +92,7 @@ foreach ($Type in $TypeList) {
     "--main-jar", "aliview.jar",
     "--main-class", "aliview.AliView",
     "--icon", $IconPath,
+    "--resource-dir", "src\main\resources\img",
     "--runtime-image", "target\jpackage-windows\runtime",
     "--file-associations", "jpackage\file-associations\nexus.properties",
     "--file-associations", "jpackage\file-associations\nex.properties",
@@ -113,7 +114,8 @@ foreach ($Type in $TypeList) {
     "--win-shortcut",
     "--win-dir-chooser",
     "--java-options", "-Xmx1024m",
-    "--java-options", "-Xms128m"
+    "--java-options", "-Xms128m",
+    "--java-options", "-splash:\$APPDIR\\splash_128x128.png"
   )
 
   if ($Type -ne "app-image") {

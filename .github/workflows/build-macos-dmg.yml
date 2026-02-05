@@ -28,6 +28,7 @@ jobs:
 
       - name: Build DMG via jpackage
         run: |
+          echo "GITHUB_RUN_NUMBER=${GITHUB_RUN_NUMBER}"
           chmod +x jpackage/jpackage-mac.sh
           VERSION=$(python3 - <<'PY'
           import xml.etree.ElementTree as ET
@@ -37,7 +38,7 @@ jobs:
           print(root.find("m:version", ns).text)
           PY
           )
-          PATCH=$(( ${GITHUB_RUN_ID} % 256 ))
+          PATCH=${GITHUB_RUN_NUMBER}
           JPACKAGE_TYPES=dmg APP_VERSION="${VERSION}.${PATCH}" ./jpackage/jpackage-mac.sh
           VERSION=$(python3 - <<'PY'
           import xml.etree.ElementTree as ET

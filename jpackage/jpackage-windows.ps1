@@ -26,10 +26,13 @@ $WinUpgradeUuid = "DC75EEAA-05CC-4923-ADE4-0D84CBD25703"
 $Ns = New-Object System.Xml.XmlNamespaceManager($Pom.NameTable)
 $Ns.AddNamespace("m", $Pom.DocumentElement.NamespaceURI)
 
-$AppVersion = $Pom.SelectSingleNode("//m:project/m:version", $Ns).InnerText
-$patchVersion = [int](git rev-list --count HEAD)
-$patchVersion = $patchVersion % 256
-$AppVersion = "$AppVersion.$patchVersion"
+$AppVersion = $env:APP_VERSION
+if (-not $AppVersion) {
+  $AppVersion = $Pom.SelectSingleNode("//m:project/m:version", $Ns).InnerText
+  $patchVersion = [int](git rev-list --count HEAD)
+  $patchVersion = $patchVersion % 256
+  $AppVersion = "$AppVersion.$patchVersion"
+}
 Write-Host "APP_VERSION=$AppVersion"
 
 $Types = $env:JPACKAGE_TYPES

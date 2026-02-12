@@ -48,11 +48,11 @@ jobs:
           print(root.find("m:version", ns).text)
           PY
           )
-          DMG=$(ls target/jpackage/*.dmg | head -n 1)
-          mv "$DMG" "target/jpackage/AliView-${VERSION}-macOS-${{ matrix.arch }}.dmg"
+          DMG=$(ls target/jpackage-mac/*.dmg | head -n 1)
+          mv "$DMG" "target/jpackage-mac/AliView-${VERSION}-macOS-${{ matrix.arch }}.dmg"
 
       - name: Upload DMG artifact
         uses: actions/upload-artifact@v4
         with:
           name: AliView-${{ matrix.arch }}-DMG
-          path: target/jpackage/AliView-*-macOS-${{ matrix.arch }}.dmg
+          path: target/jpackage-mac/AliView-*-macOS-${{ matrix.arch }}.dmg

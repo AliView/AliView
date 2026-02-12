@@ -29,8 +29,7 @@ $Ns.AddNamespace("m", $Pom.DocumentElement.NamespaceURI)
 $AppVersion = $env:APP_VERSION
 if (-not $AppVersion) {
   $AppVersion = $Pom.SelectSingleNode("//m:project/m:version", $Ns).InnerText
-  $patchVersion = [int](git rev-list --count HEAD)
-  $patchVersion = $patchVersion % 256
+  $patchVersion = 0
   $AppVersion = "$AppVersion.$patchVersion"
 }
 Write-Host "APP_VERSION=$AppVersion"
@@ -49,6 +48,7 @@ if (-not (Test-Path "target\aliview.jar")) {
 }
 
 Copy-Item "target\aliview.jar" "target\jpackage-windows\input\aliview.jar"
+Copy-Item "src\main\resources\img\splash_128x128.png" "target\jpackage-windows\input\splash_128x128.png"
 
 Write-Host "Computing module list with jdeps..."
 $JdepsJar = "target\jpackage-windows\jdeps-aliview.jar"
@@ -83,40 +83,63 @@ $IconPath = "icon_images\win\alignment_multi.ico"
 
 $TypeList = $Types.Split(",") | ForEach-Object { $_.Trim() } | Where-Object { $_ }
 foreach ($Type in $TypeList) {
-  $Args = @(
-    "--type", $Type,
-    "--name", $AppName,
-    "--app-version", $AppVersion,
-    "--vendor", $AppVendor,
-    "--input", "target\jpackage-windows\input",
-    "--main-jar", "aliview.jar",
-    "--main-class", "aliview.AliView",
-    "--icon", $IconPath,
-    "--resource-dir", "src\main\resources\img",
-    "--runtime-image", "target\jpackage-windows\runtime",
-    "--file-associations", "jpackage\file-associations\nexus.properties",
-    "--file-associations", "jpackage\file-associations\nex.properties",
-    "--file-associations", "jpackage\file-associations\fasta.properties",
-    "--file-associations", "jpackage\file-associations\fas.properties",
-    "--file-associations", "jpackage\file-associations\fa.properties",
-    "--file-associations", "jpackage\file-associations\afa.properties",
-    "--file-associations", "jpackage\file-associations\phylip.properties",
-    "--file-associations", "jpackage\file-associations\phy.properties",
-    "--file-associations", "jpackage\file-associations\aln.properties",
-    "--file-associations", "jpackage\file-associations\clustal.properties",
-    "--file-associations", "jpackage\file-associations\clustalw.properties",
-    "--file-associations", "jpackage\file-associations\clustalx.properties",
-    "--file-associations", "jpackage\file-associations\msf.properties",
-    "--dest", "target\jpackage-windows",
-    "--win-upgrade-uuid", $WinUpgradeUuid,
-    "--win-menu",
-    "--win-menu-group", $AppName,
-    "--win-shortcut",
-    "--win-dir-chooser",
-    "--java-options", "-Xmx1024m",
-    "--java-options", "-Xms128m",
-    "--java-options", "-splash:\$APPDIR\\splash_128x128.png"
-  )
+  if ($Type -eq "app-image") {
+    $Args = @(
+      "--type", $Type,
+      "--name", $AppName,
+      "--app-version", $AppVersion,
+      "--input", "target\jpackage-windows\input",
+      "--main-jar", "aliview.jar",
+      "--main-class", "aliview.AliView",
+      "--icon", $IconPath,
+      "--resource-dir", "src\main\resources\img",
+      "--runtime-image", "target\jpackage-windows\runtime",
+      "--dest", "target\jpackage-windows",
+      "--win-upgrade-uuid", $WinUpgradeUuid,
+      "--win-menu",
+      "--win-menu-group", $AppName,
+      "--win-shortcut",
+      "--win-dir-chooser",
+      "--java-options", "-Xmx1024m",
+      "--java-options", "-Xms128m",
+      "--java-options", "-splash:\$APPDIR\splash_128x128.png"
+    )
+  } else {
+    $Args = @(
+      "--type", $Type,
+      "--name", $AppName,
+      "--app-version", $AppVersion,
+      "--vendor", $AppVendor,
+      "--input", "target\jpackage-windows\input",
+      "--main-jar", "aliview.jar",
+      "--main-class", "aliview.AliView",
+      "--icon", $IconPath,
+      "--resource-dir", "src\main\resources\img",
+      "--runtime-image", "target\jpackage-windows\runtime",
+      "--file-associations", "jpackage\file-associations\nexus.properties",
+      "--file-associations", "jpackage\file-associations\nex.properties",
+      "--file-associations", "jpackage\file-associations\fasta.properties",
+      "--file-associations", "jpackage\file-associations\fas.properties",
+      "--file-associations", "jpackage\file-associations\fa.properties",
+      "--file-associations", "jpackage\file-associations\afa.properties",
+      "--file-associations", "jpackage\file-associations\phylip.properties",
+      "--file-associations", "jpackage\file-associations\phy.properties",
+      "--file-associations", "jpackage\file-associations\aln.properties",
+      "--file-associations", "jpackage\file-associations\clustal.properties",
+      "--file-associations", "jpackage\file-associations\clustalw.properties",
+      "--file-associations", "jpackage\file-associations\clustalx.properties",
+      "--file-associations", "jpackage\file-associations\msf.properties",
+      "--dest", "target\jpackage-windows",
+      "--win-upgrade-uuid", $WinUpgradeUuid,
+      "--win-menu",
+      "--win-menu-group", $AppName,
+      "--win-shortcut",
+      "--win-dir-chooser",
+      "--java-options", "-Xmx1024m",
+      "--java-options", "-Xms128m",
+      "--java-options", "-splash:\$APPDIR\splash_128x128.png"
+    )
+  }
 
   if ($Type -ne "app-image") {
     $Args += "--about-url"
@@ -126,6 +149,7 @@ foreach ($Type in $TypeList) {
 
   Write-Host "Packaging with jpackage: $Type"
   & $Jpackage @Args
+
 }
 
 Write-Host "Done: $BuildDir"

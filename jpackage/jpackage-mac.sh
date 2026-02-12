@@ -29,15 +29,14 @@ ns = {"m": root.tag.split("}")[0].strip("{")}
 print(root.find("m:version", ns).text)
 PY
 )"
-  patch_version=$(git rev-list --count HEAD)
-  patch_version=$((patch_version % 256))
+  patch_version=0
   APP_VERSION="${APP_VERSION}.${patch_version}"
 fi
 echo "APP_VERSION=$APP_VERSION"
 TYPES="${JPACKAGE_TYPES:-dmg}"
 
-rm -rf "target/jpackage"
-mkdir -p "target/jpackage/input"
+rm -rf "target/jpackage-mac"
+mkdir -p "target/jpackage-mac/input"
 
 
 echo "Building fat jar..."
@@ -48,11 +47,13 @@ if [[ ! -f "target/aliview.jar" ]]; then
   exit 1
 fi
 
-cp "target/aliview.jar" "target/jpackage/input/"
+cp "target/aliview.jar" "target/jpackage-mac/input/"
+cp "src/main/resources/img/splash_128x128.png" "target/jpackage-mac/input/"
+
 
 echo "Computing module list with jdeps..."
-JDEPS_JAR="target/jpackage/jdeps-aliview.jar"
-cp "target/jpackage/input/aliview.jar" "$JDEPS_JAR"
+JDEPS_JAR="target/jpackage-mac/jdeps-aliview.jar"
+cp "target/jpackage-mac/input/aliview.jar" "$JDEPS_JAR"
 if command -v zip >/dev/null 2>&1; then
   zip -q -d "$JDEPS_JAR" "module-info.class" "META-INF/versions/*/module-info.class" || true
 fi
@@ -71,37 +72,55 @@ echo "Creating runtime image with jlink..."
   --strip-debug \
   --no-header-files \
   --no-man-pages \
-  --output "target/jpackage/runtime"
+  --output "target/jpackage-mac/runtime"
 
 for TYPE in ${TYPES//,/ }; do
-  JPACKAGE_ARGS=(
-    --type "$TYPE"
-    --name "$APP_NAME"
-    --app-version "$APP_VERSION"
-    --input "target/jpackage/input"
-    --main-jar "aliview.jar"
-    --main-class "aliview.AliView"
-    --icon "src/main/resources/img/alignment_ico.icns"
-    --resource-dir "src/main/resources/img"
-    --runtime-image "target/jpackage/runtime"
-    --file-associations "jpackage/file-associations/nexus.properties"
-    --file-associations "jpackage/file-associations/nex.properties"
-    --file-associations "jpackage/file-associations/fasta.properties"
-    --file-associations "jpackage/file-associations/fas.properties"
-    --file-associations "jpackage/file-associations/fa.properties"
-    --file-associations "jpackage/file-associations/afa.properties"
-    --file-associations "jpackage/file-associations/phylip.properties"
-    --file-associations "jpackage/file-associations/phy.properties"
-    --file-associations "jpackage/file-associations/aln.properties"
-    --file-associations "jpackage/file-associations/clustal.properties"
-    --file-associations "jpackage/file-associations/clustalw.properties"
-    --file-associations "jpackage/file-associations/clustalx.properties"
-    --file-associations "jpackage/file-associations/msf.properties"
-    --dest "target/jpackage"
-    --java-options "-Xmx1024m"
-    --java-options "-Xms128m"
-    --java-options "-splash:\$APPDIR/splash_128x128.png"
-  )
+  if [[ "$TYPE" == "app-image" ]]; then
+    JPACKAGE_ARGS=(
+      --type "$TYPE"
+      --name "$APP_NAME"
+      --app-version "$APP_VERSION"
+      --input "target/jpackage-mac/input"
+      --main-jar "aliview.jar"
+      --main-class "aliview.AliView"
+      --icon "src/main/resources/img/alignment_ico.icns"
+      --resource-dir "src/main/resources/img"
+      --runtime-image "target/jpackage-mac/runtime"
+      --dest "target/jpackage-mac"
+      --java-options "-Xmx1024m"
+      --java-options "-Xms128m"
+      --java-options "-splash:\$APPDIR/splash_128x128.png"
+    )
+  else
+    JPACKAGE_ARGS=(
+      --type "$TYPE"
+      --name "$APP_NAME"
+      --app-version "$APP_VERSION"
+      --input "target/jpackage-mac/input"
+      --main-jar "aliview.jar"
+      --main-class "aliview.AliView"
+      --icon "src/main/resources/img/alignment_ico.icns"
+      --resource-dir "src/main/resources/img"
+      --runtime-image "target/jpackage-mac/runtime"
+      --file-associations "jpackage/file-associations/nexus.properties"
+      --file-associations "jpackage/file-associations/nex.properties"
+      --file-associations "jpackage/file-associations/fasta.properties"
+      --file-associations "jpackage/file-associations/fas.properties"
+      --file-associations "jpackage/file-associations/fa.properties"
+      --file-associations "jpackage/file-associations/afa.properties"
+      --file-associations "jpackage/file-associations/phylip.properties"
+      --file-associations "jpackage/file-associations/phy.properties"
+      --file-associations "jpackage/file-associations/aln.properties"
+      --file-associations "jpackage/file-associations/clustal.properties"
+      --file-associations "jpackage/file-associations/clustalw.properties"
+      --file-associations "jpackage/file-associations/clustalx.properties"
+      --file-associations "jpackage/file-associations/msf.properties"
+      --dest "target/jpackage-mac"
+      --java-options "-Xmx1024m"
+      --java-options "-Xms128m"
+      --java-options "-splash:\$APPDIR/splash_128x128.png"
+    )
+  fi
 
   if [[ "$TYPE" != "app-image" ]]; then
     JPACKAGE_ARGS+=(--vendor "Systematic Biology, Uppsala University")
@@ -118,6 +137,7 @@ for TYPE in ${TYPES//,/ }; do
 
   echo "Packaging with jpackage: $TYPE"
   "$JPACKAGE" "${JPACKAGE_ARGS[@]}"
+
 done
 
-echo "Done: target/jpackage"
+echo "Done: target/jpackage-mac"

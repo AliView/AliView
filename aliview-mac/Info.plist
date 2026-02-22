@@ -3,10 +3,14 @@
   <dict>
     <key>CFBundleName</key>
     <string>${bundleName}</string>
+    <key>CFBundleIdentifier</key>
+    <string>se.ormbunkar.aliview</string>
     <key>CFBundleVersion</key>
     <string>${version}</string>
+    <key>CFBundleShortVersionString</key>
+    <string>${version}</string>
     <key>CFBundleAllowMixedLocalizations</key>
-    <string>true</string>
+    <true/>
     <key>CFBundleExecutable</key>
     <string>universalJavaApplicationStub</string>
     <key>CFBundleDevelopmentRegion</key>
@@ -53,7 +57,7 @@
        <key>SplashFile</key>
        <string>splash_128x128.png</string>
        <key>JVMVersion</key>
-       <string>1.4+</string>
+       <string>1.8+</string>
        <key>ClassPath</key>
        ${classpath}
        <key>VMOptions</key>
@@ -69,6 +73,6 @@
        </dict>
     </dict>
     <key>NSHighResolutionCapable</key>
-    <string>True</string>
+    <true/>
   </dict>
 </plist>

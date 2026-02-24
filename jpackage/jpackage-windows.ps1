@@ -102,7 +102,7 @@ foreach ($Type in $TypeList) {
       "--win-dir-chooser",
       "--java-options", "-Xmx1024m",
       "--java-options", "-Xms128m",
-      "--java-options", "-splash:\$APPDIR\splash_128x128.png"
+      "--java-options", '-splash:$APPDIR\splash_128x128.png'
     )
   } else {
     $Args = @(
@@ -137,7 +137,7 @@ foreach ($Type in $TypeList) {
       "--win-dir-chooser",
       "--java-options", "-Xmx1024m",
       "--java-options", "-Xms128m",
-      "--java-options", "-splash:\$APPDIR\splash_128x128.png"
+      "--java-options", '-splash:$APPDIR\splash_128x128.png'
     )
   }
 

@@ -29,8 +29,6 @@ ns = {"m": root.tag.split("}")[0].strip("{")}
 print(root.find("m:version", ns).text)
 PY
 )"
-  patch_version=0
-  APP_VERSION="${APP_VERSION}.${patch_version}"
 fi
 echo "APP_VERSION=$APP_VERSION"
 TYPES="${JPACKAGE_TYPES:-app-image,deb}"
@@ -84,7 +82,6 @@ for TYPE in ${TYPES//,/ }; do
       --main-jar "aliview.jar"
       --main-class "aliview.AliView"
       --icon "src/main/resources/img/alignment_ico_128x128.png"
-      --resource-dir "src/main/resources/img"
       --runtime-image "target/jpackage-linux/runtime"
       --dest "target/jpackage-linux"
       --java-options "-Xmx1024m"
@@ -100,7 +97,7 @@ for TYPE in ${TYPES//,/ }; do
       --main-jar "aliview.jar"
       --main-class "aliview.AliView"
       --icon "src/main/resources/img/alignment_ico_128x128.png"
-      --resource-dir "src/main/resources/img"
+      --resource-dir "jpackage/pkg-resources"
       --runtime-image "target/jpackage-linux/runtime"
       --file-associations "jpackage/file-associations/nexus.properties"
       --file-associations "jpackage/file-associations/nex.properties"
@@ -139,6 +136,15 @@ for TYPE in ${TYPES//,/ }; do
 
   echo "Packaging with jpackage: $TYPE"
   "$JPACKAGE" "${JPACKAGE_ARGS[@]}"
+
+  if [[ "$TYPE" == "app-image" ]]; then
+    APP_IMAGE_DIR="target/jpackage-linux/${APP_NAME}"
+    APP_IMAGE_TGZ="target/jpackage-linux/${APP_NAME}-${APP_VERSION}-linux-app-image.tar.gz"
+    if [[ -d "$APP_IMAGE_DIR" ]]; then
+      tar -C "target/jpackage-linux" -czf "$APP_IMAGE_TGZ" "$APP_NAME"
+      echo "Created app-image archive: $APP_IMAGE_TGZ"
+    fi
+  fi
 done
 
 echo "Done: target/jpackage-linux"

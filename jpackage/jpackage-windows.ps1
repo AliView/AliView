@@ -25,10 +25,11 @@ $WinUpgradeUuid = "DC75EEAA-05CC-4923-ADE4-0D84CBD25703"
 [xml]$Pom = Get-Content "pom.xml"
 $Ns = New-Object System.Xml.XmlNamespaceManager($Pom.NameTable)
 $Ns.AddNamespace("m", $Pom.DocumentElement.NamespaceURI)
+$PomVersion = $Pom.SelectSingleNode("//m:project/m:version", $Ns).InnerText
 
 $AppVersion = $env:APP_VERSION
 if (-not $AppVersion) {
-  $AppVersion = $Pom.SelectSingleNode("//m:project/m:version", $Ns).InnerText
+  $AppVersion = $PomVersion
   $patchVersion = 0
   $AppVersion = "$AppVersion.$patchVersion"
 }
@@ -43,11 +44,13 @@ New-Item -ItemType Directory -Path "target\jpackage-windows\input" | Out-Null
 Write-Host "Building fat jar..."
 & mvn -DskipTests package
 
-if (-not (Test-Path "target\aliview.jar")) {
-  Write-Error "Expected jar not found: target\aliview.jar"
+$MainJarPath = "target\windows-version-$PomVersion\aliview.jar"
+if (-not (Test-Path $MainJarPath)) {
+  Write-Error "Expected jar not found: target\\windows-version-$PomVersion\\aliview.jar"
 }
+Write-Host "Using main jar: $MainJarPath"
 
-Copy-Item "target\aliview.jar" "target\jpackage-windows\input\aliview.jar"
+Copy-Item $MainJarPath "target\jpackage-windows\input\aliview.jar"
 Copy-Item "src\main\resources\img\splash_128x128.png" "target\jpackage-windows\input\splash_128x128.png"
 
 Write-Host "Computing module list with jdeps..."

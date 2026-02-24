@@ -15,13 +15,13 @@ chmod 755 -R target
 # move into dir
 cd target/linux-version*/aliview/
 
-makeself . ../aliview.install.run "Installer for AliView" ./install.sh
+makeself . ../aliview-no-java.install.run "Installer for AliView" ./install.sh
 
 # move up one step back
 cd ..
 
 # make standard archive for linux
-tar -czvf aliview.tgz aliview/
+tar -czvf aliview-no-java.tgz aliview/
 
 # move back
 cd ../../

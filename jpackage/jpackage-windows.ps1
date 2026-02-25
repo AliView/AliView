@@ -103,6 +103,7 @@ foreach ($Type in $TypeList) {
       "--win-menu-group", $AppName,
       "--win-shortcut",
       "--win-dir-chooser",
+      "--java-options", "-Dlog4j.configurationFile=classpath:log4j2.xml",
       "--java-options", "-Xmx1024m",
       "--java-options", "-Xms128m",
       "--java-options", '-splash:$APPDIR\splash_128x128.png'
@@ -138,6 +139,7 @@ foreach ($Type in $TypeList) {
       "--win-menu-group", $AppName,
       "--win-shortcut",
       "--win-dir-chooser",
+      "--java-options", "-Dlog4j.configurationFile=classpath:log4j2.xml",
       "--java-options", "-Xmx1024m",
       "--java-options", "-Xms128m",
       "--java-options", '-splash:$APPDIR\splash_128x128.png'

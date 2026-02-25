@@ -17,6 +17,7 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.lang.reflect.Method;
 import java.net.JarURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
@@ -38,6 +39,7 @@ import org.apache.log4j.Appender;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 import org.simplericity.macify.eawt.Application;
 import org.simplericity.macify.eawt.ApplicationEvent;
 import org.simplericity.macify.eawt.ApplicationListener;
@@ -55,6 +57,11 @@ import aliview.test.Test;
 public class AliView implements ApplicationListener{
 
 	private static final String LF = System.getProperty("line.separator");
+	private static final String ALIVIEW_USERDATA_SUBDIR = ".AliView";
+	private static final String ALIVIEW_LOG_FILENAME = "AliView.log";
+	static {
+		forceLog4j2ConfigEarly();
+	}
 	private static final AliViewJMenuBarFactory menuBarFactory = new AliViewJMenuBarFactory();
 	private static AliView aliView;
 	private static ArrayList<AliViewWindow> aliViewWindows = new ArrayList<AliViewWindow>();
@@ -74,6 +81,7 @@ public class AliView implements ApplicationListener{
 		//		System.setOut( new PrintStream( new LoggingOutputStream( logger, Level.INFO ), true));
 
 		long startTime = System.currentTimeMillis();
+		// ensureFallbackFileAppender();
 
 		Logger.getRootLogger().setLevel(Level.ALL);
 		logAllLogs();
@@ -416,6 +424,40 @@ public class AliView implements ApplicationListener{
 
 		logger.info("done with main method");
 
+	}
+
+	private static void forceLog4j2ConfigEarly() {
+		if (System.getProperty("log4j.configurationFile") == null) {
+			URL cfg = AliView.class.getClassLoader().getResource("log4j2.xml");
+			if (cfg != null) {
+				System.setProperty("log4j.configurationFile", cfg.toString());
+			}
+		}
+	}
+
+	private static void ensureFallbackFileAppender() {
+		try {
+			boolean hasFileAppender = false;
+			Enumeration appenders = Logger.getRootLogger().getAllAppenders();
+			while (appenders.hasMoreElements()) {
+				Object appender = appenders.nextElement();
+				if (appender instanceof FileAppender) {
+					hasFileAppender = true;
+					break;
+				}
+			}
+			if (!hasFileAppender) {
+				File logFile = new File(System.getProperty("user.home"), ALIVIEW_USERDATA_SUBDIR + File.separator + ALIVIEW_LOG_FILENAME);
+				FileAppender fallbackAppender = new FileAppender(
+						new PatternLayout("%-5p %d{ISO8601} %t %c{1}:%L - %m%n"),
+						logFile.getAbsolutePath(),
+						false);
+				fallbackAppender.setName("AliViewFallbackFileLog");
+				Logger.getRootLogger().addAppender(fallbackAppender);
+			}
+		} catch (Exception ignored) {
+			// Best effort fallback.
+		}
 	}
 
 	private static void debugUIDefaults(){

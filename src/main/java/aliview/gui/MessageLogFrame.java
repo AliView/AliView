@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.Enumeration;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -16,6 +17,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Appender;
+import org.apache.log4j.FileAppender;
 import org.apache.log4j.Logger;
 
 import aliview.AliViewWindow;
@@ -78,14 +81,33 @@ public class MessageLogFrame extends JFrame{
 	protected void refreshLog() {
 		try {
 			aliViewWindow.flushAllLogs();
-			File logFile = new File( System.getProperty("user.home"), File.separator + Settings.getAliViewUserDataSubdir() + File.separator + Settings.getLogfileName());
+			File logFile = resolveLogFile();
 			logger.info("logFile=" + logFile);
-			String message = FileUtils.readFileToString(logFile);
-			messageArea.setText(logFile.getAbsolutePath() + LF + message);
+			if(logFile.exists()){
+				String message = FileUtils.readFileToString(logFile);
+				messageArea.setText(logFile.getAbsolutePath() + LF + message);
+			}else{
+				messageArea.setText("Log file not found:" + LF + logFile.getAbsolutePath());
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	private File resolveLogFile() {
+		Enumeration appenders = Logger.getRootLogger().getAllAppenders();
+		while (appenders.hasMoreElements()) {
+			Object appender = appenders.nextElement();
+			if (appender instanceof FileAppender) {
+				String file = ((FileAppender) appender).getFile();
+				if (file != null && file.length() > 0) {
+					return new File(file);
+				}
+			}
+		}
+
+		return new File(System.getProperty("user.home"), File.separator + Settings.getAliViewUserDataSubdir() + File.separator + Settings.getLogfileName());
 	}
 
 	public void placeFrameupperLeftLocationOfThis(Component parent){

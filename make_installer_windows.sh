@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -eu -o pipefail
 
 echo "Make installer fow windows"
 
@@ -35,10 +35,9 @@ rsync -av aliview-windows/* target/windows-latest/
 chmod 755 -R target
 
 # move non installer files fo other dir
-mkdir target/windows-latest/without_installer_version
-mv target/windows-latest/AliView.exe target/windows-latest/without_installer_version
-mv target/windows-latest/aliview.jar target/windows-latest/without_installer_version
+mkdir -p target/windows-latest/without_installer_version
+cp -a target/windows-latest/AliView.exe target/windows-latest/without_installer_version/
+cp -a target/windows-latest/aliview.jar target/windows-latest/without_installer_version/
 
 # and windows install instr to package-dir
 rsync -av htaccess-files/windows-install-dir/.htaccess target/windows-version*
-

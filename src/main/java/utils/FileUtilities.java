@@ -15,7 +15,7 @@ import javax.swing.UIManager;
 
 import org.apache.log4j.Logger;
 
-import aliview.gui.AppIcons;
+//import aliview.gui.AppIcons;
 public class FileUtilities {
 	private static final Logger logger = Logger.getLogger(FileUtilities.class);
 	private static int preferedWidth = 650;
@@ -34,7 +34,7 @@ public class FileUtilities {
 				parentFrame = (Frame) root;
 			}
 			// use the native file dialog
-			parentFrame.setIconImage(AppIcons.getProgramIconImage());
+			//parentFrame.setIconImage(AppIcons.getProgramIconImage());
 			
 			FileDialog dialog = new FileDialog(parentFrame, "Open",FileDialog.LOAD);
 			dialog.setDirectory(suggestedFile.getParent());

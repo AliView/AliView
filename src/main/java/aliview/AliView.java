@@ -238,7 +238,6 @@ public class AliView implements ApplicationListener{
 						uiFound = true;
 
 					}
-
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -251,9 +250,6 @@ public class AliView implements ApplicationListener{
 					e.printStackTrace();
 				}
 			}
-
-
-
 
 			// debugUIDefaults();
 

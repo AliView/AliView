@@ -1428,7 +1428,7 @@ public class AlignmentPane extends JPanel{
 
 
 						// draw tickmarks
-						g2d.setColor(Color.DARK_GRAY);
+						g2d.setColor(getForeground());
 						// make every 5 tickmarks a bit bigger
 						if(x % 5 == 4 && charWidth > 0.6){ // it has to be 4 and not 0 due to the fact that 1:st base har position 0 in matrix
 							// we are drawing not on a large scrollable ruler, but a window sized fixed pane we have to adjust with offsetDueToScrollPanePosition
@@ -1576,7 +1576,7 @@ public class AlignmentPane extends JPanel{
 				int countTicks = 0;
 
 				// Same color for everything
-				g2d.setColor(Color.DARK_GRAY);
+				g2d.setColor(getForeground());
 
 				// X Loop Start
 				for(int xSeq = (int)startPosSeq; xSeq < maxVisibleSeq; xSeq = xSeq + xStep){
@@ -1780,4 +1780,3 @@ public class AlignmentPane extends JPanel{
 	} // end CodonPosRuler class
 
 }
-

@@ -127,6 +127,7 @@ for TYPE in ${TYPES//,/ }; do
     JPACKAGE_ARGS+=(--about-url "https://www.ormbunkar.se")
   fi
 
+  MAC_BUNDLE_ID="${MAC_BUNDLE_ID:-se.ormbunkar.aliview}"
   if [[ -n "${MAC_BUNDLE_ID:-}" ]]; then
     if [[ "$(uname -s)" == "Darwin" ]]; then
       JPACKAGE_ARGS+=(--mac-package-identifier "$MAC_BUNDLE_ID")

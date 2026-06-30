@@ -16,6 +16,13 @@ tmp/**/*
 linux-app-image-installer/*.run
 linux-app-image-installer/*.run.xz
 
+# Credentials — never commit
+.htpasswd
+
+# Vendored Windows launcher toolchains
+launch4j/
+launch4j-old/
+
 deployed
 target
 copy_deploy.sh

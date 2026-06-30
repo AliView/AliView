@@ -10,7 +10,11 @@ hs_err_*
 
 
 # Can also ignore all directories and files in a directory.
-tmp/**/* 
+tmp/**/*
+
+# Built Linux installer archives (regenerable via create-package.sh)
+linux-app-image-installer/*.run
+linux-app-image-installer/*.run.xz
 
 deployed
 target

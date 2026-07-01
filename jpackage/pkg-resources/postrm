@@ -1,0 +1,31 @@
+#!/bin/sh
+# postrm script for aliview
+#
+# see: dh_installdeb(1)
+
+set -e
+
+TARGET="/opt/aliview/bin/AliView"
+LINK="/usr/bin/aliview"
+
+case "$1" in
+  purge|remove)
+    # Remove only the symlink we created (do not touch real files).
+    if [ -L "$LINK" ]; then
+      CURRENT="$(readlink -f "$LINK" || true)"
+      if [ "$CURRENT" = "$TARGET" ] || echo "$CURRENT" | grep -q '^/opt/aliview/'; then
+        rm -f "$LINK"
+      fi
+    fi
+    ;;
+
+  upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
+    ;;
+
+  *)
+    echo "postrm called with unknown argument \`$1'" >&2
+    exit 1
+    ;;
+esac
+
+exit 0

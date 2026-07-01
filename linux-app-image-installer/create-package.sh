@@ -1,19 +1,29 @@
 #!/bin/bash
 # AliView Package Builder
-# Run this on Ubuntu 20.04 (or in a Ubuntu 20.04 Docker container) for maximum
-# glibc compatibility across Ubuntu, Debian, Fedora, Arch, and openSUSE.
 #
-# Quick Docker build:
-#   docker run --rm -v $(pwd):/build ubuntu:20.04 bash -c \
-#     "apt-get update && apt-get install -y openjdk-17-jdk makeself && cd /build && ./create-package.sh"
+# This only wraps the existing jpackage app-image (bundled JRE + launcher) into
+# a self-extracting installer, so the BUILD OS does not affect compatibility:
+# nothing native is compiled here. The glibc floor of the final bundle is
+# inherited entirely from the JDK that produced the app-image (jlink copies the
+# runtime .so files and jpackage copies a prebuilt launcher). For wide Linux
+# compatibility, build the app-image with a low-glibc JDK such as Eclipse
+# Temurin (x64 floor ~glibc 2.17), NOT a distro-packaged JDK. Verify the floor
+# with:  objdump -T <bundle>/lib/runtime/lib/server/libjvm.so | grep GLIBC
 #
 # Requires: makeself (apt install makeself)
 
 set -euo pipefail
 trap 'echo "ERROR: Build failed at line $LINENO."; exit 1' ERR
 
+# Resolve to this script's own directory so install.sh, the icon, and the
+# output archive are found regardless of the caller's working directory.
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
+
 # --- Configuration ---
-APP_IMAGE_DIR="/home/anders/projekt/maven/AliView/target/jpackage-linux/AliView"   # <-- update this path
+# APP_IMAGE_DIR defaults to the jpackage output relative to the repo root, but
+# can be overridden via the environment (e.g. in CI).
+APP_IMAGE_DIR="${APP_IMAGE_DIR:-$SCRIPT_DIR/../target/jpackage-linux/AliView}"
 PACKAGE_NAME="aliview.install.run"
 ICON_SRC="splash_128x128.png"                       # <-- must be in current directory
 INSTALL_SCRIPT="install.sh"                          # <-- must be in current directory
@@ -63,17 +73,16 @@ if [ ! -f "$APP_IMAGE_DIR/bin/$APP_BINARY" ]; then
     echo "   Found binary: $APP_BINARY"
 fi
 
-# 4. Warn if not building on Ubuntu 20.04
-if [ -f /etc/os-release ]; then
-    . /etc/os-release
-    MAJOR_VERSION="${VERSION_ID%%.*}"
-    if [ "${ID:-}" != "ubuntu" ] || [ "${MAJOR_VERSION:-99}" -gt 20 ]; then
-        echo -e "${YELLOW}WARNING:${NC} For maximum Linux compatibility, build on Ubuntu 20.04 (glibc 2.31)."
-        echo "         Current OS: ${PRETTY_NAME:-unknown}"
-        echo "         Binaries built on newer systems will not run on older distros."
-        echo "         Press Ctrl+C to cancel, or wait 5 seconds to continue anyway..."
-        sleep 5
-    fi
+# 4. Report the glibc floor of the app-image being packaged.
+#    The build OS is irrelevant (nothing native is compiled here); the floor is
+#    inherited from the JDK that produced the app-image. This is informational —
+#    the CI workflow enforces a hard threshold separately.
+LIBJVM="$APP_IMAGE_DIR/lib/runtime/lib/server/libjvm.so"
+if command -v objdump &> /dev/null && [ -f "$LIBJVM" ]; then
+    GLIBC_FLOOR=$(objdump -T "$APP_IMAGE_DIR/bin/$APP_BINARY" "$LIBJVM" 2>/dev/null \
+        | grep -oE 'GLIBC_[0-9.]+' | sort -uV | tail -1)
+    echo -e "-> App-image glibc floor: ${GREEN}${GLIBC_FLOOR:-unknown}${NC}"
+    echo "   (a low floor needs a low-glibc JDK such as Temurin, not a distro JDK)"
 fi
 
 # 5. Stage installer files into the app-image folder

@@ -1,0 +1,48 @@
+#!/bin/sh
+# postinst script for aliview
+#
+# see: dh_installdeb(1)
+
+set -e
+
+package_type=deb
+
+TARGET="/opt/aliview/bin/AliView"
+LINK="/usr/bin/aliview"
+
+case "$1" in
+  configure)
+    if command -v xdg-desktop-menu > /dev/null 2>&1; then
+      xdg-desktop-menu install /opt/aliview/lib/aliview-AliView.desktop
+    fi
+    if command -v xdg-mime > /dev/null 2>&1; then
+      xdg-mime install /opt/aliview/lib/aliview-AliView-MimeInfo.xml
+    fi
+
+    # Create /usr/bin/aliview symlink if safe.
+    if [ -x "$TARGET" ]; then
+      if [ ! -e "$LINK" ]; then
+        ln -s "$TARGET" "$LINK"
+      elif [ -L "$LINK" ]; then
+        CURRENT="$(readlink -f "$LINK" || true)"
+        # Only update if it already points into /opt/aliview (i.e., ours)
+        if [ "$CURRENT" != "$TARGET" ] && echo "$CURRENT" | grep -q '^/opt/aliview/'; then
+          ln -sf "$TARGET" "$LINK"
+        fi
+      else
+        # Regular file exists -> do not modify
+        :
+      fi
+    fi
+    ;;
+
+  abort-upgrade|abort-remove|abort-deconfigure)
+    ;;
+
+  *)
+    echo "postinst called with unknown argument \`$1'" >&2
+    exit 1
+    ;;
+esac
+
+exit 0

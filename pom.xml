@@ -104,7 +104,6 @@
 				  </goals>
 				  <configuration>
 					   <finalName>aliview</finalName>
-					   <fileMode>0755</fileMode>
 					   <outputDirectory>target/windows-version-${project.version}</outputDirectory>
 					   <appendAssemblyId>false</appendAssemblyId>
 					   <descriptorRefs>
@@ -128,7 +127,6 @@
 				   </goals>
 				   <configuration>
 					  <finalName>aliview</finalName>
-					  <fileMode>0755</fileMode>
 					  <outputDirectory>target/linux-version-${project.version}/aliview/</outputDirectory>
 					  <appendAssemblyId>false</appendAssemblyId>
 					  <descriptorRefs>
@@ -152,7 +150,6 @@
                      </goals>
 			         <configuration>
 						  <finalName>aliview</finalName>
-						  <fileMode>0755</fileMode>
 						  <appendAssemblyId>false</appendAssemblyId>
 						  <descriptorRefs>
 							   <descriptorRef>jar-with-dependencies</descriptorRef>

@@ -111,32 +111,57 @@ if [ -d "$INSTALL_DIR" ]; then
 fi
 
 # 5b. Remove artifacts from the OLD (pre-/opt) install layout, if present.
-#     The old installer used /usr/bin, /usr/share/aliview and a capitalized
-#     AliView.desktop — none of which collide with the new paths, so they would
-#     otherwise survive as a stale launcher and a duplicate menu entry.
+#     The old (2018) installer used /usr/bin, /usr/share/aliview and a
+#     capitalized AliView.desktop — none of which collide with the new paths,
+#     so they would otherwise survive as a stale launcher and a duplicate menu
+#     entry. Every removal is guarded by a content fingerprint so we only ever
+#     delete the genuine 2018 artifacts and never clobber another AliView
+#     install (e.g. a distro package) that happens to use the same paths.
 echo "-> Checking for a previous (legacy) AliView installation..."
 
-# Old launcher was a plain script in /usr/bin (new one is a symlink in /usr/local/bin)
-if [ -f /usr/bin/aliview ] && [ ! -L /usr/bin/aliview ]; then
+# True only for the 2018 /usr/bin/aliview wrapper: a regular file (not a
+# symlink) carrying both of its signature strings.
+is_legacy_aliview_wrapper() {
+    local f="$1"
+    [ -f "$f" ] && [ ! -L "$f" ] || return 1
+    grep -q 'Wrapper script version 29 Jan 2018' "$f" 2>/dev/null || return 1
+    grep -q 'defprogdir="/usr/share/aliview"' "$f" 2>/dev/null || return 1
+    return 0
+}
+
+# True only for the 2018 AliView.desktop: its Exec= is the bare command
+# "aliview" (the modern entries use an absolute path).
+is_legacy_aliview_desktop() {
+    local f="$1"
+    [ -f "$f" ] || return 1
+    grep -q '^Exec=aliview' "$f" 2>/dev/null
+}
+
+# Old launcher (new one is a symlink in /usr/local/bin)
+if is_legacy_aliview_wrapper /usr/bin/aliview; then
     echo "   Removing legacy launcher /usr/bin/aliview"
     rm -f /usr/bin/aliview
 fi
 
-# Old data dir
-if [ -d /usr/share/aliview ]; then
+# Old data dir — only if it holds the legacy jar
+if [ -d /usr/share/aliview ] && [ -f /usr/share/aliview/aliview.jar ]; then
     echo "   Removing legacy data dir /usr/share/aliview"
     rm -rf /usr/share/aliview
 fi
 
-# Old system desktop entry (capitalized -> shows as a duplicate menu item)
-rm -f /usr/share/applications/AliView.desktop
+# Old system desktop entry (capitalized -> would show as a duplicate menu item)
+if is_legacy_aliview_desktop /usr/share/applications/AliView.desktop; then
+    echo "   Removing legacy desktop entry /usr/share/applications/AliView.desktop"
+    rm -f /usr/share/applications/AliView.desktop
+fi
 
 # Old per-user desktop entry, in the invoking user's home (not root's)
 if [ -n "${SUDO_USER:-}" ]; then
     USER_HOME=$(getent passwd "$SUDO_USER" | cut -d: -f6)
-    if [ -n "$USER_HOME" ] && [ -f "$USER_HOME/.local/share/applications/AliView.desktop" ]; then
+    USER_DESKTOP="$USER_HOME/.local/share/applications/AliView.desktop"
+    if [ -n "$USER_HOME" ] && is_legacy_aliview_desktop "$USER_DESKTOP"; then
         echo "   Removing legacy menu entry for user $SUDO_USER"
-        rm -f "$USER_HOME/.local/share/applications/AliView.desktop"
+        rm -f "$USER_DESKTOP"
     fi
 fi
 

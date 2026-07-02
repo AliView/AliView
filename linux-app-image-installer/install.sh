@@ -1,7 +1,8 @@
 #!/bin/bash
 # AliView Linux Installer
 # Compatible with: Ubuntu 20.04+, Debian 11+, Fedora 38+, Arch Linux, openSUSE Leap/Tumbleweed
-# Build requirement: jpackage output built on Ubuntu 20.04 (glibc 2.31) for maximum compatibility
+# (the bundled JRE sets the glibc floor; build the app-image with a low-glibc
+#  JDK such as Temurin to keep this compatibility range wide)
 
 set -euo pipefail
 
@@ -15,6 +16,7 @@ ICON_SRC="splash_128x128.png"
 ICON_DEST_NAME="aliview"
 ICON_DEST="/usr/share/icons/hicolor/128x128/apps/${ICON_DEST_NAME}.png"
 DESKTOP_FILE="/usr/share/applications/aliview.desktop"
+MIME_XML_DEST="/usr/share/mime/packages/aliview.xml"
 APP_VERSION="1.0"
 INSTALL_MARKER="$INSTALL_DIR/.installing"
 LOG_FILE="$INSTALL_DIR/install.log"
@@ -207,11 +209,58 @@ else
     echo -e "   ${YELLOW}Warning:${NC} Icon file not found, skipping icon installation."
 fi
 
+# 11b. Install shared-mime-info definitions so the desktop recognizes alignment
+#      files by extension (enables double-click -> open in AliView, not just
+#      "Open With"). Types are declared as sub-classes of text/plain.
+#      shared-mime-info MERGES package files under /usr/share/mime/packages,
+#      so this augments the MIME database rather than clobbering types other
+#      apps may define.
+echo "-> Installing MIME type definitions..."
+mkdir -p "$(dirname "$MIME_XML_DEST")"
+cat <<'MIME_EOF' > "$MIME_XML_DEST"
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+  <mime-type type="application/x-fasta">
+    <comment>FASTA sequence alignment</comment>
+    <sub-class-of type="text/plain"/>
+    <glob pattern="*.fasta"/>
+    <glob pattern="*.fas"/>
+    <glob pattern="*.fa"/>
+    <glob pattern="*.afa"/>
+  </mime-type>
+  <mime-type type="application/x-nexus">
+    <comment>NEXUS alignment</comment>
+    <sub-class-of type="text/plain"/>
+    <glob pattern="*.nexus"/>
+    <glob pattern="*.nex"/>
+  </mime-type>
+  <mime-type type="application/x-phylip">
+    <comment>PHYLIP alignment</comment>
+    <sub-class-of type="text/plain"/>
+    <glob pattern="*.phylip"/>
+    <glob pattern="*.phy"/>
+  </mime-type>
+  <mime-type type="application/x-clustal">
+    <comment>Clustal alignment</comment>
+    <sub-class-of type="text/plain"/>
+    <glob pattern="*.clustal"/>
+    <glob pattern="*.clustalw"/>
+    <glob pattern="*.clustalx"/>
+    <glob pattern="*.aln"/>
+  </mime-type>
+  <mime-type type="application/x-msf">
+    <comment>MSF alignment</comment>
+    <sub-class-of type="text/plain"/>
+    <glob pattern="*.msf"/>
+  </mime-type>
+</mime-info>
+MIME_EOF
+chmod 644 "$MIME_XML_DEST"
+
 # 12. Desktop entry
-#     MimeType= here is sufficient for "Open With" associations in all major DEs.
-#     We deliberately do NOT install a MIME XML package — many distros already
-#     define these biological sequence types, and adding duplicate definitions
-#     can silently break other apps' file associations.
+#     Categories: exactly one main category (Science) plus the Biology
+#     additional category — validates cleanly and shows once in the menu.
+#     MimeType matches the types registered in step 11b.
 echo "-> Registering desktop menu entry..."
 mkdir -p /usr/share/applications
 cat <<EOF > "$DESKTOP_FILE"
@@ -225,8 +274,8 @@ Exec=$BIN_LINK %f
 TryExec=$BIN_LINK
 Icon=${ICON_DEST_NAME}
 Terminal=false
-Categories=Science;Biology;Education;
-MimeType=application/x-fasta;text/x-fasta;application/x-clustal;application/x-phylip;application/x-nexus;
+Categories=Science;Biology;
+MimeType=application/x-fasta;application/x-nexus;application/x-phylip;application/x-clustal;application/x-msf;
 Keywords=alignment;biology;bioinformatics;fasta;phylip;clustal;nexus;
 StartupWMClass=AliView
 StartupNotify=true
@@ -245,6 +294,7 @@ INSTALL_DIR_EXPECTED="/opt/aliview"
 BIN_LINK="/usr/local/bin/aliview"
 DESKTOP_FILE="/usr/share/applications/aliview.desktop"
 ICON_FILE="/usr/share/icons/hicolor/128x128/apps/aliview.png"
+MIME_XML="/usr/share/mime/packages/aliview.xml"
 
 if [ "$EUID" -ne 0 ]; then
     echo "Please run with sudo: sudo /opt/aliview/uninstall.sh"
@@ -263,12 +313,14 @@ echo "Removing AliView..."
 rm -f "$BIN_LINK"
 rm -f "$DESKTOP_FILE"
 rm -f "$ICON_FILE"
+rm -f "$MIME_XML"
 
 # Refresh databases BEFORE rm -rf INSTALL_DIR — do all meaningful work first.
 # bash reads the whole script into memory so rm -rf won't cut execution short,
 # but this ordering is still correct practice.
 echo "-> Refreshing system databases..."
 update-desktop-database /usr/share/applications > /dev/null 2>&1 || true
+update-mime-database /usr/share/mime > /dev/null 2>&1 || true
 
 # Icon cache — GTK desktops (GNOME, Xfce, LXDE, Cinnamon)
 if command -v gtk-update-icon-cache &> /dev/null; then
@@ -296,6 +348,7 @@ rm -f "$INSTALL_MARKER"
 # 15. Refresh system databases
 echo "-> Refreshing system databases..."
 update-desktop-database /usr/share/applications > /dev/null 2>&1 || true
+update-mime-database /usr/share/mime > /dev/null 2>&1 || true
 
 # Icon cache — GTK desktops (GNOME, Xfce, LXDE, Cinnamon)
 if command -v gtk-update-icon-cache &> /dev/null; then

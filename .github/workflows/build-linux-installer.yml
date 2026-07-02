@@ -45,9 +45,8 @@ jobs:
           )
           VERSION="${BASE}.${GITHUB_RUN_NUMBER}"
           echo "APP_VERSION=${VERSION}" >> "$GITHUB_ENV"
-          # app-image only — no .deb (its auto-computed Depends break across
-          # Ubuntu releases, e.g. the 24.04 t64 library renames).
-          JPACKAGE_TYPES=app-image APP_VERSION="${VERSION}" ./jpackage/jpackage-linux.sh
+          # jpackage-linux.sh builds the app-image only (no .deb).
+          APP_VERSION="${VERSION}" ./jpackage/jpackage-linux.sh
           APP_VERSION="${VERSION}" ./linux-app-image-installer/create-package.sh
 
       # Hard regression gate: the whole point of using Temurin is a low glibc

@@ -31,7 +31,6 @@ PY
 )"
 fi
 echo "APP_VERSION=$APP_VERSION"
-TYPES="${JPACKAGE_TYPES:-app-image,deb}"
 
 rm -rf "target/jpackage-linux"
 mkdir -p "target/jpackage-linux/input"
@@ -72,79 +71,30 @@ echo "Creating runtime image with jlink..."
   --no-man-pages \
   --output "target/jpackage-linux/runtime"
 
-for TYPE in ${TYPES//,/ }; do
-  if [[ "$TYPE" == "app-image" ]]; then
-    JPACKAGE_ARGS=(
-      --type "$TYPE"
-      --name "$APP_NAME"
-      --app-version "$APP_VERSION"
-      --input "target/jpackage-linux/input"
-      --main-jar "aliview.jar"
-      --main-class "aliview.AliView"
-      --icon "src/main/resources/img/alignment_ico_128x128.png"
-      --runtime-image "target/jpackage-linux/runtime"
-      --dest "target/jpackage-linux"
-      --java-options "-Xmx1024m"
-      --java-options "-Xms128m"
-      --java-options "-splash:\$APPDIR/splash_128x128.png"
-    )
-  else
-    JPACKAGE_ARGS=(
-      --type "$TYPE"
-      --name "$APP_NAME"
-      --app-version "$APP_VERSION"
-      --input "target/jpackage-linux/input"
-      --main-jar "aliview.jar"
-      --main-class "aliview.AliView"
-      --icon "src/main/resources/img/alignment_ico_128x128.png"
-      --resource-dir "jpackage/pkg-resources"
-      --runtime-image "target/jpackage-linux/runtime"
-      --file-associations "jpackage/file-associations/nexus.properties"
-      --file-associations "jpackage/file-associations/nex.properties"
-      --file-associations "jpackage/file-associations/fasta.properties"
-      --file-associations "jpackage/file-associations/fas.properties"
-      --file-associations "jpackage/file-associations/fa.properties"
-      --file-associations "jpackage/file-associations/afa.properties"
-      --file-associations "jpackage/file-associations/phylip.properties"
-      --file-associations "jpackage/file-associations/phy.properties"
-      --file-associations "jpackage/file-associations/aln.properties"
-      --file-associations "jpackage/file-associations/clustal.properties"
-      --file-associations "jpackage/file-associations/clustalw.properties"
-      --file-associations "jpackage/file-associations/clustalx.properties"
-      --file-associations "jpackage/file-associations/msf.properties"
-      --dest "target/jpackage-linux"
-      --java-options "-Xmx1024m"
-      --java-options "-Xms128m"
-      --java-options "-splash:\$APPDIR/splash_128x128.png"
-    )
-  fi
+# We build the app-image only. Native packages (.deb/.rpm) are intentionally not
+# produced: the self-extracting installer in linux-app-image-installer/ wraps
+# this app-image and is distro-agnostic, and jpackage's auto-computed .deb
+# dependencies break across distro releases (e.g. the Ubuntu 24.04 t64 renames).
+echo "Packaging app-image with jpackage..."
+"$JPACKAGE" \
+  --type app-image \
+  --name "$APP_NAME" \
+  --app-version "$APP_VERSION" \
+  --input "target/jpackage-linux/input" \
+  --main-jar "aliview.jar" \
+  --main-class "aliview.AliView" \
+  --icon "src/main/resources/img/alignment_ico_128x128.png" \
+  --runtime-image "target/jpackage-linux/runtime" \
+  --dest "target/jpackage-linux" \
+  --java-options "-Xmx1024m" \
+  --java-options "-Xms128m" \
+  --java-options "-splash:\$APPDIR/splash_128x128.png"
 
-  if [[ "$TYPE" != "app-image" ]]; then
-    JPACKAGE_ARGS+=(--vendor "Systematic Biology, Uppsala University")
-    JPACKAGE_ARGS+=(--about-url "https://www.ormbunkar.se")
-  fi
-
-  if [[ -n "${LINUX_PACKAGE_NAME:-}" ]]; then
-    JPACKAGE_ARGS+=(--linux-package-name "$LINUX_PACKAGE_NAME")
-  fi
-  if [[ -n "${LINUX_APP_CATEGORY:-}" ]]; then
-    JPACKAGE_ARGS+=(--linux-app-category "$LINUX_APP_CATEGORY")
-  fi
-  if [[ -n "${LINUX_MENU_GROUP:-}" ]]; then
-    JPACKAGE_ARGS+=(--linux-menu-group "$LINUX_MENU_GROUP")
-  fi
-
-  echo "Packaging with jpackage: $TYPE"
-  "$JPACKAGE" "${JPACKAGE_ARGS[@]}"
-
-  if [[ "$TYPE" == "app-image" ]]; then
-    APP_IMAGE_DIR="target/jpackage-linux/${APP_NAME}"
-    APP_IMAGE_TGZ="target/jpackage-linux/${APP_NAME}-${APP_VERSION}-linux-app-image.tar.gz"
-    if [[ -d "$APP_IMAGE_DIR" ]]; then
-      tar -C "target/jpackage-linux" -czf "$APP_IMAGE_TGZ" "$APP_NAME"
-      echo "Created app-image archive: $APP_IMAGE_TGZ"
-    fi
-  fi
-done
+APP_IMAGE_DIR="target/jpackage-linux/${APP_NAME}"
+APP_IMAGE_TGZ="target/jpackage-linux/${APP_NAME}-${APP_VERSION}-linux-app-image.tar.gz"
+if [[ -d "$APP_IMAGE_DIR" ]]; then
+  tar -C "target/jpackage-linux" -czf "$APP_IMAGE_TGZ" "$APP_NAME"
+  echo "Created app-image archive: $APP_IMAGE_TGZ"
+fi
 
 echo "Done: target/jpackage-linux"

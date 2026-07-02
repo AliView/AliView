@@ -28,6 +28,20 @@ PACKAGE_NAME="aliview.install.run"
 ICON_SRC="splash_128x128.png"                       # <-- must be in current directory
 INSTALL_SCRIPT="install.sh"                          # <-- must be in current directory
 
+# Version to stamp into the installer. Use $APP_VERSION if set (CI passes it),
+# else read it from pom.xml, else fall back to the installer's own default.
+APP_VERSION="${APP_VERSION:-}"
+if [ -z "$APP_VERSION" ] && [ -f "$SCRIPT_DIR/../pom.xml" ] && command -v python3 &> /dev/null; then
+    APP_VERSION="$(python3 - "$SCRIPT_DIR/../pom.xml" <<'PY'
+import sys, xml.etree.ElementTree as ET
+root = ET.parse(sys.argv[1]).getroot()
+ns = {"m": root.tag.split("}")[0].strip("{")}
+print(root.find("m:version", ns).text)
+PY
+)"
+fi
+APP_VERSION="${APP_VERSION:-1.0}"
+
 # Colors
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -86,10 +100,14 @@ if command -v objdump &> /dev/null && [ -f "$LIBJVM" ]; then
 fi
 
 # 5. Stage installer files into the app-image folder
-echo "-> Staging installer files..."
+echo "-> Staging installer files (version ${APP_VERSION})..."
 cp "$INSTALL_SCRIPT" "$APP_IMAGE_DIR/"
 cp "$ICON_SRC"       "$APP_IMAGE_DIR/"
 chmod +x "$APP_IMAGE_DIR/$INSTALL_SCRIPT"
+
+# Stamp the real version into the staged installer, replacing its default.
+sed -i "s/^APP_VERSION=\"[^\"]*\"/APP_VERSION=\"${APP_VERSION}\"/" \
+    "$APP_IMAGE_DIR/$INSTALL_SCRIPT"
 
 # 6. Create the self-extracting archive
 echo "-> Building self-extracting archive: $PACKAGE_NAME"

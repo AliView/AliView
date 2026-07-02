@@ -209,58 +209,107 @@ else
     echo -e "   ${YELLOW}Warning:${NC} Icon file not found, skipping icon installation."
 fi
 
-# 11b. Install shared-mime-info definitions so the desktop recognizes alignment
-#      files by extension (enables double-click -> open in AliView, not just
-#      "Open With"). Types are declared as sub-classes of text/plain.
-#      shared-mime-info MERGES package files under /usr/share/mime/packages,
-#      so this augments the MIME database rather than clobbering types other
-#      apps may define.
-echo "-> Installing MIME type definitions..."
-mkdir -p "$(dirname "$MIME_XML_DEST")"
-cat <<'MIME_EOF' > "$MIME_XML_DEST"
-<?xml version="1.0" encoding="UTF-8"?>
-<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
-  <mime-type type="application/x-fasta">
-    <comment>FASTA sequence alignment</comment>
-    <sub-class-of type="text/plain"/>
-    <glob pattern="*.fasta"/>
-    <glob pattern="*.fas"/>
-    <glob pattern="*.fa"/>
-    <glob pattern="*.afa"/>
-  </mime-type>
-  <mime-type type="application/x-nexus">
-    <comment>NEXUS alignment</comment>
-    <sub-class-of type="text/plain"/>
-    <glob pattern="*.nexus"/>
-    <glob pattern="*.nex"/>
-  </mime-type>
-  <mime-type type="application/x-phylip">
-    <comment>PHYLIP alignment</comment>
-    <sub-class-of type="text/plain"/>
-    <glob pattern="*.phylip"/>
-    <glob pattern="*.phy"/>
-  </mime-type>
-  <mime-type type="application/x-clustal">
-    <comment>Clustal alignment</comment>
-    <sub-class-of type="text/plain"/>
-    <glob pattern="*.clustal"/>
-    <glob pattern="*.clustalw"/>
-    <glob pattern="*.clustalx"/>
-    <glob pattern="*.aln"/>
-  </mime-type>
-  <mime-type type="application/x-msf">
-    <comment>MSF alignment</comment>
-    <sub-class-of type="text/plain"/>
-    <glob pattern="*.msf"/>
-  </mime-type>
-</mime-info>
-MIME_EOF
-chmod 644 "$MIME_XML_DEST"
+# 11b. File type associations.
+#      Policy: AliView must ALWAYS be offered under "Open With" for alignment
+#      files, but must NEVER steal an association another application already
+#      owns. To honour that:
+#        * we install a MIME glob only for an extension that is NOT already
+#          mapped to a specific type, so we never change how existing files are
+#          classified and never hijack another app's default;
+#        * for extensions another app already owns, we add that existing type
+#          to our desktop MimeType so we still appear under "Open With";
+#        * we never set AliView as the default handler (no `xdg-mime default`,
+#          no [Default Applications] entry) — the desktop only makes us default
+#          when nothing else claims the type.
+echo "-> Configuring file type associations..."
+
+# Remove any MIME package from a previous AliView install first, so the probing
+# below reflects only OTHER applications (otherwise a reinstall would see our
+# own globs and wrongly treat every extension as already-owned).
+if [ -f "$MIME_XML_DEST" ]; then
+    rm -f "$MIME_XML_DEST"
+    command -v update-mime-database &> /dev/null && \
+        update-mime-database /usr/share/mime &> /dev/null || true
+fi
+
+# Format family -> extensions and a human-readable comment per family.
+FAMILY_ORDER=(application/x-fasta application/x-nexus application/x-phylip application/x-clustal application/x-msf)
+declare -A FAMILY_EXTS=(
+    [application/x-fasta]="fasta fas fa afa"
+    [application/x-nexus]="nexus nex"
+    [application/x-phylip]="phylip phy"
+    [application/x-clustal]="clustal clustalw clustalx aln"
+    [application/x-msf]="msf"
+)
+declare -A FAMILY_COMMENT=(
+    [application/x-fasta]="FASTA sequence alignment"
+    [application/x-nexus]="NEXUS alignment"
+    [application/x-phylip]="PHYLIP alignment"
+    [application/x-clustal]="Clustal alignment"
+    [application/x-msf]="MSF alignment"
+)
+
+# Return the current specific MIME type for a file extension, or empty if the
+# system has no specific mapping (unknown / plain text / generic binary).
+current_type_for_ext() {
+    local ext="$1" probe t
+    command -v xdg-mime &> /dev/null || { echo ""; return; }
+    probe="$(mktemp --suffix=".$ext" 2>/dev/null)" || { echo ""; return; }
+    printf 'x' > "$probe"
+    t="$(xdg-mime query filetype "$probe" 2>/dev/null || true)"
+    rm -f "$probe"
+    case "$t" in
+        ""|text/plain|application/octet-stream|application/x-zerosize|inode/*) echo "" ;;
+        *) echo "$t" ;;
+    esac
+}
+
+MIME_XML_BODY=""
+declare -A DESKTOP_TYPES=()   # types to advertise in the desktop MimeType line
+
+for TYPE in "${FAMILY_ORDER[@]}"; do
+    OUR_GLOBS=""
+    for ext in ${FAMILY_EXTS[$TYPE]}; do
+        existing="$(current_type_for_ext "$ext")"
+        if [ -n "$existing" ]; then
+            echo "   .$ext already handled as '$existing' — not overriding; adding to Open With"
+            DESKTOP_TYPES["$existing"]=1
+        else
+            OUR_GLOBS+="    <glob pattern=\"*.${ext}\"/>"$'\n'
+        fi
+    done
+    if [ -n "$OUR_GLOBS" ]; then
+        MIME_XML_BODY+="  <mime-type type=\"${TYPE}\">"$'\n'
+        MIME_XML_BODY+="    <comment>${FAMILY_COMMENT[$TYPE]}</comment>"$'\n'
+        MIME_XML_BODY+="    <sub-class-of type=\"text/plain\"/>"$'\n'
+        MIME_XML_BODY+="${OUR_GLOBS}"
+        MIME_XML_BODY+="  </mime-type>"$'\n'
+        DESKTOP_TYPES["$TYPE"]=1
+    fi
+done
+
+# Install our shared-mime-info package only if we own at least one glob.
+if [ -n "$MIME_XML_BODY" ]; then
+    echo "-> Installing MIME type definitions for unclaimed extensions..."
+    mkdir -p "$(dirname "$MIME_XML_DEST")"
+    {
+        echo '<?xml version="1.0" encoding="UTF-8"?>'
+        echo '<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">'
+        printf '%s' "$MIME_XML_BODY"
+        echo '</mime-info>'
+    } > "$MIME_XML_DEST"
+    chmod 644 "$MIME_XML_DEST"
+else
+    echo "   All alignment extensions are already registered — no MIME package installed."
+fi
+
+# Desktop MimeType value: our own types plus any pre-existing ones, sorted for
+# stable output (trailing ';' is expected by the desktop entry spec).
+MIME_TYPES="$(printf '%s;' $(printf '%s\n' "${!DESKTOP_TYPES[@]}" | sort))"
 
 # 12. Desktop entry
-#     Categories: exactly one main category (Science) plus the Biology
-#     additional category — validates cleanly and shows once in the menu.
-#     MimeType matches the types registered in step 11b.
+#     Categories: one main category (Science) plus the Biology additional
+#     category — validates cleanly and shows once in the menu.
 echo "-> Registering desktop menu entry..."
 mkdir -p /usr/share/applications
 cat <<EOF > "$DESKTOP_FILE"
@@ -275,7 +324,7 @@ TryExec=$BIN_LINK
 Icon=${ICON_DEST_NAME}
 Terminal=false
 Categories=Science;Biology;
-MimeType=application/x-fasta;application/x-nexus;application/x-phylip;application/x-clustal;application/x-msf;
+MimeType=${MIME_TYPES}
 Keywords=alignment;biology;bioinformatics;fasta;phylip;clustal;nexus;
 StartupWMClass=AliView
 StartupNotify=true

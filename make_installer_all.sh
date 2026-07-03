@@ -15,7 +15,8 @@ function print_error {
 }
 trap print_error ERR
 
-./make_installer_linux.sh
+# Linux installer is now built via ./build-linux-installer.sh (jpackage-based)
+# or the build-linux-installer.yml CI workflow.
 ./make_installer_windows.sh
 # no need to create for OSX
 

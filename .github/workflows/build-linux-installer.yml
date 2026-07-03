@@ -44,7 +44,11 @@ jobs:
           PY
           )
           VERSION="${BASE}.${GITHUB_RUN_NUMBER}"
+          # Full version (with run number) is the internal build/app version;
+          # the plain pom version is used for the artifact filename, matching
+          # the macOS and Windows workflows.
           echo "APP_VERSION=${VERSION}" >> "$GITHUB_ENV"
+          echo "RELEASE_VERSION=${BASE}" >> "$GITHUB_ENV"
           # jpackage-linux.sh builds the app-image only (no .deb).
           APP_VERSION="${VERSION}" ./jpackage/jpackage-linux.sh
           APP_VERSION="${VERSION}" ./linux-app-image-installer/create-package.sh
@@ -72,7 +76,7 @@ jobs:
       - name: Rename installer
         run: |
           mv linux-app-image-installer/aliview.install.run \
-             "linux-app-image-installer/AliView-${APP_VERSION}-linux-x86_64.run"
+             "linux-app-image-installer/AliView-${RELEASE_VERSION}-linux-x86_64.run"
 
       - name: Upload installer artifact
         uses: actions/upload-artifact@v4

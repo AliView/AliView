@@ -15,14 +15,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       # Temurin (not the distro JDK) is what gives the bundle a low glibc floor.
       # Nothing native is compiled here — jlink copies the runtime .so files and
       # jpackage copies a prebuilt launcher, so the floor is inherited from this
       # JDK. The build OS (ubuntu-latest) is irrelevant to compatibility.
       - name: Set up Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "25"
@@ -79,13 +79,13 @@ jobs:
              "linux-app-image-installer/AliView-${RELEASE_VERSION}-linux-x86_64.run"
 
       - name: Upload installer artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: AliView-linux-installer
           path: linux-app-image-installer/AliView-*-linux-x86_64.run
 
       - name: Attach installer to Release
         if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: linux-app-image-installer/AliView-*-linux-x86_64.run

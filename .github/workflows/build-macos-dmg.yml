@@ -11,9 +11,9 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: macos-14
+          - os: macos-13      # Intel (x86_64)
             arch: x64
-          - os: macos-14
+          - os: macos-14      # Apple Silicon (arm64)
             arch: arm64
     runs-on: ${{ matrix.os }}
     steps:
@@ -25,6 +25,23 @@ jobs:
         with:
           distribution: temurin
           java-version: "25"
+
+      # Guard against a matrix misconfiguration silently producing two builds of
+      # the same architecture (setup-java and jpackage build native to the
+      # runner, so the runner's arch IS the artifact's arch).
+      - name: Verify runner architecture
+        run: |
+          ACTUAL=$(uname -m)   # x86_64 on Intel, arm64 on Apple Silicon
+          case "${{ matrix.arch }}" in
+            x64)   EXPECT=x86_64 ;;
+            arm64) EXPECT=arm64  ;;
+            *)     echo "::error::Unknown matrix.arch '${{ matrix.arch }}'"; exit 1 ;;
+          esac
+          echo "matrix.arch=${{ matrix.arch }} expects $EXPECT; runner reports $ACTUAL"
+          if [ "$ACTUAL" != "$EXPECT" ]; then
+            echo "::error::Runner architecture $ACTUAL does not match expected $EXPECT for ${{ matrix.arch }}."
+            exit 1
+          fi
 
       - name: Build DMG via jpackage
         run: |

@@ -8,40 +8,39 @@ on:
 
 jobs:
   build-dmg:
+    # Build BOTH architectures on Apple Silicon (macos-14). Free Intel runners
+    # (macos-13) are scarce and can queue for hours. jpackage compiles nothing —
+    # it copies the launcher and the jlink runtime from the JDK — so the OUTPUT
+    # architecture and the minimum-macOS floor are inherited from the Temurin
+    # JDK, not from the runner. Installing an x64 Temurin (run via Rosetta 2)
+    # therefore produces a genuine x86_64 app that still runs on older macOS
+    # (Temurin x64 floor ~10.x; arm64 floor is macOS 11, the first Apple Silicon
+    # release). The verification step below proves this on the built binary.
     strategy:
+      fail-fast: false
       matrix:
         include:
-          - os: macos-13      # Intel (x86_64)
-            arch: x64
-          - os: macos-14      # Apple Silicon (arm64)
-            arch: arm64
-    runs-on: ${{ matrix.os }}
+          - arch: x64
+            jdk_arch: x64
+          - arch: arm64
+            jdk_arch: aarch64
+    runs-on: macos-14
     steps:
       - name: Check out code
         uses: actions/checkout@v7
+
+      # The x64 JDK is an Intel binary; make sure Rosetta 2 is present so it can
+      # run on the Apple Silicon runner. Harmless no-op if already installed.
+      - name: Ensure Rosetta 2 (x64 only)
+        if: matrix.arch == 'x64'
+        run: softwareupdate --install-rosetta --agree-to-license
 
       - name: Set up Java
         uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "25"
-
-      # Guard against a matrix misconfiguration silently producing two builds of
-      # the same architecture (setup-java and jpackage build native to the
-      # runner, so the runner's arch IS the artifact's arch).
-      - name: Verify runner architecture
-        run: |
-          ACTUAL=$(uname -m)   # x86_64 on Intel, arm64 on Apple Silicon
-          case "${{ matrix.arch }}" in
-            x64)   EXPECT=x86_64 ;;
-            arm64) EXPECT=arm64  ;;
-            *)     echo "::error::Unknown matrix.arch '${{ matrix.arch }}'"; exit 1 ;;
-          esac
-          echo "matrix.arch=${{ matrix.arch }} expects $EXPECT; runner reports $ACTUAL"
-          if [ "$ACTUAL" != "$EXPECT" ]; then
-            echo "::error::Runner architecture $ACTUAL does not match expected $EXPECT for ${{ matrix.arch }}."
-            exit 1
-          fi
+          architecture: ${{ matrix.jdk_arch }}
 
       - name: Build DMG via jpackage
         run: |
@@ -56,17 +55,52 @@ jobs:
           PY
           )
           PATCH=${GITHUB_RUN_NUMBER}
+          # Internal app-version carries the run number; the artifact filename
+          # uses the plain pom version (matches Linux/Windows).
           JPACKAGE_TYPES=dmg APP_VERSION="${VERSION}.${PATCH}" ./jpackage/jpackage-mac.sh
-          VERSION=$(python3 - <<'PY'
-          import xml.etree.ElementTree as ET
-          tree = ET.parse("pom.xml")
-          root = tree.getroot()
-          ns = {"m": root.tag.split("}")[0].strip("{")}
-          print(root.find("m:version", ns).text)
-          PY
-          )
           DMG=$(ls target/jpackage-mac/*.dmg | head -n 1)
           mv "$DMG" "target/jpackage-mac/AliView-${VERSION}-macOS-${{ matrix.arch }}.dmg"
+
+      # Verify the SHIPPED binary (not the runner): mount the DMG and inspect the
+      # launcher's Mach-O headers. Fails the build if the architecture is wrong
+      # (the arm64-mislabeled-as-x64 bug) or the minimum-macOS floor regressed.
+      - name: Verify architecture and macOS floor
+        run: |
+          DMG=$(ls target/jpackage-mac/AliView-*-macOS-${{ matrix.arch }}.dmg | head -n 1)
+          MNT=/tmp/aliview_dmg
+          hdiutil attach "$DMG" -nobrowse -mountpoint "$MNT"   # mount read-only
+          LAUNCHER="$MNT/AliView.app/Contents/MacOS/AliView"
+
+          # Expected CPU arch for this matrix leg
+          case "${{ matrix.arch }}" in
+            x64)   EXPECT=x86_64 ;;
+            arm64) EXPECT=arm64  ;;
+          esac
+          GOT=$(lipo -archs "$LAUNCHER")                       # actual arch(es)
+
+          # Minimum macOS floor: parse both the modern (LC_BUILD_VERSION -> minos)
+          # and legacy (LC_VERSION_MIN_MACOSX -> version) load commands.
+          MIN_OS=$(otool -l "$LAUNCHER" | awk '
+            /cmd LC_BUILD_VERSION/{f=1}
+            /cmd LC_VERSION_MIN_MACOSX/{f=1}
+            f && /minos|version/{print $2; exit}')
+
+          echo "arch: expected=$EXPECT got=$GOT"
+          echo "minimum macOS floor: ${MIN_OS:-unknown}"
+          hdiutil detach "$MNT" || true
+
+          if [ "$GOT" != "$EXPECT" ]; then
+            echo "::error::Launcher is $GOT but expected $EXPECT for ${{ matrix.arch }}."
+            exit 1
+          fi
+
+          # Ceiling 11.99 => 10.x and 11.x pass; 12.0+ fails as a regression.
+          CEIL="11.99"
+          if [ -z "$MIN_OS" ] || \
+             [ "$(printf '%s\n%s\n' "$CEIL" "$MIN_OS" | sort -V | tail -1)" != "$CEIL" ]; then
+            echo "::error::Minimum macOS floor '${MIN_OS}' is too high (want <= 11.x)."
+            exit 1
+          fi
 
       - name: Upload DMG artifact
         uses: actions/upload-artifact@v7

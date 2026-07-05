@@ -104,30 +104,24 @@ if command -v getenforce &> /dev/null; then
     fi
 fi
 
-# 5. Remove a prior .deb-installed AliView (version 1.31 shipped as a .deb).
-#    That package installed to the SAME /opt/aliview and is tracked by dpkg, so
-#    if we just overwrote it dpkg would be left inconsistent — and a later
-#    `apt remove aliview` would then delete THIS install. Remove it via the
-#    package manager first (which also runs the deb's own cleanup for its
-#    /usr/bin/aliview symlink), so dpkg forgets the package before we take over.
-if command -v dpkg &> /dev/null && dpkg -s aliview &> /dev/null; then
-    echo "-> Detected a .deb-installed AliView; removing it to avoid a split install..."
-    if command -v apt-get &> /dev/null; then
-        DEBIAN_FRONTEND=noninteractive apt-get remove -y aliview || dpkg -r aliview || true
-    else
-        dpkg -r aliview || true
-    fi
+# 5. Refuse to run over a prior .deb-installed AliView (version 1.31 shipped as
+#    a .deb). That package installed to the SAME /opt/aliview and is tracked by
+#    dpkg, so overwriting it would leave dpkg inconsistent — and a later
+#    `apt remove aliview` would then delete THIS install. We deliberately do not
+#    touch the package manager ourselves; instead we ask the user to remove it,
+#    keeping them in control of their system's package state.
+if command -v dpkg &> /dev/null && dpkg -s aliview &> /dev/null 2>&1; then
+    echo -e "${RED}Error:${NC} AliView is currently installed via your package manager (.deb)."
+    echo "It occupies the same location ($INSTALL_DIR) this installer uses."
+    echo "Please remove it first, then run this installer again:"
+    echo ""
+    echo "    sudo apt remove aliview"
+    echo ""
+    echo "(on non-apt systems: sudo dpkg -r aliview)"
+    exit 1
 fi
 
-# Drop a leftover /usr/bin/aliview symlink if it still points into /opt/aliview
-# (the deb's launcher location; our launcher lives in /usr/local/bin).
-if [ -L /usr/bin/aliview ]; then
-    case "$(readlink -f /usr/bin/aliview 2>/dev/null)" in
-        /opt/aliview/*) echo "   Removing leftover /usr/bin/aliview symlink"; rm -f /usr/bin/aliview ;;
-    esac
-fi
-
-# 5a. Cleanup old /opt version (from a previous .run install, or deb remnants)
+# 5a. Cleanup old /opt version (from a previous .run install)
 if [ -d "$INSTALL_DIR" ]; then
     echo "-> Removing existing version at $INSTALL_DIR..."
     rm -rf "$INSTALL_DIR"

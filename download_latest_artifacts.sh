@@ -36,6 +36,11 @@ mkdir -p "$DEST"
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 
+# Clear any previously-downloaded installers so the result is a clean set of the
+# current build (stale versions would otherwise pile up, since differing version
+# numbers don't overwrite each other).
+rm -f "$DEST"/AliView-*
+
 echo "=> Downloading artifacts into: $DEST"
 [ -n "$REF" ] && echo "   (pinned to ref: $REF)"
 

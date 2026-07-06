@@ -71,21 +71,13 @@ if [ "$EUID" -ne 0 ]; then
     exit 1
 fi
 
-# 2. Detect binary in the makeself temp dir (this script runs from the extracted
-#    package root, so ./bin/ refers to the bundled jpackage output, not /opt).
-#    Try the expected name first; fall back to scanning ./bin/ for any executable.
-RESOLVED_BINARY=""
-if [ -f "./bin/$APP_BINARY" ] && [ -x "./bin/$APP_BINARY" ]; then
-    RESOLVED_BINARY="./bin/$APP_BINARY"
-else
-    echo -e "   ${YELLOW}Warning:${NC} Expected binary ./bin/$APP_BINARY not found — scanning ./bin/..."
-    RESOLVED_BINARY=$(find ./bin -maxdepth 1 -type f -executable | head -n1 || true)
-    if [ -z "$RESOLVED_BINARY" ]; then
-        echo -e "${RED}Error:${NC} No executable found in ./bin/. Package may be corrupted."
-        exit 1
-    fi
-    APP_BINARY=$(basename "$RESOLVED_BINARY")
-    echo "   Found binary: $APP_BINARY"
+# 2. Verify the launcher is present. This script runs from the extracted package
+#    root, and a jpackage app-image always places the launcher at ./bin/<AppName>.
+#    If it is missing or not executable, the package is corrupt — fail fast.
+if [ ! -f "./bin/$APP_BINARY" ] || [ ! -x "./bin/$APP_BINARY" ]; then
+    echo -e "${RED}Error:${NC} Expected launcher ./bin/$APP_BINARY is missing or not executable."
+    echo "The package appears to be corrupt."
+    exit 1
 fi
 
 # 3. Detect distro family
@@ -206,28 +198,19 @@ touch "$INSTALL_MARKER"
 echo "AliView install log — $(date)" > "$LOG_FILE"
 echo "Distro: $DISTRO | SELinux: $SELINUX_ACTIVE" >> "$LOG_FILE"
 
-# 7. Deploy files
-#    Prefer rsync, fall back to tar pipe, fall back to find+cp.
-#    All three exclude install.sh from the destination.
+# 7. Deploy files: copy every top-level entry from the extracted package except
+#    this installer script. cp -a is sufficient — step 8 resets ownership and
+#    permissions afterward, so preserving attributes here doesn't matter.
 echo -e "-> Installing files to ${GREEN}$INSTALL_DIR${NC}..."
-if command -v rsync &> /dev/null; then
-    echo "   (using rsync)" | tee -a "$LOG_FILE"
-    rsync -a --exclude="install.sh" ./ "$INSTALL_DIR/"
-elif command -v tar &> /dev/null; then
-    echo "   (using tar pipe)" | tee -a "$LOG_FILE"
-    tar -c --exclude="./install.sh" . | tar -x -C "$INSTALL_DIR"
-else
-    echo "   (using find+cp fallback)" | tee -a "$LOG_FILE"
-    find . -maxdepth 1 -mindepth 1 ! -name "install.sh" -exec cp -a {} "$INSTALL_DIR/" \;
-fi
+find . -maxdepth 1 -mindepth 1 ! -name "install.sh" -exec cp -a {} "$INSTALL_DIR/" \;
 
 # Record installed version
 echo "$APP_VERSION" > "$INSTALL_DIR/.version"
 
 # 8. Fix ownership and permissions
-#    rsync/tar preserve source ownership, which can be a normal user from the
-#    build machine. Reset everything to root:root and make the tree world-readable
-#    so normal users can actually launch the app.
+#    cp -a preserves source ownership, which can be a normal user from the build
+#    machine. Reset everything to root:root and make the tree world-readable so
+#    normal users can actually launch the app.
 echo "-> Setting ownership and permissions..."
 chown -R root:root "$INSTALL_DIR"
 find "$INSTALL_DIR" -type d -exec chmod 755 {} \;

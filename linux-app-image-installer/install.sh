@@ -187,7 +187,9 @@ fi
 
 # Old per-user desktop entry, in the invoking user's home (not root's)
 if [ -n "${SUDO_USER:-}" ]; then
-    USER_HOME=$(getent passwd "$SUDO_USER" | cut -d: -f6)
+    # Tolerate an unresolvable user: this is best-effort cleanup and must never
+    # abort the install (a bare failing assignment would, under set -e).
+    USER_HOME="$(getent passwd "$SUDO_USER" 2>/dev/null | cut -d: -f6)" || USER_HOME=""
     USER_DESKTOP="$USER_HOME/.local/share/applications/AliView.desktop"
     if [ -n "$USER_HOME" ] && is_legacy_aliview_desktop "$USER_DESKTOP"; then
         echo "   Removing legacy menu entry for user $SUDO_USER"
@@ -392,6 +394,11 @@ cat <<'UNINSTALL_EOF' > "$INSTALL_DIR/uninstall.sh"
 #!/bin/bash
 set -euo pipefail
 
+# Match the installer: keep regenerated icon/MIME caches world-readable even if
+# this is run under a restrictive umask, otherwise the refresh below would write
+# root-only caches and break icon loading desktop-wide (see install.sh).
+umask 022
+
 # Hardcoded paths — do not use variables for rm -rf targets without a sanity check
 INSTALL_DIR="/opt/aliview"
 INSTALL_DIR_EXPECTED="/opt/aliview"
@@ -430,14 +437,8 @@ update-mime-database /usr/share/mime > /dev/null 2>&1 || true
 if command -v gtk-update-icon-cache &> /dev/null; then
     gtk-update-icon-cache /usr/share/icons/hicolor/ -f -t > /dev/null 2>&1 || true
 fi
-# Icon cache — KDE Plasma 5
-if command -v kbuildsycoca5 &> /dev/null; then
-    kbuildsycoca5 --noincremental > /dev/null 2>&1 || true
-fi
-# Icon cache — KDE Plasma 6
-if command -v kbuildsycoca6 &> /dev/null; then
-    kbuildsycoca6 --noincremental > /dev/null 2>&1 || true
-fi
+# (No kbuildsycoca: KDE rebuilds its per-user sycoca automatically when
+#  /usr/share/applications changes; running it as root only rebuilds root's.)
 
 # Final act — remove the install directory (also removes this running script)
 rm -rf "$INSTALL_DIR"
@@ -458,14 +459,8 @@ update-mime-database /usr/share/mime > /dev/null 2>&1 || true
 if command -v gtk-update-icon-cache &> /dev/null; then
     gtk-update-icon-cache /usr/share/icons/hicolor/ -f -t > /dev/null 2>&1 || true
 fi
-# Icon cache — KDE Plasma 5
-if command -v kbuildsycoca5 &> /dev/null; then
-    kbuildsycoca5 --noincremental > /dev/null 2>&1 || true
-fi
-# Icon cache — KDE Plasma 6
-if command -v kbuildsycoca6 &> /dev/null; then
-    kbuildsycoca6 --noincremental > /dev/null 2>&1 || true
-fi
+# (No kbuildsycoca: KDE rebuilds its per-user sycoca automatically when
+#  /usr/share/applications changes; running it as root only rebuilds root's.)
 
 echo ""
 echo -e "${GREEN}=== Installation Complete! ===${NC}"

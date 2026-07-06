@@ -110,7 +110,12 @@ fi
 #    `apt remove aliview` would then delete THIS install. We deliberately do not
 #    touch the package manager ourselves; instead we ask the user to remove it,
 #    keeping them in control of their system's package state.
-if command -v dpkg &> /dev/null && dpkg -s aliview &> /dev/null 2>&1; then
+# Match only the actually-installed state. `apt remove` (without purge) leaves
+# the package in "config-files" state, which `dpkg -s` still reports as known —
+# so we check the Status field explicitly and treat config-files/deinstalled
+# (files already gone) as safe to proceed.
+if command -v dpkg &> /dev/null && \
+   dpkg-query -W -f='${Status}' aliview 2>/dev/null | grep -q 'install ok installed'; then
     echo -e "${RED}Error:${NC} AliView is currently installed via your package manager (.deb)."
     echo "It occupies the same location ($INSTALL_DIR) this installer uses."
     echo "Please remove it first, then run this installer again:"

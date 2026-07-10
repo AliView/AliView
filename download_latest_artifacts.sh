@@ -36,10 +36,14 @@ mkdir -p "$DEST"
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 
-# Clear any previously-downloaded installers so the result is a clean set of the
-# current build (stale versions would otherwise pile up, since differing version
-# numbers don't overwrite each other).
-rm -f "$DEST"/AliView-*
+# Clear previous copies of only the artifact families THIS script downloads (all
+# versions, so a version bump doesn't leave stale files behind). Anything else in
+# the directory — e.g. a locally-built AliView-*-macOS-no-java.zip — is left
+# untouched, since the script only owns what it fetches.
+rm -f "$DEST"/AliView-*-linux-x86_64.run \
+      "$DEST"/AliView-*-macOS-*.dmg \
+      "$DEST"/AliView-*-Windows-x64.msi \
+      "$DEST"/AliView-*-Windows-x64.exe
 
 echo "=> Downloading artifacts into: $DEST"
 [ -n "$REF" ] && echo "   (pinned to ref: $REF)"

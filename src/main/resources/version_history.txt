@@ -1,4 +1,11 @@
 Version history
+1.32
+- New universial Linux installer that installs to /opt with menu entry and file associations
+- macOS: added a no-Java version (uses system installed Java)
+- macOS: fixed bug with Intel installer
+- macOS: corrected app bundle identifier
+- Various installer and packaging fixes
+
 1.31
 - Self-contained program with streamlined Java runtime libraries (no Java installation required)
 - Fixed drag-and-drop sequences in panel

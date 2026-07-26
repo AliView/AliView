@@ -2971,6 +2971,15 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 		alignmentPane.setBackground(color);
 		alignmentPane.getRulerComponent().setBackground(color);
 		alignmentPane.getCharsetRulerComponent().setBackground(color);
+
+		// Adjust the foreground text color based on perceived brightness of the background
+		double luminance = 0.2126 * color.getRed() + 0.7152 * color.getGreen() + 0.0722 * color.getBlue();
+		Color fgColor = luminance < 128 ? new Color(220, 220, 220) : Color.BLACK;
+
+		sequenceJList.setForeground(fgColor);
+		alignmentPane.getRulerComponent().setForeground(fgColor);
+		alignmentPane.getCharsetRulerComponent().setForeground(fgColor);
+		listTopOffset.setForeground(fgColor);
 	}
 
 	public void setColorSchemeNucleotide(ColorScheme aScheme){
@@ -4575,7 +4584,6 @@ public class AliViewWindow extends JFrame implements UndoControler, AlignmentLis
 
 
 }
-
 
 
 

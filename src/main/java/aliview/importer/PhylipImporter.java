@@ -310,6 +310,7 @@ public class PhylipImporter {
 				return new PhylipHint(false, false);
 			}
 			int seqCount = Integer.parseInt(lineSplitted[0]);
+			int declaredSequenceLength = Integer.parseInt(lineSplitted[1]);
 			String line = reader.readLine();
 			while(line != null && line.trim().isEmpty()){
 				line = reader.readLine();
@@ -317,7 +318,7 @@ public class PhylipImporter {
 			if(line == null || line.length() <= 10){
 				return new PhylipHint(false, false);
 			}
-			if(!Character.isWhitespace(line.charAt(10))){
+			if(!Character.isWhitespace(line.charAt(10)) && couldBeSequenceData(line.substring(10), declaredSequenceLength)){
 				isStrictShortName = true;
 			}
 			if(isStrictShortName && seqCount > 0){
@@ -341,6 +342,40 @@ public class PhylipImporter {
 		return hint;
 	}
 
+	/*
+	 * In strict phylip the name occupies the first 10 columns and everything after
+	 * that is sequence data. A non-whitespace character at column 11 is therefore
+	 * NOT enough to tell strict format apart from a relaxed file whose name simply
+	 * happens to be longer than 10 characters (e.g. "Achelura_yunnanensis_GCA041274885",
+	 * where column 11 is still inside the name). Reading such a file as strict
+	 * silently truncates every name to 10 characters, so before claiming strict we
+	 * check that the text after the name field could actually BE sequence data:
+	 *
+	 *   1) it only holds characters that can occur in sequence data - a long name
+	 *      usually also contains digits, underscores or other invalid characters
+	 *   2) it is not longer than the alignment length declared on the first line -
+	 *      a strict line can never carry more data than the alignment is long,
+	 *      which catches long names built only from letters
+	 */
+	private static boolean couldBeSequenceData(String textAfterNameField, int declaredSequenceLength) {
+		int nonWhiteCount = 0;
+		for(int i = 0; i < textAfterNameField.length(); i++){
+			char c = textAfterNameField.charAt(i);
+			if(Character.isWhitespace(c)){
+				continue;
+			}
+			if(!isPossibleSequenceChar(c)){
+				return false;
+			}
+			nonWhiteCount ++;
+		}
+		return nonWhiteCount <= declaredSequenceLength;
+	}
+
+	/* Characters that can occur in nucleotide or amino acid data, incl. ambiguity codes and gaps */
+	private static boolean isPossibleSequenceChar(char c) {
+		return Character.isLetter(c) || c == '-' || c == '.' || c == '?' || c == '*' || c == '~';
+	}
 
 	public FileFormat getFileFormat() {
 		// TODO Auto-generated method stub

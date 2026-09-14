@@ -20,8 +20,7 @@ if [[ ! -x "$JDEPS" || ! -x "$JLINK" || ! -x "$JPACKAGE" ]]; then
 fi
 
 APP_NAME="AliView"
-if [[ -z "${APP_VERSION:-}" ]]; then
-  APP_VERSION="$(python3 - <<'PY'
+POM_VERSION="$(python3 - <<'PY'
 import xml.etree.ElementTree as ET
 tree = ET.parse("pom.xml")
 root = tree.getroot()
@@ -29,6 +28,8 @@ ns = {"m": root.tag.split("}")[0].strip("{")}
 print(root.find("m:version", ns).text)
 PY
 )"
+if [[ -z "${APP_VERSION:-}" ]]; then
+  APP_VERSION="$POM_VERSION"
 fi
 echo "APP_VERSION=$APP_VERSION"
 
@@ -39,12 +40,19 @@ mkdir -p "target/jpackage-linux/input"
 echo "Building fat jar..."
 mvn -DskipTests package
 
-if [[ ! -f "target/aliview.jar" ]]; then
-  echo "Expected jar not found: target/aliview.jar" >&2
+# Use the LINUX flavoured jar, not target/aliview.jar. The pom's
+# cleanup-unneeded-files step strips muscle*linux* from target/aliview.jar
+# (it is the mac jar) and strips the mac/windows binaries from this one, so
+# only this jar carries the bundled Linux MUSCLE binaries that
+# "Realign everything" extracts at runtime. The Windows script likewise uses
+# its own target/windows-version-*/aliview.jar.
+LINUX_JAR="target/linux-version-${POM_VERSION}/aliview/aliview.jar"
+if [[ ! -f "$LINUX_JAR" ]]; then
+  echo "Expected jar not found: $LINUX_JAR" >&2
   exit 1
 fi
 
-cp "target/aliview.jar" "target/jpackage-linux/input/"
+cp "$LINUX_JAR" "target/jpackage-linux/input/aliview.jar"
 cp -f "src/main/resources/img/splash_128x128.png" "target/jpackage-linux/input/"
 
 

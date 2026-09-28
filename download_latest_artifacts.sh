@@ -2,10 +2,17 @@
 # Download the latest CI-built installers (Linux .run, macOS DMGs, Windows MSI)
 # into a single directory, ready for a release.
 #
-# By default it grabs the most recent SUCCESSFUL run of each workflow on the
-# default branch. Pass a git ref (branch or tag) to pin to that ref instead:
-#     ./download_latest_artifacts.sh              # latest successful on main
-#     ./download_latest_artifacts.sh v1.31        # latest successful for tag
+# By default it grabs the most recent SUCCESSFUL run of each workflow ON MAIN.
+# Restricting to a branch matters: without it the "latest successful run" of a
+# workflow can belong to a dependabot (or any other) branch, which would mix
+# artifacts built from unmerged code into a release.
+#
+#     ./download_latest_artifacts.sh                 # latest successful on main
+#     ./download_latest_artifacts.sh v1.33           # pin to a tag/branch
+#     COMMIT=5665f47 ./download_latest_artifacts.sh  # pin to one exact commit
+#
+# COMMIT is the safest for a release: it guarantees every artifact comes from
+# the same commit instead of from whatever each workflow happened to build last.
 #
 # Output dir defaults to ./dist (override with DEST=/some/dir).
 # Requires: gh (GitHub CLI), authenticated (gh auth login).
@@ -13,7 +20,8 @@ set -euo pipefail
 
 cd "$(cd "$(dirname "$0")" && pwd)"
 
-REF="${1:-}"
+REF="${1:-main}"
+COMMIT="${COMMIT:-}"
 DEST="${DEST:-dist}"
 
 # workflow file -> the artifact name(s) it produces
@@ -46,21 +54,36 @@ rm -f "$DEST"/AliView-*-linux-x86_64.run \
       "$DEST"/AliView-*-Windows-x64.exe
 
 echo "=> Downloading artifacts into: $DEST"
-[ -n "$REF" ] && echo "   (pinned to ref: $REF)"
+if [ -n "$COMMIT" ]; then
+    echo "   (pinned to commit: $COMMIT)"
+else
+    echo "   (ref: $REF)"
+fi
 
 for WF in "${WORKFLOWS[@]}"; do
-    # Find the latest successful run for this workflow (optionally on $REF).
-    RUN_ARGS=(--workflow="$WF" --status=success --limit 1 --json databaseId,headSha,displayTitle)
-    [ -n "$REF" ] && RUN_ARGS+=(--branch "$REF")
+    # Find the newest successful run for this workflow. When COMMIT is given we
+    # look through more runs and take the one built from that exact commit,
+    # regardless of which branch/tag triggered it; otherwise the newest on $REF.
+    if [ -n "$COMMIT" ]; then
+        RUN_ARGS=(--workflow="$WF" --status=success --limit 30 --json databaseId,headSha,displayTitle)
+    else
+        RUN_ARGS=(--workflow="$WF" --status=success --limit 1 --branch "$REF" --json databaseId,headSha,displayTitle)
+    fi
 
     RUN_JSON="$(gh run list "${RUN_ARGS[@]}")"
-    RUN_ID="$(echo "$RUN_JSON" | python3 -c 'import sys,json; r=json.load(sys.stdin); print(r[0]["databaseId"] if r else "")')"
+    RUN_ID="$(echo "$RUN_JSON" | COMMIT="$COMMIT" python3 -c '
+import sys, json, os
+runs = json.load(sys.stdin)
+want = os.environ.get("COMMIT", "")
+if want:
+    runs = [r for r in runs if r["headSha"].startswith(want)]
+print(runs[0]["databaseId"] if runs else "")')"
 
     if [ -z "$RUN_ID" ]; then
-        echo "   !! $WF: no successful run found${REF:+ for ref $REF} — skipping"
+        echo "   !! $WF: no successful run found for ${COMMIT:-$REF} — skipping"
         continue
     fi
-    SHA="$(echo "$RUN_JSON" | python3 -c 'import sys,json; print(json.load(sys.stdin)[0]["headSha"][:7])')"
+    SHA="$(gh run view "$RUN_ID" --json headSha -q '.headSha[0:7]')"
     echo "   $WF: run $RUN_ID (commit $SHA)"
 
     # Download every artifact of this run into a scratch dir, then flatten the

@@ -3,12 +3,8 @@ name: Build Linux Installer
 on:
   push:
     branches: [ "main" ]
-    tags: [ "v*" ]
   pull_request:
     branches: [ "main" ]
-
-permissions:
-  contents: write   # needed to attach the installer to a GitHub Release on tags
 
 jobs:
   build-linux:
@@ -78,14 +74,11 @@ jobs:
           mv linux-app-image-installer/aliview.install.run \
              "linux-app-image-installer/AliView-${RELEASE_VERSION}-linux-x86_64.run"
 
+      # The installer is published as a run artifact only. Releases are created
+      # and filled deliberately with ./deploy-all.sh - nothing here writes to a
+      # GitHub release.
       - name: Upload installer artifact
         uses: actions/upload-artifact@v7
         with:
           name: AliView-linux-installer
           path: linux-app-image-installer/AliView-*-linux-x86_64.run
-
-      - name: Attach installer to Release
-        if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v3
-        with:
-          files: linux-app-image-installer/AliView-*-linux-x86_64.run

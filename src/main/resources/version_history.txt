@@ -1,4 +1,8 @@
 Version history
+1.33
+- Fixed sequence names in phylip files being cut off after 10 characters
+- Linux: fixed "Realign everything" not working (bundled Muscle was missing)
+
 1.32
 - New universial Linux installer that installs to /opt with menu entry and file associations
 - macOS: added a no-Java version (uses system installed Java)

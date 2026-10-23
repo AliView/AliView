@@ -157,6 +157,11 @@ implements ListCellRenderer, Serializable
 	private void setPlatformDefaultRenderingHints(Graphics2D g2){
 		try{
 			Map pdefaults =	(Map)(Toolkit.getDefaultToolkit().getDesktopProperty("awt.font.desktophints"));
+			// desktop hints are not available on all platforms
+			if(pdefaults == null){
+				g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+				return;
+			}
 			Object aaHint  = pdefaults.get(RenderingHints.KEY_TEXT_ANTIALIASING);
 			if(aaHint != null){
 				g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, aaHint);

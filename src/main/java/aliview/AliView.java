@@ -9,12 +9,15 @@ import java.awt.Frame;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.InputStream;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.JarURLConnection;
 import java.net.URL;
@@ -28,6 +31,8 @@ import javax.swing.Icon;
 import javax.swing.InputMap;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.ToolTipManager;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
@@ -59,6 +64,7 @@ public class AliView implements ApplicationListener{
 	private static final String LF = System.getProperty("line.separator");
 	private static final String ALIVIEW_USERDATA_SUBDIR = ".AliView";
 	private static final String ALIVIEW_LOG_FILENAME = "AliView.log";
+	private static final int NUDGE_PAINT_DELAY_MS = 200;
 	static {
 		forceLog4j2ConfigEarly();
 	}
@@ -520,7 +526,15 @@ public class AliView implements ApplicationListener{
 
 
 
-	public static void openAlignmentFile(File alignmentFile){	
+	public static void openAlignmentFile(final File alignmentFile){
+		runOnEventThread(new Runnable() {
+			public void run() {
+				doOpenAlignmentFile(alignmentFile);
+			}
+		});
+	}
+
+	private static void doOpenAlignmentFile(File alignmentFile){
 		try{
 			// if it is empty load file in old window - otherwise create new window
 			logger.info("activeWindow=" + activeWindow);
@@ -534,6 +548,10 @@ public class AliView implements ApplicationListener{
 			if(activeWindow != null && activeWindow.isEmpty()){
 
 				activeWindow.loadNewAlignmentFile(alignmentFile);
+				// this is the usual way a file is opened in mac (file is loaded into the
+				// empty window that was created at program start) so the macOS painting
+				// problem has to be taken care of here as well
+				nudgeWindowIntoPainting(activeWindow);
 			}else{
 				createNewAliViewWindow(alignmentFile);
 			}
@@ -571,6 +589,38 @@ public class AliView implements ApplicationListener{
 	}
 
 	private static void createNewAliViewWindow(final File alignmentFile){
+		runOnEventThread(new Runnable() {
+			public void run() {
+				doCreateNewAliViewWindow(alignmentFile);
+			}
+		});
+	}
+
+	/*
+	 * 
+	 * Swing windows may only be created and shown from the event-dispatch-thread, when it
+	 * is done from another thread (program start, tests, external command results) macOS can
+	 * end up with a window that is visible but never painted - see GitHub issue #146 and #166.
+	 * Calls already on the event thread are run directly, other calls are handed over and
+	 * waited for, so the caller still can use the created window when the call returns.
+	 * 
+	 */
+	private static void runOnEventThread(Runnable runnable){
+		if(SwingUtilities.isEventDispatchThread()){
+			runnable.run();
+			return;
+		}
+		try {
+			SwingUtilities.invokeAndWait(runnable);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			logger.error(e, e);
+		} catch (InvocationTargetException e) {
+			logger.error(e, e);
+		}
+	}
+
+	private static void doCreateNewAliViewWindow(final File alignmentFile){
 
 		try {
 
@@ -627,6 +677,7 @@ public class AliView implements ApplicationListener{
 
 			newWin.setVisible(true);
 			newWin.toFront();
+			nudgeWindowIntoPainting(newWin);
 
 
 		}catch(Exception e) {
@@ -691,6 +742,48 @@ public class AliView implements ApplicationListener{
 			newWin.setBounds(intersection);
 		}
 
+	}
+
+	/*
+	 * 
+	 * Workaround for the macOS problem where a newly shown window stays empty until the user
+	 * resizes it or minimizes and restores it (GitHub issue #146 and #166) - the window content
+	 * is created but never painted. A layout and repaint is requested as soon as the window is
+	 * on screen, and on mac the window is in addition resized one pixel and back again, which is
+	 * what the users have found makes the native window redraw its content.
+	 * 
+	 */
+	private static void nudgeWindowIntoPainting(final AliViewWindow newWin) {
+
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				newWin.validate();
+				newWin.repaint();
+			}
+		});
+
+		if(! OSNativeUtils.isMac()){
+			return;
+		}
+
+		Timer resizeNudge = new Timer(NUDGE_PAINT_DELAY_MS, new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(! newWin.isShowing()){
+					return;
+				}
+				logger.info("nudging window into painting");
+				// only a window in normal state can be resized back to the same bounds
+				if(newWin.getExtendedState() == Frame.NORMAL){
+					Rectangle bounds = newWin.getBounds();
+					newWin.setBounds(bounds.x, bounds.y, bounds.width, bounds.height + 1);
+					newWin.setBounds(bounds);
+				}
+				newWin.validate();
+				newWin.repaint();
+			}
+		});
+		resizeNudge.setRepeats(false);
+		resizeNudge.start();
 	}
 
 	public static boolean quitProgram() {

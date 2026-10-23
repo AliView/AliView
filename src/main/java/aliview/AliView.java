@@ -771,7 +771,9 @@ public class AliView implements ApplicationListener{
 				if(! newWin.isShowing()){
 					return;
 				}
-				logger.info("nudging window into painting");
+				// logged as error only so that it shows in the log after startup (when level is set to ERROR),
+				// it is not an error - lower it again when the macOS paint problem is sorted out
+				logger.error("macOS paint workaround (not an error): nudging window into painting");
 				// only a window in normal state can be resized back to the same bounds
 				if(newWin.getExtendedState() == Frame.NORMAL){
 					Rectangle bounds = newWin.getBounds();

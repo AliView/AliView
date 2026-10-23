@@ -1,4 +1,7 @@
 Version history
+1.34
+- macOS: fixed window sometimes staying blank until it was resized or minimized
+
 1.33
 - Fixed sequence names in phylip files being cut off after 10 characters
 - Linux: fixed "Realign everything" not working (bundled Muscle was missing)

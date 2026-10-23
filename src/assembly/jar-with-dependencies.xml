@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Same as the built-in jar-with-dependencies descriptor of maven-assembly-plugin, except that
+  the log4j plugin cache (Log4j2Plugins.dat) of log4j-1.2-api is left out.
+
+  Several log4j jars contain a plugin cache at the same path, and when all dependencies are
+  unpacked into one jar only one of them is kept. When the log4j-1.2-api one was kept, log4j-core
+  could not find its own plugins, log4j2.xml was never read and no log file was written.
+  The log4j-1.2-api plugins are only needed for reading old log4j 1 configuration files.
+-->
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.1.1"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.1.1 https://maven.apache.org/xsd/assembly-2.1.1.xsd">
+  <id>jar-with-dependencies</id>
+  <formats>
+    <format>jar</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <dependencySets>
+    <dependencySet>
+      <outputDirectory>/</outputDirectory>
+      <useProjectArtifact>true</useProjectArtifact>
+      <unpack>true</unpack>
+      <scope>runtime</scope>
+      <excludes>
+        <exclude>org.apache.logging.log4j:log4j-1.2-api</exclude>
+      </excludes>
+    </dependencySet>
+    <dependencySet>
+      <outputDirectory>/</outputDirectory>
+      <useProjectArtifact>false</useProjectArtifact>
+      <unpack>true</unpack>
+      <scope>runtime</scope>
+      <includes>
+        <include>org.apache.logging.log4j:log4j-1.2-api</include>
+      </includes>
+      <unpackOptions>
+        <excludes>
+          <exclude>META-INF/org/apache/logging/log4j/core/config/plugins/Log4j2Plugins.dat</exclude>
+        </excludes>
+      </unpackOptions>
+    </dependencySet>
+  </dependencySets>
+</assembly>

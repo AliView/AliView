@@ -83,9 +83,9 @@
            <configuration>
                 <finalName>aliview</finalName>
                 <appendAssemblyId>false</appendAssemblyId>
-                <descriptorRefs>
-                    <descriptorRef>jar-with-dependencies</descriptorRef>
-                </descriptorRefs>
+                <descriptors>
+                    <descriptor>src/assembly/jar-with-dependencies.xml</descriptor>
+                </descriptors>
                 <archive>
                    <manifest>
                       <mainClass>aliview.AliView</mainClass>
@@ -106,9 +106,9 @@
 					   <finalName>aliview</finalName>
 					   <outputDirectory>target/windows-version-${project.version}</outputDirectory>
 					   <appendAssemblyId>false</appendAssemblyId>
-					   <descriptorRefs>
-						  <descriptorRef>jar-with-dependencies</descriptorRef>
-					   </descriptorRefs>
+					   <descriptors>
+						  <descriptor>src/assembly/jar-with-dependencies.xml</descriptor>
+					   </descriptors>
 					   <archive>
 						  <manifest>
 							 <mainClass>aliview.AliView</mainClass>
@@ -129,9 +129,9 @@
 					  <finalName>aliview</finalName>
 					  <outputDirectory>target/linux-version-${project.version}/aliview/</outputDirectory>
 					  <appendAssemblyId>false</appendAssemblyId>
-					  <descriptorRefs>
-						 <descriptorRef>jar-with-dependencies</descriptorRef>
-					  </descriptorRefs>
+					  <descriptors>
+						 <descriptor>src/assembly/jar-with-dependencies.xml</descriptor>
+					  </descriptors>
 					  <archive>
 							<manifest>
 							  <mainClass>aliview.AliView</mainClass>
@@ -151,9 +151,9 @@
 			         <configuration>
 						  <finalName>aliview</finalName>
 						  <appendAssemblyId>false</appendAssemblyId>
-						  <descriptorRefs>
-							   <descriptorRef>jar-with-dependencies</descriptorRef>
-						  </descriptorRefs>
+						  <descriptors>
+							   <descriptor>src/assembly/jar-with-dependencies.xml</descriptor>
+						  </descriptors>
 						  <archive>
 							<manifest>
 							  <mainClass>aliview.AliView</mainClass>

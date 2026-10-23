@@ -7,6 +7,10 @@
   unpacked into one jar only one of them is kept. When the log4j-1.2-api one was kept, log4j-core
   could not find its own plugins, log4j2.xml was never read and no log file was written.
   The log4j-1.2-api plugins are only needed for reading old log4j 1 configuration files.
+
+  The module-info.class files of the dependencies are also left out. The jar is run from the
+  class path, where they are not used, and whichever one was kept made jdeps (used when making
+  the jpackage runtimes) treat the whole jar as that module.
 -->
 <assembly xmlns="http://maven.apache.org/ASSEMBLY/2.1.1"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -25,6 +29,12 @@
       <excludes>
         <exclude>org.apache.logging.log4j:log4j-1.2-api</exclude>
       </excludes>
+      <unpackOptions>
+        <excludes>
+          <exclude>module-info.class</exclude>
+          <exclude>META-INF/versions/*/module-info.class</exclude>
+        </excludes>
+      </unpackOptions>
     </dependencySet>
     <dependencySet>
       <outputDirectory>/</outputDirectory>
@@ -37,6 +47,8 @@
       <unpackOptions>
         <excludes>
           <exclude>META-INF/org/apache/logging/log4j/core/config/plugins/Log4j2Plugins.dat</exclude>
+          <exclude>module-info.class</exclude>
+          <exclude>META-INF/versions/*/module-info.class</exclude>
         </excludes>
       </unpackOptions>
     </dependencySet>
